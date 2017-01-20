@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './login.less';
+import {Icon, Checkbox } from 'antd';
 
 class Login extends React.Component {
   constructor(props) {
@@ -122,7 +123,7 @@ class Login extends React.Component {
 
     function resize() {
       cw = c1.width = c2.width = window.innerWidth,
-      ch = c1.height = c2.height = window.innerHeight;
+        ch = c1.height = c2.height = window.innerHeight;
     }
 
     init(84);
@@ -133,13 +134,25 @@ class Login extends React.Component {
         <canvas id='c1' className={styles.canvas1}></canvas>
         <canvas id='c2' className={styles.canvas2}></canvas>
         <div className={styles.content}>
-          <p className={styles.title}>营销通管理维护平台</p>
+          <p className={styles.title}>满好营销通后台管理系统</p>
+          <div className={styles.formcontent}>
+            <Icon className={styles.formIcon} type="user" />
+            <input className={styles.formInput} placeholder="请输入用户名" />
+          </div>
+          <div className={styles.formcontent}>
+            <Icon className={styles.formIcon} type="unlock" />
+            <input className={styles.formInput} placeholder="请输入密码" />
+          </div>
+          <div className={styles.savepwd}>
+            <Checkbox>记住密码</Checkbox>
+          </div>
+          <div className={styles.loginbtn}>登 录</div>
         </div>
         <foot className={styles.footcontent}>
           <h5>Copyright 2017 by 上海满好日用品有限公司</h5>
-          <h6>Shanghai Myhome Daily Household Product Co.,Ltd.</h6>
+          <h6>Shanghai Myhome Daily Household Product Co., Ltd.</h6>
         </foot>
-        
+
       </div>
     );
   }

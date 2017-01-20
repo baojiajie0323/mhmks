@@ -10,6 +10,7 @@
     .canvas2{
         position: absolute;
         background: #000;
+        opacity: 0.8;
     }
 
     .content {
@@ -23,8 +24,63 @@
         box-shadow: 0 0 20px 1px rgba(0,0,0,0.2);
         background-color: rgba(255, 255, 255, 0.55);
         .title{
-            width: 100%;
             text-align: center;
+            margin: 13px 0 20px;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: 'simhei';
+            color: #3E4148;
+            letter-spacing: 1px;
+        }
+
+        .formcontent{
+            margin: 15px 62px 15px;
+            height: 35px;
+
+            .formIcon{
+                float: left;
+                width: 45px;
+                height: 100%; 
+                line-height:35px; 
+                font-size: 17px;
+                color: white;
+                background-color: #3E8655;
+            }
+
+            .formInput{
+                outline: 0;
+                border: 0;
+                float: left;
+                height: 35px;
+                width: 191px;
+                padding: 13px;
+                font-size: 14px;
+                background-color: white;
+                border: 1px solid #3E8655;
+            }
+        }
+
+        .savepwd{
+            float: left;
+            font-size: 13px;
+            margin: 3px 0 0 62px;
+        }
+
+        .loginbtn{
+            width: 70px;
+            height: 30px;
+            background: #3E8655;
+            float: right;
+            margin: 0 62px 0 0;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+
+            &:hover{
+                background-color: #5EB178;
+            }
         }
     }
 
