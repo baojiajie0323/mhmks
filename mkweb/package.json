@@ -18,6 +18,7 @@
     "dora": "0.4.x",
     "dora-plugin-webpack": "^0.8.1",
     "eslint": "^3.8.1",
+    "jquery": "^3.0.0",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-plugin-import": "^2.0.1",
     "eslint-plugin-jsx-a11y": "^2.2.3",
@@ -32,7 +33,7 @@
   "scripts": {
     "build": "atool-build",
     "lint": "eslint --ext .js,.jsx src/",
-    "start": "dora --plugins webpack",
+    "start": "dora --plugins webpack -p 8001",
     "test": "atool-test-mocha ./**/__tests__/*-test.js"
   }
 }
