@@ -1,14 +1,17 @@
 import React from 'react';
 import styles from './login.less';
-import {Icon, Checkbox } from 'antd';
+import $ from 'jquery'
+import { Icon, Checkbox } from 'antd';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      savepwd: false,
     };
+    this.onCheckChange = this.onCheckChange.bind(this);
   }
-  componentDidMount() {
+  initCanvas() {
     var c1 = document.getElementById('c1'),
       ctx1 = c1.getContext('2d'),
       c2 = document.getElementById('c2'),
@@ -128,6 +131,38 @@ class Login extends React.Component {
 
     init(84);
   }
+  componentDidMount() {
+    this.initCanvas();
+    var username = localStorage.username;
+    var password = localStorage.password;
+    var savepwd = localStorage.savepwd;
+
+    this.setState({
+      savepwd: savepwd == 'true'
+    });
+
+    $('#username').val(username);
+    if (savepwd) {
+      $('#password').val(password);
+    }
+  }
+  componentWillUnmount() {
+    localStorage.username = $('#username').val();
+    localStorage.savepwd = this.state.savepwd;
+    if(this.state.savepwd){
+      localStorage.password = $('#password').val();
+    }else{
+      localStorage.password = '';
+    }
+  }
+  onClickLogin() {
+    Action.login();
+  }
+  onCheckChange(e) {
+    this.setState({
+      savepwd: e.target.checked
+    })
+  }
   render() {
     return (
       <div className={styles.container}>
@@ -137,16 +172,16 @@ class Login extends React.Component {
           <p className={styles.title}>满好营销通后台管理系统</p>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="user" />
-            <input className={styles.formInput} placeholder="请输入用户名" />
+            <input id="username" className={styles.formInput} placeholder="请输入用户名" />
           </div>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="unlock" />
-            <input className={styles.formInput} placeholder="请输入密码" />
+            <input id="password" type="password" className={styles.formInput} placeholder="请输入密码" />
           </div>
           <div className={styles.savepwd}>
-            <Checkbox>记住密码</Checkbox>
+            <Checkbox checked={this.state.savepwd} onChange={this.onCheckChange} >记住密码</Checkbox>
           </div>
-          <div className={styles.loginbtn}>登 录</div>
+          <div className={styles.loginbtn} onClick={this.onClickLogin}>登 录</div>
         </div>
         <foot className={styles.footcontent}>
           <h5>Copyright 2017 by 上海满好日用品有限公司</h5>

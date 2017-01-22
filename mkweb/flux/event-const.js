@@ -1,0 +1,18 @@
+'use strict';
+
+var keyMirror = require('keymirror');
+
+var eventMap = {
+  ActionEvent: keyMirror({
+    AE_LOGIN: null,
+    AE_LOGOUT: null,
+  }),
+
+  StoreEvent: keyMirror({
+    SE_LOGIN: null,
+  })
+};
+
+window.ActionEvent = eventMap.ActionEvent;
+window.StoreEvent = eventMap.StoreEvent;
+module.exports = eventMap;

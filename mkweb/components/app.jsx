@@ -6,12 +6,23 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loginSuccess: false
     };
+    this.onLoginChange = this.onLoginChange.bind(this);
+  }
+  componentDidMount(){
+    Store.addChangeListener(StoreEvent.SE_LOGIN,this.onLoginChange)
+  }
+  onLoginChange(loginSuccess){
+    this.setState({loginSuccess});
   }
   render() {
     return (
       <div className={styles.container}>
-        <Login /> 
+        {!this.state.loginSuccess ? 
+          <Login /> :
+          null
+        }        
       </div>
     );
   }
