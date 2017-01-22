@@ -1,12 +1,13 @@
 import React from 'react';
 import Login from './login/login';
+import Main from './main/main';
 import styles from './app.less';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginSuccess: false
+      loginSuccess: true
     };
     this.onLoginChange = this.onLoginChange.bind(this);
   }
@@ -21,7 +22,7 @@ class App extends React.Component {
       <div className={styles.container}>
         {!this.state.loginSuccess ? 
           <Login /> :
-          null
+          <Main />
         }        
       </div>
     );
