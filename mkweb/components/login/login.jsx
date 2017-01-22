@@ -169,7 +169,7 @@ class Login extends React.Component {
         <canvas id='c1' className={styles.canvas1}></canvas>
         <canvas id='c2' className={styles.canvas2}></canvas>
         <div className={styles.content}>
-          <p className={styles.title}>科达视讯通后台管理平台</p>
+          <p className={styles.title}>满好营销通后台管理平台</p>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="user" />
             <input id="username" className={styles.formInput} placeholder="请输入用户名" />
