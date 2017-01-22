@@ -30,8 +30,47 @@
         position: absolute;
         height: 86px;
         line-height: 86px;
-        right: 280px;
-        width: 500px;
+        right: 300px;
+
+        .navcontent{
+            position: relative;
+            float: left;
+            width: 75px;
+            height: 86px;
+            text-align: center;
+            cursor: pointer;
+            color: #ADADAD;
+            font-size: 15px;
+            font-family: 'simhei';
+
+            transition: all 0.3s ease;
+            &:after{
+                transition: all 0.3s ease;
+                content: ' ';
+                position: absolute;
+                height: 3px;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: white;
+                opacity: 0;
+            }
+
+            &:hover{
+                color: white;
+                background-color: rgb(90, 169, 115);
+                &:after{
+                    opacity: 1;
+                }
+            }
+        }
+        .navcontent_sel{
+            color: white;
+            font-weight: bold;
+            &:after{
+                opacity: 1;
+            }
+        }
     }
     
     .headeruser{

@@ -8,6 +8,7 @@ var StoreEvent = EventConst.StoreEvent;
 
 var _loginSuccess = false;
 var _userInfo = {};
+var _curview = 'homepage';
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
@@ -17,6 +18,14 @@ var Store = assign({}, EventEmitter.prototype, {
       _userInfo = {};
     }
     this.emit(StoreEvent.SE_LOGIN, loginsuccess);
+  },
+
+  setCurView: function (view) {
+    _curview = view;
+    this.emit(StoreEvent.SE_VIEW);
+  },
+  getCurView: function(){
+    return _curview;
   },
 
   emitChange: function (eventtype) {

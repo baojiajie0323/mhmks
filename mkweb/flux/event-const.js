@@ -10,6 +10,7 @@ var eventMap = {
 
   StoreEvent: keyMirror({
     SE_LOGIN: null,
+    SE_VIEW: null,
   })
 };
 
