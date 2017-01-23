@@ -1,4 +1,6 @@
 var user = {
+  login_web: 'select * from user where username = ? and password = ? and enableweb = 1',
+  login_app: 'select * from user where username = ? and password = ? and enableapp = 1',
   insert:'INSERT INTO user(id, name, age) VALUES(0,?,?)',
   update:'update user set name=?, age=? where id=?',
   delete: 'delete from user where id=?',

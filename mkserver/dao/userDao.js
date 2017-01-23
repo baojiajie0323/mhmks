@@ -10,7 +10,8 @@ var dbcode = {
   SUCCESS: 0,
   CONNECT_ERROR: 1,
   PARAM_ERROR: 2,
-  FAIL: 3
+  FAIL: 3,
+  LOGIN_FAIL: 4,
 }
 // 向前台返回JSON方法的简单封装
 var jsonWrite = function (res, ret, code) {
@@ -18,6 +19,7 @@ var jsonWrite = function (res, ret, code) {
     if (code == dbcode.CONNECT_ERROR) { res.json({ code: code, msg: '数据库连接失败' }); }
     else if (code == dbcode.PARAM_ERROR) { res.json({ code: code, msg: '参数错误' }); }
     else if (code == dbcode.FAIL) { res.json({ code: code, msg: '操作失败' }); }
+    else if (code == dbcode.LOGIN_FAIL) { res.json({ code: code, msg: '用户名或密码错误' }); }
   } else {
     if (typeof ret === 'undefined') {
       res.json({ code: dbcode.FAIL, msg: '操作失败' });
@@ -58,6 +60,38 @@ function getNowFormatDate() {
 }
 
 module.exports = {
+  login: function (req, res, next) {
+    var param = req.body;
+    if (!param.username || !param.password || !param.type) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = $sql.login_web;
+        if (param.type == 2) {
+          sqlstring = $sql.login_app;
+        }
+
+        connection.query(sqlstring, [param.username, param.password], function (err, result) {
+          console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  logout: function (req, res, next) {
+    jsonWrite(res, {}, dbcode.SUCCESS);
+  },
   insertgroup: function (req, res, next) {
     var param = req.body;
     if (param.name == null || param.groupid == null) {
@@ -74,7 +108,7 @@ module.exports = {
           if (result.affectedRows > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.FAIL);
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
           }
           connection.release();
         });

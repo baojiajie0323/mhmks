@@ -10,10 +10,13 @@ router.get('/', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
   console.log('users :' + JSON.stringify(req.body));
-  if (req.body.command == "getallplangroup") {
-    console.log('getallplangroup');
-    userDao.queryallgroup(req, res, next);
-  } else if (req.body.command == "getallplan") {
+  if (req.body.command == "login") {
+    console.log('login');
+    userDao.login(req, res, next);
+  } else if (req.body.command == "logout") {
+    console.log('logout');
+    userDao.logout(req, res, next);
+  }else if (req.body.command == "getallplan") {
     console.log('getallplan');
     userDao.queryallplan(req, res, next);
   } else if (req.body.command == "delplan") {

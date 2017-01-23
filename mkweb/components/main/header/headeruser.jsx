@@ -17,10 +17,15 @@ class HeaderUser extends React.Component {
     Action.logout();
   }
   render() {
+    var userInfo = Store.getUserInfo();
+    var username = userInfo.realname;
+    if(!username || username == ''){
+      username = userInfo.username;
+    }
     return (
       <div className={styles.headeruser}>
         <Icon style={{marginRight:'15px'}} type="user" />
-        <span style={{marginRight:'10px'}} >鲍嘉捷</span>
+        <span style={{marginRight:'10px'}} >{username}</span>
         <span style={{  fontSize: '12px', color: 'rgb(215, 215, 215)'}} > 系统管理员</span>
         <Popconfirm placement="bottomRight" title="  确定要注销吗？  " onConfirm={this.onClickLogout} >
         <div className={styles.headerlogout}>

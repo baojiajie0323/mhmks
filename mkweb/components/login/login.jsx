@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './login.less';
 import $ from 'jquery'
-import { Icon, Checkbox } from 'antd';
+import { Icon, Checkbox, message} from 'antd';
 
 class Login extends React.Component {
   constructor(props) {
@@ -156,7 +156,22 @@ class Login extends React.Component {
     }
   }
   onClickLogin() {
-    Action.login();
+    var username = $('#username').val();
+    var password = $('#password').val();
+    if(username == ""){
+      message.info("请输入用户名！");
+      return;
+    }
+    if(password == ""){
+      message.info("请输入密码！");
+      return;
+    }
+    var data = {
+      username:username,
+      password:password,
+      type:1
+    }
+    Action.login(data);
   }
   onCheckChange(e) {
     this.setState({
