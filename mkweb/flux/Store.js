@@ -9,6 +9,8 @@ var StoreEvent = EventConst.StoreEvent;
 var _loginSuccess = false;
 var _userInfo = {};
 var _curview = 'homepage';
+var _storeArea = [];
+
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
@@ -20,7 +22,7 @@ var Store = assign({}, EventEmitter.prototype, {
     }
     this.emit(StoreEvent.SE_LOGIN, loginsuccess);
   },
-  getUserInfo : () => {
+  getUserInfo: () => {
     return _userInfo;
   },
 
@@ -28,8 +30,16 @@ var Store = assign({}, EventEmitter.prototype, {
     _curview = view;
     this.emit(StoreEvent.SE_VIEW);
   },
-  getCurView: function(){
+  getCurView: function () {
     return _curview;
+  },
+
+  setStoreArea: function (sa) {
+    _storeArea = sa;
+    this.emitChange(StoreEvent.SE_STOREAREA);
+  },
+  getStoreArea: function () {
+    return _storeArea;
   },
 
   emitChange: function (eventtype) {
@@ -58,6 +68,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_LOGOUT: {
       Store.setLoginSuccess(false);
+    }
+      break;
+    case ActionEvent.AE_STOREAREA: {
+      Store.setStoreArea(action.value);
     }
       break;
     default:

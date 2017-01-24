@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './info.less';
 
-class Store extends React.Component {
+class StoreBasic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,4 +19,4 @@ class Store extends React.Component {
   }
 }
 
-export default Store;
+export default StoreBasic;

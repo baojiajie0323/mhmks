@@ -18,7 +18,6 @@ var dao = {
     return pool;
   },
   jsonWrite: function(res, ret, code) {
-    console.log('jsonwrite',dao.dbcode);
     if (code != dao.dbcode.SUCCESS) {
       if (code == dao.dbcode.CONNECT_ERROR) { res.json({ code: code, msg: '数据库连接失败' }); }
       else if (code == dao.dbcode.PARAM_ERROR) { res.json({ code: code, msg: '参数错误' }); }
