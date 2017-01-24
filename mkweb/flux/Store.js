@@ -10,6 +10,7 @@ var _loginSuccess = false;
 var _userInfo = {};
 var _curview = 'homepage';
 var _storeArea = [];
+var _storeBasic = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -40,6 +41,13 @@ var Store = assign({}, EventEmitter.prototype, {
   },
   getStoreArea: function () {
     return _storeArea;
+  },
+  setStoreBasic: function (sa) {
+    _storeBasic = sa;
+    this.emitChange(StoreEvent.SE_STOREBASIC);
+  },
+  getStoreBasic: function () {
+    return _storeBasic;
   },
 
   emitChange: function (eventtype) {
@@ -72,6 +80,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_STOREAREA: {
       Store.setStoreArea(action.value);
+    }
+      break;
+    case ActionEvent.AE_STOREBASIC: {
+      Store.setStoreBasic(action.value);
     }
       break;
     default:

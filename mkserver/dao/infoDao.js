@@ -16,11 +16,11 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstorearea;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
+          console.log('dbresult', err,JSON.stringify(result));
+          if(err){
             jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }else{
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });
