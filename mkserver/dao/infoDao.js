@@ -27,4 +27,24 @@ module.exports = {
       }
     });
   },
+  getStoreBasic: function (req, res, next) {
+    console.log('infoDao getStoreBasic');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getstorebasic;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };
