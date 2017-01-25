@@ -7,12 +7,14 @@ var eventMap = {
     AE_LOGIN: null,
     AE_LOGOUT: null,
     AE_STOREAREA: null,
+    AE_STOREBASIC: null,
   }),
 
   StoreEvent: keyMirror({
     SE_LOGIN: null,
     SE_VIEW: null,
     SE_STOREAREA: null,
+    SE_STOREBASIC: null,
   })
 };
 

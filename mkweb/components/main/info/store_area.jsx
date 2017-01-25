@@ -45,16 +45,17 @@ class StoreArea extends React.Component {
   }
   getTableData() {
     console.log(this.state.storeArea);
-    return this.state.storeArea.map((sa, i) => {
+    this.state.storeArea.forEach((sa, i) => {
       sa.key = i.toString();
     })
+    return this.state.storeArea;
   }
   render() {
     return (
       <div className={styles.infocontent}>
         <p className={styles.infotitle}>门店系统区域</p>
         <div className={styles.infotable}>
-          <Table loading={this.state.loading}
+          <Table loading={this.state.loading} bordered
             columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
       </div>

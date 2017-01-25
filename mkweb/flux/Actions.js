@@ -89,6 +89,33 @@ var Action = {
         }
       })
   },
+  getStoreBasic: function () {
+    var context = this;
+    var data = {
+      command: 'getstorebasic'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStoreBasic:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOREBASIC, response.data);
+        } else {
+          message.error('获取门店失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStoreBasic fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STOREBASIC, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,
