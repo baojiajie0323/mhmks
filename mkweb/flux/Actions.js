@@ -197,10 +197,11 @@ var Action = {
         }
       })
   },
-  getProductPrice: function () {
+  getProductPrice: function (page) {
     var context = this;
     var data = {
-      command: 'getproductprice'
+      command: 'getproductprice',
+      page:page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,

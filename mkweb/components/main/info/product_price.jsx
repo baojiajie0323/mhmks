@@ -8,12 +8,13 @@ class ProductPrice extends React.Component {
     this.state = {
       loading: true,
       productPrice: Store.getProductPrice(),
+      pagination : {}
     };
     this.onProductPriceChange = this.onProductPriceChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PRODUCTPRICE, this.onProductPriceChange);
-    Action.getProductPrice();
+    Action.getProductPrice(0);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PRODUCTPRICE, this.onProductPriceChange);
@@ -89,7 +90,8 @@ class ProductPrice extends React.Component {
         <p className={styles.infotitle}>产品价格</p>
         <div className={styles.infotable}>
           <Table loading={this.state.loading} bordered
-            columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} 
+            pagination={this.state.pagination} />
         </div>
       </div>
     );

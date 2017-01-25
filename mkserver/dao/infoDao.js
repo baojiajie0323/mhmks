@@ -107,16 +107,44 @@ module.exports = {
       }
     });
   },
-  getProductPrice: function (req, res, next) {
-    console.log('infoDao getProductPrice');
+  getproductpricecount: function (req, res, next) {
+    console.log('infoDao getproductpricecount');
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var sqlstring = _sql.getproductprice;
+        var sqlstring = _sql.getproductpricecount;
         connection.query(sqlstring, [], function (err, result) {
           console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getProductPrice: function (req, res, next) {
+    console.log('infoDao getProductPrice');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getproductpricecount;
+        connection.query(sqlstring, [], function (err, result) {
+          var nCount = result[0]['count(*)'];          
+          console.log('dbresult', result, nCount);
+
+        });
+
+        sqlstring = _sql.getproductprice;
+        connection.query(sqlstring, [param.page], function (err, result) {
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
