@@ -31,6 +31,15 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getproductstock") {
     console.log('getproductstock');
     infoDao.getProductStock(req, res, next);
+  } else if (req.body.command == "getproductbrand") {
+    console.log('getproductbrand');
+    infoDao.getProductBrand(req, res, next);
+  } else if (req.body.command == "getpromotiontype") {
+    console.log('getpromotiontype');
+    infoDao.getPromotionType(req, res, next);
+  } else if (req.body.command == "getpromotion") {
+    console.log('getpromotion');
+    infoDao.getPromotion(req, res, next);
   }
 });
 

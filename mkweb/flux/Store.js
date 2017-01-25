@@ -16,6 +16,9 @@ var _storeDisplay = [];
 var _product = [];
 var _productPrice = [];
 var _productStock = [];
+var _productBrand = [];
+var _promotion = [];
+var _promotionType = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -90,6 +93,29 @@ var Store = assign({}, EventEmitter.prototype, {
   getProductStock: function () {
     return _productStock;
   },
+  setProductBrand: function (sa) {
+    _productBrand = sa;
+    this.emitChange(StoreEvent.SE_PRODUCTBRAND);
+  },
+  getProductBrand: function () {
+    return _productBrand;
+  },
+
+  setPromotion: function (sa) {
+    _promotion = sa;
+    this.emitChange(StoreEvent.SE_PROMOTION);
+  },
+  getPromotion: function () {
+    return _promotion;
+  },
+  setPromotionType: function (sa) {
+    _promotionType = sa;
+    this.emitChange(StoreEvent.SE_PROMOTIONTYPE);
+  },
+  getPromotionType: function () {
+    return _promotionType;
+  },
+
 
 
   emitChange: function (eventtype) {
@@ -146,6 +172,18 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PRODUCTSTOCK: {
       Store.setProductStock(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCTBRAND: {
+      Store.setProductBrand(action.value);
+    }
+      break;
+    case ActionEvent.AE_PROMOTION: {
+      Store.setPromotion(action.value);
+    }
+      break;
+    case ActionEvent.AE_PROMOTIONTYPE: {
+      Store.setPromotionType(action.value);
     }
       break;
     default:

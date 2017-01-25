@@ -4,7 +4,7 @@ import { message } from 'antd';
 
 var _debug = true;
 
-const AJAXTIMEOUT = 10 * 1000;
+const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
 var AppDispatcher = require('./AppDispatcher');
 var ActionEvent = require('./event-const').ActionEvent;
@@ -248,6 +248,87 @@ var Action = {
           var response = '{"data":[]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_PRODUCTSTOCK, rsp.data);
+        }
+      })
+  },
+  getProductBrand: function () {
+    var context = this;
+    var data = {
+      command: 'getproductbrand'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getProductBrand:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCTBRAND, response.data);
+        } else {
+          message.error('获取品牌失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getProductBrand fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PRODUCTBRAND, rsp.data);
+        }
+      })
+  },
+  getPromotionType: function () {
+    var context = this;
+    var data = {
+      command: 'getpromotiontype'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotionType:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONTYPE, response.data);
+        } else {
+          message.error('获取促销类型失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotionType fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PROMOTIONTYPE, rsp.data);
+        }
+      })
+  },
+  getPromotion: function () {
+    var context = this;
+    var data = {
+      command: 'getpromotion'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotion:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTION, response.data);
+        } else {
+          message.error('获取促销活动失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotion fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PROMOTION, rsp.data);
         }
       })
   },

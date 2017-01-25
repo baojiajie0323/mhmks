@@ -16,7 +16,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstorearea;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', err, JSON.stringify(result));
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.LOGIN_FAIL);
           } else {
@@ -135,6 +135,66 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getproductstock;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getProductBrand: function (req, res, next) {
+    console.log('infoDao getProductBrand');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getproductbrand;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotionType: function (req, res, next) {
+    console.log('infoDao getPromotionType');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotiontype;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          } else {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotion: function (req, res, next) {
+    console.log('infoDao getPromotion');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotion;
         connection.query(sqlstring, [], function (err, result) {
           console.log('dbresult', result);
           if (result.length > 0) {

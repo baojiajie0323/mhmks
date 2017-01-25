@@ -7,6 +7,9 @@ import StoreDisplay from './store_display';
 import Product from './product';
 import ProductPrice from './product_price';
 import ProductStock from './product_stock';
+import ProductBrand from './product_brand';
+import PromotionType from './promotion_type';
+import Promotion from './promotion';
 
 import styles from './info.less';
 
@@ -42,6 +45,12 @@ class Info extends React.Component {
       return <ProductPrice />
     } else if (this.state.contentkey == 'product_stock') {
       return <ProductStock />
+    } else if (this.state.contentkey == 'product_brand') {
+      return <ProductBrand />
+    } else if (this.state.contentkey == 'promotion_type') {
+      return <PromotionType />
+    } else if (this.state.contentkey == 'promotion') {
+      return <Promotion />
     }
     return <StoreArea />;
   }
