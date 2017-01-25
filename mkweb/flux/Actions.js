@@ -116,6 +116,141 @@ var Action = {
         }
       })
   },
+  getStoreContacts: function () {
+    var context = this;
+    var data = {
+      command: 'getstorecontacts'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStoreContacts:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STORECONTACTS, response.data);
+        } else {
+          message.error('获取门店联系人失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStoreContacts fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STORECONTACTS, rsp.data);
+        }
+      })
+  },
+  getStoreDisplay: function () {
+    var context = this;
+    var data = {
+      command: 'getstoredisplay'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStoreDisplay:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOREDISPLAY, response.data);
+        } else {
+          message.error('获取门店联系人失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStoreDisplay fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STOREDISPLAY, rsp.data);
+        }
+      })
+  },
+  getProduct: function () {
+    var context = this;
+    var data = {
+      command: 'getproduct'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getProduct:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCT, response.data);
+        } else {
+          message.error('获取产品失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStoreDisplay fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PRODUCT, rsp.data);
+        }
+      })
+  },
+  getProductPrice: function () {
+    var context = this;
+    var data = {
+      command: 'getproductprice'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getProductPrice:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCTPRICE, response.data);
+        } else {
+          message.error('获取产品价格失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getProductPrice fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PRODUCTPRICE, rsp.data);
+        }
+      })
+  },
+  getProductStock: function () {
+    var context = this;
+    var data = {
+      command: 'getproductstock'
+    }
+    $.ajax({
+      url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getProductStock:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCTSTOCK, response.data);
+        } else {
+          message.error('获取产品安全库存失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getProductStock fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PRODUCTSTOCK, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

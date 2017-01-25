@@ -11,6 +11,11 @@ var _userInfo = {};
 var _curview = 'homepage';
 var _storeArea = [];
 var _storeBasic = [];
+var _storeContacts = [];
+var _storeDisplay = [];
+var _product = [];
+var _productPrice = [];
+var _productStock = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -49,6 +54,43 @@ var Store = assign({}, EventEmitter.prototype, {
   getStoreBasic: function () {
     return _storeBasic;
   },
+  setStoreContacts: function (sa) {
+    _storeContacts = sa;
+    this.emitChange(StoreEvent.SE_STORECONTACTS);
+  },
+  getStoreContacts: function () {
+    return _storeContacts;
+  },
+  setStoreDisplay: function (sa) {
+    _storeDisplay = sa;
+    this.emitChange(StoreEvent.SE_STOREDISPLAY);
+  },
+  getStoreDisplay: function () {
+    return _storeDisplay;
+  },
+
+  setProduct: function (sa) {
+    _product = sa;
+    this.emitChange(StoreEvent.SE_PRODUCT);
+  },
+  getProduct: function () {
+    return _product;
+  },
+  setProductPrice: function (sa) {
+    _productPrice = sa;
+    this.emitChange(StoreEvent.SE_PRODUCTPRICE);
+  },
+  getProductPrice: function () {
+    return _productPrice;
+  },
+  setProductStock: function (sa) {
+    _productStock = sa;
+    this.emitChange(StoreEvent.SE_PRODUCTSTOCK);
+  },
+  getProductStock: function () {
+    return _productStock;
+  },
+
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -84,6 +126,26 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_STOREBASIC: {
       Store.setStoreBasic(action.value);
+    }
+      break;
+    case ActionEvent.AE_STORECONTACTS: {
+      Store.setStoreContacts(action.value);
+    }
+      break;
+    case ActionEvent.AE_STOREDISPLAY: {
+      Store.setStoreDisplay(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCT: {
+      Store.setProduct(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCTPRICE: {
+      Store.setProductPrice(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCTSTOCK: {
+      Store.setProductStock(action.value);
     }
       break;
     default:

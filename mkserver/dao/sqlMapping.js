@@ -1,13 +1,13 @@
-var user = {
+var sqlmap = {
   login_web: 'select * from user where username = ? and password = ? and enableweb = 1',
   login_app: 'select * from user where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
-  getstorebasic: 'select store.*, System_name,Region_name from store,store_area where store.System_id=store_area.System_id and store.Region_id=store_area.Region_id ',
-  update: 'update user set name=?, age=? where id=?',
-  delete: 'delete from user where id=?',
-  queryById: 'select * from user where id=?',
-  queryAll: 'select * from user',
-  insertgroup: 'insert into emergency_plan_group(name,groupid) values(?,?)',
+  getstorebasic: 'SELECT store.*, System_name,Region_name from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id )',
+  getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
+  getstoredisplay: 'select * from store_display',
+  getproduct: 'select * from product',
+  getproductprice: 'select product_price.*,Store_name,Product_name from product_price left join store on (product_price.Store_id = store.Store_id ) left join product on (product_price.Product_id = product.Product_id)',
+  getproductstock: 'select product_stock.*,Store_name,Product_name from product_stock left join store on (product_stock.Store_id = store.Store_id ) left join product on (product_stock.Product_id = product.Product_id)',
   updategroup: 'update emergency_plan_group set name=? where id = ?',
   deletegroup: 'delete from emergency_plan_group where id = ?',
   queryallgroup: 'select * from emergency_plan_group',
@@ -18,4 +18,4 @@ var user = {
   queryplan: 'select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id where a.id = ?',
 };
 
-module.exports = user;
+module.exports = sqlmap;

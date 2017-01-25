@@ -26,21 +26,49 @@ class StoreBasic extends React.Component {
   }
   getTableColumn() {
     return [{
-      title: '系统编号',
-      dataIndex: 'System_id',
-      key: 'System_id',
-    }, {
-      title: '系统名称',
+      title: '系统',
       dataIndex: 'System_name',
       key: 'System_name',
     }, {
-      title: '区域编号',
-      dataIndex: 'Region_id',
-      key: 'Region_id',
-    }, {
-      title: '区域名称',
+      title: '区域',
       dataIndex: 'Region_name',
       key: 'Region_name',
+    }, {
+      title: '门店编码',
+      dataIndex: 'Store_id',
+      key: 'Store_id',
+    }, {
+      title: '门店名称',
+      dataIndex: 'Store_name',
+      key: 'Store_name',
+    }, {
+      title: '等级',
+      dataIndex: 'Level',
+      key: 'Level',
+    }, {
+      title: '销售代表',
+      dataIndex: 'user_id',
+      key: 'user_id',
+    }, {
+      title: '订货周期',
+      dataIndex: 'D1',
+      key: 'D1',
+      render : (text,record) => (<span>{text? (text + '天'):'暂无数据'}</span>), 
+    }, {
+      title: '到仓天数',
+      dataIndex: 'D2',
+      key: 'D2',
+      render : (text,record) => (<span>{text? (text + '天'):'暂无数据'}</span>), 
+    }, {
+      title: '到店天数',
+      dataIndex: 'D3',
+      key: 'D3',
+      render : (text,record) => (<span>{text? (text + '天'):'暂无数据'}</span>), 
+    }, {
+      title: '状态',
+      dataIndex: 'Status',
+      key: 'Status',
+      render : (text,record) => (<span>{text == 'Y'?'有效':'无效'}</span>), 
     }];
   }
   getTableData() {
