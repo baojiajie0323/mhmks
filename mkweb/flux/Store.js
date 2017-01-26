@@ -170,8 +170,16 @@ AppDispatcher.register((action) => {
       Store.setProductPrice(action.value);
     }
       break;
+    case ActionEvent.AE_PRODUCTPRICECOUNT: {
+      Store.emit(StoreEvent.SE_PRODUCTPRICECOUNT, action.value);
+    }
+      break;
     case ActionEvent.AE_PRODUCTSTOCK: {
       Store.setProductStock(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCTSTOCKCOUNT: {
+      Store.emit(StoreEvent.SE_PRODUCTSTOCKCOUNT, action.value);
     }
       break;
     case ActionEvent.AE_PRODUCTBRAND: {

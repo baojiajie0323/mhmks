@@ -8,21 +8,42 @@ class ProductPrice extends React.Component {
     this.state = {
       loading: true,
       productPrice: Store.getProductPrice(),
-      pagination : {}
+      pagination: {}
     };
     this.onProductPriceChange = this.onProductPriceChange.bind(this);
+    this.onProductPriceCountChange = this.onProductPriceCountChange.bind(this);
+    this.handleTableChange = this.handleTableChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PRODUCTPRICE, this.onProductPriceChange);
+    Store.addChangeListener(StoreEvent.SE_PRODUCTPRICECOUNT, this.onProductPriceCountChange);
     Action.getProductPrice(0);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PRODUCTPRICE, this.onProductPriceChange);
+    Store.removeChangeListener(StoreEvent.SE_PRODUCTPRICECOUNT, this.onProductPriceCountChange);
+  }
+  handleTableChange(pagination, filters, sorter) {
+    const pager = this.state.pagination;
+    pager.current = pagination.current;
+    this.setState({
+      pagination: pager,
+      loading: true,
+    });
+    Action.getProductPrice(pager.current);
   }
   onProductPriceChange() {
     this.setState({
       productPrice: Store.getProductPrice(),
-      loading:false
+      loading: false
+    })
+  }
+  onProductPriceCountChange(count) {
+    const pager = this.state.pagination;
+    pager.total = count;
+    console.log('onProductPriceCountChange',pager);
+    this.setState({
+      pagination: pager
     })
   }
   getTableColumn() {
@@ -31,51 +52,51 @@ class ProductPrice extends React.Component {
       dataIndex: 'Store_name',
       key: 'Store_name',
     }, {
-      title: '产品名称',
-      dataIndex: 'Product_name',
-      key: 'Product_name',
-    }, {
-      title: '门店货号',
-      dataIndex: 'Serial_no',
-      key: 'Serial_no',
-    }, {
-      title: '正常进价',
-      dataIndex: 'Price1',
-      key: 'Price1',
-    }, {
-      title: '正常售价',
-      dataIndex: 'Price2',
-      key: 'Price2',
-    }, {
-      title: 'DM进价',
-      dataIndex: 'Price3',
-      key: 'Price3',
-    }, {
-      title: 'DM售价',
-      dataIndex: 'Price4',
-      key: 'Price4',
-    }, {
-      title: '均价进价',
-      dataIndex: 'Price5',
-      key: 'Price5',
-    }, {
-      title: '均价售价',
-      dataIndex: 'Price6',
-      key: 'Price6',
-    }, {
-      title: 'IP进价',
-      dataIndex: 'Price7',
-      key: 'Price7',
-    }, {
-      title: 'IP售价',
-      dataIndex: 'Price8',
-      key: 'Price8',
-    }, {
-      title: '状态',
-      dataIndex: 'Status',
-      key: 'Status',
-      render : (text,record) => (<span>{text == '1'?'正常':'下架'}</span>), 
-    }];
+        title: '产品名称',
+        dataIndex: 'Product_name',
+        key: 'Product_name',
+      }, {
+        title: '门店货号',
+        dataIndex: 'Serial_no',
+        key: 'Serial_no',
+      }, {
+        title: '正常进价',
+        dataIndex: 'Price1',
+        key: 'Price1',
+      }, {
+        title: '正常售价',
+        dataIndex: 'Price2',
+        key: 'Price2',
+      }, {
+        title: 'DM进价',
+        dataIndex: 'Price3',
+        key: 'Price3',
+      }, {
+        title: 'DM售价',
+        dataIndex: 'Price4',
+        key: 'Price4',
+      }, {
+        title: '均价进价',
+        dataIndex: 'Price5',
+        key: 'Price5',
+      }, {
+        title: '均价售价',
+        dataIndex: 'Price6',
+        key: 'Price6',
+      }, {
+        title: 'IP进价',
+        dataIndex: 'Price7',
+        key: 'Price7',
+      }, {
+        title: 'IP售价',
+        dataIndex: 'Price8',
+        key: 'Price8',
+      }, {
+        title: '状态',
+        dataIndex: 'Status',
+        key: 'Status',
+        render: (text, record) => (<span>{text == '1' ? '正常' : '下架'}</span>),
+      }];
   }
   getTableData() {
     console.log(this.state.productPrice);
@@ -90,8 +111,8 @@ class ProductPrice extends React.Component {
         <p className={styles.infotitle}>产品价格</p>
         <div className={styles.infotable}>
           <Table loading={this.state.loading} bordered
-            columns={this.getTableColumn()} dataSource={this.getTableData()} 
-            pagination={this.state.pagination} />
+            columns={this.getTableColumn() } dataSource={this.getTableData() }
+            pagination={this.state.pagination} onChange={this.handleTableChange} />
         </div>
       </div>
     );

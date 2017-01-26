@@ -210,6 +210,7 @@ var Action = {
       .done(function (response) {
         console.log('getProductPrice:', response);
         if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCTPRICECOUNT, response.count);
           context.dispatch(ActionEvent.AE_PRODUCTPRICE, response.data);
         } else {
           message.error('获取产品价格失败！' + response.msg);
@@ -225,10 +226,11 @@ var Action = {
         }
       })
   },
-  getProductStock: function () {
+  getProductStock: function (page) {
     var context = this;
     var data = {
-      command: 'getproductstock'
+      command: 'getproductstock',
+      page:page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -237,6 +239,7 @@ var Action = {
       .done(function (response) {
         console.log('getProductStock:', response);
         if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCTSTOCKCOUNT, response.count);
           context.dispatch(ActionEvent.AE_PRODUCTSTOCK, response.data);
         } else {
           message.error('获取产品安全库存失败！' + response.msg);

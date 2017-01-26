@@ -17,7 +17,7 @@ var dao = {
   getPool: () => {
     return pool;
   },
-  jsonWrite: function(res, ret, code) {
+  jsonWrite: function(res, ret, code, ncount) {
     if (code != dao.dbcode.SUCCESS) {
       if (code == dao.dbcode.CONNECT_ERROR) { res.json({ code: code, msg: '数据库连接失败' }); }
       else if (code == dao.dbcode.PARAM_ERROR) { res.json({ code: code, msg: '参数错误' }); }
@@ -27,7 +27,7 @@ var dao = {
       if (typeof ret === 'undefined') {
         res.json({ code: dao.dbcode.FAIL, msg: '操作失败' });
       } else {
-        res.json({ code: 0, data: ret });
+        res.json({ code: 0, data: ret, count: ncount });
       }
     }
   },

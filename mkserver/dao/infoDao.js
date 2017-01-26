@@ -107,28 +107,8 @@ module.exports = {
       }
     });
   },
-  getproductpricecount: function (req, res, next) {
-    console.log('infoDao getproductpricecount');
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        var sqlstring = _sql.getproductpricecount;
-        connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
-          }
-          connection.release();
-        });
-      }
-    });
-  },
   getProductPrice: function (req, res, next) {
-    console.log('infoDao getProductPrice');
+    console.log('infoDao getProductPrice', req.body);
     var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -137,40 +117,44 @@ module.exports = {
       } else {
         var sqlstring = _sql.getproductpricecount;
         connection.query(sqlstring, [], function (err, result) {
-          var nCount = result[0]['count(*)'];          
+          var nCount = result[0]['count(*)'];
           console.log('dbresult', result, nCount);
-
-        });
-
-        sqlstring = _sql.getproductprice;
-        connection.query(sqlstring, [param.page], function (err, result) {
-          //console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
-          }
-          connection.release();
+          sqlstring = _sql.getproductprice;
+          connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
+            console.log('dbresult', result);
+            if (result.length > 0) {
+              jsonWrite(res, result, dbcode.SUCCESS, nCount);
+            } else {
+              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            }
+            connection.release();
+          });
         });
       }
     });
   },
   getProductStock: function (req, res, next) {
     console.log('infoDao getProductStock');
+    var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var sqlstring = _sql.getproductstock;
+        var sqlstring = _sql.getproductstockcount;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
-          }
-          connection.release();
+          var nCount = result[0]['count(*)'];
+          console.log('dbresult', result, nCount);
+          sqlstring = _sql.getproductstock;
+          connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
+            console.log('dbresult', result);
+            if (result.length > 0) {
+              jsonWrite(res, result, dbcode.SUCCESS, nCount);
+            } else {
+              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            }
+            connection.release();
+          });
         });
       }
     });
@@ -222,15 +206,20 @@ module.exports = {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var sqlstring = _sql.getpromotion;
+        var sqlstring = _sql.getpromotioncount;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
-          }
-          connection.release();
+          var nCount = result[0]['count(*)'];
+          console.log('dbresult', result, nCount);
+          sqlstring = _sql.getpromotion;
+          connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
+            console.log('dbresult', result);
+            if (result.length > 0) {
+              jsonWrite(res, result, dbcode.SUCCESS, nCount);
+            } else {
+              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            }
+            connection.release();
+          });
         });
       }
     });
