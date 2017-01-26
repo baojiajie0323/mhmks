@@ -309,10 +309,11 @@ var Action = {
         }
       })
   },
-  getPromotion: function () {
+  getPromotion: function (page) {
     var context = this;
     var data = {
-      command: 'getpromotion'
+      command: 'getpromotion',
+      page:page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -321,6 +322,7 @@ var Action = {
       .done(function (response) {
         console.log('getPromotion:', response);
         if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONCOUNT, response.count);
           context.dispatch(ActionEvent.AE_PROMOTION, response.data);
         } else {
           message.error('获取促销活动失败！' + response.msg);

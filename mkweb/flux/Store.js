@@ -190,6 +190,10 @@ AppDispatcher.register((action) => {
       Store.setPromotion(action.value);
     }
       break;
+    case ActionEvent.AE_PROMOTIONCOUNT: {
+      Store.emit(StoreEvent.SE_PROMOTIONCOUNT, action.value);
+    }
+      break;
     case ActionEvent.AE_PROMOTIONTYPE: {
       Store.setPromotionType(action.value);
     }

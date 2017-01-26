@@ -201,6 +201,7 @@ module.exports = {
   },
   getPromotion: function (req, res, next) {
     console.log('infoDao getPromotion');
+    var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
