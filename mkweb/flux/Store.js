@@ -20,6 +20,8 @@ var _productBrand = [];
 var _promotion = [];
 var _promotionType = [];
 
+var _user = [];
+
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
@@ -116,7 +118,13 @@ var Store = assign({}, EventEmitter.prototype, {
     return _promotionType;
   },
 
-
+  setUser: function (sa) {
+    _user = sa;
+    this.emitChange(StoreEvent.SE_USER);
+  },
+  getUser: function () {
+    return _user;
+  },
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -196,6 +204,11 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PROMOTIONTYPE: {
       Store.setPromotionType(action.value);
+    }
+      break;
+
+    case ActionEvent.AE_USER: {
+      Store.setUser(action.value);
     }
       break;
     default:

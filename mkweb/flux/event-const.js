@@ -6,6 +6,8 @@ var eventMap = {
   ActionEvent: keyMirror({
     AE_LOGIN: null,
     AE_LOGOUT: null,
+    AE_USER: null,
+
     AE_STOREAREA: null,
     AE_STOREBASIC: null,
     AE_STORECONTACTS: null,
@@ -22,6 +24,8 @@ var eventMap = {
 
   StoreEvent: keyMirror({
     SE_LOGIN: null,
+    SE_USER: null,
+
     SE_VIEW: null,
     SE_STOREAREA: null,
     SE_STOREBASIC: null,

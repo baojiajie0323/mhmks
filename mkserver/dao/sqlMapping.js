@@ -14,7 +14,7 @@ var sqlmap = {
   getpromotiontype: 'select * from promotion_type order by promotion_type',
   getpromotioncount: 'select count(*) from promotion',
   getpromotion: 'select promotion.*,Store_name,Product_name from promotion left join store on (promotion.Store_id = store.Store_id ) left join product on (promotion.Product_id = product.Product_id) left join promotion_type on (promotion.Promotion_type = promotion_type.Promotion_type) limit ?,10',
-  insertplan: 'insert into emergency_plan(name,createtime,createuser,detail,groupid) values(?,?,?,?,?)',
+  getuser: 'select * from user',
   updateplan: 'update emergency_plan set name=?,detail=? where id = ?',
   deleteplan: 'delete from emergency_plan where id = ?',
   queryallplan: 'select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id',

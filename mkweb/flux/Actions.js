@@ -201,7 +201,7 @@ var Action = {
     var context = this;
     var data = {
       command: 'getproductprice',
-      page:page
+      page: page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -230,7 +230,7 @@ var Action = {
     var context = this;
     var data = {
       command: 'getproductstock',
-      page:page
+      page: page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -313,7 +313,7 @@ var Action = {
     var context = this;
     var data = {
       command: 'getpromotion',
-      page:page
+      page: page
     }
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -335,6 +335,34 @@ var Action = {
           var response = '{"data":[]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_PROMOTION, rsp.data);
+        }
+      })
+  },
+
+  getUser: function () {
+    var context = this;
+    var data = {
+      command: 'getuser'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getUser:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_USER, response.data);
+        } else {
+          message.error('获取用户失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getUser fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_USER, rsp.data);
         }
       })
   },

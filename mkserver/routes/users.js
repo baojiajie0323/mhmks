@@ -16,7 +16,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "logout") {
     console.log('logout');
     userDao.logout(req, res, next);
-  }
+  } else if (req.body.command == "getuser") {
+    console.log('getuser');
+    userDao.getUser(req, res, next);
+  } 
 });
 
 module.exports = router;

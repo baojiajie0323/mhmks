@@ -40,6 +40,26 @@ module.exports = {
   logout: function (req, res, next) {
     jsonWrite(res, {}, dbcode.SUCCESS);
   },
+  getUser: function (req, res, next) {
+    console.log('userDao getUser');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getuser;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   insertgroup: function (req, res, next) {
     var param = req.body;
     if (param.name == null || param.groupid == null) {
