@@ -21,6 +21,7 @@ var _promotion = [];
 var _promotionType = [];
 
 var _user = [];
+var _depart = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -125,6 +126,13 @@ var Store = assign({}, EventEmitter.prototype, {
   getUser: function () {
     return _user;
   },
+  setDepartment: function (sa) {
+    _depart = sa;
+    this.emitChange(StoreEvent.SE_DEPARTMENT);
+  },
+  getDepartment: function () {
+    return _depart;
+  },
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -209,6 +217,10 @@ AppDispatcher.register((action) => {
 
     case ActionEvent.AE_USER: {
       Store.setUser(action.value);
+    }
+      break;
+    case ActionEvent.AE_DEPARTMENT: {
+      Store.setDepartment(action.value);
     }
       break;
     default:

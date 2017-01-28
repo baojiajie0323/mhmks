@@ -12,7 +12,11 @@ class App extends React.Component {
     this.onLoginChange = this.onLoginChange.bind(this);
   }
   componentDidMount(){
-    Store.addChangeListener(StoreEvent.SE_LOGIN,this.onLoginChange)
+    document.addEventListener("keypress",this.onKeyPress, true);
+    Store.addChangeListener(StoreEvent.SE_LOGIN,this.onLoginChange);
+  }
+  onKeyPress(e){
+    Store.emit(StoreEvent.SE_KEYPRESS,e.keyCode);
   }
   onLoginChange(loginSuccess){
     this.setState({loginSuccess});

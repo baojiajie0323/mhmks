@@ -360,10 +360,57 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('getUser fail');
         if (_debug) {
-          var response = '{"data":[]}';
+          var response = '{"data":[{"username":"008888","realname":"鲍嘉捷","phone":"15026489683","email":"baojiajie@myhome.com"}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_USER, rsp.data);
         }
+      })
+  },
+  getDepartment: function () {
+    var context = this;
+    var data = {
+      command: 'getdepart'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getDepart:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_DEPARTMENT, response.data);
+        } else {
+          message.error('获取部门失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getDepart fail');
+        if (_debug) {
+          var response = '{"data":[{"id":"1","name":"市场部","parentid":"0"},{"id":"2","name":"营销部","parentid":"0"},{"id":"3","name":"华东区","parentid":"1"},{"id":"4","name":"华中区","parentid":"1"},{"id":"5","name":"上海区","parentid":"4"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_DEPARTMENT, rsp.data);
+        }
+      })
+  },
+  addDepartment: function (data) {
+    var context = this;
+    data.command = 'getdepart';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('addDepartment:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_DEPARTMENT_ADD, response.data);
+        } else {
+          message.error('创建部门失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('addDepartment fail');
       })
   },
   dispatch: function (funname, value) {

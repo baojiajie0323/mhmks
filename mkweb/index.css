@@ -33,3 +33,7 @@ p{
 .ant-table{
   color : rgb(58,58,58);
 }
+
+.ant-tree {
+    font-size: 15px;
+}

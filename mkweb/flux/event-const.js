@@ -7,6 +7,7 @@ var eventMap = {
     AE_LOGIN: null,
     AE_LOGOUT: null,
     AE_USER: null,
+    AE_DEPARTMENT: null,
 
     AE_STOREAREA: null,
     AE_STOREBASIC: null,
@@ -19,12 +20,14 @@ var eventMap = {
     AE_PRODUCTSTOCKCOUNT: null,
     AE_PRODUCTBRAND: null,
     AE_PROMOTION: null,
-    AE_PROMOTIONTYPE:null,
+    AE_PROMOTIONTYPE: null,
   }),
 
   StoreEvent: keyMirror({
+    SE_KEYPRESS: null,
     SE_LOGIN: null,
     SE_USER: null,
+    SE_DEPARTMENT: null,
 
     SE_VIEW: null,
     SE_STOREAREA: null,
@@ -38,7 +41,7 @@ var eventMap = {
     SE_PRODUCTSTOCKCOUNT: null,
     SE_PRODUCTBRAND: null,
     SE_PROMOTION: null,
-    SE_PROMOTIONTYPE:null,
+    SE_PROMOTIONTYPE: null,
   })
 };
 

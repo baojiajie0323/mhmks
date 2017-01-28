@@ -10,6 +10,7 @@ class Login extends React.Component {
       savepwd: false,
     };
     this.onCheckChange = this.onCheckChange.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
   }
   initCanvas() {
     var c1 = document.getElementById('c1'),
@@ -145,6 +146,9 @@ class Login extends React.Component {
     if (savepwd) {
       $('#password').val(password);
     }
+
+    
+    Store.addChangeListener(StoreEvent.SE_KEYPRESS,this.onKeyPress);
   }
   componentWillUnmount() {
     localStorage.username = $('#username').val();
@@ -153,6 +157,14 @@ class Login extends React.Component {
       localStorage.password = $('#password').val();
     }else{
       localStorage.password = '';
+    }
+
+    
+    Store.removeChangeListener(StoreEvent.SE_KEYPRESS,this.onKeyPress);
+  }
+  onKeyPress(keyCode){
+    if(keyCode == 13){
+      this.onClickLogin();
     }
   }
   onClickLogin() {
