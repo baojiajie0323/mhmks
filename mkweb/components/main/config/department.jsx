@@ -1,7 +1,8 @@
 import React from 'react';
-import { Tree, Button, Icon, Modal, Input, Select} from 'antd';
+import { Tree, Button, Icon, Modal, Input, Select, message } from 'antd';
 import styles from './config.less';
 const TreeNode = Tree.TreeNode;
+const Option = Select.Option;
 
 class Department extends React.Component {
   constructor(props) {
@@ -11,16 +12,20 @@ class Department extends React.Component {
       department: Store.getDepartment(),
       user: Store.getUser(),
       departname: '',
+      uservalue: '',
       visible: false,
     };
     this.selectedkeys = '0';
     this.onUserChange = this.onUserChange.bind(this);
     this.onDepartmentChange = this.onDepartmentChange.bind(this);
     this.onClickAdd = this.onClickAdd.bind(this);
+    this.onClickEdit = this.onClickEdit.bind(this);
+    this.onClickDeleteDepartment = this.onClickDeleteDepartment.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onSelect = this.onSelect.bind(this);
     this.onDepartnameChange = this.onDepartnameChange.bind(this);
+    this.handleUserChange = this.handleUserChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartmentChange);
@@ -40,7 +45,8 @@ class Department extends React.Component {
   onDepartmentChange() {
     this.setState({
       department: Store.getDepartment(),
-      loading: false
+      loading: false,
+      visible: false,
     })
   }
   onDepartnameChange(e) {
@@ -51,25 +57,52 @@ class Department extends React.Component {
   onClickAdd() {
     this.modaltype = 'add';
     this.setState({
-      departname: '', 
-      准备些用户OPTION
+      departname: '',
+      uservalue: '',
       visible: true
     })
   }
   onClickEdit() {
+    console.log(this.selectedkeys);
+    if (this.selectedkeys == '0') {
+      message.info('请选择部门');
+      return;
+    }
     this.modaltype = 'mod';
-    this.setState({ visible: true})
+    this.setState({
+      departname: '',
+      uservalue: '',
+      visible: true,
+    })
   }
   handleOk() {
-    if(this.modaltype == 'add'){
-
+    if (this.modaltype == 'add') {
+      var data = {
+        name: this.state.departname,
+        userid: this.state.uservalue,
+        parentid: this.selectedkeys
+      }
+      console.log('addmode', data);
+    } else if (this.modaltype == 'mod') {
+      var data = {
+        name: this.state.departname,
+        userid: this.state.uservalue,
+        id: this.selectedkeys,
+      }
+      console.log('modmode', data);
     }
   }
   handleCancel() {
     this.setState({ visible: false })
   }
   onClickDeleteDepartment() {
-
+    if (this.selectedkeys == '0') {
+      message.info('请选择部门');
+      return;
+    }
+    var data = {
+      id: this.selectedkeys
+    }
   }
   onSelect(info) {
     if (info.length > 0) {
@@ -98,8 +131,8 @@ class Department extends React.Component {
           var username = userInfo.realname;
           titlename = titlename + '[' + username + ']'
         }
-        var treenode = <TreeNode title={titlename} key={depart.id.toString() }>
-          {context.getChildTreeNode(depart.id) }
+        var treenode = <TreeNode title={titlename} key={depart.id.toString()}>
+          {context.getChildTreeNode(depart.id)}
         </TreeNode>
         childNode.push(treenode);
       }
@@ -112,12 +145,12 @@ class Department extends React.Component {
       {childTreeNode}
     </TreeNode>
   }
-  handleUserChange() {
-
+  handleUserChange(value) {
+    this.setState({ uservalue: value })
   }
   getUserOption() {
     return this.state.user.map((u) => {
-      return <Option value={u.id}>{u.realname}</Option>
+      return <Option value={u.id.toString()}>{u.realname}</Option>
     })
   }
   render() {
@@ -126,12 +159,12 @@ class Department extends React.Component {
         <p className={styles.configtitle}>部门</p>
         <div className={styles.editcontent}>
           <Button style={{ marginRight: '5px' }} onClick={this.onClickAdd} type="primary" icon="plus">创建子部门</Button>
-          <Button style={{ marginRight: '5px' }} onClick={this.onClickAdd} type="ghost" icon="edit">编辑部门</Button>
-          <Button style={{ marginRight: '5px' }} onClick={this.onClickAdd} type="ghost" icon="delete">删除部门</Button>
+          <Button style={{ marginRight: '5px' }} onClick={this.onClickEdit} type="ghost" icon="edit">编辑部门</Button>
+          <Button style={{ marginRight: '5px' }} onClick={this.onClickDeleteDepartment} type="ghost" icon="delete">删除部门</Button>
         </div>
         <div className={styles.configtable}>
           {this.state.department.length > 0 ? <Tree onSelect={this.onSelect} defaultSelectedKeys='0' defaultExpandAll={true} >
-            {this.getTreeNode() }
+            {this.getTreeNode()}
           </Tree> : null
           }
         </div>
@@ -148,8 +181,8 @@ class Department extends React.Component {
           <div className={styles.formcontent}>
             <span className={styles.formtitle}>负责人</span>
             <div className={styles.form}>
-              <Select style={{ width: '100%' }} onChange={this.handleUserChange}>
-                {this.getUserOption() }
+              <Select style={{ width: '100%' }} value={this.state.uservalue} onChange={this.handleUserChange}>
+                {this.getUserOption()}
               </Select>
             </div>
           </div>
