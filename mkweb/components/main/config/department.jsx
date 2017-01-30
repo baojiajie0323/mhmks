@@ -3,6 +3,7 @@ import { Tree, Button, Icon, Modal, Input, Select, message } from 'antd';
 import styles from './config.less';
 const TreeNode = Tree.TreeNode;
 const Option = Select.Option;
+const confirm = Modal.confirm;
 
 class Department extends React.Component {
   constructor(props) {
@@ -83,6 +84,7 @@ class Department extends React.Component {
         parentid: this.selectedkeys
       }
       console.log('addmode', data);
+      Action.addDepartment(data);
     } else if (this.modaltype == 'mod') {
       var data = {
         name: this.state.departname,
@@ -90,6 +92,7 @@ class Department extends React.Component {
         id: this.selectedkeys,
       }
       console.log('modmode', data);
+      Action.modDepartment(data);
     }
   }
   handleCancel() {
@@ -103,6 +106,12 @@ class Department extends React.Component {
     var data = {
       id: this.selectedkeys
     }
+    confirm({
+      title: '确定要删除该部门吗？',
+      onOk() {
+        Action.delDepartment(data);
+      },
+    });
   }
   onSelect(info) {
     if (info.length > 0) {
@@ -131,8 +140,8 @@ class Department extends React.Component {
           var username = userInfo.realname;
           titlename = titlename + '[' + username + ']'
         }
-        var treenode = <TreeNode title={titlename} key={depart.id.toString()}>
-          {context.getChildTreeNode(depart.id)}
+        var treenode = <TreeNode title={titlename} key={depart.id.toString() }>
+          {context.getChildTreeNode(depart.id) }
         </TreeNode>
         childNode.push(treenode);
       }
@@ -150,7 +159,7 @@ class Department extends React.Component {
   }
   getUserOption() {
     return this.state.user.map((u) => {
-      return <Option value={u.id.toString()}>{u.realname}</Option>
+      return <Option value={u.id.toString() }>{u.realname}</Option>
     })
   }
   render() {
@@ -164,7 +173,7 @@ class Department extends React.Component {
         </div>
         <div className={styles.configtable}>
           {this.state.department.length > 0 ? <Tree onSelect={this.onSelect} defaultSelectedKeys='0' defaultExpandAll={true} >
-            {this.getTreeNode()}
+            {this.getTreeNode() }
           </Tree> : null
           }
         </div>
@@ -182,7 +191,7 @@ class Department extends React.Component {
             <span className={styles.formtitle}>负责人</span>
             <div className={styles.form}>
               <Select style={{ width: '100%' }} value={this.state.uservalue} onChange={this.handleUserChange}>
-                {this.getUserOption()}
+                {this.getUserOption() }
               </Select>
             </div>
           </div>

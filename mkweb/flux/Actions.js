@@ -395,7 +395,7 @@ var Action = {
   },
   addDepartment: function (data) {
     var context = this;
-    data.command = 'getdepart';
+    data.command = 'adddepart';
     $.ajax({
       url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
@@ -411,6 +411,46 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('addDepartment fail');
+      })
+  },
+  modDepartment: function (data) {
+    var context = this;
+    data.command = 'moddepart';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('modDepartment:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_DEPARTMENT_MOD, response.data);
+        } else {
+          message.error('修改部门失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('modDepartment fail');
+      })
+  },
+  delDepartment: function (data) {
+    var context = this;
+    data.command = 'deldepart';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('delDepartment:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_DEPARTMENT_DEL, response.data);
+        } else {
+          message.error('删除部门失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('delDepartment fail');
       })
   },
   dispatch: function (funname, value) {

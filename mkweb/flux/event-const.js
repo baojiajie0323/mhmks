@@ -8,6 +8,9 @@ var eventMap = {
     AE_LOGOUT: null,
     AE_USER: null,
     AE_DEPARTMENT: null,
+    AE_DEPARTMENT_ADD: null,
+    AE_DEPARTMENT_MOD: null,
+    AE_DEPARTMENT_DEL: null,
 
     AE_STOREAREA: null,
     AE_STOREBASIC: null,
