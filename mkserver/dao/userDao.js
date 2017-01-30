@@ -60,6 +60,123 @@ module.exports = {
       }
     });
   },
+  getDepart: function (req, res, next) {
+    console.log('userDao getDepart');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getdepart;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  addDepart: function (req, res, next) {
+    console.log('userDao addDepart');
+    var param = req.body;
+    if (param.name == null || param.parentid == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    if (param.userid == "") {
+      param.userid = 0;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.adddepart;
+        connection.query(sqlstring, [param.name, param.parentid, parseInt(param.userid)], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              data.id = result.insertId;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  modDepart: function (req, res, next) {
+    console.log('userDao modDepart');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    if (param.userid == "") {
+      param.userid = 0;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.moddepart;
+        connection.query(sqlstring, [param.name, parseInt(param.userid),param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  delDepart: function (req, res, next) {
+    console.log('userDao delDepart');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.deldepart;
+        connection.query(sqlstring, [param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   insertgroup: function (req, res, next) {
     var param = req.body;
     if (param.name == null || param.groupid == null) {

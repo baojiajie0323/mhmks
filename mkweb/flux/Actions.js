@@ -360,10 +360,73 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('getUser fail');
         if (_debug) {
-          var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","phone":"15026489683","email":"baojiajie@myhome.com"}]}';
+          var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","password":"123456","phone":"15026489683","email":"baojiajie@myhome.com","depart":""}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_USER, rsp.data);
         }
+      })
+  },
+  addUser: function (data) {
+    var context = this;
+    data.command = 'adduser';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('addUser:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_USER_ADD, response.data);
+          message.success('创建用户成功！');
+        } else {
+          message.error('创建用户失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('adduser fail');
+      })
+  },
+  modUser: function (data) {
+    var context = this;
+    data.command = 'moduser';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('modUser:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_USER_MOD, response.data);
+          message.success('修改用户成功！');
+        } else {
+          message.error('修改用户失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('modUser fail');
+      })
+  },
+  delUser: function (data) {
+    var context = this;
+    data.command = 'deluser';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('delUser:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_USER_DEL, response.data);
+          message.success('删除用户成功！');
+        } else {
+          message.error('删除用户失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('delUser fail');
       })
   },
   getDepartment: function () {
@@ -404,6 +467,7 @@ var Action = {
         console.log('addDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_ADD, response.data);
+          message.success('创建部门成功！');
         } else {
           message.error('创建部门失败！' + response.msg);
         }
@@ -424,6 +488,7 @@ var Action = {
         console.log('modDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_MOD, response.data);
+          message.success('修改部门成功！');
         } else {
           message.error('修改部门失败！' + response.msg);
         }
@@ -444,6 +509,7 @@ var Action = {
         console.log('delDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_DEL, response.data);
+          message.success('删除部门成功！');
         } else {
           message.error('删除部门失败！' + response.msg);
         }

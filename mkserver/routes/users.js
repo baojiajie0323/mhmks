@@ -19,6 +19,18 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getuser") {
     console.log('getuser');
     userDao.getUser(req, res, next);
+  } else if (req.body.command == "getdepart") {
+    console.log('getdepart');
+    userDao.getDepart(req, res, next);
+  } else if (req.body.command == "adddepart") {
+    console.log('adddepart');
+    userDao.addDepart(req, res, next);
+  } else if (req.body.command == "moddepart") {
+    console.log('moddepart');
+    userDao.modDepart(req, res, next);
+  } else if (req.body.command == "deldepart") {
+    console.log('deldepart');
+    userDao.delDepart(req, res, next);
   } 
 });
 

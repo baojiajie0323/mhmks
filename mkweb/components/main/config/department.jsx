@@ -69,10 +69,11 @@ class Department extends React.Component {
       message.info('请选择部门');
       return;
     }
+    var depart = Store.getDepartmentbyId(this.selectedkeys);
     this.modaltype = 'mod';
     this.setState({
-      departname: '',
-      uservalue: '',
+      departname: depart.name,
+      uservalue: depart.userid == 0? '':depart.userid,
       visible: true,
     })
   }
@@ -177,7 +178,7 @@ class Department extends React.Component {
           </Tree> : null
           }
         </div>
-        <Modal width={420} title="新部门" visible={this.state.visible}
+        <Modal width={420} title={this.modaltype=='add'?'创建部门':'修改部门'} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
           >
           <div className={styles.formcontent}>

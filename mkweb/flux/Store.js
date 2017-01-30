@@ -126,12 +126,71 @@ var Store = assign({}, EventEmitter.prototype, {
   getUser: function () {
     return _user;
   },
+  getUserbyId: function (id) {
+    for (var i = 0; i < _user.length; i++) {
+      if (_user[i].id == id) {
+        return _user[i];
+      }
+    }
+  },
+  addUser: function (sa) {
+    _user.push(sa);
+    this.emitChange(StoreEvent.SE_USER);
+  },
+  modUser: function (sa) {
+    for (var i = 0; i < _user.length; i++) {
+      if (_user[i].id == sa.id) {
+        _user[i] = sa;
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_USER);
+  },
+  delUser: function (sa) {
+    for (var i = 0; i < _user.length; i++) {
+      if (_user[i].id == sa.id) {
+        _user.splice(i, 1);
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_USER);
+  },
   setDepartment: function (sa) {
     _depart = sa;
     this.emitChange(StoreEvent.SE_DEPARTMENT);
   },
   getDepartment: function () {
     return _depart;
+  },
+  getDepartmentbyId: function (id) {
+    for (var i = 0; i < _depart.length; i++) {
+      if (_depart[i].id == id) {
+        return _depart[i];
+      }
+    }
+  },
+  addDepartment: function (sa) {
+    _depart.push(sa);
+    this.emitChange(StoreEvent.SE_DEPARTMENT);
+  },
+  modDepartment: function (sa) {
+    for (var i = 0; i < _depart.length; i++) {
+      if (_depart[i].id == sa.id) {
+        _depart[i].name = sa.name;
+        _depart[i].userid = sa.userid;
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_DEPARTMENT);
+  },
+  delDepartment: function (sa) {
+    for (var i = 0; i < _depart.length; i++) {
+      if (_depart[i].id == sa.id) {
+        _depart.splice(i, 1);
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_DEPARTMENT);
   },
 
   emitChange: function (eventtype) {
@@ -219,10 +278,35 @@ AppDispatcher.register((action) => {
       Store.setUser(action.value);
     }
       break;
+    case ActionEvent.AE_USER_ADD: {
+      Store.addUser(action.value);
+    }
+      break;
+    case ActionEvent.AE_USER_MOD: {
+      Store.modUser(action.value);
+    }
+      break;
+    case ActionEvent.AE_USER_DEL: {
+      Store.delUser(action.value);
+    }
+      break;
     case ActionEvent.AE_DEPARTMENT: {
       Store.setDepartment(action.value);
     }
       break;
+    case ActionEvent.AE_DEPARTMENT_ADD: {
+      Store.addDepartment(action.value);
+    }
+      break;
+    case ActionEvent.AE_DEPARTMENT_MOD: {
+      Store.modDepartment(action.value);
+    }
+      break;
+    case ActionEvent.AE_DEPARTMENT_DEL: {
+      Store.delDepartment(action.value);
+    }
+      break;
+
     default:
       break;
   }

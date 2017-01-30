@@ -15,10 +15,11 @@ var sqlmap = {
   getpromotioncount: 'select count(*) from promotion',
   getpromotion: 'select promotion.*,Store_name,Product_name from promotion left join store on (promotion.Store_id = store.Store_id ) left join product on (promotion.Product_id = product.Product_id) left join promotion_type on (promotion.Promotion_type = promotion_type.Promotion_type) limit ?,10',
   getuser: 'select * from user',
-  updateplan: 'update emergency_plan set name=?,detail=? where id = ?',
-  deleteplan: 'delete from emergency_plan where id = ?',
-  queryallplan: 'select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id',
-  queryplan: 'select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id where a.id = ?',
+  getdepart: 'select * from department',
+  adddepart: 'insert into department(name,parentid,userid) values(?,?,?)',
+  moddepart: 'update department set name = ? , userid = ? where id = ?',
+  deldepart: 'delete from department where id = ?',
+  //select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id where a.id = ?
 };
 
 module.exports = sqlmap;
