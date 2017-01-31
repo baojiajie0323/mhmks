@@ -19,6 +19,15 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getuser") {
     console.log('getuser');
     userDao.getUser(req, res, next);
+  } else if (req.body.command == "adduser") {
+    console.log('adduser');
+    userDao.addUser(req, res, next);
+  } else if (req.body.command == "moduser") {
+    console.log('moduser');
+    userDao.modUser(req, res, next);
+  } else if (req.body.command == "deluser") {
+    console.log('deluser');
+    userDao.delUser(req, res, next);
   } else if (req.body.command == "getdepart") {
     console.log('getdepart');
     userDao.getDepart(req, res, next);
@@ -31,7 +40,7 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "deldepart") {
     console.log('deldepart');
     userDao.delDepart(req, res, next);
-  } 
+  }
 });
 
 module.exports = router;

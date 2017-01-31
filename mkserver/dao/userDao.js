@@ -60,6 +60,103 @@ module.exports = {
       }
     });
   },
+  addUser: function (req, res, next) {
+    console.log('userDao addUser');
+    var param = req.body;
+    if (param.username == null || param.password == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    if(param.depart == ''){
+      param.depart = 0;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.adduser;
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart)], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              data.id = result.insertId;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  modUser: function (req, res, next) {
+    console.log('userDao modUser');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    if(param.depart == ''){
+      param.depart = 0;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.moduser;
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  delUser: function (req, res, next) {
+    console.log('userDao delUser');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.deluser;
+        connection.query(sqlstring, [param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   getDepart: function (req, res, next) {
     console.log('userDao getDepart');
     pool.getConnection(function (err, connection) {
@@ -130,7 +227,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.moddepart;
-        connection.query(sqlstring, [param.name, parseInt(param.userid),param.id], function (err, result) {
+        connection.query(sqlstring, [param.name, parseInt(param.userid), param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -177,124 +274,4 @@ module.exports = {
       }
     });
   },
-  insertgroup: function (req, res, next) {
-    var param = req.body;
-    if (param.name == null || param.groupid == null) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
-
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.insertgroup, [param.name, param.groupid], function (err, result) {
-          if (result.affectedRows > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
-          }
-          connection.release();
-        });
-      }
-    });
-  },
-
-  queryallgroup: function (req, res, next) {
-    console.log('queryallgroup');
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.queryallgroup, function (err, result) {
-          jsonWrite(res, result, dbcode.SUCCESS);
-          connection.release();
-        });
-      }
-    });
-  },
-
-  queryallplan: function (req, res, next) {
-    console.log('queryallplan');
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.queryallplan, function (err, result) {
-          jsonWrite(res, result, dbcode.SUCCESS);
-          connection.release();
-        });
-      }
-    });
-  },
-  queryplan: function (req, res, next) {
-
-    var param = req.body;
-    if (param.planid == null) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
-
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.queryplan, [param.planid], function (err, result) {
-          jsonWrite(res, result, dbcode.SUCCESS);
-          connection.release();
-        });
-      }
-    });
-  },
-  addplan: function (req, res, next) {
-    var param = req.body;
-    if (param.planname == null || param.plandetail == null) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
-
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.insertplan, [param.planname, getNowFormatDate(), param.userid, param.plandetail, 1], function (err, result) {
-          if (result.affectedRows > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.FAIL);
-          }
-          connection.release();
-        });
-      }
-    });
-  },
-  delplan: function (req, res, next) {
-    var param = req.body;
-    if (param.planid == null) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
-
-    pool.getConnection(function (err, connection) {
-      if (connection == undefined) {
-        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
-        return;
-      } else {
-        connection.query(_sql.deleteplan, [param.planid], function (err, result) {
-          if (result.affectedRows > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
-            jsonWrite(res, {}, dbcode.FAIL);
-          }
-          connection.release();
-        });
-      }
-    });
-  },
-
 };

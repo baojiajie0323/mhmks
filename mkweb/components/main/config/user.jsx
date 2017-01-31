@@ -53,6 +53,7 @@ class User extends React.Component {
   onUserChange() {
     this.setState({
       user: Store.getUser(),
+      visible: false,
       loading: false
     })
   }
@@ -111,7 +112,7 @@ class User extends React.Component {
       realname: userInfo.realname,
       phone: userInfo.phone,
       email: userInfo.email,
-      departvalue: userInfo.depart.toString(),
+      departvalue: userInfo.depart?userInfo.depart.toString():"",
       visible: true
     })
   }
@@ -140,14 +141,14 @@ class User extends React.Component {
   handleCancel() {
     this.setState({ visible: false })
   }
-  onClickDeleteUser(e) {
-    var id = e.currentTarget.dataset.id;
+  onClickDeleteUser(id) {
     var data = {
       id: id
     }
     Action.delUser(data);
   }
   getTableColumn() {
+    var context = this;
     return [{
       title: '用户名',
       dataIndex: 'username',
@@ -160,6 +161,10 @@ class User extends React.Component {
         title: '部门',
         dataIndex: 'depart',
         key: 'depart',
+        render: function (text, record) {
+          var depart = Store.getDepartmentbyId(text);
+          return (<span>{depart?depart.name:''}</span>)
+        } 
       }, {
         title: '角色',
         dataIndex: 'role',
@@ -180,12 +185,14 @@ class User extends React.Component {
         // }, {
         title: '操作',
         key: 'operate',
-        render: (text, record) => (<div className={styles.operatecontent}>
-          <a data-id={record.id} onClick={this.onClickEdit}><Icon type="edit" /></a>
-          <Popconfirm title="确定要删除这条记录吗?" onConfirm={this.onClickDeleteUser}>
+        render: function(text, record) {
+           return (<div className={styles.operatecontent}>
+          <a data-id={record.id} onClick={context.onClickEdit}><Icon type="edit" /></a>
+          <Popconfirm title="确定要删除这条记录吗?" onConfirm={function(){context.onClickDeleteUser(record.id)}}>
             <a><Icon type="delete" /></a>
           </Popconfirm>
-        </div>),
+        </div>)
+        },
       }];
   }
   getTableData() {
