@@ -67,7 +67,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
-    if(param.depart == ''){
+    if (param.depart == '') {
       param.depart = 0;
     }
     pool.getConnection(function (err, connection) {
@@ -101,7 +101,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
-    if(param.depart == ''){
+    if (param.depart == '') {
       param.depart = 0;
     }
     pool.getConnection(function (err, connection) {
@@ -257,6 +257,137 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.deldepart;
+        connection.query(sqlstring, [param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPermissontype: function (req, res, next) {
+    console.log('userDao getPermissontype');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpermissontype;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getRole: function (req, res, next) {
+    console.log('userDao getRole');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getrole;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  addRole: function (req, res, next) {
+    console.log('userDao addRole');
+    var param = req.body;
+    if (param.name == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.addrole;
+        connection.query(sqlstring, [param.name, param.permisson], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              data.id = result.insertId;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  modRole: function (req, res, next) {
+    console.log('userDao modRole');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.modrole;
+        connection.query(sqlstring, [param.name, param.permisson, param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  delRole: function (req, res, next) {
+    console.log('userDao delRole');
+    var param = req.body;
+    if (param.id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.delrole;
         connection.query(sqlstring, [param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {

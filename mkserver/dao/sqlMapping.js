@@ -22,6 +22,11 @@ var sqlmap = {
   adddepart: 'insert into department(name,parentid,userid) values(?,?,?)',
   moddepart: 'update department set name = ? , userid = ? where id = ?',
   deldepart: 'delete from department where id = ?',
+  getpermissontype: 'select * from permissontype',
+  getrole: 'select * from role',
+  addrole: 'insert into role(name,permisson) values(?,?)',
+  modrole: 'update role set name = ? , permisson = ? where id = ?',
+  delrole: 'delete from role where id = ?',
   //select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id where a.id = ?
 };
 

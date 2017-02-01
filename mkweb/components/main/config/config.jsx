@@ -2,6 +2,7 @@ import React from 'react';
 import ConfigMenu from './config_menu';
 import User from './user';
 import Depart from './department';
+import Role from './role';
 import styles from './config.less';
 
 class Config extends React.Component {
@@ -26,6 +27,8 @@ class Config extends React.Component {
       return <User />;
     } else if(this.state.contentkey == 'depart') {
       return <Depart />
+    } else if(this.state.contentkey == 'role') {
+      return <Role />
     }
     return <User />;
   }

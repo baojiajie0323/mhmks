@@ -40,6 +40,21 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "deldepart") {
     console.log('deldepart');
     userDao.delDepart(req, res, next);
+  } else if (req.body.command == "getpermissontype") {
+    console.log('getpermissontype');
+    userDao.getPermissontype(req, res, next);
+  } else if (req.body.command == "getrole") {
+    console.log('getrole');
+    userDao.getRole(req, res, next);
+  } else if (req.body.command == "addrole") {
+    console.log('addrole');
+    userDao.addRole(req, res, next);
+  } else if (req.body.command == "modrole") {
+    console.log('modrole');
+    userDao.modRole(req, res, next);
+  } else if (req.body.command == "delrole") {
+    console.log('delrole');
+    userDao.delRole(req, res, next);
   }
 });
 

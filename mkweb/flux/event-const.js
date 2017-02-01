@@ -14,6 +14,11 @@ var eventMap = {
     AE_DEPARTMENT_ADD: null,
     AE_DEPARTMENT_MOD: null,
     AE_DEPARTMENT_DEL: null,
+    AE_PERMISSONTYPE: null,
+    AE_ROLE: null,
+    AE_ROLE_ADD: null,
+    AE_ROLE_MOD: null,
+    AE_ROLE_DEL: null,
 
     AE_STOREAREA: null,
     AE_STOREBASIC: null,
@@ -34,6 +39,8 @@ var eventMap = {
     SE_LOGIN: null,
     SE_USER: null,
     SE_DEPARTMENT: null,
+    SE_PERMISSONTYPE: null,
+    SE_ROLE: null,
 
     SE_VIEW: null,
     SE_STOREAREA: null,

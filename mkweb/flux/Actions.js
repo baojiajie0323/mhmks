@@ -519,6 +519,123 @@ var Action = {
         console.log('delDepartment fail');
       })
   },
+  getPermissonType: function () {
+    var context = this;
+    var data = {
+      command: 'getpermissontype'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPermissonType:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PERMISSONTYPE, response.data);
+        } else {
+          message.error('获取权限失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPermissonType fail');
+        if (_debug) {
+          var response = '{"data":[{"permissonid":1,"name":"后台管理","parentid":"0"},{"permissonid":2,"name":"大区主管","parentid":"0"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PERMISSONTYPE, rsp.data);
+        }
+      })
+  },
+  getRole: function () {
+    var context = this;
+    var data = {
+      command: 'getrole'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getRole:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROLE, response.data);
+        } else {
+          message.error('获取角色失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getRole fail');
+        if (_debug) {
+          var response = '{"data":[{"id":1,"name":"系统管理员"},{"id":2,"name":"大区主管"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_ROLE, rsp.data);
+        }
+      })
+  },
+  addRole: function (data) {
+    var context = this;
+    data.command = 'addrole';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('addRole:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROLE_ADD, response.data);
+          message.success('创建角色成功！');
+        } else {
+          message.error('创建角色失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('addRole fail');
+      })
+  },
+  modRole: function (data) {
+    var context = this;
+    data.command = 'modrole';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('modRole:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROLE_MOD, response.data);
+          message.success('修改角色成功！');
+        } else {
+          message.error('修改角色失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('modRole fail');
+      })
+  },
+  delRole: function (data) {
+    var context = this;
+    data.command = 'delrole';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('delRole:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROLE_DEL, response.data);
+          message.success('删除角色成功！');
+        } else {
+          message.error('删除角色失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('delRole fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

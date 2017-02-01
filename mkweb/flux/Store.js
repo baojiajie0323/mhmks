@@ -22,6 +22,8 @@ var _promotionType = [];
 
 var _user = [];
 var _depart = [];
+var _permissontype = [];
+var _role = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -192,6 +194,49 @@ var Store = assign({}, EventEmitter.prototype, {
     }
     this.emitChange(StoreEvent.SE_DEPARTMENT);
   },
+  setPermissonType: function (sa) {
+    _permissontype = sa;
+    this.emitChange(StoreEvent.SE_PERMISSONTYPE);
+  },
+  getPermissonType: function () {
+    return _permissontype;
+  },
+  setRole: function (sa) {
+    _role = sa;
+    this.emitChange(StoreEvent.SE_ROLE);
+  },
+  getRole: function () {
+    return _role;
+  },
+  getRolebyId: function (id) {
+    for (var i = 0; i < _role.length; i++) {
+      if (_role[i].id == id) {
+        return _role[i];
+      }
+    }
+  },
+  addRole: function (sa) {
+    _role.push(sa);
+    this.emitChange(StoreEvent.SE_ROLE);
+  },
+  modRole: function (sa) {
+    for (var i = 0; i < _role.length; i++) {
+      if (_role[i].id == sa.id) {
+        _role[i] = sa;
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_ROLE);
+  },
+  delRole: function (sa) {
+    for (var i = 0; i < _role.length; i++) {
+      if (_role[i].id == sa.id) {
+        _role.splice(i, 1);
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_ROLE);
+  },
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -304,6 +349,26 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_DEPARTMENT_DEL: {
       Store.delDepartment(action.value);
+    }
+      break;
+    case ActionEvent.AE_PERMISSONTYPE: {
+      Store.setPermissonType(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROLE: {
+      Store.setRole(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROLE_ADD: {
+      Store.addRole(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROLE_MOD: {
+      Store.modRole(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROLE_DEL: {
+      Store.delRole(action.value);
     }
       break;
 
