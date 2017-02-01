@@ -8,6 +8,7 @@ class User extends React.Component {
     this.state = {
       loading: true,
       department: Store.getDepartment(),
+      role: Store.getRole(),
       user: Store.getUser(),
       visible: false,
 
@@ -17,13 +18,15 @@ class User extends React.Component {
       realname: '',
       phone: '',
       email: '',
-      departvalue: ''
+      departvalue: '',
+      rolevalue: '',
     };
     this.onUserChange = this.onUserChange.bind(this);
     this.onClickAdd = this.onClickAdd.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onDepartnameChange = this.onDepartnameChange.bind(this);
+    this.onRoleChange = this.onRoleChange.bind(this);
     this.onClickEdit = this.onClickEdit.bind(this);
     this.onClickDeleteUser = this.onClickDeleteUser.bind(this);
 
@@ -34,20 +37,29 @@ class User extends React.Component {
     this.onPhoneChange = this.onPhoneChange.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.handleDepartChange = this.handleDepartChange.bind(this);
+    this.handleRoleChange = this.handleRoleChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
+    Store.addChangeListener(StoreEvent.SE_ROLE, this.onRoleChange);
     Action.getUser();
     Action.getDepartment();
+    Action.getRole();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
+    Store.removeChangeListener(StoreEvent.SE_ROLE, this.onRoleChange);
   }
   onDepartnameChange() {
     this.setState({
       department: Store.getDepartment()
+    })
+  }
+  onRoleChange() {
+    this.setState({
+      role: Store.getRole()
     })
   }
   onUserChange() {
@@ -97,6 +109,7 @@ class User extends React.Component {
       phone: '',
       email: '',
       departvalue: '',
+      rolevalue: '',
       visible: true
     })
   }
@@ -112,12 +125,13 @@ class User extends React.Component {
       realname: userInfo.realname,
       phone: userInfo.phone,
       email: userInfo.email,
-      departvalue: userInfo.depart?userInfo.depart.toString():"",
+      departvalue: userInfo.depart ? userInfo.depart.toString() : "",
+      rolevalue: userInfo.role ? userInfo.role.toString() : "",
       visible: true
     })
   }
   handleOk() {
-    if(this.state.password !== this.state.password_cfm){
+    if (this.state.password !== this.state.password_cfm) {
       message.info('2次密码不一致');
       return;
     }
@@ -128,6 +142,7 @@ class User extends React.Component {
       phone: this.state.phone,
       email: this.state.email,
       depart: this.state.departvalue,
+      role: this.state.rolevalue,
     }
     if (this.modaltype == 'add') {
       console.log('addmode', data);
@@ -163,12 +178,16 @@ class User extends React.Component {
         key: 'depart',
         render: function (text, record) {
           var depart = Store.getDepartmentbyId(text);
-          return (<span>{depart?depart.name:''}</span>)
-        } 
+          return (<span>{depart ? depart.name : ''}</span>)
+        }
       }, {
         title: '角色',
         dataIndex: 'role',
         key: 'role',
+        render: function (text, record) {
+          var role = Store.getRolebyId(text);
+          return (<span>{role ? role.name : ''}</span>)
+        }
       }, {
         title: '电话',
         dataIndex: 'phone',
@@ -185,13 +204,13 @@ class User extends React.Component {
         // }, {
         title: '操作',
         key: 'operate',
-        render: function(text, record) {
-           return (<div className={styles.operatecontent}>
-          <a data-id={record.id} onClick={context.onClickEdit}><Icon type="edit" /></a>
-          <Popconfirm title="确定要删除这条记录吗?" onConfirm={function(){context.onClickDeleteUser(record.id)}}>
-            <a><Icon type="delete" /></a>
-          </Popconfirm>
-        </div>)
+        render: function (text, record) {
+          return (<div className={styles.operatecontent}>
+            <a data-id={record.id} onClick={context.onClickEdit}><Icon type="edit" /></a>
+            <Popconfirm title="确定要删除这条记录吗?" onConfirm={function () { context.onClickDeleteUser(record.id) } }>
+              <a><Icon type="delete" /></a>
+            </Popconfirm>
+          </div>)
         },
       }];
   }
@@ -204,8 +223,16 @@ class User extends React.Component {
   handleDepartChange(value) {
     this.setState({ departvalue: value })
   }
+  handleRoleChange(value) {
+    this.setState({ rolevalue: value })
+  }
   getDepartOption() {
     return this.state.department.map((u) => {
+      return <Option value={u.id.toString() }>{u.name}</Option>
+    })
+  }
+  getRoleOption() {
+    return this.state.role.map((u) => {
       return <Option value={u.id.toString() }>{u.name}</Option>
     })
   }
@@ -266,7 +293,7 @@ class User extends React.Component {
           <div className={styles.formcontent}>
             <span className={styles.formtitle}>部门</span>
             <div className={styles.form}>
-              <Select style={{ width: '100%' }} value={this.state.departvalue} onChange={this.handleDepartChange}>
+              <Select style={{ width: '100%' }} value={this.state.departvalue} placeholder="请选择部门" onChange={this.handleDepartChange}>
                 {this.getDepartOption() }
               </Select>
             </div>
@@ -275,7 +302,9 @@ class User extends React.Component {
           <div className={styles.formcontent}>
             <span className={styles.formtitle}>角色</span>
             <div className={styles.form}>
-              <Input placeholder="请选择角色" />
+              <Select style={{ width: '100%' }} value={this.state.rolevalue} placeholder="请选择角色" onChange={this.handleRoleChange}>
+                {this.getRoleOption() }
+              </Select>
             </div>
             <span className={styles.formstar}>*</span>
           </div>

@@ -70,13 +70,16 @@ module.exports = {
     if (param.depart == '') {
       param.depart = 0;
     }
+    if (param.role == '') {
+      param.role = 0;
+    }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.adduser;
-        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart)], function (err, result) {
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart),parseInt(param.role)], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -104,13 +107,16 @@ module.exports = {
     if (param.depart == '') {
       param.depart = 0;
     }
+    if (param.role == '') {
+      param.role = 0;
+    }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.moduser;
-        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), param.id], function (err, result) {
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), parseInt(param.role), param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
