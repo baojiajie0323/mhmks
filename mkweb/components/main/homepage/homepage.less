@@ -1,6 +1,99 @@
 .container{
     position: absolute;
-    width: 100%;
-    top: 86px;
-    bottom: 0;
+    top: 110px;
+    bottom: 25px;
+    left: 45px;
+    right: 45px;
+    background-color: white;
+
+    .block{
+        position: absolute;
+        .blocktitle{
+            position: absolute;
+            height: 40px;
+            line-height: 40px;
+            padding: 0 35px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: 'simhei';            
+        }
+        .blockcontent{
+            position: absolute;
+            top: 40px;
+            bottom: 0;
+            width: 100%;            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .blocksums{
+            position: absolute;
+            top: 40px;
+            bottom: 0;
+            width: 100%;            
+            padding: 20px 35px;
+            font-size: 14px;
+            p{
+                margin: 0px 0;
+                color: #5F5F5F;
+                font-family: 'simhei';
+                span{
+                    margin: 0 15px;
+                    color: #3E8655;
+                    font-size: 30px;
+                }
+            }
+        }
+    }
+
+    .sums{
+        top: 0;
+        left: 0;
+        height: 50%;
+        width: 20%; 
+    }
+
+    .planpercent_today{
+        top: 0;
+        left: 20%;
+        height: 50%;
+        width: 25%;
+        &:before{
+            content: ' ';
+            position: absolute;
+            left: -20px;
+            width: 1px;
+            top: 15%;
+            height: 70%;
+            background-color: #C5C5C5;
+        }
+    }
+
+    .planstatus{
+        top: 0; 
+        left: 45%;
+        height: 50%;
+        width: 25%;
+    }
+
+    .plandepart{
+        top: 0;
+        left: 70%;
+        height: 50%;
+        width: 30%;
+    }
+
+    .planpercent_month{        
+        top: 50%;
+        left: 0;
+        height: 50%;
+        width: 65%;
+    }
+
+    .plancoverage{
+        top: 50%;
+        left: 65%;
+        height: 50%;
+        width: 35%;
+    }
 }
