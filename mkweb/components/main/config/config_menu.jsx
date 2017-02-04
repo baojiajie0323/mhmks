@@ -30,7 +30,7 @@ class ConfigMenu extends React.Component {
       <div className={styles.contentmenu}>
         <Menu onClick={this.handleClick}
           style={{ width: 210 }}
-          defaultOpenKeys={['user_sub']}
+          defaultOpenKeys={['user_sub','path_sub']}
           selectedKeys={[this.state.current]}
           mode="inline"
           >

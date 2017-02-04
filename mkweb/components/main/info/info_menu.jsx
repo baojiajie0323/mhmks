@@ -30,7 +30,7 @@ class InfoMenu extends React.Component {
       <div className={styles.infomenu}>
         <Menu onClick={this.handleClick}
           style={{ width: 210 }}
-          defaultOpenKeys={['store_sub']}
+          defaultOpenKeys={['store_sub','product_sub','promotion_sub']}
           selectedKeys={[this.state.current]}
           mode="inline"
           >
