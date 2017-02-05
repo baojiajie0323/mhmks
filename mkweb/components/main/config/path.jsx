@@ -17,6 +17,7 @@ class Path extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.onPathChange = this.onPathChange.bind(this);
     this.onClickDetail = this.onClickDetail.bind(this);
+    this.handleTableChange = this.handleTableChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
