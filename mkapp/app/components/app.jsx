@@ -11,23 +11,32 @@ class App extends React.Component {
     };
     this.onLoginChange = this.onLoginChange.bind(this);
   }
-  componentDidMount(){
-    document.addEventListener("keypress",this.onKeyPress, true);
-    Store.addChangeListener(StoreEvent.SE_LOGIN,this.onLoginChange);
+  onDeviceReady() {
+    document.addEventListener("backbutton", function () { Store.back() }, false);
+    if (window.StatusBar && cordova.platformId == 'android') {
+      //StatusBar.overlaysWebView(false);
+      console.log(window.translucentStatusbar.enabled);
+      //StatusBar.backgroundColorByHexString("#ff0000");
+    }
+    
   }
-  onKeyPress(e){
-    Store.emit(StoreEvent.SE_KEYPRESS,e.keyCode);
+  componentDidMount() {
+    document.addEventListener('deviceready', this.onDeviceReady, false);
+    Store.addChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
   }
-  onLoginChange(loginSuccess){
-    this.setState({loginSuccess});
+  onKeyPress(e) {
+    Store.emit(StoreEvent.SE_KEYPRESS, e.keyCode);
+  }
+  onLoginChange(loginSuccess) {
+    this.setState({ loginSuccess });
   }
   render() {
     return (
       <div className={styles.container}>
-        {!this.state.loginSuccess ? 
+        {!this.state.loginSuccess ?
           <Login /> :
           <Main />
-        }        
+        }
       </div>
     );
   }

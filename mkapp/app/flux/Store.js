@@ -11,7 +11,11 @@ var _userInfo = {};
 var _curview = 'homepage';
 
 var Store = assign({}, EventEmitter.prototype, {
-  setLoginSuccess(loginsuccess, userInfo) {
+  back: function() {
+    this.emitChange(StoreEvent.SE_BACK);
+  },
+
+  setLoginSuccess: function (loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
     if (loginsuccess) {
       _userInfo = userInfo;
