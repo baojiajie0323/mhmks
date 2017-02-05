@@ -32,6 +32,9 @@ var eventMap = {
     AE_PRODUCTBRAND: null,
     AE_PROMOTION: null,
     AE_PROMOTIONTYPE: null,
+
+    AE_PATH: null,
+    AE_PATHDETAIL: null,
   }),
 
   StoreEvent: keyMirror({
@@ -55,6 +58,9 @@ var eventMap = {
     SE_PRODUCTBRAND: null,
     SE_PROMOTION: null,
     SE_PROMOTIONTYPE: null,
+
+    SE_PATH: null,
+    SE_PATHDETAIL: null,
   })
 };
 

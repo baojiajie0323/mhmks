@@ -25,6 +25,9 @@ var _depart = [];
 var _permissontype = [];
 var _role = [];
 
+var _path = [];
+var _pathdetail = [];
+
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
@@ -238,6 +241,37 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_ROLE);
   },
 
+  setPath: function (sa) {
+    _path = sa;
+    this.emitChange(StoreEvent.SE_PATH);
+  },
+  getPath: function () {
+    return _path;
+  },
+  getPathbyId: function (id) {
+    for (var i = 0; i < _path.length; i++) {
+      if (_path[i].Path_id == id) {
+        return _path[i];
+      }
+    }
+  },
+  setPathDetail: function (sa) {
+    _pathdetail = sa;
+    this.emitChange(StoreEvent.SE_PATH);
+  },
+  getPathDetail: function () {
+    return _pathdetail;
+  },
+  getPathDetailbyId: function (id) {
+    var pathdetail = [];
+    for (var i = 0; i < _pathdetail.length; i++) {
+      if (_pathdetail[i].Path_id == id) {
+        pathdetail.push(_pathdetail[i]);
+      }
+    }
+    return pathdetail;
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -369,6 +403,15 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_ROLE_DEL: {
       Store.delRole(action.value);
+    }
+      break;
+
+    case ActionEvent.AE_PATH: {
+      Store.setPath(action.value);
+    }
+      break;
+    case ActionEvent.AE_PATHDETAIL: {
+      Store.setPathDetail(action.value);
     }
       break;
 

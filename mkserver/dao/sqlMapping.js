@@ -27,6 +27,8 @@ var sqlmap = {
   addrole: 'insert into role(name,permisson) values(?,?)',
   modrole: 'update role set name = ? , permisson = ? where id = ?',
   delrole: 'delete from role where id = ?',
+  getpath: 'select * from path',
+  getpathdetail: 'select a.*,b.Store_name from path_detail a INNER JOIN store b on(a.Store_id = b.Store_id)',
   //select a.*,b.name createusername from emergency_plan a INNER JOIN user b ON a.createuser = b.id where a.id = ?
 };
 

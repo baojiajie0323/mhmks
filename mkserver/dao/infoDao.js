@@ -18,7 +18,7 @@ module.exports = {
         connection.query(sqlstring, [], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           } else {
             jsonWrite(res, result, dbcode.SUCCESS);
           }
@@ -40,7 +40,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -60,7 +60,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -80,7 +80,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -100,7 +100,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -125,7 +125,7 @@ module.exports = {
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {
-              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+              jsonWrite(res, {}, dbcode.FAIL);
             }
             connection.release();
           });
@@ -151,7 +151,7 @@ module.exports = {
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {
-              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+              jsonWrite(res, {}, dbcode.FAIL);
             }
             connection.release();
           });
@@ -172,7 +172,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -192,7 +192,7 @@ module.exports = {
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
-            jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           }
           connection.release();
         });
@@ -217,7 +217,7 @@ module.exports = {
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {
-              jsonWrite(res, {}, dbcode.LOGIN_FAIL);
+              jsonWrite(res, {}, dbcode.FAIL);
             }
             connection.release();
           });
