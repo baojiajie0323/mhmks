@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app';
-import 'antd/dist/antd.css';
-import 'weui/dist/style/weui.css';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import './index.css';
 import './flux/Store';
 import './flux/Actions';

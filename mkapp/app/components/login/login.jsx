@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './login.less';
-import $ from 'jquery'
-import { Icon, Checkbox, message} from 'antd';
+import $ from 'jquery';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class Login extends React.Component {
   constructor(props) {
@@ -25,44 +25,32 @@ class Login extends React.Component {
     }
   }
   componentWillUnmount() {
-    localStorage.username = $('#username').val();    
+    localStorage.username = $('#username').val();
     localStorage.password = $('#password').val();
   }
 
   onClickLogin() {
     var username = $('#username').val();
     var password = $('#password').val();
-    if(username == ""){
+    if (username == "") {
       message.info("请输入用户名！");
       return;
     }
-    if(password == ""){
+    if (password == "") {
       message.info("请输入密码！");
       return;
     }
     var data = {
-      username:username,
-      password:password,
-      type:1
+      username: username,
+      password: password,
+      type: 1
     }
     Action.login(data);
   }
   render() {
     return (
       <div className={styles.container}>
-        <div className={styles.content}>
-          <p className={styles.title}>满好营销通</p>
-          <div className={styles.formcontent}>
-            <Icon className={styles.formIcon} type="user" />
-            <input id="username" className={styles.formInput} placeholder="请输入用户名" />
-          </div>
-          <div className={styles.formcontent}>
-            <Icon className={styles.formIcon} type="unlock" />
-            <input id="password" type="password" className={styles.formInput} placeholder="请输入密码" />
-          </div>
-          <div className={styles.loginbtn} onClick={this.onClickLogin}>登 录</div>
-        </div>
-
+        <RaisedButton label="Primary" primary={true} />
       </div>
     );
   }
