@@ -1,14 +1,22 @@
 import React from 'react';
 import styles from './login.less';
 import $ from 'jquery';
-import RaisedButton from 'material-ui/RaisedButton';
+
+import AppBar from 'material-ui/AppBar';
+import IconButton from 'material-ui/IconButton';
+import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
+import ActionHome from 'material-ui/svg-icons/action/home';
+import AccountBox from 'material-ui/svg-icons/action/account-box';
+import {blue500} from 'material-ui/styles/colors';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
     };
-    this.onTouchTest = this.onTouchTest.bind(this);
+    this.handleTouchTap = this.handleTouchTap.bind(this);
   }
 
   componentDidMount() {
@@ -26,22 +34,22 @@ class Login extends React.Component {
     }
 
 
-    this.map = new BMap.Map("allmap");
-    var point = new BMap.Point(116.331398, 39.897445);
-    this.map.centerAndZoom(point, 12);
-    var context = this;
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function (r) {
-      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-        var mk = new BMap.Marker(r.point);
-        context.map.addOverlay(mk);
-        context.map.panTo(r.point);
-        alert('您的位置：' + r.point.lng + ',' + r.point.lat);
-      }
-      else {
-        alert('failed' + this.getStatus());
-      }
-    }, { enableHighAccuracy: true })
+    // this.map = new BMap.Map("allmap");
+    // var point = new BMap.Point(116.331398, 39.897445);
+    // this.map.centerAndZoom(point, 12);
+    // var context = this;
+    // var geolocation = new BMap.Geolocation();
+    // geolocation.getCurrentPosition(function (r) {
+    //   if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+    //     var mk = new BMap.Marker(r.point);
+    //     context.map.addOverlay(mk);
+    //     context.map.panTo(r.point);
+    //     alert('您的位置：' + r.point.lng + ',' + r.point.lat);
+    //   }
+    //   else {
+    //     alert('failed' + this.getStatus());
+    //   }
+    // }, { enableHighAccuracy: true })
   }
   componentWillUnmount() {
     localStorage.username = $('#username').val();
@@ -81,12 +89,23 @@ class Login extends React.Component {
     }
     Action.login(data);
   }
+  handleTouchTap() {
+    alert('onTouchTap triggered on the title component');
+  }
   render() {
     return (
       <div className={styles.container}>
-        <RaisedButton onClick={this.onTouchTest} label="定位" primary={true} />
-        <div style={{ height: 'calc(100% - 36px)' }} id="allmap"></div>
-
+        <AppBar
+          style={{marginBottom:'30px'}}
+          title='登录'
+          iconElementLeft={<span></span>}
+          iconElementRight={<IconButton><NavigationClose /></IconButton>}
+          onRightIconButtonTouchTap={this.handleTouchTap}
+          />
+        <div className={styles.inputform}>
+          <AccountBox style={{marginRight:'20px',width:'28px',height:'28px'}} color={"rgb(0,188,212)"}/>
+          <TextField fullWidth={true} hintText="请输入用户名" />
+        </div>
       </div>
     );
   }

@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/app';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import App from './components/app';
 import './index.css';
 import './flux/Store';
 import './flux/Actions';
 import './flux/event-const';
 
-
+injectTapEventPlugin();
 ReactDOM.render(<App />, document.getElementById('root'));
-
 
 Date.prototype.Format = function (fmt) { //author: meizz
     var o = {

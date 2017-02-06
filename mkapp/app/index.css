@@ -1,7 +1,8 @@
+html {
+  font-family: 'Roboto', sans-serif ,'microsoft yahei';
+}
 
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  font-family: 'Microsoft Yahei';
-  overflow: hidden;
+body {
+  font-size: 13px;
+  line-height: 20px;
 }
