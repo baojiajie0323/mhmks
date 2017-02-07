@@ -70,12 +70,12 @@ class Main extends React.Component {
               onTouchTap={() => this.select(1) }
               />
             <BottomNavigationItem
-              label="通讯"
+              label="通讯录"
               icon={contactsIcon}
               onTouchTap={() => this.select(2) }
               />
             <BottomNavigationItem
-              label="我的"
+              label="我"
               icon={myIcon}
               onTouchTap={() => this.select(3) }
               />
