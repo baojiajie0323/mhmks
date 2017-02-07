@@ -1,15 +1,15 @@
 import React from 'react';
 import styles from './login.less';
 import $ from 'jquery';
+import { message } from 'antd';
 
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import NavigationClose from 'material-ui/svg-icons/navigation/close';
+import NavigationClose from 'material-ui/svg-icons/action/exit-to-app';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import ActionHome from 'material-ui/svg-icons/action/home';
-import AccountBox from 'material-ui/svg-icons/action/account-box';
-import {blue500} from 'material-ui/styles/colors';
+import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 class Login extends React.Component {
   constructor(props) {
@@ -20,20 +20,6 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    var username = localStorage.username;
-    var password = localStorage.password;
-    var savepwd = localStorage.savepwd;
-
-    this.setState({
-      savepwd: savepwd == 'true'
-    });
-
-    $('#username').val(username);
-    if (savepwd) {
-      $('#password').val(password);
-    }
-
-
     // this.map = new BMap.Map("allmap");
     // var point = new BMap.Point(116.331398, 39.897445);
     // this.map.centerAndZoom(point, 12);
@@ -85,7 +71,7 @@ class Login extends React.Component {
     var data = {
       username: username,
       password: password,
-      type: 1
+      type: 2
     }
     Action.login(data);
   }
@@ -93,18 +79,25 @@ class Login extends React.Component {
     alert('onTouchTap triggered on the title component');
   }
   render() {
+    var username = localStorage.username;
+    var password = localStorage.password;
     return (
       <div className={styles.container}>
         <AppBar
-          style={{marginBottom:'30px'}}
-          title='登录'
+          style={{ marginBottom: '30px' }}
+          title='满好营销通'
           iconElementLeft={<span></span>}
           iconElementRight={<IconButton><NavigationClose /></IconButton>}
           onRightIconButtonTouchTap={this.handleTouchTap}
           />
         <div className={styles.inputform}>
-          <AccountBox style={{marginRight:'20px',width:'28px',height:'28px'}} color={"rgb(0,188,212)"}/>
-          <TextField fullWidth={true} hintText="请输入用户名" />
+          <TextField defaultValue={username} id="username" fullWidth={true} hintText="请输入用户名" />
+        </div>
+        <div className={styles.inputform}>
+          <TextField defaultValue={password} id="password" type="password" fullWidth={true} hintText="请输入密码" />
+        </div>
+        <div className={styles.btnform}>
+          <RaisedButton onTouchTap={this.onClickLogin} labelStyle={{fontSize:'16px'}} buttonStyle={{height:'50px'}} label="登 录" primary={true} fullWidth={true} />
         </div>
       </div>
     );
