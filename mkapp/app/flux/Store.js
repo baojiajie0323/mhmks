@@ -8,7 +8,6 @@ var StoreEvent = EventConst.StoreEvent;
 
 var _loginSuccess = false;
 var _userInfo = {};
-var _curview = 'homepage';
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function() {
@@ -20,7 +19,6 @@ var Store = assign({}, EventEmitter.prototype, {
     if (loginsuccess) {
       _userInfo = userInfo;
     } else {
-      _curview = 'homepage';
       _userInfo = {};
     }
     this.emit(StoreEvent.SE_LOGIN, loginsuccess);

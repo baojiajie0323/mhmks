@@ -9,9 +9,10 @@ import StoreIcon from 'material-ui/svg-icons/action/store';
 import HomeIcon from 'material-ui/svg-icons/action/home';
 
 import Home from './home/home';
-import Store from './store/store';
+import StoreView from './store/store';
 import Contacts from './contacts/contacts';
 import Aboutme from './aboutme/aboutme';
+import Location from './aboutme/location';
 
 
 const contactsIcon = <ContactsIcon />;
@@ -25,23 +26,33 @@ class Main extends React.Component {
     super(props);
     this.state = {
       selectedIndex: 0,
+      subview:'',
     };
     this.select = this.select.bind(this);
+    this.onChangeView = this.onChangeView.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_VIEW,this.onChangeView);
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_VIEW,this.onChangeView);
   }
   
   select(index) {
-    this.setState({ selectedIndex: index });
+    this.setState({ subview:'',selectedIndex: index });
+  }
+  onChangeView(subview){
+    this.setState({subview});
   }
 
   getContent() {
-    if(this.state.selectedIndex == 0){
+    if(this.state.subview == 'localtionview'){
+      return <Location />
+    }    
+    else if(this.state.selectedIndex == 0){
       return <Home />
     }else if(this.state.selectedIndex == 1){
-      return <Store />
+      return <StoreView />
     }else if(this.state.selectedIndex == 2){
       return <Contacts />
     }else if(this.state.selectedIndex == 3){
