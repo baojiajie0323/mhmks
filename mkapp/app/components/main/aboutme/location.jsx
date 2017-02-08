@@ -31,7 +31,8 @@ class Location extends React.Component {
     var context = this;
     var geolocation = new BMap.Geolocation();
     geolocation.getCurrentPosition(function (r) {
-      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+      if (this.getStatus() == BMAP_STATUS_SUCCESS) {        
+        message.success('定位成功');
         var mk = new BMap.Marker(r.point);
         context.map.addOverlay(mk);
         context.map.panTo(r.point);
