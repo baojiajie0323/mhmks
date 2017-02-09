@@ -1,7 +1,9 @@
 import React from 'react';
 import styles from './home.less';
 import AppBar from 'material-ui/AppBar';
-import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
+import AddIcon from 'material-ui/svg-icons/content/add';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
 
 class Home extends React.Component {
   constructor(props) {
@@ -21,8 +23,8 @@ class Home extends React.Component {
       <div className={styles.container}>
         <AppBar
           title='首页'
-          iconElementLeft={<span></span>}
-          iconElementRight={<FlatButton label="排班" />}
+          iconElementLeft={<span />}
+          iconElementRight={<IconButton><AddIcon /></IconButton>}
           onRightIconButtonTouchTap={this.onClickAddPlan}
           />
       </div>
