@@ -17,7 +17,19 @@ class Contacts extends React.Component {
   }
   componentWillUnmount() {
   }
-
+  getContactsDom() {
+    var domlist = [];
+    for (var i = 0; i < 50; i++) {
+      domlist.push(<a href='tel:15026489683'>
+        <ListItem
+          primaryText="鲍嘉捷"
+          rightIcon={<PhoneIcon color={cyan600} />}
+          />
+      </a>);
+      domlist.push(<Divider />);
+    }
+    return domlist;
+  }
   render() {
     return (
       <div className={styles.container}>
@@ -25,49 +37,12 @@ class Contacts extends React.Component {
           title='通讯录'
           iconElementLeft={<span></span>}
           />
-        <List>
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-          <ListItem
-            primaryText={<a href='tel:15026489683'>鲍嘉捷</a>}
-            rightIcon={<PhoneIcon color={cyan600} />}
-            />
-          <Divider />
-        </List>
-      </div>
+        <div className={styles.content}>
+          <List>
+            {this.getContactsDom() }
+          </List>
+        </div>
+      </div >
     );
   }
 }

@@ -6,10 +6,11 @@ import Paper from 'material-ui/Paper';
 import ContactsIcon from 'material-ui/svg-icons/communication/contact-phone';
 import MyIcon from 'material-ui/svg-icons/action/account-circle';
 import StoreIcon from 'material-ui/svg-icons/action/store';
-import HomeIcon from 'material-ui/svg-icons/action/home';
+import HomeIcon from 'material-ui/svg-icons/action/assignment';
 
 import Home from './home/home';
 import StoreView from './store/store';
+import StoreDetail from './store/storedetail';
 import Contacts from './contacts/contacts';
 import Aboutme from './aboutme/aboutme';
 import Location from './aboutme/location';
@@ -48,6 +49,8 @@ class Main extends React.Component {
   getContent() {
     if(this.state.subview == 'localtionview'){
       return <Location />
+    }else if (this.state.subview == 'storedetailview'){
+      return <StoreDetail />
     }    
     else if(this.state.selectedIndex == 0){
       return <Home />
@@ -71,7 +74,7 @@ class Main extends React.Component {
         <Paper style={PaperStyle} zDepth={1}>
           <BottomNavigation selectedIndex={this.state.selectedIndex}>
             <BottomNavigationItem
-              label="首页"
+              label="拜访"
               icon={homeIcon}
               onTouchTap={() => this.select(0) }
               />
