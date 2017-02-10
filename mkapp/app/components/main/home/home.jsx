@@ -21,6 +21,12 @@ import TmpIcon from 'material-ui/svg-icons/action/restore';
 import DateIcon from 'material-ui/svg-icons/action/date-range';
 import LeftIcon from 'material-ui/svg-icons/av/fast-rewind';
 import RightIcon from 'material-ui/svg-icons/av/fast-forward';
+import NotstartIcon from 'material-ui/svg-icons/toggle/star-border';
+import HasstartIcon from 'material-ui/svg-icons/toggle/star-half';
+import FinishIcon from 'material-ui/svg-icons/toggle/star';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
+import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -50,6 +56,20 @@ const Logged = (props) => (
   </IconMenu>
 );
 
+const PlanOperate = (props) => (
+  <IconMenu
+    {...props}
+    iconButtonElement={
+      <IconButton><MoreVertIcon color={cyan800} /></IconButton>
+    }
+    targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+    anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+    >
+    <MenuItem primaryText="执行" leftIcon={<PlayIcon color={cyan600} />} />
+    <MenuItem primaryText="删除" leftIcon={<DeleteIcon color={red600} />} />
+  </IconMenu>
+);
+
 const Noplan = (props) => (
   <div className={styles.noplan}>暂无计划</div>
 );
@@ -70,9 +90,27 @@ class Home extends React.Component {
       return <Noplan />
     } else {
       return <List>
-        <Subheader>Recent chats</Subheader>
+        <Subheader>共3个计划，已完成2个，未完成1个</Subheader>
         <ListItem
-          primaryText="Brendan Lim"
+          primaryText="山东1"
+          secondaryText="华北大润发即墨店-华北大润发城阳店-华北大润发长城路店"
+          secondaryTextLines={3}
+          rightIconButton={<PlanOperate />}
+          leftIcon={<HasstartIcon color={cyan600} />}
+          />
+        <ListItem
+          primaryText="临时拜访"
+          secondaryText="家乐福青岛辽阳路店"
+          secondaryTextLines={3}
+          rightIconButton={<PlanOperate />}
+          leftIcon={<NotstartIcon color={cyan600} />}
+          />
+        <ListItem
+          primaryText="临时拜访"
+          secondaryText="家乐福青岛新兴店"
+          secondaryTextLines={3}
+          rightIconButton={<PlanOperate />}
+          leftIcon={<FinishIcon color={cyan600} />}
           />
       </List>
     }
@@ -85,33 +123,34 @@ class Home extends React.Component {
           iconElementLeft={<span />}
           />
         <Paper zDepth={1}>
-        <Toolbar style={{ backgroundColor: 'white' }}>
-          <ToolbarGroup>
-            <DateIcon color={cyan800} />
-            <DatePicker
-              DateTimeFormat={DateTimeFormat}
-              locale="zh"
-              style={{ marginLeft: '10px' }}
-              textFieldStyle={{ width: '120px' }}
-              hintText="请选择日期"
-              okLabel="确定"
-              cancelLabel="取消"
-              formatDate={new DateTimeFormat('zh', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              }).format}
-              />
-            <IconButton><LeftIcon color={cyan800} /></IconButton>
-            <IconButton><RightIcon color={cyan800} /></IconButton>
-          </ToolbarGroup>
-          <ToolbarGroup lastChild={true}>
-            <Logged />
-          </ToolbarGroup>
-        </Toolbar>
+          <Toolbar style={{ backgroundColor: 'white' }}>
+            <ToolbarGroup>
+              <DateIcon color={cyan800} />
+              <DatePicker
+                DateTimeFormat={DateTimeFormat}
+                locale="zh"
+                style={{ marginLeft: '10px' }}
+                textFieldStyle={{ textAlign: 'center', width: '120px' }}
+                inputStyle ={{ textAlign: 'center' }}
+                hintText="请选择日期"
+                okLabel="确定"
+                cancelLabel="取消"
+                formatDate={new DateTimeFormat('zh', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                }).format}
+                />
+              <IconButton><LeftIcon color={cyan800} /></IconButton>
+              <IconButton><RightIcon color={cyan800} /></IconButton>
+            </ToolbarGroup>
+            <ToolbarGroup >
+              <Logged />
+            </ToolbarGroup>
+          </Toolbar>
         </Paper>
         <div className={styles.content}>
-          {this.getPlanlist()}
+          {this.getPlanlist() }
         </div>
       </div>
     );
