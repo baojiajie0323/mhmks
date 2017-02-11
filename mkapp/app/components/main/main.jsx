@@ -9,6 +9,8 @@ import StoreIcon from 'material-ui/svg-icons/action/store';
 import HomeIcon from 'material-ui/svg-icons/action/assignment';
 
 import Home from './home/home';
+import SelectPath from './home/selectpath';
+import SelectStore from './home/selectstore';
 import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
 import Contacts from './contacts/contacts';
@@ -51,7 +53,11 @@ class Main extends React.Component {
       return <Location />
     }else if (this.state.subview == 'storedetailview'){
       return <StoreDetail />
-    }    
+    }else if (this.state.subview == 'selectpathview'){
+      return <SelectPath />
+    }else if (this.state.subview == 'selectstoreview'){
+      return <SelectStore />
+    }                
     else if(this.state.selectedIndex == 0){
       return <Home />
     }else if(this.state.selectedIndex == 1){

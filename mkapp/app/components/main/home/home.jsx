@@ -49,10 +49,10 @@ const Logged = (props) => (
     targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
-    <MenuItem primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />
-    <MenuItem primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
-    <MenuItem primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
-    <MenuItem primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />
+    <MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />
+    <MenuItem onTouchTap={props.onClickAddTmp} primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
+    <MenuItem onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
+    <MenuItem onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />
   </IconMenu>
 );
 
@@ -85,6 +85,18 @@ class Home extends React.Component {
   }
   componentWillUnmount() {
   }
+  onClickAddPath(){
+    Store.emit(StoreEvent.SE_VIEW,'selectpathview');
+  }
+  onClickAddTmp(){
+    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  }
+  onClickAddCall(){
+    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  }
+  onClickAddCheck(){
+    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  }
   getPlanlist() {
     if (this.state.planlist.length <= 0) {
       return <Noplan />
@@ -93,22 +105,22 @@ class Home extends React.Component {
         <Subheader>共3个计划，已完成2个，未完成1个</Subheader>
         <ListItem
           primaryText="山东1"
-          secondaryText="华北大润发即墨店-华北大润发城阳店-华北大润发长城路店"
-          secondaryTextLines={3}
+          secondaryText="华北大润发即墨店->华北大润发城阳店->华北大润发长城路店"
+          secondaryTextLines={2}
           rightIconButton={<PlanOperate />}
           leftIcon={<HasstartIcon color={cyan600} />}
           />
         <ListItem
           primaryText="临时拜访"
           secondaryText="家乐福青岛辽阳路店"
-          secondaryTextLines={3}
+          secondaryTextLines={2}
           rightIconButton={<PlanOperate />}
           leftIcon={<NotstartIcon color={cyan600} />}
           />
         <ListItem
           primaryText="临时拜访"
           secondaryText="家乐福青岛新兴店"
-          secondaryTextLines={3}
+          secondaryTextLines={2}
           rightIconButton={<PlanOperate />}
           leftIcon={<FinishIcon color={cyan600} />}
           />
@@ -145,7 +157,12 @@ class Home extends React.Component {
               <IconButton><RightIcon color={cyan800} /></IconButton>
             </ToolbarGroup>
             <ToolbarGroup >
-              <Logged />
+              <Logged
+                onClickAddPath={this.onClickAddPath}
+                onClickAddTmp={this.onClickAddTmp}
+                onClickAddCall={this.onClickAddCall}
+                onClickAddCheck={this.onClickAddCheck}
+              />
             </ToolbarGroup>
           </Toolbar>
         </Paper>

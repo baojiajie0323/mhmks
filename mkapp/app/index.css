@@ -1,5 +1,6 @@
 html {
   font-family: 'Roboto', sans-serif ,'microsoft yahei';
+  user-select: none;
 }
 
 body {
