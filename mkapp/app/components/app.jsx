@@ -20,7 +20,10 @@ class App extends React.Component {
     Store.addChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
   }
   onLoginChange(loginSuccess) {
-    this.setState({ loginSuccess });
+    var context = this;
+    setTimeout(function () {
+      context.setState({ loginSuccess });
+    }, 400);
   }
   render() {
     return (

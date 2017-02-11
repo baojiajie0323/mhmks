@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "antd": "^2.1.0",
+    "fastclick": "^1.0.6",
     "flux": "^3.1.2",
     "intl": "^1.2.5",
     "intl-locales-supported": "^1.0.0",

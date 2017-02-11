@@ -65,7 +65,7 @@ const PlanOperate = (props) => (
     targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
-    <MenuItem primaryText="执行" leftIcon={<PlayIcon color={cyan600} />} />
+    <MenuItem primaryText="执行" onTouchTap={props.onClickDoPlan} leftIcon={<PlayIcon color={cyan600} />} />
     <MenuItem primaryText="删除" leftIcon={<DeleteIcon color={red600} />} />
   </IconMenu>
 );
@@ -85,17 +85,20 @@ class Home extends React.Component {
   }
   componentWillUnmount() {
   }
-  onClickAddPath(){
-    Store.emit(StoreEvent.SE_VIEW,'selectpathview');
+  onClickAddPath() {
+    Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
   }
-  onClickAddTmp(){
-    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  onClickAddTmp() {
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
-  onClickAddCall(){
-    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  onClickAddCall() {
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
-  onClickAddCheck(){
-    Store.emit(StoreEvent.SE_VIEW,'selectstoreview');
+  onClickAddCheck() {
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+  }
+  onClickDoPlan() {
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   getPlanlist() {
     if (this.state.planlist.length <= 0) {
@@ -107,21 +110,27 @@ class Home extends React.Component {
           primaryText="山东1"
           secondaryText="华北大润发即墨店->华北大润发城阳店->华北大润发长城路店"
           secondaryTextLines={2}
-          rightIconButton={<PlanOperate />}
+          rightIconButton={<PlanOperate
+            onClickDoPlan={this.onClickDoPlan}
+            />}
           leftIcon={<HasstartIcon color={cyan600} />}
           />
         <ListItem
           primaryText="临时拜访"
           secondaryText="家乐福青岛辽阳路店"
           secondaryTextLines={2}
-          rightIconButton={<PlanOperate />}
+          rightIconButton={<PlanOperate
+            onClickDoPlan={this.onClickDoPlan}
+            />}
           leftIcon={<NotstartIcon color={cyan600} />}
           />
         <ListItem
           primaryText="临时拜访"
           secondaryText="家乐福青岛新兴店"
           secondaryTextLines={2}
-          rightIconButton={<PlanOperate />}
+          rightIconButton={<PlanOperate
+            onClickDoPlan={this.onClickDoPlan}
+            />}
           leftIcon={<FinishIcon color={cyan600} />}
           />
       </List>
@@ -162,7 +171,7 @@ class Home extends React.Component {
                 onClickAddTmp={this.onClickAddTmp}
                 onClickAddCall={this.onClickAddCall}
                 onClickAddCheck={this.onClickAddCheck}
-              />
+                />
             </ToolbarGroup>
           </Toolbar>
         </Paper>
