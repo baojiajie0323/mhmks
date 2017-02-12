@@ -71,14 +71,14 @@ const PlanOperate = (props) => (
 );
 
 const Noplan = (props) => (
-  <div className={styles.noplan}>暂无计划</div>
+  <div className={styles.noplan}>当日暂无计划，您可以添加计划</div>
 );
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      planlist: [1, 2]
+      planlist: Store.getPlanlist()
     };
   }
   componentDidMount() {

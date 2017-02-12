@@ -13,6 +13,7 @@ var eventMap = {
     SE_BACK: null,
     SE_LOGIN: null,
     SE_VIEW:null,
+    SE_CURPLANLIST:null,
   })
 };
 

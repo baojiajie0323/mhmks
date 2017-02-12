@@ -12,11 +12,16 @@ import {
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
+import Subheader from 'material-ui/Subheader';
+import {message} from 'antd';
+import { List, ListItem } from 'material-ui/List';
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
+import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
 
 
+import { cyan600 } from 'material-ui/styles/colors';
 
 
 class DoPlan extends React.Component {
@@ -25,47 +30,89 @@ class DoPlan extends React.Component {
     this.state = {
       finished: false,
       stepIndex: 0,
+      storestate: 0, // 0未签到  1已签到未签出  2已签出
     };
-    this.handleNext = this.handleNext.bind(this);
-    this.handlePrev = this.handlePrev.bind(this);
+    this.handleSignIn = this.handleSignIn.bind(this);
+    this.handleSignOut = this.handleSignOut.bind(this);
   }
-  handleNext() {
+
+  handleSignIn() {
+    const {stepIndex} = this.state;
+    var context = this;
+    setTimeout(function() {
+      context.setState({
+      storestate: 1
+    });
+    }, 400);
+    message.success('签到成功');
+  }
+
+  handleSignOut() {
     const {stepIndex} = this.state;
     this.setState({
       stepIndex: stepIndex + 1,
+      storestate: 0,
       finished: stepIndex >= 2,
     });
-  }
-
-  handlePrev() {
-    const {stepIndex} = this.state;
-    if (stepIndex > 0) {
-      this.setState({ stepIndex: stepIndex - 1 });
-    }
+    message.success('签出成功');
   }
 
   renderStepActions(step) {
-    const {stepIndex} = this.state;
+    const {stepIndex, storestate} = this.state;
 
     return (
       <div style={{ margin: '12px 0' }}>
-        <RaisedButton
-          label={stepIndex === 2 ? 'Finish' : 'Next'}
-          disableTouchRipple={true}
-          disableFocusRipple={true}
-          primary={true}
-          onTouchTap={this.handleNext}
-          style={{ marginRight: 12 }}
-          />
-        {step > 0 && (
-          <FlatButton
-            label="Back"
-            disabled={stepIndex === 0}
-            disableTouchRipple={true}
-            disableFocusRipple={true}
-            onTouchTap={this.handlePrev}
-            />
-        ) }
+        {storestate == 0 ?
+          <RaisedButton
+            label={'签到'}
+            primary={true}
+            onTouchTap={this.handleSignIn}
+            /> : null
+        }
+        {storestate == 1 ?
+          [<List>
+            <ListItem
+              primaryText="主货架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="离架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="促销陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="库存采集"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="异常库存管理"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="竞品信息采集"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+            <ListItem
+              primaryText="洽谈记录"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={this.onClickStore}
+              />
+          </List>,
+            <RaisedButton
+              label="签出"
+              secondary={true}
+              onTouchTap={this.handleSignOut}
+              />] : null
+        }
       </div>
     );
   }
@@ -89,49 +136,39 @@ class DoPlan extends React.Component {
           />
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
+            <Subheader>线路：山东1</Subheader>
             <Stepper activeStep={stepIndex} orientation="vertical">
               <Step>
-                <StepLabel>Select campaign settings</StepLabel>
+                <StepLabel>华北大润发即墨店</StepLabel>
                 <StepContent>
-                  <p>
-                    For each ad campaign that you create, you can control how much
-                    you're willing to spend on clicks and conversions, which networks
-                    and geographical locations you want your ads to show on, and more.
-                  </p>
                   {this.renderStepActions(0) }
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel>Create an ad group</StepLabel>
+                <StepLabel>华北大润发城阳店</StepLabel>
                 <StepContent>
-                  <p>An ad group contains one or more ads which target a shared set of keywords.</p>
                   {this.renderStepActions(1) }
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel>Create an ad</StepLabel>
+                <StepLabel>华北大润发长城路店</StepLabel>
                 <StepContent>
-                  <p>
-                    Try out different ad text to see what brings in the most customers,
-                    and learn how to enhance your ads using features like ad extensions.
-                    If you run into any problems with your ads, find out how to tell if
-                    they're running and how to resolve approval issues.
-                  </p>
                   {this.renderStepActions(2) }
                 </StepContent>
               </Step>
             </Stepper>
             {finished && (
               <p style={{ margin: '20px 0', textAlign: 'center' }}>
+                该线路所有门店都已巡完.
                 <a
                   href="#"
                   onClick={(event) => {
                     event.preventDefault();
-                    this.setState({ stepIndex: 0, finished: false });
+                    this.onClickBack();
                   } }
                   >
-                  Click here
-                </a> to reset the example.
+                  查看其它计划
+                </a>
               </p>
             ) }
           </div>

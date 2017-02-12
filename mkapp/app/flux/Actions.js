@@ -62,6 +62,32 @@ var Action = {
         //context.dispatch(ActionEvent.AE_LOGOUT);
       })
   },
+  addPlan: function (data) {
+    var context = this;
+    data.command = 'addplan';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('addPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PLAN_ADD, response.data[0]);
+          message.success('增加计划成功');
+        } else {
+          message.error('增加计划失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('addPlan fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PLAN_ADD, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

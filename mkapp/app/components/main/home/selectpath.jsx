@@ -18,6 +18,7 @@ class SelectPath extends React.Component {
     };
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_CURPLANLIST, this.onCurPlanListChange)
   }
   componentWillUnmount() {
   }
@@ -41,8 +42,11 @@ class SelectPath extends React.Component {
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, '');
   }
-  onClickOk() {
+  onCurPlanListChange() {
     Store.emit(StoreEvent.SE_VIEW, '');
+  }
+  onClickOk() {
+    Action.addPlan({});
   }
   render() {
     return (
@@ -54,9 +58,9 @@ class SelectPath extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <div className={[styles.content,styles.content_notoolbar].join(' ')}>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <List>
-          {this.getPathlist()}
+            {this.getPathlist() }
           </List>
         </div>
       </div>
