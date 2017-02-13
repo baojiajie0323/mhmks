@@ -4,13 +4,79 @@
   <meta charset="UTF-8">
   <title>满好营销通后台管理平台</title>
   <link rel="stylesheet" href="index.css" />
+  <style>
+	.con4{      
+		 width: %;      
+		 height: auto;      
+		 overflow: hidden;      
+		 margin: % auto  auto;      
+		 color: #FFFFFF;      
+	}      
+	.con4 .btn{      
+		 width: %;      
+		 height: px;      
+		 line-height: px;      
+		 text-align: center;      
+		 background: #dbc;      
+		 display: block;      
+		 font-size: px;      
+		 border-radius: px;      
+	}      
+	.upload{      
+		 float: left;      
+		 position: relative;      
+	}      
+	.upload_pic{      
+		 display: block;      
+		 width: %;      
+		 height: px;      
+		 position: absolute;      
+		 left: ;      
+		 top: ;      
+		 opacity: ;      
+		 border-radius: px;      
+	}     
+  </style>
 </head>
 <body>
 
-<div id="root"></div>
-
-<script src="common.js"></script>
-<script src="index.js"></script>
-
+<div id="root">
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="con4">     
+ <span class="btn upload">上传<input type="file" class="upload_pic" id="upload" /></span>     
+</div>  
+</div>
 </body>
+<script>
+function readFile(){       
+     var file = this.files[];       
+     if(!/image\/\w+/.test(file.type)){       
+         alert("文件必须为图片！");       
+         return false;       
+     }       
+     var reader = new FileReader();       
+     reader.readAsDataURL(file);       
+     //当文件读取成功便可以调取上传的接口，想传哪里传哪里（PS： 你们可以把你们的靓照偷偷发给我！）      
+     reader.onload = function(e){       
+         var data = this.result.split(',');      
+         var tp = (file.type == 'image/png')? 'png': 'jpg';      
+         var a = data[];      
+         //需要上传到服务器的在这里可以进行ajax请求      
+         ... ...      
+     }      
+};     
+
+var input = document.getElementById("upload");       
+if(typeof FileReader==='undefined'){       
+     //result.innerHTML = "抱歉，你的浏览器不支持 FileReader";       
+     input.setAttribute('disabled','disabled');       
+}else{       
+     input.addEventListener('change',readFile,false);       
+}  
+</script>
 </html>
