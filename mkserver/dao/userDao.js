@@ -116,7 +116,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.moduser;
-        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), parseInt(param.role), ,parseInt(param.enableweb),parseInt(param.enableapp), param.id], function (err, result) {
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), parseInt(param.role) ,parseInt(param.enableweb),parseInt(param.enableapp), param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -199,7 +199,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.adddepart;
-        connection.query(sqlstring, [param.name, param.parentid, parseInt(param.userid)], function (err, result) {
+        connection.query(sqlstring, [param.name, param.parentid, parseInt(param.userid), param.path], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -233,7 +233,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.moddepart;
-        connection.query(sqlstring, [param.name, parseInt(param.userid), param.id], function (err, result) {
+        connection.query(sqlstring, [param.name, parseInt(param.userid),param.path, param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

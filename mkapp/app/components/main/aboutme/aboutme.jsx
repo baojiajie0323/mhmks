@@ -20,14 +20,23 @@ class Aboutme extends React.Component {
     super(props);
     this.state = {
       open: false,
+      userInfo: Store.getUserInfo()
     };
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleOk = this.handleOk.bind(this);
+    this.onLoginChange = this.onLoginChange.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
+  }
+  onLoginChange(){
+    this.setState({
+      userInfo: Store.getUserInfo()
+    })
   }
   onClickPos() {
     Store.emit(StoreEvent.SE_VIEW, 'localtionview');
@@ -63,16 +72,16 @@ class Aboutme extends React.Component {
           />
         <div className={styles.usercontainer}>
           <Paper className={styles.userphoto} zDepth={3} circle={true} />
-          <p className={styles.username}>李春香</p>
+          <p className={styles.username}>{this.state.userInfo.realname}</p>
         </div>
         <List>
-          <ListItem primaryText="15026489683"
+          <ListItem primaryText={this.state.userInfo.phone}
           leftIcon={<CommunicationCall color={cyan300}/>} 
           />
-          <ListItem primaryText="lichunxiang@myhome-sh.com"
+          <ListItem primaryText={this.state.userInfo.email}
           leftIcon={<CommunicationEmail color={cyan300}/>} 
           />
-          <ListItem primaryText="浙江宁波"
+          <ListItem primaryText={this.state.userInfo.departname}
           leftIcon={<AreaIcon color={cyan300}/>} 
           />
           <Divider />

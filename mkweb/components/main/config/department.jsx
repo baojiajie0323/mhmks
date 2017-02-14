@@ -12,8 +12,10 @@ class Department extends React.Component {
       loading: true,
       department: Store.getDepartment(),
       user: Store.getUser(),
+      path: Store.getPath(),
       departname: '',
       uservalue: '',
+      pathvalue: [],
       visible: false,
     };
     this.selectedkeys = '0';
@@ -27,15 +29,20 @@ class Department extends React.Component {
     this.onSelect = this.onSelect.bind(this);
     this.onDepartnameChange = this.onDepartnameChange.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
+    this.handlePathChange = this.handlePathChange.bind(this);
+    this.onPathChange = this.onPathChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartmentChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
     Action.getDepartment();
     Action.getUser();
+    Action.getPath();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartmentChange);
   }
   onUserChange() {
@@ -50,6 +57,11 @@ class Department extends React.Component {
       visible: false,
     })
   }
+  onPathChange() {
+    this.setState({
+      path: Store.getPath(),
+    })
+  }
   onDepartnameChange(e) {
     this.setState({
       departname: e.target.value
@@ -60,6 +72,7 @@ class Department extends React.Component {
     this.setState({
       departname: '',
       uservalue: '',
+      pathvalue: [],
       visible: true
     })
   }
@@ -73,7 +86,8 @@ class Department extends React.Component {
     this.modaltype = 'mod';
     this.setState({
       departname: depart.name,
-      uservalue: depart.userid == 0? '':depart.userid,
+      uservalue: depart.userid == 0 ? '' : depart.userid,
+      pathvalue: depart.path ? JSON.parse(depart.path.replace('\\','')) : [],
       visible: true,
     })
   }
@@ -82,6 +96,7 @@ class Department extends React.Component {
       var data = {
         name: this.state.departname,
         userid: this.state.uservalue,
+        path: JSON.stringify(this.state.pathvalue),
         parentid: this.selectedkeys
       }
       console.log('addmode', data);
@@ -90,6 +105,7 @@ class Department extends React.Component {
       var data = {
         name: this.state.departname,
         userid: this.state.uservalue,
+        path: JSON.stringify(this.state.pathvalue),
         id: this.selectedkeys,
       }
       console.log('modmode', data);
@@ -158,9 +174,17 @@ class Department extends React.Component {
   handleUserChange(value) {
     this.setState({ uservalue: value })
   }
+  handlePathChange(value){
+    this.setState({pathvalue:value})
+  }
   getUserOption() {
     return this.state.user.map((u) => {
       return <Option value={u.id.toString() }>{u.realname}</Option>
+    })
+  }
+  getPathOption() {
+    return this.state.path.map((u) => {
+      return <Option value={u.Path_id }>{u.Path_name}</Option>
     })
   }
   render() {
@@ -178,7 +202,7 @@ class Department extends React.Component {
           </Tree> : null
           }
         </div>
-        <Modal width={420} title={this.modaltype=='add'?'创建部门':'修改部门'} visible={this.state.visible}
+        <Modal width={420} title={this.modaltype == 'add' ? '创建部门' : '修改部门'} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
           >
           <div className={styles.formcontent}>
@@ -193,6 +217,14 @@ class Department extends React.Component {
             <div className={styles.form}>
               <Select style={{ width: '100%' }} value={this.state.uservalue} onChange={this.handleUserChange}>
                 {this.getUserOption() }
+              </Select>
+            </div>
+          </div>
+          <div className={[styles.formcontent,styles.formmultiselcontent].join(' ')}>
+            <span className={styles.formtitle}>路线</span>
+            <div className={styles.form}>
+              <Select style={{ width: '100%' }} multiple placeholder="请选择路线" value={this.state.pathvalue} onChange={this.handlePathChange}>
+                {this.getPathOption() }
               </Select>
             </div>
           </div>

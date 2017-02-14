@@ -8,16 +8,20 @@ body {
   line-height: 20px;
 }
 
+input :-webkit-autofill{
+  background-color: transparent !important;
+}
+
 .ant-message {
   z-index: 9999;
 }
 
 .ant-spin-nested-loading .ant-spin-show-text.ant-spin-lg .ant-spin-dot{
-  margin-top: 30px;
+  margin-top: -45px;
 }
 
 .ant-spin-nested-loading .ant-spin-lg .ant-spin-text {
-  padding-top: 75px;
+  padding-top: 0;
 }
 
 .ant-spin-nested-loading {

@@ -31,6 +31,7 @@ class Main extends React.Component {
     this.state = {
       selectedIndex: 0,
       subview:'',
+      userdata: '',
     };
     this.select = this.select.bind(this);
     this.onChangeView = this.onChangeView.bind(this);
@@ -45,10 +46,10 @@ class Main extends React.Component {
   select(index) {
     this.setState({ subview:'',selectedIndex: index });
   }
-  onChangeView(subview){
+  onChangeView(subview,userdata){
     var context = this;
     setTimeout(function() {
-      context.setState({subview});
+      context.setState({subview,userdata});
     }, 400);
   }
 
@@ -56,7 +57,7 @@ class Main extends React.Component {
     if(this.state.subview == 'localtionview'){
       return <Location />
     }else if (this.state.subview == 'storedetailview'){
-      return <StoreDetail />
+      return <StoreDetail userdata={this.state.userdata} />
     }else if (this.state.subview == 'selectpathview'){
       return <SelectPath />
     }else if (this.state.subview == 'selectstoreview'){

@@ -162,8 +162,8 @@ class User extends React.Component {
       email: this.state.email,
       depart: this.state.departvalue,
       role: this.state.rolevalue,
-      enableapp: this.state.enableapp,
-      enableweb: this.state.enableweb
+      enableapp: this.state.enableapp ? 1:0,
+      enableweb: this.state.enableweb ? 1:0
     }
     if (this.modaltype == 'add') {
       console.log('addmode', data);

@@ -11,6 +11,7 @@ var _userInfo = {};
 var _curPlanlist = [];
 
 var _user = [];
+var _storeBasic = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -44,6 +45,22 @@ var Store = assign({}, EventEmitter.prototype, {
   },
   getUser: function () {
     return _user;
+  },
+
+  setStoreBasic: function (sa) {
+    _storeBasic = sa;
+    this.emitChange(StoreEvent.SE_STOREBASIC);
+  },
+  getStoreBasic: function () {
+    return _storeBasic;
+  },
+  getStoreById: function (id) {
+    for (var i = 0; i < _storeBasic.length; i++){
+      if(id == _storeBasic[i].Store_id){
+        return _storeBasic[i];
+      }
+    }
+    return null;
   },
 
   getPlanlist: function () {
@@ -88,6 +105,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_USER: {
       Store.setUser(action.value);
+    }
+      break;
+    case ActionEvent.AE_STOREBASIC: {
+      Store.setStoreBasic(action.value);
     }
       break;
     case ActionEvent.AE_PLAN_ADD: {

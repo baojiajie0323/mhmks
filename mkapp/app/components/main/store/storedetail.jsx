@@ -15,14 +15,23 @@ class StoreDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      storeInfo: {}
     };
   }
   componentDidMount() {
+    var Store_id = this.props.userdata;
+    var storeInfo = Store.getStoreById(Store_id);
+    if (storeInfo) {
+      this.setState({
+        storeInfo
+      })
+
     var map = new BMap.Map("localtionmap");
-    var point = new BMap.Point(120.3897754779, 36.066245467);
+    var point = new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y);
     map.centerAndZoom(point, 14);
-    var marker = new BMap.Marker(new BMap.Point(120.3897754779, 36.066245467)); // 创建点
+    var marker = new BMap.Marker(new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y)); // 创建点
     map.addOverlay(marker);
+    }
   }
   componentWillUnmount() {
   }
@@ -33,7 +42,7 @@ class StoreDetail extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          title='家乐福青岛名达店'
+          title={this.state.storeInfo.Store_name}
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
@@ -41,22 +50,17 @@ class StoreDetail extends React.Component {
           <div id="localtionmap" className={styles.mapContainer}></div>
           <List>
             <ListItem
-              primaryText="山东省青岛市市南区香港中路21号"
+              primaryText={this.state.storeInfo.Address}
               leftIcon={<PlaceIcon color={cyan600}/>}
               />
             <ListItem
-              primaryText={<span style={{fontWeight:'bold'}}>A</span>}
+              primaryText={<span style={{ fontWeight: 'bold' }}>{this.state.storeInfo.Level}</span>}
               leftIcon={<StarIcon color={cyan600}/>}
               />
             <ListItem
-              primaryText="苏文"
-              secondaryText="15026489683"
+              primaryText={this.state.storeInfo.Contacts_name}
+              secondaryText={this.state.storeInfo.Tel}
               leftIcon={<CommunicationCall color={cyan600}/>}
-              />
-            <ListItem
-              insetChildren={true}
-              primaryText="张飞"
-              secondaryText="15026489684"
               />
           </List>
         </div>

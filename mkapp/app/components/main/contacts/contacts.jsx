@@ -19,8 +19,13 @@ class Contacts extends React.Component {
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
-
-    Action.getUser();
+    if (this.state.user.length <= 0) {
+      Action.getUser();
+    } else {
+      this.setState({
+        loading: false,
+      })
+    }
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
@@ -54,7 +59,7 @@ class Contacts extends React.Component {
         <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
           <div className={styles.content}>
             <List>
-              {this.getContactsDom()}
+              {this.getContactsDom() }
             </List>
           </div>
         </Spin>

@@ -3,7 +3,8 @@ import $ from 'jquery'
 import { message } from 'antd';
 
 var _debug = true;
-var _domain_name = 'http://d1658k3l069.iask.in';  //域名
+//var _domain_name = 'http://d1658k3l069.iask.in';  //域名
+var _domain_name = '';  //域名
 
 const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
@@ -88,6 +89,34 @@ var Action = {
           var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","password":"123456","phone":"15026489683","email":"baojiajie@myhome.com","depart":"","enableweb":1,"enableapp":0}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_USER, rsp.data);
+        }
+      })
+  },
+  getStoreBasic: function (data) {
+    var context = this;
+    
+    data.command = 'getstorebasic';
+    
+    $.ajax({
+      url: _domain_name + '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStoreBasic:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOREBASIC, response.data);
+        } else {
+          message.error('获取门店失败！' + response.msg);
+          context.dispatch(ActionEvent.AE_STOREBASIC, []);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStoreBasic fail');
+        if (_debug) {
+          var response = '{"data":[]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STOREBASIC, rsp.data);
         }
       })
   },

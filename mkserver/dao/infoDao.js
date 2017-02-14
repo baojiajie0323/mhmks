@@ -28,13 +28,19 @@ module.exports = {
     });
   },
   getStoreBasic: function (req, res, next) {
-    console.log('infoDao getStoreBasic');
+    console.log('infoDao getStoreBasic',req.body);
+
+    var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.getstorebasic;
+        if(param.username){
+          sqlstring += ' where user_id = "' + param.username + '"';
+        }
+        console.log(sqlstring);
         connection.query(sqlstring, [], function (err, result) {
           console.log('dbresult', result);
           if (result.length > 0) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './store.less';
 import AppBar from 'material-ui/AppBar';
+import { Spin } from 'antd';
 import { List, ListItem } from 'material-ui/List';
 import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import Divider from 'material-ui/Divider';
@@ -10,29 +11,50 @@ import { cyan600 } from 'material-ui/styles/colors';
 class StoreView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {      
+    this.state = {
       storeBasic: Store.getStoreBasic(),
       loading: true,
     };
+    this.onStoreBasicChange = this.onStoreBasicChange.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
+
+    if (this.state.storeBasic.length <= 0) {
+      Action.getStoreBasic({
+        username: localStorage.username
+      });
+    } else {
+      this.setState({
+        loading: false,
+      })
+    }
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
   }
-  onClickStore(e){
-    console.log(e);
-    Store.emit(StoreEvent.SE_VIEW,'storedetailview');
+  onStoreBasicChange() {
+    this.setState({
+      storeBasic: Store.getStoreBasic(),
+      loading: false,
+    })
+  }
+  onClickStore(id) {
+    console.log(id);
+    Store.emit(StoreEvent.SE_VIEW, 'storedetailview', id);
   }
   getStoreDom() {
     var domlist = [];
-    for (var i = 0; i < 50; i++) {
+    var context = this;
+    this.state.storeBasic.forEach((sb) => {
       domlist.push(<ListItem
-        primaryText="家乐福青岛名达店"
+        id={sb.Store_id}
+        primaryText={sb.Store_name}
         rightIcon={<RightIcon color={cyan600} />}
-        onTouchTap={this.onClickStore}
+        onTouchTap={function () { context.onClickStore(sb.Store_id) } }
         />);
       domlist.push(<Divider />);
-    }
+    })
     return domlist;
   }
   render() {
@@ -42,11 +64,13 @@ class StoreView extends React.Component {
           title='门店'
           iconElementLeft={<span></span>}
           />
-        <div className={styles.content}>
-          <List>
-            {this.getStoreDom() }
-          </List>
-        </div>
+        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <div className={styles.content}>
+            <List>
+              {this.getStoreDom() }
+            </List>
+          </div>
+        </Spin>
       </div>
     );
   }
