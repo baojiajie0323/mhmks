@@ -79,7 +79,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.adduser;
-        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart),parseInt(param.role)], function (err, result) {
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart),parseInt(param.role),parseInt(param.enableweb),parseInt(param.enableapp)], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -116,7 +116,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.moduser;
-        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), parseInt(param.role), param.id], function (err, result) {
+        connection.query(sqlstring, [param.username, param.password, param.realname, param.phone, param.email, parseInt(param.depart), parseInt(param.role), ,parseInt(param.enableweb),parseInt(param.enableapp), param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

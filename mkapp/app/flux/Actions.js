@@ -3,6 +3,7 @@ import $ from 'jquery'
 import { message } from 'antd';
 
 var _debug = true;
+var _domain_name = 'http://d1658k3l069.iask.in';  //域名
 
 const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
@@ -13,7 +14,7 @@ var Action = {
     var context = this;
     data.command = 'login';
     $.ajax({
-      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/users', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {
@@ -41,7 +42,7 @@ var Action = {
       command: 'logout'
     }
     $.ajax({
-      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/users', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {
@@ -62,11 +63,39 @@ var Action = {
         //context.dispatch(ActionEvent.AE_LOGOUT);
       })
   },
+  getUser: function () {
+    var context = this;
+    var data = {
+      command: 'getuser'
+    }
+    $.ajax({
+      url: _domain_name + '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getUser:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_USER, response.data);
+        } else {
+          message.error('获取用户失败！' + response.msg);
+          context.dispatch(ActionEvent.AE_USER, []);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getUser fail');
+        if (_debug) {
+          var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","password":"123456","phone":"15026489683","email":"baojiajie@myhome.com","depart":"","enableweb":1,"enableapp":0}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_USER, rsp.data);
+        }
+      })
+  },
   addPlan: function (data) {
     var context = this;
     data.command = 'addplan';
     $.ajax({
-      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {

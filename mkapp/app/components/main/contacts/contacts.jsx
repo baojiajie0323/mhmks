@@ -1,33 +1,47 @@
 import React from 'react';
 import styles from './contacts.less';
+import { Spin } from 'antd';
 import AppBar from 'material-ui/AppBar';
 import { List, ListItem } from 'material-ui/List';
 import PhoneIcon from 'material-ui/svg-icons/communication/phone';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
-import { cyan600} from 'material-ui/styles/colors';
+import { cyan600 } from 'material-ui/styles/colors';
 
 class Contacts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: Store.getUser(),
+      loading: true,
     };
+    this.onUserChange = this.onUserChange.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+
+    Action.getUser();
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
+  }
+  onUserChange() {
+    this.setState({
+      user: Store.getUser(),
+      loading: false,
+    })
   }
   getContactsDom() {
     var domlist = [];
-    for (var i = 0; i < 50; i++) {
-      domlist.push(<a href='tel:15026489683'>
+    this.state.user.forEach((user) => {
+      domlist.push(<a href={'tel:' + user.phone}>
         <ListItem
-          primaryText="鲍嘉捷"
+          primaryText={user.realname}
           rightIcon={<PhoneIcon color={cyan600} />}
           />
       </a>);
       domlist.push(<Divider />);
-    }
+    })
     return domlist;
   }
   render() {
@@ -37,11 +51,13 @@ class Contacts extends React.Component {
           title='通讯录'
           iconElementLeft={<span></span>}
           />
-        <div className={styles.content}>
-          <List>
-            {this.getContactsDom() }
-          </List>
-        </div>
+        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <div className={styles.content}>
+            <List>
+              {this.getContactsDom()}
+            </List>
+          </div>
+        </Spin>
       </div >
     );
   }

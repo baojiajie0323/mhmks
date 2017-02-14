@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Icon, Modal, Input, Popconfirm, Select, message} from 'antd';
+import { Table, Button, Icon, Modal, Checkbox, Input, Popconfirm, Select, message } from 'antd';
 import styles from './config.less';
 
 class User extends React.Component {
@@ -20,6 +20,9 @@ class User extends React.Component {
       email: '',
       departvalue: '',
       rolevalue: '',
+      enableapp: false,
+      enableweb: false,
+
     };
     this.onUserChange = this.onUserChange.bind(this);
     this.onClickAdd = this.onClickAdd.bind(this);
@@ -38,6 +41,8 @@ class User extends React.Component {
     this.onEmailChange = this.onEmailChange.bind(this);
     this.handleDepartChange = this.handleDepartChange.bind(this);
     this.handleRoleChange = this.handleRoleChange.bind(this);
+    this.onEnableWebChange = this.onEnableWebChange.bind(this);
+    this.onEnableAppChange = this.onEnableAppChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
@@ -99,6 +104,16 @@ class User extends React.Component {
       email: e.target.value
     })
   }
+  onEnableWebChange(e) {
+    this.setState({
+      enableweb: e.target.checked
+    })
+  }
+  onEnableAppChange(e) {
+    this.setState({
+      enableapp: e.target.checked
+    })
+  }
   onClickAdd() {
     this.modaltype = 'add';
     this.setState({
@@ -110,6 +125,8 @@ class User extends React.Component {
       email: '',
       departvalue: '',
       rolevalue: '',
+      enableweb: false,
+      enableapp: false,
       visible: true
     })
   }
@@ -127,6 +144,8 @@ class User extends React.Component {
       email: userInfo.email,
       departvalue: userInfo.depart ? userInfo.depart.toString() : "",
       rolevalue: userInfo.role ? userInfo.role.toString() : "",
+      enableapp: userInfo.enableapp,
+      enableweb: userInfo.enableweb,
       visible: true
     })
   }
@@ -143,6 +162,8 @@ class User extends React.Component {
       email: this.state.email,
       depart: this.state.departvalue,
       role: this.state.rolevalue,
+      enableapp: this.state.enableapp,
+      enableweb: this.state.enableweb
     }
     if (this.modaltype == 'add') {
       console.log('addmode', data);
@@ -169,50 +190,64 @@ class User extends React.Component {
       dataIndex: 'username',
       key: 'username',
     }, {
-        title: '姓名',
-        dataIndex: 'realname',
-        key: 'realname',
-      }, {
-        title: '部门',
-        dataIndex: 'depart',
-        key: 'depart',
-        render: function (text, record) {
-          var depart = Store.getDepartmentbyId(text);
-          return (<span>{depart ? depart.name : ''}</span>)
-        }
-      }, {
-        title: '角色',
-        dataIndex: 'role',
-        key: 'role',
-        render: function (text, record) {
-          var role = Store.getRolebyId(text);
-          return (<span>{role ? role.name : ''}</span>)
-        }
-      }, {
-        title: '电话',
-        dataIndex: 'phone',
-        key: 'phone',
-      }, {
-        title: '邮箱',
-        dataIndex: 'email',
-        key: 'email',
-      }, {
-        //   title: '稽查',
-        //   dataIndex: 'check',
-        //   key: 'check',
-        //   render: (text, record) => (<span>{text == 1 ? '是' : '否'}</span>),
-        // }, {
-        title: '操作',
-        key: 'operate',
-        render: function (text, record) {
-          return (<div className={styles.operatecontent}>
-            <a data-id={record.id} onClick={context.onClickEdit}><Icon type="edit" /></a>
-            <Popconfirm title="确定要删除这条记录吗?" onConfirm={function () { context.onClickDeleteUser(record.id) } }>
-              <a><Icon type="delete" /></a>
-            </Popconfirm>
-          </div>)
-        },
-      }];
+      title: '姓名',
+      dataIndex: 'realname',
+      key: 'realname',
+    }, {
+      title: '部门',
+      dataIndex: 'depart',
+      key: 'depart',
+      render: function (text, record) {
+        var depart = Store.getDepartmentbyId(text);
+        return (<span>{depart ? depart.name : ''}</span>)
+      }
+    }, {
+      title: '角色',
+      dataIndex: 'role',
+      key: 'role',
+      render: function (text, record) {
+        var role = Store.getRolebyId(text);
+        return (<span>{role ? role.name : ''}</span>)
+      }
+    }, {
+      title: '电话',
+      dataIndex: 'phone',
+      key: 'phone',
+    }, {
+      title: '邮箱',
+      dataIndex: 'email',
+      key: 'email',
+    }, {
+      title: '后台',
+      dataIndex: 'enableweb',
+      key: 'enableweb',
+      render: function (text, record) {
+        return (<span>{text == 1 ? '启用' : '未启用'}</span>)
+      }
+    }, {
+      title: 'APP',
+      dataIndex: 'enableapp',
+      key: 'enableapp',
+      render: function (text, record) {
+        return (<span>{text == 1 ? '启用' : '未启用'}</span>)
+      }
+    }, {
+      //   title: '稽查',
+      //   dataIndex: 'check',
+      //   key: 'check',
+      //   render: (text, record) => (<span>{text == 1 ? '是' : '否'}</span>),
+      // }, {
+      title: '操作',
+      key: 'operate',
+      render: function (text, record) {
+        return (<div className={styles.operatecontent}>
+          <a data-id={record.id} onClick={context.onClickEdit}><Icon type="edit" /></a>
+          <Popconfirm title="确定要删除这条记录吗?" onConfirm={function () { context.onClickDeleteUser(record.id) } }>
+            <a><Icon type="delete" /></a>
+          </Popconfirm>
+        </div>)
+      },
+    }];
   }
   getTableData() {
     this.state.user.forEach((sa, i) => {
@@ -228,12 +263,12 @@ class User extends React.Component {
   }
   getDepartOption() {
     return this.state.department.map((u) => {
-      return <Option value={u.id.toString() }>{u.name}</Option>
+      return <Option value={u.id.toString()}>{u.name}</Option>
     })
   }
   getRoleOption() {
     return this.state.role.map((u) => {
-      return <Option value={u.id.toString() }>{u.name}</Option>
+      return <Option value={u.id.toString()}>{u.name}</Option>
     })
   }
   render() {
@@ -245,7 +280,7 @@ class User extends React.Component {
         </div>
         <div className={styles.configtable}>
           <Table loading={this.state.loading} bordered
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={420} title={this.modaltype == 'add' ? '创建用户' : '修改用户'} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -294,7 +329,7 @@ class User extends React.Component {
             <span className={styles.formtitle}>部门</span>
             <div className={styles.form}>
               <Select style={{ width: '100%' }} value={this.state.departvalue} placeholder="请选择部门" onChange={this.handleDepartChange}>
-                {this.getDepartOption() }
+                {this.getDepartOption()}
               </Select>
             </div>
             <span className={styles.formstar}>*</span>
@@ -303,10 +338,17 @@ class User extends React.Component {
             <span className={styles.formtitle}>角色</span>
             <div className={styles.form}>
               <Select style={{ width: '100%' }} value={this.state.rolevalue} placeholder="请选择角色" onChange={this.handleRoleChange}>
-                {this.getRoleOption() }
+                {this.getRoleOption()}
               </Select>
             </div>
             <span className={styles.formstar}>*</span>
+          </div>
+          <div className={styles.formcontent}>
+            <span className={styles.formtitle}></span>
+            <div className={styles.form}>
+              <Checkbox checked={this.state.enableweb} onChange={this.onEnableWebChange}>启用后台</Checkbox>
+              <Checkbox checked={this.state.enableapp} onChange={this.onEnableAppChange}>启用APP</Checkbox>
+            </div>
           </div>
         </Modal>
       </div>

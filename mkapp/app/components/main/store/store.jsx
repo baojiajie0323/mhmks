@@ -10,7 +10,9 @@ import { cyan600 } from 'material-ui/styles/colors';
 class StoreView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {      
+      storeBasic: Store.getStoreBasic(),
+      loading: true,
     };
   }
   componentDidMount() {
