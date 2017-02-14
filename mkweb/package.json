@@ -36,7 +36,7 @@
     "lint"
   ],
   "scripts": {
-    "build": "atool-build",
+    "build": "atool-build && node ./postbuild.js",
     "lint": "eslint --ext .js,.jsx src/",
     "start": "dora --plugins webpack -p 8001",
     "test": "atool-test-mocha ./**/__tests__/*-test.js"
