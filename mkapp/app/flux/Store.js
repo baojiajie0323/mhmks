@@ -10,6 +10,8 @@ var _loginSuccess = false;
 var _userInfo = {};
 var _curPlanlist = [];
 
+var _user = [];
+
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
     this.emitChange(StoreEvent.SE_BACK);
@@ -36,6 +38,14 @@ var Store = assign({}, EventEmitter.prototype, {
     return _curview;
   },
 
+  setUser: function (sa) {
+    _user = sa;
+    this.emitChange(StoreEvent.SE_USER);
+  },
+  getUser: function () {
+    return _user;
+  },
+
   getPlanlist: function () {
     return _curPlanlist;
   },
@@ -43,7 +53,7 @@ var Store = assign({}, EventEmitter.prototype, {
     _curPlanlist = pl;
     this.emit(StoreEvent.SE_CURPLANLIST);
   },
-  addPlan: function (plan){
+  addPlan: function (plan) {
     _curPlanlist.push(plan);
     this.emit(StoreEvent.SE_CURPLANLIST);
   },
@@ -76,8 +86,12 @@ AppDispatcher.register((action) => {
       Store.setLoginSuccess(false);
     }
       break;
+    case ActionEvent.AE_USER: {
+      Store.setUser(action.value);
+    }
+      break;
     case ActionEvent.AE_PLAN_ADD: {
-      Store.addPlan({id:2});
+      Store.addPlan({ id: 2 });
     }
       break;
     default:

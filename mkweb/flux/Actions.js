@@ -360,7 +360,7 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('getUser fail');
         if (_debug) {
-          var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","password":"123456","phone":"15026489683","email":"baojiajie@myhome.com","depart":""}]}';
+          var response = '{"data":[{"id":1,"username":"008888","realname":"鲍嘉捷","password":"123456","phone":"15026489683","email":"baojiajie@myhome.com","depart":"","enableweb":1,"enableapp":0}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_USER, rsp.data);
         }
