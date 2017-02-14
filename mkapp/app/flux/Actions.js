@@ -13,7 +13,7 @@ var Action = {
     var context = this;
     data.command = 'login';
     $.ajax({
-      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      url: 'http://1658k3l069.iask.in/users', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {
