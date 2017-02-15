@@ -78,12 +78,17 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      planlist: Store.getPlanlist()
+      planlist: Store.getPlanlist(),
+      curDate: new Date(),
     };
+    this.onDateChange = this.onDateChange.bind(this);
   }
   componentDidMount() {
   }
   componentWillUnmount() {
+  }
+  onDateChange(e,date){
+    this.setState({curDate:date})
   }
   onClickAddPath() {
     Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
@@ -148,6 +153,7 @@ class Home extends React.Component {
             <ToolbarGroup>
               <DateIcon color={cyan800} />
               <DatePicker
+                value={this.state.curDate}
                 DateTimeFormat={DateTimeFormat}
                 locale="zh"
                 style={{ marginLeft: '10px' }}
@@ -156,14 +162,15 @@ class Home extends React.Component {
                 hintText="请选择日期"
                 okLabel="确定"
                 cancelLabel="取消"
+                onChange={this.onDateChange}
                 formatDate={new DateTimeFormat('zh', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
                 }).format}
                 />
-              <IconButton><LeftIcon color={cyan800} /></IconButton>
-              <IconButton><RightIcon color={cyan800} /></IconButton>
+              <IconButton onTouchTap={this.onClickPrev}><LeftIcon color={cyan800} /></IconButton>
+              <IconButton onTouchTap={this.onClickNext}><RightIcon color={cyan800} /></IconButton>
             </ToolbarGroup>
             <ToolbarGroup >
               <Logged
