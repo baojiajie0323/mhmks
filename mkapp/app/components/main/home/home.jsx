@@ -82,13 +82,30 @@ class Home extends React.Component {
       curDate: new Date(),
     };
     this.onDateChange = this.onDateChange.bind(this);
+    this.onClickPrev = this.onClickPrev.bind(this);
+    this.onClickNext = this.onClickNext.bind(this);
   }
   componentDidMount() {
   }
   componentWillUnmount() {
   }
-  onDateChange(e,date){
-    this.setState({curDate:date})
+  onDateChange(e,curDate){
+    this.setState({curDate})
+  }
+  onClickPrev(){
+    var {curDate} = this.state;
+    curDate.setDate(curDate.getDate() - 1);
+    this.setState({
+      curDate
+    })
+  }
+  onClickNext(){
+    var {curDate} = this.state;
+    console.log(curDate,curDate.getDate);
+    curDate.setDate(curDate.getDate() + 1);
+    this.setState({
+      curDate
+    })
   }
   onClickAddPath() {
     Store.emit(StoreEvent.SE_VIEW, 'selectpathview');

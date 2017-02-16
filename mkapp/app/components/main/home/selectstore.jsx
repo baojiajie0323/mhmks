@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './home.less';
 
 
+import { Spin } from 'antd';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -10,30 +11,49 @@ import Checkbox from 'material-ui/Checkbox';
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
+import StoreIcon from 'material-ui/svg-icons/action/store';
 
 class SelectStore extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      storeBasic: Store.getStoreBasic(),
+      loading: true,
     };
+    this.onStoreBasicChange = this.onStoreBasicChange.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
+    if (this.state.storeBasic.length <= 0) {
+      Action.getStoreBasic({
+        username: localStorage.username
+      });
+    } else {
+      this.setState({
+        loading: false,
+      })
+    }
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
   }
+  onStoreBasicChange() {
+    this.setState({
+      storeBasic: Store.getStoreBasic(),
+      loading: false,
+    })
+  }
+
   getStorelist() {
-    return [<ListItem
-      leftCheckbox={<Checkbox />}
-      primaryText="华北大润发即墨店"
-      />,
-      <ListItem
+    var context = this;
+    return this.state.storeBasic.map((sb) => {
+      domlist.push(<ListItem
+        id={sb.Store_id}
+        primaryText={sb.Store_name}
         leftCheckbox={<Checkbox />}
-        primaryText="华北大润发城阳店"
-        />,
-      <ListItem
-        leftCheckbox={<Checkbox />}
-        primaryText="家乐福青岛新兴店"
-        />]
+        />);
+      domlist.push(<Divider />);
+    })
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, '');
@@ -51,11 +71,13 @@ class SelectStore extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <div className={[styles.content,styles.content_notoolbar].join(' ')}>
-          <List>
-          {this.getStorelist()}
-          </List>
-        </div>
+        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+            <List>
+              {this.getStorelist()}
+            </List>
+          </div>
+        </Spin>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './home.less';
 
 
+import { Spin } from 'antd';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -15,6 +16,8 @@ class SelectPath extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      path: Store.getPath(),
+      loading: true,
     };
   }
   componentDidMount() {
