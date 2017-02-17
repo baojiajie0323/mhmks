@@ -38,7 +38,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstorebasic;
         if(param.username){
-          sqlstring += ' where user_id = "' + param.username + '"';
+          sqlstring += ' where user_id = ' + connection.escape(param.username);
         }
         console.log(sqlstring);
         connection.query(sqlstring, [], function (err, result) {
