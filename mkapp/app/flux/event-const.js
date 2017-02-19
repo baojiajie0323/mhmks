@@ -8,6 +8,8 @@ var eventMap = {
     AE_LOGOUT: null,
     AE_USER: null,
     AE_STOREBASIC: null,
+    AE_PATH: null,
+    AE_PLAN: null,
   }),
 
   StoreEvent: keyMirror({
@@ -16,7 +18,8 @@ var eventMap = {
     SE_VIEW: null,
     SE_USER: null,
     SE_STOREBASIC: null,
-    SE_CURPLANLIST: null,
+    SE_PATH: null,
+    SE_PLAN: null,
   })
 };
 

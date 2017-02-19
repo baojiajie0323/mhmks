@@ -11,6 +11,7 @@ import Paper from 'material-ui/Paper';
 import areIntlLocalesSupported from 'intl-locales-supported';
 import {List, ListItem} from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import { Spin } from 'antd';
 
 
 import AddIcon from 'material-ui/svg-icons/content/add-box';
@@ -78,30 +79,35 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      planlist: Store.getPlanlist(),
+      plan: Store.getPlan(),
       curDate: new Date(),
+      loading: true,
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickPrev = this.onClickPrev.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+
+    Action.
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
-  onDateChange(e,curDate){
-    this.setState({curDate})
+  onDateChange(e, curDate) {
+    this.setState({ curDate })
   }
-  onClickPrev(){
+  onClickPrev() {
     var {curDate} = this.state;
     curDate.setDate(curDate.getDate() - 1);
     this.setState({
       curDate
     })
   }
-  onClickNext(){
+  onClickNext() {
     var {curDate} = this.state;
-    console.log(curDate,curDate.getDate);
+    console.log(curDate, curDate.getDate);
     curDate.setDate(curDate.getDate() + 1);
     this.setState({
       curDate
@@ -123,7 +129,7 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   getPlanlist() {
-    if (this.state.planlist.length <= 0) {
+    if (this.state.plan.length <= 0) {
       return <Noplan />
     } else {
       return <List>
@@ -199,9 +205,12 @@ class Home extends React.Component {
             </ToolbarGroup>
           </Toolbar>
         </Paper>
-        <div className={styles.content}>
-          {this.getPlanlist() }
-        </div>
+
+        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <div className={styles.content}>
+            {this.getPlanlist() }
+          </div>
+        </Spin>
       </div>
     );
   }

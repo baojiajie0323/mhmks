@@ -12,6 +12,8 @@ var _curPlanlist = [];
 
 var _user = [];
 var _storeBasic = [];
+var _path = [];
+var _plan = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -55,24 +57,49 @@ var Store = assign({}, EventEmitter.prototype, {
     return _storeBasic;
   },
   getStoreById: function (id) {
-    for (var i = 0; i < _storeBasic.length; i++){
-      if(id == _storeBasic[i].Store_id){
+    for (var i = 0; i < _storeBasic.length; i++) {
+      if (id == _storeBasic[i].Store_id) {
         return _storeBasic[i];
       }
     }
     return null;
   },
 
-  getPlanlist: function () {
-    return _curPlanlist;
+  setPath: function (sa) {
+    _path = sa;
+    this.emitChange(StoreEvent.SE_PATH);
   },
-  setPlanlist: function (pl) {
-    _curPlanlist = pl;
-    this.emit(StoreEvent.SE_CURPLANLIST);
+  getPath: function () {
+    var pathList = _path.map((p) => {
+      if (p.Path_seq == 1) {
+        return {
+          Path_id: p.Path_id,
+          Path_name: p.Path_name
+        }
+      }
+    })
+    return pathList;
+  },
+  getPathDetail: function (pathId) {
+    var pathDetail = [];
+    _path.forEach((p) => {
+      if (p.Path_id == pathId) {
+        pathDetail.push(p.Store_name);
+      }
+    })
+    return pathDetail;
+  },
+
+  getPlan: function () {
+    return _plan;
+  },
+  setPlan: function (pl) {
+    _plan = pl;
+    this.emit(StoreEvent.SE_PLAN);
   },
   addPlan: function (plan) {
-    _curPlanlist.push(plan);
-    this.emit(StoreEvent.SE_CURPLANLIST);
+    _plan.push(plan);
+    this.emit(StoreEvent.SE_PLAN);
   },
 
   emitChange: function (eventtype) {
@@ -109,6 +136,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_STOREBASIC: {
       Store.setStoreBasic(action.value);
+    }
+      break;
+    case ActionEvent.AE_PATH: {
+      Store.setPath(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLAN: {
+      Store.setPlan(action.value);
     }
       break;
     case ActionEvent.AE_PLAN_ADD: {

@@ -5,7 +5,6 @@ var _sql = require('./sqlMapping');
 var pool = _dao.getPool();
 var jsonWrite = _dao.jsonWrite;
 var dbcode = _dao.dbcode;
-console.log(dbcode);
 
 module.exports = {
   login: function (req, res, next) {

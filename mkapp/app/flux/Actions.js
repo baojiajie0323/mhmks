@@ -94,9 +94,9 @@ var Action = {
   },
   getStoreBasic: function (data) {
     var context = this;
-    
+
     data.command = 'getstorebasic';
-    
+
     $.ajax({
       url: _domain_name + '/info', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
@@ -117,6 +117,56 @@ var Action = {
           var response = '{"data":[]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_STOREBASIC, rsp.data);
+        }
+      })
+  },
+  getPath: function (data) {
+    var context = this;
+    data.command = 'getpath_app';
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPath:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PATH, response.data);
+        } else {
+          message.error('获取路线失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPath fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PATH, rsp.data);
+        }
+      })
+  },
+  getPlan: function (data) {
+    var context = this;
+    data.command = 'getplan';
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PLAN, response.data);
+        } else {
+          message.error('获取计划失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPlan fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PLAN, rsp.data);
         }
       })
   },

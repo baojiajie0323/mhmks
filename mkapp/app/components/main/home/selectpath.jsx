@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import { List, ListItem } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -18,29 +19,58 @@ class SelectPath extends React.Component {
     this.state = {
       path: Store.getPath(),
       loading: true,
+      checkedId: '',
     };
+    this.onPathChange = this.onPathChange.bind(this);
+    this.onCheckChange = this.onCheckChange.bind(this);
   }
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_CURPLANLIST, this.onCurPlanListChange)
+    Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+    if (this.state.path.length <= 0) {
+      Action.getPath({
+        userid: localStorage.username
+      });
+    } else {
+      this.setState({
+        loading: false,
+      })
+    }
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+  }
+  onCheckChange(id, isInputChecked) {
+    if (isInputChecked) {
+      this.setState({ checkedId: id });
+    } else {
+      this.setState({ checkedId: '' });
+    }
+  }
+  onPathChange() {
+    this.setState({
+      path: Store.getPath(),
+      loading: false,
+    })
   }
   getPathlist() {
-    return [<ListItem
-      leftCheckbox={<Checkbox />}
-      primaryText="山东1"
-      secondaryText="华北大润发即墨店->华北大润发城阳店->华北大润发长城路店"
-      />,
-      <ListItem
-        leftCheckbox={<Checkbox />}
-        primaryText="山东2"
-        secondaryText="家乐福青岛辽阳路店->家乐福青岛新兴店->家乐福青岛名达店"
-        />,
-      <ListItem
-        leftCheckbox={<Checkbox />}
-        primaryText="山东3"
-        secondaryText="家乐福青岛辽阳路店->家乐福青岛新兴店"
-        />]
+    var context = this;
+    var domlist = [];
+    this.state.path.forEach((sb) => {
+      if (!sb) return;
+      var pathDetail = Store.getPathDetail(sb.Path_id);
+      var detailText = pathDetail.join('->');
+      domlist.push(<ListItem
+        id={sb.Path_id}
+        primaryText={sb.Path_name}
+        secondaryText={detailText}
+        secondaryTextLines = {2}
+        leftCheckbox={<Checkbox
+          onCheck={function (e, checked) { context.onCheckChange(sb.Path_id, checked) } }
+          checked={context.state.checkedId == sb.Path_id} />}
+        />);
+      domlist.push(<Divider />);
+    })
+    return domlist;
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, '');
@@ -61,11 +91,13 @@ class SelectPath extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          <List>
-            {this.getPathlist() }
-          </List>
-        </div>
+        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+            <List>
+              {this.getPathlist() }
+            </List>
+          </div>
+        </Spin>
       </div>
     );
   }

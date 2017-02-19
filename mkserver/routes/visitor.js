@@ -16,6 +16,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getpathdetail") {
     console.log('getpathdetail');
     visitorDao.getPathDetail(req, res, next);
+  } else if (req.body.command == "getpath_app") {
+    console.log('getpath_app');
+    visitorDao.getPath_app(req, res, next);
   }
 });
 

@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import { List, ListItem } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -19,8 +20,10 @@ class SelectStore extends React.Component {
     this.state = {
       storeBasic: Store.getStoreBasic(),
       loading: true,
+      checkedId: '',
     };
     this.onStoreBasicChange = this.onStoreBasicChange.bind(this);
+    this.onCheckChange = this.onCheckChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
@@ -37,6 +40,13 @@ class SelectStore extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
   }
+  onCheckChange(id,isInputChecked){
+    if(isInputChecked){
+      this.setState({checkedId:id});
+    }else{
+      this.setState({checkedId:''});
+    }
+  }
   onStoreBasicChange() {
     this.setState({
       storeBasic: Store.getStoreBasic(),
@@ -46,14 +56,18 @@ class SelectStore extends React.Component {
 
   getStorelist() {
     var context = this;
-    return this.state.storeBasic.map((sb) => {
+    var domlist = [];
+    this.state.storeBasic.forEach((sb) => {
       domlist.push(<ListItem
         id={sb.Store_id}
         primaryText={sb.Store_name}
-        leftCheckbox={<Checkbox />}
+        leftCheckbox={<Checkbox 
+          onCheck={function(e,checked){context.onCheckChange(sb.Store_id,checked)}} 
+          checked={context.state.checkedId == sb.Store_id} />}
         />);
       domlist.push(<Divider />);
     })
+    return domlist;
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, '');

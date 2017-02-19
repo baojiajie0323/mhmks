@@ -3,7 +3,6 @@ var $conf = require('../conf/db');
 var $util = require('../util/util');
 
 // 使用连接池，提升性能
-console.log('createpool')
 var pool = mysql.createPool($util.extend({}, $conf.mysql));
 
 var dao = {
