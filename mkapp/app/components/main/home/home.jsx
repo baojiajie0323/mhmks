@@ -86,17 +86,35 @@ class Home extends React.Component {
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickPrev = this.onClickPrev.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
+    this.onPlanChange = this.onPlanChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
-
-    Action.
+    this.getcurPlan();
+  }
+  getcurPlan(){
+    this.setState({
+      loading: true,
+    })
+    Action.getPlan({
+      date:this.state.curDate.Format('yyyy-MM-dd'),
+      userid:localStorage.username,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
+  onPlanChange(){
+    this.setState({      
+      plan: Store.getPlan(),
+      loading: false,
+    })    
+  }
   onDateChange(e, curDate) {
-    this.setState({ curDate })
+    var context = this;
+    this.setState({ curDate },function(){
+      context.getcurPlan();
+    })
   }
   onClickPrev() {
     var {curDate} = this.state;
