@@ -75,6 +75,7 @@ var copyfile = function(src,dst){
   fs.writeFileSync(dstpath, content,{ encoding: 'utf8' });
 }
 
-copyfile( './index.html', './dist/index.html');
+copyfile( './index.html', './dist/main.html');
+copyfile( './index_start.html', './dist/index.html');
 exists( './dist', '../mkcordova/www', copy );
 exists( './dist', '../../mkserver/public/mkapp', copy );

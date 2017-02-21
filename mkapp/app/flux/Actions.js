@@ -3,8 +3,8 @@ import $ from 'jquery'
 import { message } from 'antd';
 
 var _debug = true;
-//var _domain_name = 'http://d1658k3l069.iask.in';  //域名
-var _domain_name = '';  //域名
+var _domain_name = 'http://1658k3l069.iask.in';  //域名
+//var _domain_name = '';  //域名
 
 const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
@@ -149,7 +149,7 @@ var Action = {
     var context = this;
     data.command = 'getplan';
     $.ajax({
-      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/visitor', type: 'POST', timeout: 300,
       data: data
     })
       .done(function (response) {
