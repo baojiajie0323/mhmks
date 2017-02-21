@@ -2,9 +2,10 @@
 import $ from 'jquery'
 import { message } from 'antd';
 
-var _debug = true;
-var _domain_name = 'http://1658k3l069.iask.in';  //域名
-//var _domain_name = '';  //域名
+//var _domain_name = 'http://1658k3l069.iask.in';  //域名
+var _domain_name = '';  //域名
+
+var _debug = _domain_name == '';
 
 const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
@@ -149,7 +150,7 @@ var Action = {
     var context = this;
     data.command = 'getplan';
     $.ajax({
-      url: _domain_name + '/visitor', type: 'POST', timeout: 300,
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {
@@ -180,7 +181,7 @@ var Action = {
       .done(function (response) {
         console.log('addPlan:', response);
         if (response.code == 0) {
-          context.dispatch(ActionEvent.AE_PLAN_ADD, response.data[0]);
+          context.dispatch(ActionEvent.AE_PLAN_ADD, response.data);
           message.success('增加计划成功');
         } else {
           message.error('增加计划失败！' + response.msg);

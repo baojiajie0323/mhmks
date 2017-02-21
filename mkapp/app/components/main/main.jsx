@@ -59,9 +59,9 @@ class Main extends React.Component {
     }else if (this.state.subview == 'storedetailview'){
       return <StoreDetail userdata={this.state.userdata} />
     }else if (this.state.subview == 'selectpathview'){
-      return <SelectPath />
+      return <SelectPath userdata={this.state.userdata} />
     }else if (this.state.subview == 'selectstoreview'){
-      return <SelectStore />
+      return <SelectStore userdata={this.state.userdata} />
     }else if (this.state.subview == 'doplanview'){
       return <DoPlan />
     }                 

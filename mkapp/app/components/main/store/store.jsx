@@ -64,13 +64,13 @@ class StoreView extends React.Component {
           title='门店'
           iconElementLeft={<span></span>}
           />
-        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-          <div className={styles.content}>
+        <div className={styles.content}>
+          <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
               {this.getStoreDom() }
             </List>
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './home.less';
+import { message } from 'antd';
 
 
 import { Spin } from 'antd';
@@ -20,12 +21,16 @@ class SelectPath extends React.Component {
       path: Store.getPath(),
       loading: true,
       checkedId: '',
+      tipText: '正在加载，请稍后'
     };
     this.onPathChange = this.onPathChange.bind(this);
     this.onCheckChange = this.onCheckChange.bind(this);
+    this.onClickOk = this.onClickOk.bind(this);
+    this.onPlanChange = this.onPlanChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+    Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     if (this.state.path.length <= 0) {
       Action.getPath({
         userid: localStorage.username
@@ -38,6 +43,7 @@ class SelectPath extends React.Component {
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+    Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
   onCheckChange(id, isInputChecked) {
     if (isInputChecked) {
@@ -51,6 +57,9 @@ class SelectPath extends React.Component {
       path: Store.getPath(),
       loading: false,
     })
+  }
+  onPlanChange(){
+    Store.emit(StoreEvent.SE_VIEW, '');
   }
   getPathlist() {
     var context = this;
@@ -79,7 +88,23 @@ class SelectPath extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, '');
   }
   onClickOk() {
-    Action.addPlan({});
+    if (this.state.checkedId == "") {
+      message.info('请选择路线');
+      return;
+    }
+    this.setState({
+      loading: true,
+      tipText: '正在创建拜访计划，请稍后',
+    })
+    var pathDetail = Store.getPathDetail(this.state.checkedId);
+    var detailText = pathDetail.join('->');
+    Action.addPlan({
+      Plan_Type: 1,
+      Plan_Date: this.props.userdata.Format('yyyy-MM-dd'),
+      Path_Id: this.state.checkedId,
+      Store_Name: detailText,
+      User_Id: localStorage.username,
+    });
   }
   render() {
     return (
@@ -91,13 +116,13 @@ class SelectPath extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-          <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+          <Spin size="large" tip={this.state.tipText} spinning={this.state.loading}>
             <List>
               {this.getPathlist() }
             </List>
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div>
     );
   }

@@ -10,6 +10,7 @@ var eventMap = {
     AE_STOREBASIC: null,
     AE_PATH: null,
     AE_PLAN: null,
+    AE_PLAN_ADD: null,
   }),
 
   StoreEvent: keyMirror({

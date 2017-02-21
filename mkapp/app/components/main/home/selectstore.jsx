@@ -40,11 +40,11 @@ class SelectStore extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
   }
-  onCheckChange(id,isInputChecked){
-    if(isInputChecked){
-      this.setState({checkedId:id});
-    }else{
-      this.setState({checkedId:''});
+  onCheckChange(id, isInputChecked) {
+    if (isInputChecked) {
+      this.setState({ checkedId: id });
+    } else {
+      this.setState({ checkedId: '' });
     }
   }
   onStoreBasicChange() {
@@ -61,8 +61,8 @@ class SelectStore extends React.Component {
       domlist.push(<ListItem
         id={sb.Store_id}
         primaryText={sb.Store_name}
-        leftCheckbox={<Checkbox 
-          onCheck={function(e,checked){context.onCheckChange(sb.Store_id,checked)}} 
+        leftCheckbox={<Checkbox
+          onCheck={function (e, checked) { context.onCheckChange(sb.Store_id, checked) } }
           checked={context.state.checkedId == sb.Store_id} />}
         />);
       domlist.push(<Divider />);
@@ -85,13 +85,13 @@ class SelectStore extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-          <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+          <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
-              {this.getStorelist()}
+              {this.getStorelist() }
             </List>
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div>
     );
   }

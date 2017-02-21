@@ -15,18 +15,26 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loginloading: false,
     };
     this.handleTouchTap = this.handleTouchTap.bind(this);
+    this.onLoginChange = this.onLoginChange.bind(this);
+    this.onClickLogin = this.onClickLogin.bind(this);
   }
 
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
     localStorage.username = $('#username').val();
     localStorage.password = $('#password').val();
   }
-
+  onLoginChange(loginSuccess) {
+    this.setState({ loginloading: false });
+  }
   onClickLogin() {
+    this.setState({ loginloading: true });
     var username = $('#username').val();
     var password = $('#password').val();
     if (username == "") {
@@ -55,8 +63,6 @@ class Login extends React.Component {
           style={{ marginBottom: '30px' }}
           title='满好营销通'
           iconElementLeft={<span></span>}
-          iconElementRight={<IconButton><NavigationClose /></IconButton>}
-          onRightIconButtonTouchTap={this.handleTouchTap}
           />
         <div className={styles.inputform}>
           <TextField floatingLabelText="用户名" defaultValue={username} id="username" fullWidth={true} />
@@ -65,7 +71,14 @@ class Login extends React.Component {
           <TextField floatingLabelText="密码" defaultValue={password} id="password" type="password" fullWidth={true} hintText="请输入密码" />
         </div>
         <div className={styles.btnform}>
-          <RaisedButton onTouchTap={this.onClickLogin} labelStyle={{fontSize:'16px'}} buttonStyle={{height:'50px'}} label="登 录" primary={true} fullWidth={true} />
+          <RaisedButton disabled={this.state.loginloading} 
+          onTouchTap={this.onClickLogin} 
+          labelStyle={{ fontSize: '16px' }} 
+          buttonStyle={{ height: '50px' }}
+            label={this.state.loginloading ? "正在登录,请稍后":"登 录"} 
+            primary={!this.state.loginloading} 
+            secondary={true}
+            fullWidth={true} />
         </div>
       </div>
     );

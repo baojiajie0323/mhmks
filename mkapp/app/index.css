@@ -17,17 +17,13 @@ input :-webkit-autofill{
 }
 
 .ant-spin-nested-loading .ant-spin-show-text.ant-spin-lg .ant-spin-dot{
-  margin-top: -45px;
+  margin-top: 40px;
 }
 
 .ant-spin-nested-loading .ant-spin-lg .ant-spin-text {
-  padding-top: 0;
+  padding-top: 88px;
 }
 
-.ant-spin-nested-loading {
-  position: static;
-}
-
-.ant-spin-container{
-  position: static;
+.ant-spin-nested-loading .ant-spin{
+  height: auto;
 }

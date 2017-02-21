@@ -147,7 +147,7 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_PLAN_ADD: {
-      Store.addPlan({ id: 2 });
+      Store.addPlan(action.value);
     }
       break;
     default:

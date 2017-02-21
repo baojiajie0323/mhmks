@@ -56,13 +56,14 @@ class Contacts extends React.Component {
           title='通讯录'
           iconElementLeft={<span></span>}
           />
-        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-          <div className={styles.content}>
+        <div className={styles.content}>
+
+          <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
               {this.getContactsDom() }
             </List>
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div >
     );
   }

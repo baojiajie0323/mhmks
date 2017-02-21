@@ -12,6 +12,7 @@ import areIntlLocalesSupported from 'intl-locales-supported';
 import {List, ListItem} from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import { Spin } from 'antd';
+import Divider from 'material-ui/Divider';
 
 
 import AddIcon from 'material-ui/svg-icons/content/add-box';
@@ -87,32 +88,33 @@ class Home extends React.Component {
     this.onClickPrev = this.onClickPrev.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
+    this.getcurPlan = this.getcurPlan.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     this.getcurPlan();
   }
-  getcurPlan(){
+  getcurPlan() {
     this.setState({
       loading: true,
     })
     Action.getPlan({
-      date:this.state.curDate.Format('yyyy-MM-dd'),
-      userid:localStorage.username,
+      date: this.state.curDate.Format('yyyy-MM-dd'),
+      userid: localStorage.username,
     });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
-  onPlanChange(){
-    this.setState({      
+  onPlanChange() {
+    this.setState({
       plan: Store.getPlan(),
       loading: false,
-    })    
+    })
   }
   onDateChange(e, curDate) {
     var context = this;
-    this.setState({ curDate },function(){
+    this.setState({ curDate }, function () {
       context.getcurPlan();
     })
   }
@@ -121,27 +123,26 @@ class Home extends React.Component {
     curDate.setDate(curDate.getDate() - 1);
     this.setState({
       curDate
-    })
+    }, this.getcurPlan)
   }
   onClickNext() {
     var {curDate} = this.state;
-    console.log(curDate, curDate.getDate);
     curDate.setDate(curDate.getDate() + 1);
     this.setState({
       curDate
-    })
+    }, this.getcurPlan)
   }
   onClickAddPath() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectpathview', this.state.curDate);
   }
   onClickAddTmp() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
   }
   onClickAddCall() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
   }
   onClickAddCheck() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
   }
   onClickDoPlan() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -150,36 +151,25 @@ class Home extends React.Component {
     if (this.state.plan.length <= 0) {
       return <Noplan />
     } else {
-      return <List>
-        <Subheader>共3个计划，已完成2个，未完成1个</Subheader>
-        <ListItem
-          primaryText="山东1"
-          secondaryText="华北大润发即墨店->华北大润发城阳店->华北大润发长城路店"
+      var planDom = [];
+      var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
+      this.state.plan.forEach((pl) => {
+        var pathName = '';
+        if (pl.Plan_Type == 1) {
+          pathName = ' ' + pl.Path_Name;
+        }
+        planDom.push(<ListItem
+          primaryText={pathTitle[pl.Plan_Type - 1] + pathName}
+          secondaryText={pl.Store_Name}
           secondaryTextLines={2}
           rightIconButton={<PlanOperate
             onClickDoPlan={this.onClickDoPlan}
             />}
           leftIcon={<HasstartIcon color={cyan600} />}
-          />
-        <ListItem
-          primaryText="临时拜访"
-          secondaryText="家乐福青岛辽阳路店"
-          secondaryTextLines={2}
-          rightIconButton={<PlanOperate
-            onClickDoPlan={this.onClickDoPlan}
-            />}
-          leftIcon={<NotstartIcon color={cyan600} />}
-          />
-        <ListItem
-          primaryText="临时拜访"
-          secondaryText="家乐福青岛新兴店"
-          secondaryTextLines={2}
-          rightIconButton={<PlanOperate
-            onClickDoPlan={this.onClickDoPlan}
-            />}
-          leftIcon={<FinishIcon color={cyan600} />}
-          />
-      </List>
+          />)
+        planDom.push(<Divider />);
+      })
+      return planDom;
     }
   }
   render() {
@@ -215,20 +205,20 @@ class Home extends React.Component {
             </ToolbarGroup>
             <ToolbarGroup >
               <Logged
-                onClickAddPath={this.onClickAddPath}
-                onClickAddTmp={this.onClickAddTmp}
-                onClickAddCall={this.onClickAddCall}
-                onClickAddCheck={this.onClickAddCheck}
+                onClickAddPath={this.onClickAddPath.bind(this) }
+                onClickAddTmp={this.onClickAddTmp.bind(this) }
+                onClickAddCall={this.onClickAddCall.bind(this) }
+                onClickAddCheck={this.onClickAddCheck.bind(this) }
                 />
             </ToolbarGroup>
           </Toolbar>
         </Paper>
 
-        <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-          <div className={styles.content}>
+        <div className={styles.content}>
+          <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             {this.getPlanlist() }
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div>
     );
   }
