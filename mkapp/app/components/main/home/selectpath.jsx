@@ -59,7 +59,7 @@ class SelectPath extends React.Component {
     })
   }
   onPlanChange(){
-    Store.emit(StoreEvent.SE_VIEW, '');
+    Store.emit(StoreEvent.SE_VIEW,'',this.props.userdata);
   }
   getPathlist() {
     var context = this;
@@ -82,9 +82,6 @@ class SelectPath extends React.Component {
     return domlist;
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, '',this.props.userdata);
-  }
-  onCurPlanListChange() {
     Store.emit(StoreEvent.SE_VIEW, '',this.props.userdata);
   }
   onClickOk() {

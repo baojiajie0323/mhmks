@@ -92,6 +92,8 @@ class Home extends React.Component {
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+
+    console.log('home userdata',this.props.userdata);
     if(this.props.userdata){
       var context = this;
       this.setState({

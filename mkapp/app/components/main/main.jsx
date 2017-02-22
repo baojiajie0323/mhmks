@@ -47,6 +47,7 @@ class Main extends React.Component {
     this.setState({ subview:'',selectedIndex: index });
   }
   onChangeView(subview,userdata){
+    console.log('onChangeView',subview,userdata);
     var context = this;
     setTimeout(function() {
       context.setState({subview,userdata});
