@@ -66,7 +66,7 @@ class Main extends React.Component {
       return <DoPlan />
     }                 
     else if(this.state.selectedIndex == 0){
-      return <Home />
+      return <Home userdata={this.state.userdata} />
     }else if(this.state.selectedIndex == 1){
       return <StoreView />
     }else if(this.state.selectedIndex == 2){

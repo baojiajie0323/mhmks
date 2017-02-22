@@ -92,7 +92,17 @@ class Home extends React.Component {
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
-    this.getcurPlan();
+    if(this.props.userdata){
+      var context = this;
+      this.setState({
+        curDate: this.props.userdata
+      },function(){
+        context.getcurPlan();
+      })
+    }else{
+      this.getcurPlan();
+    }
+    
   }
   getcurPlan() {
     this.setState({
