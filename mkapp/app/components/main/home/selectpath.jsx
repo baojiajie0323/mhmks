@@ -27,6 +27,7 @@ class SelectPath extends React.Component {
     this.onCheckChange = this.onCheckChange.bind(this);
     this.onClickOk = this.onClickOk.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
+    this.onClickBack = this.onClickBack.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);

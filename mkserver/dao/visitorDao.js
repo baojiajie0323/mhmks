@@ -104,7 +104,7 @@ module.exports = {
   addPlan: function (req, res, next) {
     console.log('visitorDao addPlan');
     var param = req.body;
-    if (!param.Plan_Type || !param.Plan_Date || !param.Path_Id || !param.Store_Name || !param.User_Id) {
+    if (!param.Plan_Type || !param.Plan_Date || !param.Store_Name || !param.User_Id) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
@@ -114,7 +114,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.addplan;
-        connection.query(sqlstring, [param.Plan_Type,param.Plan_Date,param.Path_Id,null,param.Store_Name,param.User_Id], function (err, result) {
+        connection.query(sqlstring, [param.Plan_Type, param.Plan_Date, param.Path_Id, param.Store_Id, param.Store_Name, param.User_Id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -123,6 +123,35 @@ module.exports = {
               var data = req.body;
               data.Plan_Id = result.insertId;
               jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  delPlan: function (req, res, next) {
+    console.log('visitorDao delPlan');
+    var param = req.body;
+    if (!param.Plan_Id) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.delplan;
+        connection.query(sqlstring, [parseInt(param.Plan_Id)], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              jsonWrite(res, {}, dbcode.SUCCESS);
             } else {
               jsonWrite(res, {}, dbcode.FAIL);
             }

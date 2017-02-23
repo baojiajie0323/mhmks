@@ -3,6 +3,7 @@ import styles from './home.less';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import DatePicker from 'material-ui/DatePicker';
@@ -11,8 +12,9 @@ import Paper from 'material-ui/Paper';
 import areIntlLocalesSupported from 'intl-locales-supported';
 import {List, ListItem} from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-import { Spin } from 'antd';
+import { Spin, Alert } from 'antd';
 import Divider from 'material-ui/Divider';
+import Dialog from 'material-ui/Dialog';
 
 
 import AddIcon from 'material-ui/svg-icons/content/add-box';
@@ -20,13 +22,13 @@ import LineIcon from 'material-ui/svg-icons/action/timeline';
 import DoneIcon from 'material-ui/svg-icons/action/done-all';
 import PhoneIcon from 'material-ui/svg-icons/action/settings-phone';
 import TmpIcon from 'material-ui/svg-icons/action/restore';
-import DateIcon from 'material-ui/svg-icons/action/date-range';
-import LeftIcon from 'material-ui/svg-icons/av/fast-rewind';
-import RightIcon from 'material-ui/svg-icons/av/fast-forward';
+import Note from 'material-ui/svg-icons/action/assignment';
+import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
+import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import NotstartIcon from 'material-ui/svg-icons/toggle/star-border';
 import HasstartIcon from 'material-ui/svg-icons/toggle/star-half';
 import FinishIcon from 'material-ui/svg-icons/toggle/star';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/menu';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
 
@@ -53,8 +55,8 @@ const Logged = (props) => (
     >
     <MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />
     <MenuItem onTouchTap={props.onClickAddTmp} primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
-    <MenuItem onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
-    <MenuItem onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />
+    <MenuItem disabled={true} onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
+    <MenuItem disabled={true} onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />
   </IconMenu>
 );
 
@@ -68,7 +70,7 @@ const PlanOperate = (props) => (
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
     <MenuItem primaryText="执行" onTouchTap={props.onClickDoPlan} leftIcon={<PlayIcon color={cyan600} />} />
-    <MenuItem primaryText="删除" leftIcon={<DeleteIcon color={red600} />} />
+    <MenuItem primaryText="删除" onTouchTap={props.onClickDelete} leftIcon={<DeleteIcon color={red600} />} />
   </IconMenu>
 );
 
@@ -83,28 +85,41 @@ class Home extends React.Component {
       plan: Store.getPlan(),
       curDate: new Date(),
       loading: true,
+      showAlert: true,
+      open: false,
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickPrev = this.onClickPrev.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
     this.getcurPlan = this.getcurPlan.bind(this);
+    this.onClickNote = this.onClickNote.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleOk = this.handleOk.bind(this);
+    this.onClickDelete = this.onClickDelete.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
 
-    console.log('home userdata',this.props.userdata);
-    if(this.props.userdata){
-      var context = this;
+    console.log('home userdata', this.props.userdata);
+
+    var context = this;
+    if (this.props.userdata) {
       this.setState({
         curDate: this.props.userdata
-      },function(){
+      }, function () {
         context.getcurPlan();
       })
-    }else{
+    } else {
       this.getcurPlan();
     }
-    
+
+    setTimeout(function () {
+      context.setState({
+        showAlert: false
+      })
+    }, 3000);
+
   }
   getcurPlan() {
     this.setState({
@@ -122,6 +137,7 @@ class Home extends React.Component {
     this.setState({
       plan: Store.getPlan(),
       loading: false,
+      open:false,
     })
   }
   onDateChange(e, curDate) {
@@ -157,13 +173,22 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
   }
   onClickDoPlan() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview', this.state.curDate);
+  }
+  onClickNote() {
+    Store.emit(StoreEvent.SE_VIEW, 'noteview', this.state.curDate);
   }
   getPlanlist() {
+    var context = this;
     if (this.state.plan.length <= 0) {
       return <Noplan />
     } else {
       var planDom = [];
+      if (this.state.showAlert || 1) {
+        planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
+      }
+      var headerTitle = '共' + this.state.plan.length + '个计划，已完成' + '?' + '个，未完成' + '?' + '个';
+      planDom.push(<Subheader>{headerTitle}</Subheader>)
       var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
       this.state.plan.forEach((pl) => {
         var pathName = '';
@@ -176,6 +201,7 @@ class Home extends React.Component {
           secondaryTextLines={2}
           rightIconButton={<PlanOperate
             onClickDoPlan={this.onClickDoPlan}
+            onClickDelete={function(){context.onClickDelete(pl.Plan_Id)}}
             />}
           leftIcon={<HasstartIcon color={cyan600} />}
           />)
@@ -184,7 +210,31 @@ class Home extends React.Component {
       return planDom;
     }
   }
+  onClickDelete(planid) {
+    this.curplanid = planid;
+    this.setState({open:true});
+  }
+  handleClose() {
+    this.setState({ open: false });
+  }
+  handleOk() {
+    Action.delPlan({
+      Plan_Id:this.curplanid
+    });
+  }
   render() {
+    const actions = [
+      <FlatButton
+        label="取消"
+        primary={true}
+        onTouchTap={this.handleClose}
+        />,
+      <FlatButton
+        label="确定"
+        primary={true}
+        onTouchTap={this.handleOk}
+        />,
+    ];
     return (
       <div className={styles.container}>
         <AppBar
@@ -192,14 +242,13 @@ class Home extends React.Component {
           iconElementLeft={<span />}
           />
         <Paper zDepth={1}>
-          <Toolbar style={{ backgroundColor: 'white' }}>
+          <Toolbar noGutter={true} style={{ backgroundColor: 'white' }}>
             <ToolbarGroup>
-              <DateIcon color={cyan800} />
+              <IconButton onTouchTap={this.onClickPrev}><LeftIcon color={cyan800} /></IconButton>
               <DatePicker
                 value={this.state.curDate}
                 DateTimeFormat={DateTimeFormat}
                 locale="zh"
-                style={{ marginLeft: '10px' }}
                 textFieldStyle={{ textAlign: 'center', width: '120px' }}
                 inputStyle ={{ textAlign: 'center' }}
                 hintText="请选择日期"
@@ -212,10 +261,10 @@ class Home extends React.Component {
                   year: 'numeric',
                 }).format}
                 />
-              <IconButton onTouchTap={this.onClickPrev}><LeftIcon color={cyan800} /></IconButton>
               <IconButton onTouchTap={this.onClickNext}><RightIcon color={cyan800} /></IconButton>
             </ToolbarGroup>
             <ToolbarGroup >
+              <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
                 onClickAddPath={this.onClickAddPath.bind(this) }
                 onClickAddTmp={this.onClickAddTmp.bind(this) }
@@ -231,6 +280,15 @@ class Home extends React.Component {
             {this.getPlanlist() }
           </Spin>
         </div>
+        <Dialog
+          title="确定要删除计划吗？"
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose}
+          >
+          该计划删除后，与该计划相关的数据将同时删除，后台无法查看到你本次计划的实际情况，请谨慎操作！
+        </Dialog>
       </div>
     );
   }

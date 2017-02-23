@@ -11,6 +11,7 @@ var eventMap = {
     AE_PATH: null,
     AE_PLAN: null,
     AE_PLAN_ADD: null,
+    AE_PLAN_DEL: null,
   }),
 
   StoreEvent: keyMirror({

@@ -101,6 +101,16 @@ var Store = assign({}, EventEmitter.prototype, {
     _plan.push(plan);
     this.emit(StoreEvent.SE_PLAN);
   },
+  delPlan: function (plan){
+    for (var i = 0 ; i < _plan.length; i++){
+      if(_plan[i].Plan_Id == plan.Plan_Id){
+        _plan.splice(i,1);
+        break;
+      }
+    }
+    
+    this.emit(StoreEvent.SE_PLAN);
+  },
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -148,6 +158,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PLAN_ADD: {
       Store.addPlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLAN_DEL: {
+      Store.delPlan(action.value);
     }
       break;
     default:

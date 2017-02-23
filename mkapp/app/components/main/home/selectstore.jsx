@@ -21,12 +21,17 @@ class SelectStore extends React.Component {
       storeBasic: Store.getStoreBasic(),
       loading: true,
       checkedId: '',
+      tipText: '正在加载，请稍后'
     };
     this.onStoreBasicChange = this.onStoreBasicChange.bind(this);
     this.onCheckChange = this.onCheckChange.bind(this);
+    this.onClickOk = this.onClickOk.bind(this);
+    this.onPlanChange = this.onPlanChange.bind(this);
+    this.onClickBack = this.onClickBack.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
+    Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     if (this.state.storeBasic.length <= 0) {
       Action.getStoreBasic({
         username: localStorage.username
@@ -39,6 +44,7 @@ class SelectStore extends React.Component {
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreBasicChange);
+    Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
   onCheckChange(id, isInputChecked) {
     if (isInputChecked) {
@@ -53,7 +59,9 @@ class SelectStore extends React.Component {
       loading: false,
     })
   }
-
+  onPlanChange(){
+    Store.emit(StoreEvent.SE_VIEW,'',this.props.userdata);
+  }
   getStorelist() {
     var context = this;
     var domlist = [];
@@ -70,10 +78,26 @@ class SelectStore extends React.Component {
     return domlist;
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, '');
+    Store.emit(StoreEvent.SE_VIEW, '',this.props.userdata);
   }
   onClickOk() {
-    Store.emit(StoreEvent.SE_VIEW, '');
+    if (this.state.checkedId == "") {
+      message.info('请选择门店');
+      return;
+    }
+    this.setState({
+      loading: true,
+      tipText: '正在创建拜访计划，请稍后',
+    })
+    var storeInfo = Store.getStoreById(this.state.checkedId);
+  
+    Action.addPlan({
+      Plan_Type: 2,
+      Plan_Date: this.props.userdata.Format('yyyy-MM-dd'),
+      Store_Id:storeInfo.Store_id,
+      Store_Name: storeInfo.Store_name,
+      User_Id: localStorage.username,
+    });
   }
   render() {
     return (
