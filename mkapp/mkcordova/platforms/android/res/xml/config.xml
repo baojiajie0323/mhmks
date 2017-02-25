@@ -4,6 +4,10 @@
         <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
         <param name="onload" value="true" />
     </feature>
+    <feature name="SplashScreen">
+        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
+        <param name="onload" value="true" />
+    </feature>
     <name>满好营销通</name>
     <description>
         满好营销通.
@@ -24,9 +28,15 @@
     <access origin="http://ajax.googleapis.com" />
     <access origin="http://api.map.baidu.com" />
     <allow-intent href="market:*" />
+    <splash density="land-hdpi" src="res/screen/android/splash-port-hdpi.png" />
+    <splash density="land-ldpi" src="res/screen/android/splash-port-ldpi.png" />
+    <splash density="land-mdpi" src="res/screen/android/splash-port-mdpi.png" />
+    <splash density="land-xhdpi" src="res/screen/android/splash-port-xhdpi.png" />
+    <splash density="port-hdpi" src="res/screen/android/splash-port-hdpi.png" />
+    <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
+    <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
+    <splash density="port-xhdpi" src="res/screen/android/splash-port-xhdpi.png" />
     <preference name="loglevel" value="DEBUG" />
-    <feature name="SplashScreen">
-        <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
-        <param name="onload" value="true" />
-    </feature>
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashMaintainAspectRatio" value="true" />
 </widget>

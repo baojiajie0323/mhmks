@@ -13,6 +13,7 @@ class App extends React.Component {
     this.onLoginChange = this.onLoginChange.bind(this);
   }
   onDeviceReady() {
+    alert(11)
     document.addEventListener("backbutton", function () { Store.back() }, false);
   }
   componentDidMount() {
