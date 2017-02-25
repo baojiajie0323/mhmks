@@ -37,3 +37,7 @@ p{
 .ant-tree {
     font-size: 15px;
 }
+
+.ant-fullcalendar-month{
+  height: 116px !important;
+} 

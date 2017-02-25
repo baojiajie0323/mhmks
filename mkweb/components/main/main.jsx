@@ -4,6 +4,7 @@ import Homepage from './homepage/homepage';
 import Info from './info/info';
 import Visitor from './visitor/visitor';
 import Config from './config/config';
+import Schdule from './schdule/schdule';
 import styles from './main.less';
 
 class Main extends React.Component {
@@ -34,6 +35,8 @@ class Main extends React.Component {
       return <Visitor />
     }else if(this.state.curview == 'config'){
       return <Config />
+    }else if(this.state.curview == 'schdule'){
+      return <Schdule />
     }
     return <Homepage />
   }

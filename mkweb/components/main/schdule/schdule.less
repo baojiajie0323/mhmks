@@ -1,0 +1,91 @@
+.container{
+    position: absolute;
+    top: 86px;
+    bottom: 25px;
+    width: 100%;
+    background-color: white;    
+
+    header{
+        font-size: 24px;
+        text-align: center;
+        height: 50px;
+        line-height: 56px;
+        font-family: 'simhei';
+
+        span{
+            font-size: 14px;
+            position: absolute;
+            top: 5px;
+            /* margin-left: 30px; */
+            right: 41px;
+            color: #108EE9;
+        }
+    }
+
+    .subheader{
+        position: relative;
+        height: 25px;
+        display: flex;
+        padding: 0 42px;
+        align-items: center;
+        font-size: 14px;
+
+        p{
+            font-weight: bold;
+            //color: #108EE9;
+            margin-right: 35px;
+            margin-left: 2px;
+        }
+
+        .markcontent{
+            height: 100%;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            .markblock{
+                width: 16px;
+                height: 16px;
+                margin-left: 20px;
+            }
+            p{
+                margin-right: 0;
+                margin-left: 6px;
+                font-weight: normal;
+                color: #108EE9;
+                font-size: 13px;
+            }
+        }
+    }
+
+    .content{
+        position: absolute;
+        top: 81px;
+        left: 30px;
+        right: 30px;
+        bottom: 30px;
+        overflow: auto;
+
+        .monthcontainer{
+            position: absolute;          
+            top: 30px;
+            bottom: 0;
+            left: 4px;
+            right: 4px;
+        }
+    }
+}
+
+.past{
+    background-color: rgb(245,245,245);
+}
+.current{
+    background-color: transparent;
+}
+.next{
+    background-color: #80B290;
+}
+.later{
+    background-color: transparent;
+}

@@ -5,7 +5,7 @@ class HeaderNav extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      curview: 'homepage'
+      curview: 'schdule'
     };
     this.onClickNav = this.onClickNav.bind(this);
   }
@@ -28,6 +28,7 @@ class HeaderNav extends React.Component {
   render() {
     return (
       <div className={styles.headernav}>
+        <div data-view="schdule" className={this.getnavcontentStyle('schdule')} onClick={this.onClickNav}>计划</div>
         <div data-view="homepage" className={this.getnavcontentStyle('homepage')} onClick={this.onClickNav}>总览</div>
         <div data-view="info" className={this.getnavcontentStyle('info')} onClick={this.onClickNav}>信息</div>
         <div data-view="visitor" className={this.getnavcontentStyle('visitor')} onClick={this.onClickNav}>拜访</div>

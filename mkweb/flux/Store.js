@@ -8,7 +8,7 @@ var StoreEvent = EventConst.StoreEvent;
 
 var _loginSuccess = false;
 var _userInfo = {};
-var _curview = 'homepage';
+var _curview = 'schdule';
 var _storeArea = [];
 var _storeBasic = [];
 var _storeContacts = [];

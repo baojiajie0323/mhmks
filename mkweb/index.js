@@ -7,6 +7,11 @@ import './flux/Store';
 import './flux/Actions';
 import './flux/event-const';
 
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
+window.moment = moment;
+
 ReactDOM.render(<App />, document.getElementById('root'));
 
 Date.prototype.Format = function (fmt) { //author: meizz
