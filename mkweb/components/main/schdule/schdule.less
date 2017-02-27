@@ -10,7 +10,6 @@
         text-align: center;
         height: 50px;
         line-height: 56px;
-        font-family: 'simhei';
 
         span{
             font-size: 14px;
@@ -48,6 +47,8 @@
                 width: 16px;
                 height: 16px;
                 margin-left: 20px;
+                border-style: solid;
+                border-width: 2px;
             }
             p{
                 margin-right: 0;
@@ -73,19 +74,105 @@
             bottom: 0;
             left: 4px;
             right: 4px;
+            border-style: solid;
+            border-width: 2px;
+
+            .tableContent{
+                display: flex;
+                align-items: center;
+                p{
+                    width: 100px;
+                    min-width: 100px;
+                }
+            }
+
+        }
+        .datecontainer{
+            position: absolute;          
+            top: 30px;
+            bottom: 0;
+            left: 4px;
+            right: 4px;
+            border-style: solid;
+            border-width: 2px;
+
+            .date_path_store_content{
+                position: absolute;
+                top: 22px;
+                bottom: 0;
+                width: 100%;
+                overflow: auto;
+                padding: 0 3px;
+
+                span{
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+
+    .content_month{
+        right: 400px;
+    }
+
+    .planDetailContainer{
+        position: absolute;
+        top: 81px;
+        width: 345px;
+        right: 30px;
+        bottom: 30px;
+
+        .planDetail_Title{
+            text-align: center;
+            font-size: 18px;
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .detailContent{
+            position: absolute;
+            top: 50px;
+            bottom: 0;
+            overflow-x: hidden; 
+            overflow-y: auto;
+            width: 100%;
+
+            p{
+                padding: 0 5px;
+                margin: 40px 0 10px;
+            }
+
+            tbody[class="ant-table-tbody"]{
+                tr{
+                    td{
+                        padding: 4px 8px;
+                    }
+                }
+            }
+            thead[class="ant-table-thead"]{
+                tr{
+                    th{
+                        padding: 4px 8px;
+                    }
+                }
+            }
         }
     }
 }
 
 .past{
     background-color: rgb(245,245,245);
+    border-color: transparent;
 }
 .current{
     background-color: transparent;
+    border-color: transparent;
 }
 .next{
-    background-color: #80B290;
+    background-color: transparent;
+    border-color: #00A854;
 }
 .later{
     background-color: transparent;
+    border-color: transparent;
 }

@@ -39,5 +39,13 @@ p{
 }
 
 .ant-fullcalendar-month{
-  height: 116px !important;
+  height: 136px !important;
 } 
+
+.ant-select-selection--single {
+    height: 22px;
+}
+
+.ant-select-selection__rendered{
+  line-height: 20px;
+}
