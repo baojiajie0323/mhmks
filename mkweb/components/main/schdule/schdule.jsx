@@ -9,7 +9,10 @@ class Schdule extends React.Component {
     super(props);
     this.state = {
       monent: moment(),
-      mode: 'year'
+      mode: 'year',
+      path:Store.getPath(),
+      pathDetail:Store.getPathDetail(),
+      storeBasic: Store.getStoreBasic(),
     };
     this.monthCellRender = this.monthCellRender.bind(this);
     this.dateCellRender = this.dateCellRender.bind(this);
@@ -18,9 +21,25 @@ class Schdule extends React.Component {
     this.onClickSave = this.onClickSave.bind(this);
   }
   componentDidMount() {
+    Action.getPath();
+    Action.getPathDetail();    
+    Action.getStoreBasic({
+      username: localStorage.username
+    });
   }
   componentWillUnmount() {
   }
+  onPathChange(){
+    this.setState({
+      path:Store.getPath()
+    })
+  }
+  onStoreBasicChange(){
+    this.setState({
+      storeBasic:Store.getStoreBasic()
+    })
+  }
+
   onClickMonthContent(value) {
     if (!value) {
       return;
@@ -85,21 +104,21 @@ class Schdule extends React.Component {
       onClick={function () { context.onClickMonthContent(value) } }
       >
       {monthType == 'later' ? null :
-      [<div className={styles.tableContent}>
-        <p>计划月均拜访</p>
-        <Tag color="#2db7f5">A类：4.2次</Tag>
-        <Tag color="#27b56e">B类：2.1次</Tag>
-        <Tag color="#7265E6">C类：1次</Tag>
-      </div>,
-      <div className={styles.tableContent}>
-        <p>计划覆盖率</p>
-        <Progress percent={85} strokeWidth={5} status="active" />
-      </div>,
-      <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
-      <div className={styles.tableContent}>
-        <p>执行完成率</p>
-        <Progress percent={53} strokeWidth={5} status="active" />
-      </div>]
+        [<div className={styles.tableContent}>
+          <p>计划月均拜访</p>
+          <Tag color="#2db7f5">A类：4.2次</Tag>
+          <Tag color="#27b56e">B类：2.1次</Tag>
+          <Tag color="#7265E6">C类：1次</Tag>
+        </div>,
+          <div className={styles.tableContent}>
+            <p>计划覆盖率</p>
+            <Progress percent={85} strokeWidth={5} status="active" />
+          </div>,
+          <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
+          <div className={styles.tableContent}>
+            <p>执行完成率</p>
+            <Progress percent={53} strokeWidth={5} status="active" />
+          </div>]
       }
     </div>;
   }
