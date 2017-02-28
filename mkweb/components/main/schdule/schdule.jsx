@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './schdule.less';
-import { Calendar, Select, Table, Progress, Button, Modal, Tag  } from 'antd';
+import { Calendar, Select, Table, Progress, Button, Modal, Tag } from 'antd';
 const Option = Select.Option;
 const confirm = Modal.confirm;
 
@@ -10,8 +10,8 @@ class Schdule extends React.Component {
     this.state = {
       monent: moment(),
       mode: 'year',
-      path:Store.getPath(),
-      pathDetail:Store.getPathDetail(),
+      path: Store.getPath(),
+      pathDetail: Store.getPathDetail(),
       storeBasic: Store.getStoreBasic(),
     };
     this.monthCellRender = this.monthCellRender.bind(this);
@@ -21,22 +21,24 @@ class Schdule extends React.Component {
     this.onClickSave = this.onClickSave.bind(this);
   }
   componentDidMount() {
-    Action.getPath();
-    Action.getPathDetail();    
+    Action.getPath_app({
+      userid: localStorage.username
+    });
+    Action.getPathDetail();
     Action.getStoreBasic({
       username: localStorage.username
     });
   }
   componentWillUnmount() {
   }
-  onPathChange(){
+  onPathChange() {
     this.setState({
-      path:Store.getPath()
+      path: Store.getPath()
     })
   }
-  onStoreBasicChange(){
+  onStoreBasicChange() {
     this.setState({
-      storeBasic:Store.getStoreBasic()
+      storeBasic: Store.getStoreBasic()
     })
   }
 
@@ -48,11 +50,6 @@ class Schdule extends React.Component {
       mode: 'month',
       monent: value
     })
-  }
-  getMonthData(value) {
-    if (value.month() === 8) {
-      return 1394;
-    }
   }
   getMonthType(year, month) {
     //console.log(year, month);
@@ -100,7 +97,7 @@ class Schdule extends React.Component {
     else if (monthType == 'later') monthStyle.push(styles.later);
 
     var context = this;
-    return <div className={monthStyle.join(' ') }
+    return <div className={monthStyle.join(' ')}
       onClick={function () { context.onClickMonthContent(value) } }
       >
       {monthType == 'later' ? null :
@@ -110,51 +107,49 @@ class Schdule extends React.Component {
           <Tag color="#27b56e">B类：2.1次</Tag>
           <Tag color="#7265E6">C类：1次</Tag>
         </div>,
-          <div className={styles.tableContent}>
-            <p>计划覆盖率</p>
-            <Progress percent={85} strokeWidth={5} status="active" />
-          </div>,
-          <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
-          <div className={styles.tableContent}>
-            <p>执行完成率</p>
-            <Progress percent={53} strokeWidth={5} status="active" />
-          </div>]
+        <div className={styles.tableContent}>
+          <p>计划覆盖率</p>
+          <Progress percent={85} strokeWidth={5} status="active" />
+        </div>,
+        <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
+        <div className={styles.tableContent}>
+          <p>执行完成率</p>
+          <Progress percent={53} strokeWidth={5} status="active" />
+        </div>]
       }
     </div>;
   }
 
   getDateType(value) {
     var nowDate = moment();
-    //console.log('nowweek', nowDate.week(), 'nowDate', nowDate.date(), 'valueweek', value.week(), 'valuedate', value.date());
     if (value.week() == nowDate.week() + 1 && nowDate.day() <= 5 && nowDate.day() > 0) {
-      //console.log('next');
       return 'next';
     }
 
     if (nowDate.date() <= 25 && value.month() == nowDate.month() + 1) {
-      //console.log('next');
       return 'next';
     }
 
-    //console.log('past');
     return 'past';
   }
   dateCellRender(value) {
-    //console.log(value);
     var dateStyle = [styles.datecontainer];
     var dateType = this.getDateType(value);
     if (dateType == 'past') dateStyle.push(styles.past);
     else if (dateType == 'next') dateStyle.push(styles.next);
 
-    return <div className={dateStyle.join(' ') }>
+    var getPathOption = function () {
+      return this.state.path.map((pt) => {
+        return <Option value={pt.Path_id}>{pt.Path_name}</Option>
+      });
+    }
+    return <div className={dateStyle.join(' ')}>
       <Select
         style={{ width: '100%' }}
         allowClear
         placeholder="选择一条路线"
         disabled={dateType == 'past'} >
-        <Option value="1">山东1</Option>
-        <Option value="2">山东2</Option>
-        <Option value="3">山东3</Option>
+        {getPathOption()}
       </Select>
       <div className={styles.date_path_store_content}>
         <p title="大润发松江店"><span>A</span>大润发松江店</p>
@@ -169,14 +164,14 @@ class Schdule extends React.Component {
       dataIndex: 'level',
       key: 'level',
     }, {
-        title: '门店数量',
-        dataIndex: 'count',
-        key: 'count',
-      }, {
-        title: '月均拜访次数',
-        dataIndex: 'percount',
-        key: 'percount',
-      }];
+      title: '门店数量',
+      dataIndex: 'count',
+      key: 'count',
+    }, {
+      title: '月均拜访次数',
+      dataIndex: 'percount',
+      key: 'percount',
+    }];
     return columns;
   }
   getTable2Column() {
@@ -185,14 +180,14 @@ class Schdule extends React.Component {
       dataIndex: 'name',
       key: 'name',
     }, {
-        title: '门店级别',
-        dataIndex: 'level',
-        key: 'level',
-      }, {
-        title: '所属路线',
-        dataIndex: 'path',
-        key: 'path',
-      }];
+      title: '门店级别',
+      dataIndex: 'level',
+      key: 'level',
+    }, {
+      title: '所属路线',
+      dataIndex: 'path',
+      key: 'path',
+    }];
     return columns;
   }
   getTableData() {
@@ -202,21 +197,21 @@ class Schdule extends React.Component {
       count: 20,
       percount: 4.2,
     }, {
-        key: '2',
-        level: 'B类',
-        count: 16,
-        percount: 2.1,
-      }, {
-        key: '3',
-        level: 'C类',
-        count: 4,
-        percount: 1,
-      }, {
-        key: '4',
-        level: '所有门店',
-        count: 40,
+      key: '2',
+      level: 'B类',
+      count: 16,
+      percount: 2.1,
+    }, {
+      key: '3',
+      level: 'C类',
+      count: 4,
+      percount: 1,
+    }, {
+      key: '4',
+      level: '所有门店',
+      count: 40,
 
-      }];
+    }];
     return data;
   }
   getTable2Data() {
@@ -226,21 +221,21 @@ class Schdule extends React.Component {
       name: '大润发松江店',
       path: '山东8',
     }, {
-        key: '2',
-        level: 'A类',
-        name: '大润发松江店',
-        path: '山东9',
-      }, {
-        key: '3',
-        level: 'B类',
-        name: '大润发松江店',
-        path: '山东10',
-      }, {
-        key: '4',
-        level: 'C类',
-        name: '大润发松江店',
-        path: '山东11',
-      }];
+      key: '2',
+      level: 'A类',
+      name: '大润发松江店',
+      path: '山东9',
+    }, {
+      key: '3',
+      level: 'B类',
+      name: '大润发松江店',
+      path: '山东10',
+    }, {
+      key: '4',
+      level: 'C类',
+      name: '大润发松江店',
+      path: '山东11',
+    }];
     return data;
   }
   onClickSave() {
@@ -254,26 +249,27 @@ class Schdule extends React.Component {
     });
   }
   render() {
+    var userInfo = Store.getUserInfo();
     return (
       <div className={styles.container}>
         <header>拜访计划表<span>注： 每月25日之前制定下月计划，每周五之前确定下周计划</span></header>
         <div className={styles.subheader}>
           <span>区域：</span>
-          <p>苏皖区</p>
+          <p>{userInfo.departname}</p>
           <span>姓名：</span>
-          <p>李春香</p>
+          <p>{userInfo.realname}</p>
           <span>岗位：</span>
-          <p>销售代表</p>
+          <p>{userInfo.post}</p>
           <span>大区主管：</span>
           <p>白焕霞</p>
           <div className={styles.markcontent}>
-            <div className={[styles.markblock, styles.next].join(' ') }></div>
+            <div className={[styles.markblock, styles.next].join(' ')}></div>
             <p>可排计划</p>
-            <div className={[styles.markblock, styles.past].join(' ') }></div>
+            <div className={[styles.markblock, styles.past].join(' ')}></div>
             <p>不可改</p>
           </div>
         </div>
-        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ') }>
+        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ')}>
           <Calendar value={this.state.monent}
             mode={this.state.mode}
             onPanelChange={this.onPanelChange}
@@ -288,9 +284,9 @@ class Schdule extends React.Component {
                 <span style={{ width: '100px' }}>拜访覆盖率：</span>
                 <Progress percent={85} strokeWidth={5} status="active" />
               </div>
-              <Table pagination={false} columns={this.getTableColumn() } dataSource={this.getTableData() } />
+              <Table pagination={false} columns={this.getTableColumn()} dataSource={this.getTableData()} />
               <p>未覆盖门店：</p>
-              <Table pagination={false} columns={this.getTable2Column() } dataSource={this.getTable2Data() } />
+              <Table pagination={false} columns={this.getTable2Column()} dataSource={this.getTable2Data()} />
               <Button onClick={this.onClickSave} style={{ marginTop: '20px', width: '100%' }} type="primary">保存并提交</Button>
             </div>
           </div> : null
