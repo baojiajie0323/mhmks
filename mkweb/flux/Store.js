@@ -27,6 +27,8 @@ var _role = [];
 
 var _path = [];
 var _pathdetail = [];
+var _plansum = [];
+var _plan = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -272,6 +274,54 @@ var Store = assign({}, EventEmitter.prototype, {
     return pathdetail;
   },
 
+  getPlanSum: function (year, month) {
+    var planSum = [];
+    for (var i = 0; i < _plansum.length; i++) {
+      if (_plansum[i].userid == localStorage.username &&
+        _plansum[i].year == year &&
+        (!month || _plansum[i].month == month)) {
+        planSum.push(_plansum[i]);
+      }
+    }
+    return planSum;
+  },
+  setPlanSum: function (sa) {
+    for (var i = 0; i < sa.length; i++) {
+      var planSum = this.getPlanSum(sa[i].year, sa[i].month);
+      if (planSum.length > 0) {
+        planSum[0] = sa[i];
+      } else {
+        _plansum.push(sa[i]);
+      }
+    }
+    this.emit(StoreEvent.SE_PLANSUM);
+  },
+  getPlan: function (year, month, day) {
+    var plan = [];
+    for (var i = 0; i < _plan.length; i++) {
+      if (_plan[i].userid == localStorage.username &&
+        _plan[i].year == year &&
+        _plan[i].month == month &&
+        (!day || _plan[i].day == day)) {
+        plan.push(_plan[i]);
+      }
+    }
+    return plan;
+  },
+  setPlan: function (sa) {
+    for (var i = 0; i < sa.length; i++) {
+      var plan = this.getPlan(sa[i].year, sa[i].month, sa[i].day);
+      if (plan.length > 0) {
+        plan[0] = sa[i];
+      } else {
+        _plan.push(sa[i]);
+      }
+    }
+    this.emit(StoreEvent.SE_PLAN);
+  },
+
+
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -412,6 +462,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PATHDETAIL: {
       Store.setPathDetail(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLANSUM: {
+      Store.setPlanSum(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLAN: {
+      Store.setPlan(action.value);
     }
       break;
 

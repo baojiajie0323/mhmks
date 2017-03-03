@@ -716,6 +716,56 @@ var Action = {
         }
       })
   },
+  getPlanSum: function (data) {
+    var context = this;
+    data.command = 'getplansum';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPlanSum:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PLANSUM, response.data);
+        } else {
+          message.error('获取计划统计失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPlanSum fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PLANSUM, rsp.data);
+        }
+      })
+  },
+  getPlan: function (data) {
+    var context = this;
+    data.command = 'getplan';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PLAN, response.data);
+        } else {
+          message.error('获取计划失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPlan fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PLAN, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

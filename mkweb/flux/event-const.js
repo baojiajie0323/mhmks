@@ -35,6 +35,8 @@ var eventMap = {
 
     AE_PATH: null,
     AE_PATHDETAIL: null,
+    AE_PLANSUM: null,
+    AE_PLAN: null,
   }),
 
   StoreEvent: keyMirror({
@@ -61,6 +63,8 @@ var eventMap = {
 
     SE_PATH: null,
     SE_PATHDETAIL: null,
+    SE_PLANSUM: null,
+    SE_PLAN: null,
   })
 };
 

@@ -13,14 +13,21 @@ class Schdule extends React.Component {
       path: Store.getPath(),
       pathDetail: Store.getPathDetail(),
       storeBasic: Store.getStoreBasic(),
+      plansumList: [],
+      planList: [],
     };
     this.monthCellRender = this.monthCellRender.bind(this);
     this.dateCellRender = this.dateCellRender.bind(this);
     this.onPanelChange = this.onPanelChange.bind(this);
     this.onClickMonthContent = this.onClickMonthContent.bind(this);
     this.onClickSave = this.onClickSave.bind(this);
+    this.onPlanSumChange = this.onPlanSumChange.bind(this);
+    this.onPlanChange = this.onPlanChange.bind(this);
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_PLANSUM, this.onPlanSumChange);
+    Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+
     Action.getPath_app({
       userid: localStorage.username
     });
@@ -28,9 +35,72 @@ class Schdule extends React.Component {
     Action.getStoreBasic({
       username: localStorage.username
     });
+
+    this.checkPlanSum(true);
+    this.checkPlan(true);
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_PLANSUM, this.onPlanSumChange);
+    Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
+  checkPlanSum(ajax) {
+    var curMonent = this.state.monent;
+    var curYear = curMonent.year();
+    var planSumList = Store.getPlanSum(curYear);
+    if (ajax && planSumList.length == 0) {
+      Action.getPlanSum({
+        userid: localStorage.username,
+        year: curYear
+      })
+    } else {
+      this.setState({
+        plansumList: planSumList,
+      })
+    }
+  }
+  checkPlan(ajax) {
+    var curMonent = this.state.monent;
+    var curYear = curMonent.year();
+    var curMonth = curMonth.month();
+    var planList = Store.getPlan(curYear, curMonth);
+    if (ajax && planList.length == 0) {
+      Action.getPlan({
+        userid: localStorage.username,
+        year: curYear,
+        month: curMonth,
+      })
+    } else {
+      this.setState({
+        planList: planList,
+      })
+    }
+  }
+  onPlanSumChange() {
+    this.checkPlanSum();
+  }
+  onPlanChange() {
+    this.checkPlan();
+  }
+  getPlanSum(year, month) {
+    for (var i = 0; i < this.state.plansumList.length; i++) {
+      if (this.state.plansumList[i].year == year &&
+        this.state.plansumList[i].month == month) {
+        return this.state.plansumList[i];
+      }
+    }
+    return null;
+  }
+  getPlan(year, month, day) {
+    for (var i = 0; i < this.state.planList.length; i++) {
+      if (this.state.planList[i].year == year &&
+        this.state.planList[i].month == month &&
+        this.state.planList[i].day == day) {
+        return this.state.planList[i];
+      }
+    }
+    return null;
+  }
+
   onPathChange() {
     this.setState({
       path: Store.getPath()
@@ -82,9 +152,16 @@ class Schdule extends React.Component {
     return 'later';
   }
   onPanelChange(monent, mode) {
+    var context = this;
     this.setState({
       monent,
       mode
+    }, function () {
+      if (mode == 'year') {
+        context.checkPlanSum();
+      } else if (mode == 'month') {
+        context.checkPlan();
+      }
     })
   }
   monthCellRender(value) {
@@ -97,24 +174,25 @@ class Schdule extends React.Component {
     else if (monthType == 'later') monthStyle.push(styles.later);
 
     var context = this;
+    var planSum = this.getPlanSum(value.year(), value.month());
     return <div className={monthStyle.join(' ')}
       onClick={function () { context.onClickMonthContent(value) } }
       >
       {monthType == 'later' ? null :
         [<div className={styles.tableContent}>
           <p>计划月均拜访</p>
-          <Tag color="#2db7f5">A类：4.2次</Tag>
-          <Tag color="#27b56e">B类：2.1次</Tag>
-          <Tag color="#7265E6">C类：1次</Tag>
+          <Tag color="#2db7f5">{'A类：' + (planSum ? planSum.storeA : '') + '次'}</Tag>
+          <Tag color="#27b56e">{'B类：' + (planSum ? planSum.storeB : '') + '次'}</Tag>
+          <Tag color="#7265E6">{'C类：' + (planSum ? planSum.storeC : '') + '次'}</Tag>
         </div>,
         <div className={styles.tableContent}>
           <p>计划覆盖率</p>
-          <Progress percent={85} strokeWidth={5} status="active" />
+          <Progress percent={planSum ? planSum.cover : 0} strokeWidth={5} status="active" />
         </div>,
         <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
         <div className={styles.tableContent}>
           <p>执行完成率</p>
-          <Progress percent={53} strokeWidth={5} status="active" />
+          <Progress percent={planSum ? planSum.complete : 0} strokeWidth={5} status="active" />
         </div>]
       }
     </div>;
@@ -143,11 +221,14 @@ class Schdule extends React.Component {
         return <Option value={pt.Path_id}>{pt.Path_name}</Option>
       });
     }
+
+    var plan
     return <div className={dateStyle.join(' ')}>
       <Select
         style={{ width: '100%' }}
         allowClear
         placeholder="选择一条路线"
+        value={}
         disabled={dateType == 'past'} >
         {getPathOption()}
       </Select>
@@ -191,6 +272,7 @@ class Schdule extends React.Component {
     return columns;
   }
   getTableData() {
+
     const data = [{
       key: '1',
       level: 'A类',
@@ -250,6 +332,9 @@ class Schdule extends React.Component {
   }
   render() {
     var userInfo = Store.getUserInfo();
+    var curmonent = this.state.monent;
+    var year = curmonent.year();
+    var month = curmonent.month();
     return (
       <div className={styles.container}>
         <header>拜访计划表<span>注： 每月25日之前制定下月计划，每周五之前确定下周计划</span></header>
@@ -278,7 +363,7 @@ class Schdule extends React.Component {
         </div>
         {this.state.mode == 'month' ?
           <div className={styles.planDetailContainer}>
-            <p className={styles.planDetail_Title}>2017年3月计划分析统计</p>
+            <p className={styles.planDetail_Title}>{year + '年' + month + '月计划分析统计'}</p>
             <div className={styles.detailContent}>
               <div style={{ padding: '0 5px', display: 'flex', margin: '10px 0' }}>
                 <span style={{ width: '100px' }}>拜访覆盖率：</span>
