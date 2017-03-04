@@ -67,6 +67,14 @@ var Store = assign({}, EventEmitter.prototype, {
   getStoreBasic: function () {
     return _storeBasic;
   },
+  getStoreBasicById: function (id) {
+    for(var i =0; i < _storeBasic.length; i ++ ){
+      if(_storeBasic[i].Store_id == id){
+        return _storeBasic[i];
+      }
+    }
+    return null;
+  },
   setStoreContacts: function (sa) {
     _storeContacts = sa;
     this.emitChange(StoreEvent.SE_STORECONTACTS);
