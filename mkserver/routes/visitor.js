@@ -28,6 +28,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "delplan") {
     console.log('delplan');
     visitorDao.delPlan(req, res, next);
+  } else if (req.body.command == "getplansum") {
+    console.log('getplansum');
+    visitorDao.getPlanSum(req, res, next);
   }
 });
 

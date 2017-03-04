@@ -14,11 +14,11 @@ class Schdule extends React.Component {
       monent: moment(),
       mode: 'year',
       path: Store.getPath(),
-      pathDetail: Store.getPathDetail(),
       storeBasic: Store.getStoreBasic(),
       plansumList: [],
       planList: [],
     };
+    this.needUpdateMonent = [];
     this.monthCellRender = this.monthCellRender.bind(this);
     this.dateCellRender = this.dateCellRender.bind(this);
     this.onPanelChange = this.onPanelChange.bind(this);
@@ -27,15 +27,20 @@ class Schdule extends React.Component {
     this.onClickSave = this.onClickSave.bind(this);
     this.onPlanSumChange = this.onPlanSumChange.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
+    this.onPathSelChange = this.onPathSelChange.bind(this);
+    this.onPathChange = this.onPathChange.bind(this);
+    this.onStoreChange = this.onStoreChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLANSUM, this.onPlanSumChange);
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+    Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+    Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreChange);
 
     Action.getPath_app({
       userid: localStorage.username
     });
-    Action.getPathDetail();
+    //Action.getPathDetail();
     Action.getStoreBasic({
       username: localStorage.username
     });
@@ -46,6 +51,8 @@ class Schdule extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLANSUM, this.onPlanSumChange);
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
+    Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreChange);
   }
   checkPlanSum(ajax) {
     var curMonent = this.state.monent;
@@ -85,6 +92,16 @@ class Schdule extends React.Component {
   onPlanChange() {
     this.checkPlan();
   }
+  onPathChange() {
+    this.setState({
+      path: Store.getPath()
+    })
+  }
+  onStoreChange() {
+    this.setState({
+      storeBasic: Store.getStoreBasic()
+    })
+  }
   getPlanSum(year, month) {
     for (var i = 0; i < this.state.plansumList.length; i++) {
       if (this.state.plansumList[i].year == year &&
@@ -104,6 +121,42 @@ class Schdule extends React.Component {
       }
     }
     return planlist;
+  }
+  getPlanPath(planlist) {
+    for (var i = 0; i < planlist.length; i++) {
+      if (planlist[i].plan_type == 1) {
+        return planlist[i].path_id;
+      }
+    }
+  }
+  updatePlan(year, month, day, path) {
+    this.needUpdateMonent.push(day);
+    for (var i = 0; i < this.state.planList.length;) {
+      if (this.state.planList[i].year == year &&
+        this.state.planList[i].month == month + 1 &&
+        this.state.planList[i].day == day) {
+        this.state.planList.splice(i, 1);
+        continue;
+      }
+      i++;
+    }
+    if (path) {
+      var pathDetail = Store.getPathDetail(path);
+      for (var i = 0; i < pathDetail.length; i++) {
+        this.state.planList.push({
+          userid: localStorage.username,
+          year: year,
+          month: month + 1,
+          day: day,
+          plan_type: 1,
+          path_id: path,
+          store_id: pathDetail[i].Store_id
+        })
+      }
+    }
+    this.setState({
+      planList: this.state.planList
+    })
   }
 
   onPathChange() {
@@ -127,14 +180,32 @@ class Schdule extends React.Component {
     })
   }
   onClickDateContent(value) {
+    var context = this;
     var curMonent = this.state.monent;
-    if (value.month() != curMonent.month) {
+    if (value.month() != curMonent.month()) {
       value.date(15);
+      if (this.needUpdateMonent.length > 0) {
+        confirm({
+          title: '由于您修改了当月计划，请先保存提交计划！',
+          content: '点击"确定"停留在此月，点击"取消"放弃保存',
+          onOk() {
+          },
+          onCancel() {
+            context.setState({
+              mode: 'month',
+              monent: value
+            })
+          },
+        });
+        return;
+      }
+      this.setState({
+        mode: 'month',
+        monent: value
+      }, function () {
+        context.checkPlan();
+      })
     }
-    this.setState({
-      mode: 'month',
-      monent: value
-    })
   }
   getMonthType(year, month) {
     //console.log(year, month);
@@ -166,19 +237,39 @@ class Schdule extends React.Component {
     }
     return 'later';
   }
+
   onPanelChange(monent, mode) {
-    console.log('onPanel', monent.month(), monent.date())
+      console.log('onPanelChange',monent,mode)
     var context = this;
-    this.setState({
-      monent,
-      mode
-    }, function () {
-      if (mode == 'year') {
-        context.checkPlanSum();
-      } else if (mode == 'month') {
-        context.checkPlan();
+    var doChange = function () {
+      console.log('onPanelChange',monent,mode)
+      context.setState({
+        monent,
+        mode
+      }, function () {
+        if (mode == 'year') {
+          context.checkPlanSum(true);
+        } else if (mode == 'month') {
+          context.checkPlan(true);
+        }
+      })
+    }
+    var curMonent = this.state.monent;
+    if (this.state.mode == 'month' && (mode == "year" || monent.month() != curMonent.month())) {
+      if (this.needUpdateMonent.length > 0) {
+        confirm({
+          title: '由于您修改了当月计划，请先保存提交计划！',
+          content: '点击"确定"停留在此月，点击"取消"放弃保存',
+          onOk() {
+          },
+          onCancel() {
+            doChange();
+          },
+        });
+        return;
       }
-    })
+    }
+    doChange();
   }
   monthCellRender(value) {
     //console.log(value);
@@ -190,8 +281,8 @@ class Schdule extends React.Component {
     else if (monthType == 'later') monthStyle.push(styles.later);
 
     var context = this;
-    var planSum = this.getPlanSum(value.year(), value.month());
-    return <div className={monthStyle.join(' ') }
+    var planSum = this.getPlanSum(value.year(), value.month() + 1);
+    return <div className={monthStyle.join(' ')}
       onClick={function () { context.onClickMonthContent(value) } }
       >
       {monthType == 'later' ? null :
@@ -201,15 +292,15 @@ class Schdule extends React.Component {
           <Tag color="#27b56e">{'B类：' + (planSum ? planSum.storeB : '0') + '次'}</Tag>
           <Tag color="#7265E6">{'C类：' + (planSum ? planSum.storeC : '0') + '次'}</Tag>
         </div>,
-          <div className={styles.tableContent}>
-            <p>计划覆盖率</p>
-            <Progress percent={planSum ? planSum.cover : 0} strokeWidth={5} status="active" />
-          </div>,
-          <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
-          <div className={styles.tableContent}>
-            <p>执行完成率</p>
-            <Progress percent={planSum ? planSum.complete : 0} strokeWidth={5} status="active" />
-          </div>]
+        <div className={styles.tableContent}>
+          <p>计划覆盖率</p>
+          <Progress percent={planSum ? planSum.cover : 0} strokeWidth={5} status="active" />
+        </div>,
+        <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
+        <div className={styles.tableContent}>
+          <p>执行完成率</p>
+          <Progress percent={planSum ? planSum.complete : 0} strokeWidth={5} status="active" />
+        </div>]
       }
     </div>;
   }
@@ -235,11 +326,14 @@ class Schdule extends React.Component {
     var context = this;
     var getPathOption = function () {
       return context.state.path.map((pt) => {
-        return <Option value={pt.Path_id}>{pt.Path_name}</Option>
+        if (pt) {
+          return <Option value={pt.Path_id}>{pt.Path_name}</Option>
+        }
       });
     }
 
     var planlist = this.getPlan(value.year(), value.month() + 1, value.date());
+    //console.log('planlist', planlist, this.state.planList);
     var storelist = [];
     var path_id = NOPATH;
     for (var i = 0; i < planlist.length; i++) {
@@ -259,7 +353,7 @@ class Schdule extends React.Component {
       }
     }
 
-    return <div className={dateStyle.join(' ') }
+    return <div className={dateStyle.join(' ')}
       onClick={function () { context.onClickDateContent(value) } }
       >
       <Select
@@ -267,8 +361,11 @@ class Schdule extends React.Component {
         allowClear
         value={path_id}
         notFoundContent='没有路线'
+        onChange={function (path) {
+          context.onPathSelChange(value, path);
+        } }
         disabled={dateType == 'past'} >
-        {getPathOption() }
+        {getPathOption()}
       </Select>
       <div className={styles.date_path_store_content}>
         {storelist}
@@ -281,14 +378,14 @@ class Schdule extends React.Component {
       dataIndex: 'level',
       key: 'level',
     }, {
-        title: '门店数量',
-        dataIndex: 'count',
-        key: 'count',
-      }, {
-        title: '月均拜访次数',
-        dataIndex: 'percount',
-        key: 'percount',
-      }];
+      title: '门店数量',
+      dataIndex: 'count',
+      key: 'count',
+    }, {
+      title: '月均拜访次数',
+      dataIndex: 'percount',
+      key: 'percount',
+    }];
     return columns;
   }
   getTable2Column() {
@@ -297,14 +394,14 @@ class Schdule extends React.Component {
       dataIndex: 'name',
       key: 'name',
     }, {
-        title: '门店级别',
-        dataIndex: 'level',
-        key: 'level',
-      }, {
-        title: '所属路线',
-        dataIndex: 'path',
-        key: 'path',
-      }];
+      title: '门店级别',
+      dataIndex: 'level',
+      key: 'level',
+    }, {
+      title: '所属路线',
+      dataIndex: 'path',
+      key: 'path',
+    }];
     return columns;
   }
   unique(arr) {
@@ -372,7 +469,7 @@ class Schdule extends React.Component {
     storeC = planStoreCCount / storeCCount;
     storeC = parseFloat(storeC.toFixed(1));
     complete = parseInt(completeCount / planlist.length * 100);
-    complete = parseInt(planStoreList.length / storeCount * 100);
+    cover = parseInt(planStoreList.length / storeCount * 100);
 
 
     return {
@@ -395,21 +492,21 @@ class Schdule extends React.Component {
       count: sumInfo.storeACount + '家',
       percount: sumInfo.storeA + '次',
     }, {
-        key: '2',
-        level: 'B类',
-        count: sumInfo.storeBCount + '家',
-        percount: sumInfo.storeB + '次',
-      }, {
-        key: '3',
-        level: 'C类',
-        count: sumInfo.storeCCount + '家',
-        percount: sumInfo.storeC + '次',
-      }, {
-        key: '4',
-        level: '所有门店',
-        count: sumInfo.storeCount + '家',
+      key: '2',
+      level: 'B类',
+      count: sumInfo.storeBCount + '家',
+      percount: sumInfo.storeB + '次',
+    }, {
+      key: '3',
+      level: 'C类',
+      count: sumInfo.storeCCount + '家',
+      percount: sumInfo.storeC + '次',
+    }, {
+      key: '4',
+      level: '所有门店',
+      count: sumInfo.storeCount + '家',
 
-      }];
+    }];
     return data;
   }
   getTable2Data(noPlanList) {
@@ -418,10 +515,11 @@ class Schdule extends React.Component {
       var storeInfo = Store.getStoreBasicById(st);
       if (storeInfo) {
         var path_id = '';
-        var path_name = '';
-        for (var i = 0; i < context.state.pathDetail.length; i++) {
-          if (context.state.pathDetail[i].Store_id == st) {
-            path_id = context.state.pathDetail[i].Path_id;
+        var path_name = '无路线';
+        var planDetail = Store.getPathDetail();
+        for (var i = 0; i < planDetail.length; i++) {
+          if (planDetail[i].Store_id == st) {
+            path_id = planDetail[i].Path_id;
             break;
           }
         }
@@ -443,15 +541,48 @@ class Schdule extends React.Component {
     })
     return data;
   }
+  onPathSelChange(value, path) {
+    // console.log(value,path);
+    // var planlist = this.getPlan(value.year(),value.month(),value.date());
+    // var path_id = this.getPlanPath(planlist);
+    // if(path_id == path){
+    //   return;
+    // }
+    console.log(path);
+    this.updatePlan(value.year(), value.month(), value.date(), path);
+  }
   onClickSave() {
+    var context = this;
     confirm({
       title: '确定要保存并提交计划表吗？',
       content: '提交计划后请严格按照计划进行',
       onOk() {
-        console.log('OK');
+        context.onSavePlan();
       },
       onCancel() { },
     });
+  }
+  onSavePlan(){
+    var sumInfo = this.getSumInfo();
+    var curmonent = this.state.monent;
+    var year = curmonent.year();
+    var month = curmonent.month() + 1;
+    var modifyData = {};
+    this.needUpdateMonent = this.unique(this.needUpdateMonent);
+
+    for(var i = 0; i < this.needUpdateMonent.length; i++){
+      var planlist = this.getPlan(year,month,this.needUpdateMonent[i]);
+      modifyData[this.needUpdateMonent[i]] = planlist;
+    }
+
+    var data = {
+      userid:localStorage.username,
+      year,
+      month,
+      sumInfo,
+      modifyData
+    }
+    Action.updatePlan(data);
   }
   render() {
     var userInfo = Store.getUserInfo();
@@ -473,13 +604,13 @@ class Schdule extends React.Component {
           <span>大区主管：</span>
           <p>白焕霞</p>
           <div className={styles.markcontent}>
-            <div className={[styles.markblock, styles.next].join(' ') }></div>
+            <div className={[styles.markblock, styles.next].join(' ')}></div>
             <p>可排计划</p>
-            <div className={[styles.markblock, styles.past].join(' ') }></div>
+            <div className={[styles.markblock, styles.past].join(' ')}></div>
             <p>不可改</p>
           </div>
         </div>
-        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ') }>
+        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ')}>
           <Calendar value={this.state.monent}
             mode={this.state.mode}
             onPanelChange={this.onPanelChange}
@@ -494,10 +625,10 @@ class Schdule extends React.Component {
                 <span style={{ width: '100px' }}>拜访覆盖率：</span>
                 <Progress percent={sumInfo.cover} strokeWidth={5} status="active" />
               </div>
-              <Table pagination={false} columns={this.getTableColumn() } dataSource={this.getTableData(sumInfo) } />
-              <p>未覆盖门店：</p>
-              <Table pagination={false} columns={this.getTable2Column() } dataSource={this.getTable2Data(sumInfo.noplanList) } />
+              <Table pagination={false} columns={this.getTableColumn()} dataSource={this.getTableData(sumInfo)} />
               <Button onClick={this.onClickSave} style={{ marginTop: '20px', width: '100%' }} type="primary">保存并提交</Button>
+              <p>{'未覆盖门店(' + sumInfo.noplanList.length + '家) ：'}</p>
+              <Table pagination={false} columns={this.getTable2Column()} dataSource={this.getTable2Data(sumInfo.noplanList)} />
             </div>
           </div> : null
         }
