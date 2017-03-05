@@ -91,7 +91,10 @@ var Action = {
   },
   getStoreBasic: function (data) {
     var context = this;
+<<<<<<< HEAD
     data = data || {};
+=======
+>>>>>>> cbb2df8a0f041f51fa84abd3d1c5f054a1fcc596
     data.command = 'getstorebasic';
     $.ajax({
       url: '/info', type: 'POST', timeout: AJAXTIMEOUT,
@@ -759,7 +762,11 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('getPlan fail');
         if (_debug) {
+<<<<<<< HEAD
           var response = '{"code":0,"data":[{"userid":"z00189","year":2017,"month":4,"day":1,"plan_type":1,"path_id":"Q00004","store_id":"MTR-059","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东4"},{"userid":"z00189","year":2017,"month":4,"day":1,"plan_type":1,"path_id":"Q00004","store_id":"RTM-HB-026","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东4"},{"userid":"z00189","year":2017,"month":4,"day":2,"plan_type":1,"path_id":"Q00006","store_id":"CAF-025","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":2,"plan_type":1,"path_id":"Q00006","store_id":"RTM-HB-001","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":2,"plan_type":1,"path_id":"Q00006","store_id":"RTM-HB-002","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":2,"plan_type":1,"path_id":"Q00006","store_id":"WAL-5744","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":7,"plan_type":1,"path_id":"Q00002","store_id":"CAF-014","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东2"},{"userid":"z00189","year":2017,"month":4,"day":7,"plan_type":1,"path_id":"Q00002","store_id":"CAF-020","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东2"},{"userid":"z00189","year":2017,"month":4,"day":7,"plan_type":1,"path_id":"Q00002","store_id":"CAF-057","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东2"},{"userid":"z00189","year":2017,"month":4,"day":8,"plan_type":1,"path_id":"Q00006","store_id":"CAF-025","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":8,"plan_type":1,"path_id":"Q00006","store_id":"RTM-HB-001","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":8,"plan_type":1,"path_id":"Q00006","store_id":"RTM-HB-002","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"},{"userid":"z00189","year":2017,"month":4,"day":8,"plan_type":1,"path_id":"Q00006","store_id":"WAL-5744","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东6"}]}';
+=======
+          var response = '{"code":0,"data":[{"userid":"z00189","year":2017,"month":3,"day":1,"plan_type":1,"path_id":"Q00001","store_id":"RTM-HB-011","isfinish":0,"signin_time":null,"signin_gps_x":null,"signin_gps_y":null,"signout_time":null,"signout_gps_x":null,"signout_gps_y":null,"Path_Name":"山东1"}]}';
+>>>>>>> cbb2df8a0f041f51fa84abd3d1c5f054a1fcc596
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_PLAN, rsp.data);
         }

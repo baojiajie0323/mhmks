@@ -32,10 +32,15 @@ var sqlmap = {
   getpath_app: 'select a.*,Path_name,Store_name from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) where c.store_id in (select store_id from store where user_id = ?) order by a.path_seq,a.Path_id',
   getplan: 'select a.*,b.Path_Name from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) where userid = ? and year = ? and month = ?',
   addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)', 
+<<<<<<< HEAD
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',
   updateplansum: 'replace into plan_sum(userid,year,month,storeCount,storeACount,storeBCount,storeCCount,storeA,storeB,storeC,cover) VALUES(?,?,?,?,?,?,?,?,?,?,?) ',
   insertplan: 'insert into plan(userid,year,month,day,plan_type,path_id,store_id) values(?,?,?,?,?,?,?) '
+=======
+  delplan: 'delete from plan where Plan_Id = ?',
+  getplansum: 'select * from plan_sum where userid = ? and year = ?'
+>>>>>>> cbb2df8a0f041f51fa84abd3d1c5f054a1fcc596
 };
 
 module.exports = sqlmap;
