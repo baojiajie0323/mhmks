@@ -16,7 +16,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstorearea;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', err, result);
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
@@ -42,7 +42,7 @@ module.exports = {
         }
         console.log(sqlstring);
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -62,7 +62,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstorecontacts;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -82,7 +82,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getstoredisplay;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -102,7 +102,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getproduct;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -124,10 +124,10 @@ module.exports = {
         var sqlstring = _sql.getproductpricecount;
         connection.query(sqlstring, [], function (err, result) {
           var nCount = result[0]['count(*)'];
-          console.log('dbresult', result, nCount);
+          //console.log('dbresult', result, nCount);
           sqlstring = _sql.getproductprice;
           connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
-            console.log('dbresult', result);
+            //console.log('dbresult', result);
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {
@@ -150,10 +150,10 @@ module.exports = {
         var sqlstring = _sql.getproductstockcount;
         connection.query(sqlstring, [], function (err, result) {
           var nCount = result[0]['count(*)'];
-          console.log('dbresult', result, nCount);
+          //console.log('dbresult', result, nCount);
           sqlstring = _sql.getproductstock;
           connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
-            console.log('dbresult', result);
+            //console.log('dbresult', result);
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {
@@ -174,7 +174,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getproductbrand;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -194,7 +194,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getpromotiontype;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', result);
+          //console.log('dbresult', result);
           if (result.length > 0) {
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
@@ -216,10 +216,10 @@ module.exports = {
         var sqlstring = _sql.getpromotioncount;
         connection.query(sqlstring, [], function (err, result) {
           var nCount = result[0]['count(*)'];
-          console.log('dbresult', result, nCount);
+          //console.log('dbresult', result, nCount);
           sqlstring = _sql.getpromotion;
           connection.query(sqlstring, [parseInt(param.page)], function (err, result) {
-            console.log('dbresult', result);
+            //console.log('dbresult', result);
             if (result.length > 0) {
               jsonWrite(res, result, dbcode.SUCCESS, nCount);
             } else {

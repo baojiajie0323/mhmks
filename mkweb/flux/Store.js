@@ -338,14 +338,28 @@ var Store = assign({}, EventEmitter.prototype, {
     }
     return plan;
   },
-  setPlan: function (sa) {
-    for (var i = 0; i < sa.length; i++) {
-      var plan = this.getPlan(sa[i].year, sa[i].month, sa[i].day);
-      if (plan.length > 0) {
-        plan[0] = sa[i];
-      } else {
-        _plan.push(sa[i]);
+  delPlan: function(year,month,day) {
+    for (var i = 0; i < _plan.length;) {
+      if (_plan[i].userid == localStorage.username &&
+        _plan[i].year == year &&
+        _plan[i].month == month &&
+        (!day || _plan[i].day == day)) {
+        plan.splice(i,1);
+        continue;
       }
+      i++;
+    }
+  },
+  setPlan: function (sa) {
+    var lastyear = 0,lastmonth = 0,lastday = 0;
+    for (var i = 0; i < sa.length; i++) {
+      if(lastyear != sa[i].year || lastmonth != sa[i].month || lastday != sa[i].day){
+        this.delPlan(sa[i].year, sa[i].month, sa[i].day);
+        lastyear = sa[i].year;
+        lastmonth = sa[i].month;
+        lastday = sa[i].day;
+      }
+      _plan.push(sa[i]);
     }
     this.emit(StoreEvent.SE_PLAN);
   },

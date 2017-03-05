@@ -174,9 +174,12 @@ class Schdule extends React.Component {
     if (!value) {
       return;
     }
+    var context =  this;
     this.setState({
       mode: 'month',
       monent: value
+    },function(){
+      context.checkPlan(true);
     })
   }
   onClickDateContent(value) {
@@ -282,6 +285,13 @@ class Schdule extends React.Component {
 
     var context = this;
     var planSum = this.getPlanSum(value.year(), value.month() + 1);
+    var cover = 0,complete = 0;
+    if(planSum && planSum.cover){
+      cover = planSum.cover;
+    }
+    if(planSum && planSum.complete){
+      complete = planSum.complete;
+    }
     return <div className={monthStyle.join(' ')}
       onClick={function () { context.onClickMonthContent(value) } }
       >
@@ -294,12 +304,12 @@ class Schdule extends React.Component {
         </div>,
         <div className={styles.tableContent}>
           <p>计划覆盖率</p>
-          <Progress percent={planSum ? planSum.cover : 0} strokeWidth={5} status="active" />
+          <Progress percent={cover} strokeWidth={5} status="active" />
         </div>,
         <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
         <div className={styles.tableContent}>
           <p>执行完成率</p>
-          <Progress percent={planSum ? planSum.complete : 0} strokeWidth={5} status="active" />
+          <Progress percent={complete} strokeWidth={5} status="active" />
         </div>]
       }
     </div>;
@@ -532,7 +542,7 @@ class Schdule extends React.Component {
         }
 
         return {
-          key: index.toString(),
+          key: index,
           level: storeInfo.Level + '类',
           name: storeInfo.Store_name,
           path: path_name,
@@ -579,8 +589,8 @@ class Schdule extends React.Component {
       userid:localStorage.username,
       year,
       month,
-      sumInfo,
-      modifyData
+      sumInfo: JSON.stringify(sumInfo),
+      modifyData: JSON.stringify(modifyData),
     }
     Action.updatePlan(data);
   }
