@@ -7,7 +7,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginSuccess: false
+      loginSuccess: true
     };
     this.onLoginChange = this.onLoginChange.bind(this);
   }

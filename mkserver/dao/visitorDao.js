@@ -72,10 +72,35 @@ module.exports = {
       }
     });
   },
+  getPlanSum: function (req, res, next) {
+    console.log('visitorDao getPlanSum');
+    var param = req.body;
+    if (!param.userid || !param.year) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getplansum;
+        connection.query(sqlstring, [param.userid,param.year], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   getPlan: function (req, res, next) {
     console.log('visitorDao getPlan');
     var param = req.body;
-    if (!param.date) {
+    if (!param.userid || !param.year || !param.month) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
@@ -85,11 +110,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getplan;
-        sqlstring += ' where Plan_Date = ' + connection.escape(param.date);
-        if (param.userid) {
-          sqlstring += ' and User_Id = ' + connection.escape(param.userid);
-        }
-        connection.query(sqlstring, [], function (err, result) {
+        // sqlstring += ' where Plan_Date = ' + connection.escape(param.date);
+        // if (param.userid) {
+        //   sqlstring += ' and User_Id = ' + connection.escape(param.userid);
+        // }
+        connection.query(sqlstring, [param.userid,param.year,param.month], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

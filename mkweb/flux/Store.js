@@ -68,8 +68,8 @@ var Store = assign({}, EventEmitter.prototype, {
     return _storeBasic;
   },
   getStoreBasicById: function (id) {
-    for(var i =0; i < _storeBasic.length; i ++ ){
-      if(_storeBasic[i].Store_id == id){
+    for (var i = 0; i < _storeBasic.length; i++) {
+      if (_storeBasic[i].Store_id == id) {
         return _storeBasic[i];
       }
     }
@@ -256,22 +256,44 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_PATH);
   },
   getPath: function () {
-    return _path;
-  },
-  getPathbyId: function (id) {
-    for (var i = 0; i < _path.length; i++) {
-      if (_path[i].Path_id == id) {
-        return _path[i];
+    var pathList = [];
+    _path.forEach((p) => {
+      if (p.Path_seq == 1) {
+        pathList.push({
+          Path_id: p.Path_id,
+          Path_name: p.Path_name
+        })
       }
-    }
+    })
+    return pathList;
   },
-  setPathDetail: function (sa) {
-    _pathdetail = sa;
-    this.emitChange(StoreEvent.SE_PATH);
+  getPathDetail: function (pathId) {
+    var pathDetail = [];
+    _path.forEach((p) => {
+      if (!pathId || p.Path_id == pathId) {
+        pathDetail.push(p);
+      }
+    })
+    return pathDetail;
   },
-  getPathDetail: function () {
-    return _pathdetail;
-  },
+
+  // getPath: function () {
+  //   return _path;
+  // },
+  // getPathbyId: function (id) {
+  //   for (var i = 0; i < _path.length; i++) {
+  //     if (_path[i].Path_id == id) {
+  //       return _path[i];
+  //     }
+  //   }
+  // },
+  // setPathDetail: function (sa) {
+  //   _pathdetail = sa;
+  //   this.emitChange(StoreEvent.SE_PATH);
+  // },
+  // getPathDetail: function () {
+  //   return _pathdetail;
+  // },
   getPathDetailbyId: function (id) {
     var pathdetail = [];
     for (var i = 0; i < _pathdetail.length; i++) {
