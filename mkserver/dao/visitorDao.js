@@ -86,7 +86,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getplansum;
-        connection.query(sqlstring, [param.userid,param.year], function (err, result) {
+        connection.query(sqlstring, [param.userid, param.year], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -115,8 +115,8 @@ module.exports = {
         // if (param.userid) {
         //   sqlstring += ' and User_Id = ' + connection.escape(param.userid);
         // }
-        connection.query(sqlstring, [param.userid,param.year,param.month], function (err, result) {
-          console.log('dbresult', err, result);
+        connection.query(sqlstring, [param.userid, param.year, param.month], function (err, result) {
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
@@ -188,7 +188,7 @@ module.exports = {
     });
   },
   updatePlan: function (req, res, next) {
-    console.log('visitorDao updatePlan',req.body);
+    console.log('visitorDao updatePlan', req.body);
     var param = req.body;
     if (!param.year || !param.month || !param.userid) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
@@ -196,7 +196,7 @@ module.exports = {
     }
     var sumInfo = JSON.parse(param.sumInfo);
     var modifyData = JSON.parse(param.modifyData);
-    
+
     var planSum = {};
     var plan = [];
     pool.getConnection(function (err, connection) {
@@ -205,78 +205,77 @@ module.exports = {
         return;
       } else {
         // function数组，需要执行的任务列表，每个function都有一个参数callback函数并且要调用
-        var tasks = [function(callback) {
+        var tasks = [function (callback) {
           // 开启事务
-          connection.beginTransaction(function(err) {
+          connection.beginTransaction(function (err) {
             callback(err);
           });
-        }, function(callback) {
+        }, function (callback) {
           var sqlstring = _sql.updateplansum;
-          connection.query(sqlstring, [param.userid,param.year,param.month,
-          sumInfo.storeCount,sumInfo.storeACount,sumInfo.storeBCount,sumInfo.storeCCount,
-          sumInfo.storeA,sumInfo.storeB,sumInfo.storeC,sumInfo.cover],
-           function(err, result) {
-            callback(err);
-          });
-        }, function(callback) {
-            connection.query('select * from plan_sum where userid = ? and year = ? and month = ?',
-             [param.userid,param.year,param.month], function(err, result) {
-            //console.log('dbresult', err, result);
-            planSum = result[0];
-            callback(err);
-          });
+          connection.query(sqlstring, [param.userid, param.year, param.month,
+            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+            function (err, result) {
+              callback(err);
+            });
+        }, function (callback) {
+          connection.query('select * from plan_sum where userid = ? and year = ? and month = ?',
+            [param.userid, param.year, param.month], function (err, result) {
+              //console.log('dbresult', err, result);
+              planSum = result;
+              callback(err);
+            });
         }];
 
         for (let day in modifyData) {
           var planlist = modifyData[day];
-          tasks.push(function(callback) {
+          tasks.push(function (callback) {
             var sqlstring = _sql.delplan;
-            connection.query(sqlstring, [param.userid,param.year,param.month,day],
-            function(err, result) {
-              callback(err);
-            });
-          })
-
-          for(var i = 0; i < planlist.length;i++){
-            let plan = planlist[i];
-            tasks.push(function(callback) {
-              var sqlstring = _sql.insertplan;
-              console.log(sqlstring,param.userid,param.year,param.month,day,plan.plan_type,plan.path_id,plan.store_id);
-              connection.query(sqlstring, [param.userid,param.year,param.month,day,plan.plan_type,plan.path_id,plan.store_id],
-              function(err, result) {
+            connection.query(sqlstring, [param.userid, param.year, param.month, day],
+              function (err, result) {
                 callback(err);
               });
+          })
+
+          for (var i = 0; i < planlist.length; i++) {
+            let plan = planlist[i];
+            tasks.push(function (callback) {
+              var sqlstring = _sql.insertplan;
+              console.log(sqlstring, param.userid, param.year, param.month, day, plan.plan_type, plan.path_id, plan.store_id);
+              connection.query(sqlstring, [param.userid, param.year, param.month, day, plan.plan_type, plan.path_id, plan.store_id],
+                function (err, result) {
+                  callback(err);
+                });
             })
           }
-
-          tasks.push(function(callback) {
-            connection.query('select * from plan where userid = ? and year = ? and month = ? and day = ?',
-              [param.userid,param.year,param.month,day], function(err, result) {
+        }
+        tasks.push(function (callback) {
+          connection.query('select * from plan where userid = ? and year = ? and month = ?',
+            [param.userid, param.year, param.month], function (err, result) {
               //console.log('dbresult', err, result);
-              plan = plan.concat(result);
+              plan = result;
               callback(err);
             });
-          })
-        }
+        })
 
-        tasks.push(function(callback) {
+        tasks.push(function (callback) {
           // 提交事务
-          connection.commit(function(err) {
+          connection.commit(function (err) {
             callback(err);
           });
         })
 
-        async.series(tasks, function(err, results) {
-          if(err) {
-              console.log('tasks error',err);
-              connection.rollback(); // 发生错误事务回滚
-              jsonWrite(res, {}, dbcode.FAIL);
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
           } else {
-              var result = {
-                planSum : planSum,
-                plan: plan
-              }
-              jsonWrite(res, result, dbcode.SUCCESS);
+            var result = {
+              planSum: planSum,
+              plan: plan
+            }
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });

@@ -315,14 +315,21 @@ var Store = assign({}, EventEmitter.prototype, {
     }
     return planSum;
   },
-  setPlanSum: function (sa) {
-    for (var i = 0; i < sa.length; i++) {
-      var planSum = this.getPlanSum(sa[i].year, sa[i].month);
-      if (planSum.length > 0) {
-        planSum[0] = sa[i];
-      } else {
-        _plansum.push(sa[i]);
+  delPlanSum: function (year, month) {
+    for (var i = 0; i < _plansum.length; i++) {
+      if (_plansum[i].userid == localStorage.username &&
+        _plansum[i].year == year &&
+        _plansum[i].month == month) {
+        _plansum.splice(i, 1);
+        break;
       }
+    }
+  },
+  setPlanSum: function (sa) {
+    console.log('test1', _plansum);
+    for (var i = 0; i < sa.length; i++) {
+      this.delPlanSum(sa[i].year, sa[i].month);
+      _plansum.push(sa[i]);
     }
     this.emit(StoreEvent.SE_PLANSUM);
   },
@@ -344,20 +351,19 @@ var Store = assign({}, EventEmitter.prototype, {
         _plan[i].year == year &&
         _plan[i].month == month &&
         (!day || _plan[i].day == day)) {
-        plan.splice(i, 1);
+        _plan.splice(i, 1);
         continue;
       }
       i++;
     }
   },
   setPlan: function (sa) {
-    var lastyear = 0, lastmonth = 0, lastday = 0;
+    var lastyear = 0, lastmonth = 0;
     for (var i = 0; i < sa.length; i++) {
-      if (lastyear != sa[i].year || lastmonth != sa[i].month || lastday != sa[i].day) {
-        this.delPlan(sa[i].year, sa[i].month, sa[i].day);
+      if (lastyear != sa[i].year || lastmonth != sa[i].month) {
+        this.delPlan(sa[0].year, sa[i].month);
         lastyear = sa[i].year;
         lastmonth = sa[i].month;
-        lastday = sa[i].day;
       }
       _plan.push(sa[i]);
     }
