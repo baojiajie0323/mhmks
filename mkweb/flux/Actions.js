@@ -776,7 +776,7 @@ var Action = {
       .done(function (response) {
         console.log('updatePlan:', response);
         if (response.code == 0) {
-          context.dispatch(ActionEvent.AE_ROLE_MOD, response.data);
+          context.dispatch(ActionEvent.AE_PLAN_UPDATE, response.data);
           message.success('修改计划成功！');
         } else {
           message.error('修改计划失败！' + response.msg);

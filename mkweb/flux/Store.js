@@ -338,22 +338,22 @@ var Store = assign({}, EventEmitter.prototype, {
     }
     return plan;
   },
-  delPlan: function(year,month,day) {
+  delPlan: function (year, month, day) {
     for (var i = 0; i < _plan.length;) {
       if (_plan[i].userid == localStorage.username &&
         _plan[i].year == year &&
         _plan[i].month == month &&
         (!day || _plan[i].day == day)) {
-        plan.splice(i,1);
+        plan.splice(i, 1);
         continue;
       }
       i++;
     }
   },
   setPlan: function (sa) {
-    var lastyear = 0,lastmonth = 0,lastday = 0;
+    var lastyear = 0, lastmonth = 0, lastday = 0;
     for (var i = 0; i < sa.length; i++) {
-      if(lastyear != sa[i].year || lastmonth != sa[i].month || lastday != sa[i].day){
+      if (lastyear != sa[i].year || lastmonth != sa[i].month || lastday != sa[i].day) {
         this.delPlan(sa[i].year, sa[i].month, sa[i].day);
         lastyear = sa[i].year;
         lastmonth = sa[i].month;
@@ -364,6 +364,13 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emit(StoreEvent.SE_PLAN);
   },
 
+  updatePlan: function (sa) {
+    var planSum = sa.planSum;
+    var plan = sa.plan;
+    this.setPlan(plan);
+    this.setPlanSum(planSum);
+    this.emit(StoreEvent.SE_PLAN_UPDATE);
+  },
 
 
   emitChange: function (eventtype) {
@@ -514,6 +521,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PLAN: {
       Store.setPlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLAN_UPDATE: {
+      Store.updatePlan(action.value);
     }
       break;
 

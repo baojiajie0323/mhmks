@@ -30,12 +30,14 @@ class Schdule extends React.Component {
     this.onPathSelChange = this.onPathSelChange.bind(this);
     this.onPathChange = this.onPathChange.bind(this);
     this.onStoreChange = this.onStoreChange.bind(this);
+    this.onPlanUpdate = this.onPlanUpdate.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLANSUM, this.onPlanSumChange);
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
     Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreChange);
+    Store.addChangeListener(StoreEvent.SE_PLAN_UPDATE, this.onPlanUpdate);
 
     Action.getPath_app({
       userid: localStorage.username
@@ -53,6 +55,7 @@ class Schdule extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
     Store.removeChangeListener(StoreEvent.SE_STOREBASIC, this.onStoreChange);
+    Store.removeChangeListener(StoreEvent.SE_PLAN_UPDATE, this.onPlanUpdate);
   }
   checkPlanSum(ajax) {
     var curMonent = this.state.monent;
@@ -101,6 +104,9 @@ class Schdule extends React.Component {
     this.setState({
       storeBasic: Store.getStoreBasic()
     })
+  }
+  onPlanUpdate() {
+    this.needUpdateMonent = [];
   }
   getPlanSum(year, month) {
     for (var i = 0; i < this.state.plansumList.length; i++) {
@@ -174,11 +180,11 @@ class Schdule extends React.Component {
     if (!value) {
       return;
     }
-    var context =  this;
+    var context = this;
     this.setState({
       mode: 'month',
       monent: value
-    },function(){
+    }, function () {
       context.checkPlan(true);
     })
   }
@@ -242,10 +248,10 @@ class Schdule extends React.Component {
   }
 
   onPanelChange(monent, mode) {
-      console.log('onPanelChange',monent,mode)
+    console.log('onPanelChange', monent, mode)
     var context = this;
     var doChange = function () {
-      console.log('onPanelChange',monent,mode)
+      console.log('onPanelChange', monent, mode)
       context.setState({
         monent,
         mode
@@ -285,11 +291,11 @@ class Schdule extends React.Component {
 
     var context = this;
     var planSum = this.getPlanSum(value.year(), value.month() + 1);
-    var cover = 0,complete = 0;
-    if(planSum && planSum.cover){
+    var cover = 0, complete = 0;
+    if (planSum && planSum.cover) {
       cover = planSum.cover;
     }
-    if(planSum && planSum.complete){
+    if (planSum && planSum.complete) {
       complete = planSum.complete;
     }
     return <div className={monthStyle.join(' ')}
@@ -429,8 +435,8 @@ class Schdule extends React.Component {
     var storelist = this.state.storeBasic;
     var noplanList = [];
     var storeACount = 0, storeBCount = 0, storeCCount = 0, storeA = 0, storeB = 0, storeC = 0, cover = 0, complete = 0;
-
     var storeCount = storelist.length;
+
     for (var i = 0; i < storelist.length; i++) {
       noplanList.push(storelist[i].Store_id);
       if (storelist[i].Level == 'A') {
@@ -440,6 +446,16 @@ class Schdule extends React.Component {
       } else if (storelist[i].Level == 'C') {
         storeCCount++;
       }
+    }
+
+    var curMonent = this.state.monent;
+    var nowMonent = moment();
+    var planSum = this.getPlanSum(curMonent.year(), curMonent.month() + 1);
+    if (planSum && (nowMonent.month() > curMonent.month() || nowMonent.year() > curMonent.year())) {
+      storeCount = planSum.storeCount;
+      storeACount = planSum.storeACount;
+      storeBCount = planSum.storeBCount;
+      storeCCount = planSum.storeCCount;
     }
 
     var planStoreACount = 0, planStoreBCount = 0, planStoreCCount = 0, completeCount = 0;
@@ -572,7 +588,7 @@ class Schdule extends React.Component {
       onCancel() { },
     });
   }
-  onSavePlan(){
+  onSavePlan() {
     var sumInfo = this.getSumInfo();
     var curmonent = this.state.monent;
     var year = curmonent.year();
@@ -580,13 +596,13 @@ class Schdule extends React.Component {
     var modifyData = {};
     this.needUpdateMonent = this.unique(this.needUpdateMonent);
 
-    for(var i = 0; i < this.needUpdateMonent.length; i++){
-      var planlist = this.getPlan(year,month,this.needUpdateMonent[i]);
+    for (var i = 0; i < this.needUpdateMonent.length; i++) {
+      var planlist = this.getPlan(year, month, this.needUpdateMonent[i]);
       modifyData[this.needUpdateMonent[i]] = planlist;
     }
 
     var data = {
-      userid:localStorage.username,
+      userid: localStorage.username,
       year,
       month,
       sumInfo: JSON.stringify(sumInfo),
