@@ -46,6 +46,7 @@ class Location extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title='我的位置'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickLocation}

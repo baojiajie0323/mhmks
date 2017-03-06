@@ -2,8 +2,8 @@
 import $ from 'jquery'
 import { message } from 'antd';
 
-var _domain_name = 'http://1658k3l069.iask.in';  //域名
-//var _domain_name = '';  //域名
+//var _domain_name = 'http://1658k3l069.iask.in';  //域名
+var _domain_name = '';  //域名
 
 var _debug = _domain_name == '';
 

@@ -103,6 +103,7 @@ class SelectStore extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title='选择门店'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickOk}

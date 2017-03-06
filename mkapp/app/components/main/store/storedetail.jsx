@@ -42,6 +42,7 @@ class StoreDetail extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title={this.state.storeInfo.Store_name}
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

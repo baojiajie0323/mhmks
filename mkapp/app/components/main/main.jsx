@@ -18,6 +18,7 @@ import StoreDetail from './store/storedetail';
 import Contacts from './contacts/contacts';
 import Aboutme from './aboutme/aboutme';
 import Location from './aboutme/location';
+import Help from './aboutme/help';
 
 
 const contactsIcon = <ContactsIcon />;
@@ -58,6 +59,8 @@ class Main extends React.Component {
   getContent() {
     if (this.state.subview == 'localtionview') {
       return <Location />
+    } else if (this.state.subview == 'helpview') {
+      return <Help />
     } else if (this.state.subview == 'storedetailview') {
       return <StoreDetail userdata={this.state.userdata} />
     } else if (this.state.subview == 'selectpathview') {

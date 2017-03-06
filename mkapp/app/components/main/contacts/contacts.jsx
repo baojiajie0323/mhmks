@@ -53,6 +53,7 @@ class Contacts extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title='通讯录'
           iconElementLeft={<span></span>}
           />

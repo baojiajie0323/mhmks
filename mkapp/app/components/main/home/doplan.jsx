@@ -130,6 +130,7 @@ class DoPlan extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title='执行计划'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

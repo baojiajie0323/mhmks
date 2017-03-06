@@ -60,7 +60,7 @@ class Login extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ marginBottom: '30px' }}
+          style={{ marginBottom: '30px', paddingTop:'20px' }}
           title='满好营销通'
           iconElementLeft={<span></span>}
           />

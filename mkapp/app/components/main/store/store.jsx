@@ -61,6 +61,7 @@ class StoreView extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{  paddingTop:'20px' }}
           title='门店'
           iconElementLeft={<span></span>}
           />

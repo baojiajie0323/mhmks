@@ -4,8 +4,9 @@ import AppBar from 'material-ui/AppBar';
 import Paper from 'material-ui/Paper';
 import { List, ListItem } from 'material-ui/List';
 import PosIcon from 'material-ui/svg-icons/maps/my-location';
+import HelpIcon from 'material-ui/svg-icons/action/dashboard';
 import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
-import {cyan300,cyan600} from 'material-ui/styles/colors';
+import {cyan300, cyan600} from 'material-ui/styles/colors';
 import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -33,13 +34,16 @@ class Aboutme extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_LOGIN, this.onLoginChange);
   }
-  onLoginChange(){
+  onLoginChange() {
     this.setState({
       userInfo: Store.getUserInfo()
     })
   }
   onClickPos() {
     Store.emit(StoreEvent.SE_VIEW, 'localtionview');
+  }
+  onClickHelp() {
+    Store.emit(StoreEvent.SE_VIEW, 'helpview');
   }
   handleOpen() {
     this.setState({ open: true });
@@ -67,6 +71,7 @@ class Aboutme extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
+          style={{ paddingTop:'20px' }}
           title='个人中心'
           iconElementLeft={<span></span>}
           />
@@ -76,14 +81,19 @@ class Aboutme extends React.Component {
         </div>
         <List>
           <ListItem primaryText={this.state.userInfo.phone}
-          leftIcon={<CommunicationCall color={cyan300}/>} 
-          />
+            leftIcon={<CommunicationCall color={cyan300}/>}
+            />
           <ListItem primaryText={this.state.userInfo.email}
-          leftIcon={<CommunicationEmail color={cyan300}/>} 
-          />
+            leftIcon={<CommunicationEmail color={cyan300}/>}
+            />
           <ListItem primaryText={this.state.userInfo.departname}
-          leftIcon={<AreaIcon color={cyan300}/>} 
-          />
+            leftIcon={<AreaIcon color={cyan300}/>}
+            />
+          <Divider />
+          <ListItem primaryText="产品手册"
+            onTouchTap={this.onClickHelp}
+            leftIcon={<HelpIcon color={cyan600} />}
+            rightIcon={<RightIcon color={cyan600} />} />
           <Divider />
           <ListItem primaryText="我的位置"
             onTouchTap={this.onClickPos}
