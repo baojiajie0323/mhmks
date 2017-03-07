@@ -30,7 +30,7 @@ var sqlmap = {
   getpath: 'select * from path',
   getpathdetail: 'select a.*,b.Store_name from path_detail a INNER JOIN store b on(a.Store_id = b.Store_id)',
   getpath_app: 'select a.*,Path_name,Store_name from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) where c.store_id in (select store_id from store where user_id = ?) order by a.path_seq,a.Path_id',
-  getplan: 'select a.*,b.Path_Name from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) where userid = ? and year = ? and month = ?',
+  getplan: 'select a.*,b.Path_Name,c.Store_name from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
   addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)', 
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',

@@ -111,11 +111,13 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getplan;
-        // sqlstring += ' where Plan_Date = ' + connection.escape(param.date);
-        // if (param.userid) {
-        //   sqlstring += ' and User_Id = ' + connection.escape(param.userid);
-        // }
-        connection.query(sqlstring, [param.userid, param.year, param.month], function (err, result) {
+        sqlstring += ' where userid = ' + connection.escape(param.userid);
+        sqlstring += ' and year = ' + connection.escape(param.year);
+        sqlstring += ' and month = ' + connection.escape(param.month);
+        if (param.day) {
+           sqlstring += ' and day = ' + connection.escape(param.day);
+        }
+        connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

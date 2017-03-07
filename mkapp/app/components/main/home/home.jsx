@@ -10,7 +10,7 @@ import DatePicker from 'material-ui/DatePicker';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 import areIntlLocalesSupported from 'intl-locales-supported';
-import {List, ListItem} from 'material-ui/List';
+import { List, ListItem } from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import { Spin, Alert } from 'antd';
 import Divider from 'material-ui/Divider';
@@ -53,10 +53,10 @@ const Logged = (props) => (
     targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
-    <MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />
+    {/*<MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />*/}
     <MenuItem onTouchTap={props.onClickAddTmp} primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
-    <MenuItem disabled={true} onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
-    <MenuItem disabled={true} onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />
+    {/*<MenuItem disabled={true} onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
+    <MenuItem disabled={true} onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />*/}
   </IconMenu>
 );
 
@@ -97,6 +97,7 @@ class Home extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleOk = this.handleOk.bind(this);
     this.onClickDelete = this.onClickDelete.bind(this);
+    this.onClickDoPlan = this.onClickDoPlan.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
@@ -126,8 +127,11 @@ class Home extends React.Component {
       loading: true,
     })
     Action.getPlan({
-      date: this.state.curDate.Format('yyyy-MM-dd'),
+      //date: this.state.curDate.Format('yyyy-MM-dd'),
       userid: localStorage.username,
+      year: this.state.curDate.getFullYear(),
+      month: this.state.curDate.getMonth() + 1,
+      day: this.state.curDate.getDate()
     });
   }
   componentWillUnmount() {
@@ -137,7 +141,7 @@ class Home extends React.Component {
     this.setState({
       plan: Store.getPlan(),
       loading: false,
-      open:false,
+      open: false,
     })
   }
   onDateChange(e, curDate) {
@@ -178,6 +182,31 @@ class Home extends React.Component {
   onClickNote() {
     Store.emit(StoreEvent.SE_VIEW, 'noteview', this.state.curDate);
   }
+  getPlanCount() {
+    var planCount = 0;
+    var linePlan = false;
+    for (var i = 0; i < this.state.plan.length; i++) {
+      var plan = this.state.plan[i];
+      if (plan.plan_type == 1) {
+        if (!linePlan) {
+          linePlan = true;
+          planCount++;
+        }
+      } else {
+        planCount++;
+      }
+    }
+  }
+  getStoreListName(path_id){
+    var storeNameList = [];
+    for (var i = 0; i < this.state.plan.length; i++) {
+      var plan = this.state.plan[i];
+      if (plan.plan_type == 1 && path_id == plan.path_id) {
+        storeNameList.push(plan.Store_name);
+      }
+    }
+    return storeNameList.join(' ， ');
+  }
   getPlanlist() {
     var context = this;
     if (this.state.plan.length <= 0) {
@@ -187,21 +216,29 @@ class Home extends React.Component {
       if (this.state.showAlert || 1) {
         planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
       }
-      var headerTitle = '共' + this.state.plan.length + '个计划，已完成' + '?' + '个，未完成' + '?' + '个';
+      var headerTitle = '共' + this.getPlanCount() + '个计划，已完成' + '?' + '个，未完成' + '?' + '个';
       planDom.push(<Subheader>{headerTitle}</Subheader>)
       var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
+      var linepath = false;
       this.state.plan.forEach((pl) => {
         var pathName = '';
-        if (pl.Plan_Type == 1) {
-          pathName = ' ' + pl.Path_Name;
+        var storeName = pl.Store_name;
+        if (pl.plan_type == 1) {
+          if (!linepath) {
+            pathName = ' ' + pl.Path_Name;
+            linepath = true;
+            storeName = context.getStoreListName(pl.path_id);
+          } else {
+            return;
+          }
         }
         planDom.push(<ListItem
-          primaryText={pathTitle[pl.Plan_Type - 1] + pathName}
-          secondaryText={pl.Store_Name}
+          primaryText={pathTitle[pl.plan_type - 1] + pathName}
+          secondaryText={storeName}
           secondaryTextLines={2}
           rightIconButton={<PlanOperate
             onClickDoPlan={this.onClickDoPlan}
-            onClickDelete={function(){context.onClickDelete(pl.Plan_Id)}}
+            onClickDelete={function () { context.onClickDelete(pl.Plan_Id) } }
             />}
           leftIcon={<HasstartIcon color={cyan600} />}
           />)
@@ -212,14 +249,14 @@ class Home extends React.Component {
   }
   onClickDelete(planid) {
     this.curplanid = planid;
-    this.setState({open:true});
+    this.setState({ open: true });
   }
   handleClose() {
     this.setState({ open: false });
   }
   handleOk() {
     Action.delPlan({
-      Plan_Id:this.curplanid
+      Plan_Id: this.curplanid
     });
   }
   render() {
@@ -238,7 +275,7 @@ class Home extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{ paddingTop: '20px' }}
           title='拜访'
           iconElementLeft={<span />}
           />
@@ -250,8 +287,9 @@ class Home extends React.Component {
                 value={this.state.curDate}
                 DateTimeFormat={DateTimeFormat}
                 locale="zh"
+                autoOk={true}
                 textFieldStyle={{ textAlign: 'center', width: '120px' }}
-                inputStyle ={{ textAlign: 'center' }}
+                inputStyle={{ textAlign: 'center' }}
                 hintText="请选择日期"
                 okLabel="确定"
                 cancelLabel="取消"
@@ -267,10 +305,10 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this) }
-                onClickAddTmp={this.onClickAddTmp.bind(this) }
-                onClickAddCall={this.onClickAddCall.bind(this) }
-                onClickAddCheck={this.onClickAddCheck.bind(this) }
+                onClickAddPath={this.onClickAddPath.bind(this)}
+                onClickAddTmp={this.onClickAddTmp.bind(this)}
+                onClickAddCall={this.onClickAddCall.bind(this)}
+                onClickAddCheck={this.onClickAddCheck.bind(this)}
                 />
             </ToolbarGroup>
           </Toolbar>
@@ -278,7 +316,7 @@ class Home extends React.Component {
 
         <div className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist() }
+            {this.getPlanlist()}
           </Spin>
         </div>
         <Dialog

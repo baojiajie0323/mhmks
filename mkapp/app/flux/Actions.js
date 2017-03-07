@@ -7,6 +7,11 @@ var _domain_name = '';  //域名
 
 var _debug = _domain_name == '';
 
+message.config({
+  top: 40,
+  duration: 2,
+});
+
 const AJAXTIMEOUT = 20 * 1000;
 var React = require('react');
 var AppDispatcher = require('./AppDispatcher');
@@ -25,11 +30,13 @@ var Action = {
           context.dispatch(ActionEvent.AE_LOGIN, response.data[0]);
           message.success('登录成功');
         } else {
+          context.dispatch(ActionEvent.AE_LOGOUT);
           message.error('登录失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
+        context.dispatch(ActionEvent.AE_LOGOUT);
         console.log('login fail');
         if (_debug) {
           var response = '{"data":{},"result":"ok"}';
