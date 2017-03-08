@@ -13,6 +13,7 @@ import SelectPath from './home/selectpath';
 import SelectStore from './home/selectstore';
 import DoPlan from './home/doplan';
 import Note from './home/note';
+import ShelfMain from './home/product/shelf_main';
 import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
 import Contacts from './contacts/contacts';
@@ -71,6 +72,8 @@ class Main extends React.Component {
       return <DoPlan />
     } else if (this.state.subview == 'noteview') {
       return <Note userdata={this.state.userdata} />
+    } else if (this.state.subview == 'shelfmainview') {
+      return <ShelfMain userdata={this.state.userdata} />
     }
     else if (this.state.selectedIndex == 0) {
       return <Home userdata={this.state.userdata} />

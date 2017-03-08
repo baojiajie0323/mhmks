@@ -34,6 +34,7 @@ class DoPlan extends React.Component {
     };
     this.handleSignIn = this.handleSignIn.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
+    this.onClickShelfMain = this.onClickShelfMain.bind(this);
   }
 
   handleSignIn() {
@@ -57,6 +58,10 @@ class DoPlan extends React.Component {
     message.success('签出成功');
   }
 
+  onClickShelfMain(){
+    Store.emit(StoreEvent.SE_VIEW, 'shelfmainview');
+  }
+
   renderStepActions(step) {
     const {stepIndex, storestate} = this.state;
 
@@ -74,24 +79,25 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="主货架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStore}
+              onTouchTap={this.onClickShelfMain}
               />
             <ListItem
               primaryText="离架陈列"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />
-            <ListItem
+            {/*<ListItem
               primaryText="促销陈列"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />
+              */}
             <ListItem
               primaryText="库存采集"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />
-            <ListItem
+            {/*<ListItem
               primaryText="异常库存管理"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
@@ -100,7 +106,7 @@ class DoPlan extends React.Component {
               primaryText="竞品信息采集"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
-              />
+              />*/}
             <ListItem
               primaryText="洽谈记录"
               rightIcon={<RightIcon color={cyan600} />}
