@@ -31,10 +31,12 @@ class DoPlan extends React.Component {
       finished: false,
       stepIndex: 0,
       storestate: 0, // 0未签到  1已签到未签出  2已签出
+      storelist:[],
     };
     this.handleSignIn = this.handleSignIn.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
     this.onClickShelfMain = this.onClickShelfMain.bind(this);
+    this.onClickChat = this.onClickChat.bind(this);
   }
 
   handleSignIn() {
@@ -60,6 +62,9 @@ class DoPlan extends React.Component {
 
   onClickShelfMain(){
     Store.emit(StoreEvent.SE_VIEW, 'shelfmainview');
+  }
+  onClickChat(){
+    Store.emit(StoreEvent.SE_VIEW, 'chatview');
   }
 
   renderStepActions(step) {
@@ -110,7 +115,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="洽谈记录"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStore}
+              onTouchTap={this.onClickChat}
               />
           </List>,
             <RaisedButton
@@ -125,14 +130,21 @@ class DoPlan extends React.Component {
 
 
   componentDidMount() {
+    console.log(this.props.userdata);
+    this.setState({
+      storelist: this.props.userdata
+    })
   }
   componentWillUnmount() {
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, '');
   }
+  getPlanName()
   render() {
     const {finished, stepIndex} = this.state;
+
+    var planname = this.getPlanName();
     return (
       <div className={styles.container}>
         <AppBar

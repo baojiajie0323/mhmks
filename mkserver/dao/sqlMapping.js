@@ -35,7 +35,8 @@ var sqlmap = {
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',
   updateplansum: 'replace into plan_sum(userid,year,month,storeCount,storeACount,storeBCount,storeCCount,storeA,storeB,storeC,cover) VALUES(?,?,?,?,?,?,?,?,?,?,?) ',
-  insertplan: 'insert into plan(userid,year,month,day,plan_type,path_id,store_id) values(?,?,?,?,?,?,?) '
+  insertplan: 'insert into plan(userid,year,month,day,plan_type,path_id,store_id) values(?,?,?,?,?,?,?) ',
+  getstoreproduct: 'select a.*,b.Product_name,b.Brand_id from product_price a INNER JOIN product b on(a.Product_id = b.product_id) where Store_id = ?'
 };
 
 module.exports = sqlmap;

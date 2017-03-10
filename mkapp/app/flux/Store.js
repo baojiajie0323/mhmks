@@ -6,6 +6,7 @@ var EventConst = require('./event-const');
 var ActionEvent = EventConst.ActionEvent;
 var StoreEvent = EventConst.StoreEvent;
 
+var _curDate = new Date();
 var _loginSuccess = false;
 var _userInfo = {};
 var _curPlanlist = [];
@@ -18,6 +19,13 @@ var _plan = [];
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
     this.emitChange(StoreEvent.SE_BACK);
+  },
+
+  setCurDate(date){
+    _curDate = date;
+  },
+  getCurDate(){
+    return _curDate;
   },
 
   setLoginSuccess: function (loginsuccess, userInfo) {

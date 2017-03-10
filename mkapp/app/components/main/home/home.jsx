@@ -83,7 +83,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       plan: Store.getPlan(),
-      curDate: new Date(),
+      curDate: Store.getCurDate(),
       loading: true,
       showAlert: true,
       open: false,
@@ -102,18 +102,18 @@ class Home extends React.Component {
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
 
-    console.log('home userdata', this.props.userdata);
+    //console.log('home userdata', this.props.userdata);
 
     var context = this;
-    if (this.props.userdata) {
-      this.setState({
-        curDate: this.props.userdata
-      }, function () {
-        context.getcurPlan();
-      })
-    } else {
+    // if (this.props.userdata) {
+    //   this.setState({
+    //     curDate: this.props.userdata
+    //   }, function () {
+    //     context.getcurPlan();
+    //   })
+    // } else {
       this.getcurPlan();
-    }
+    //}
 
     setTimeout(function () {
       context.setState({
@@ -148,6 +148,7 @@ class Home extends React.Component {
     var context = this;
     this.setState({ curDate }, function () {
       context.getcurPlan();
+      Store.setCurDate(curDate);
     })
   }
   onClickPrev() {
@@ -165,22 +166,40 @@ class Home extends React.Component {
     }, this.getcurPlan)
   }
   onClickAddPath() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectpathview', this.state.curDate);
+    Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
   }
   onClickAddTmp() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCall() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCheck() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', this.state.curDate);
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
-  onClickDoPlan() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview', this.state.curDate);
+  onClickDoPlan(path_id, store_id) {
+    var storelist = [];
+    if (path_id) {
+      //路线拜访
+      for (var i = 0; i < this.state.plan.length; i++) {
+        var plan = this.state.plan[i];
+        if (plan.plan_type == 1 && plan.path_id == path_id) {
+          data.storelist.push(plan);
+        }
+      }
+    } else {
+      //临时拜访
+      for (var i = 0; i < this.state.plan.length; i++) {
+        var plan = this.state.plan[i];
+        if (plan.plan_type != 1 && plan.store_id == store_id) {
+          data.storelist.push(plan);
+        }
+      }
+    }
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview', storelist);
   }
   onClickNote() {
-    Store.emit(StoreEvent.SE_VIEW, 'noteview', this.state.curDate);
+    Store.emit(StoreEvent.SE_VIEW, 'noteview');
   }
   getPlanCount() {
     var planCount = 0;
@@ -197,7 +216,7 @@ class Home extends React.Component {
       }
     }
   }
-  getStoreListName(path_id){
+  getStoreListName(path_id) {
     var storeNameList = [];
     for (var i = 0; i < this.state.plan.length; i++) {
       var plan = this.state.plan[i];
@@ -237,7 +256,9 @@ class Home extends React.Component {
           secondaryText={storeName}
           secondaryTextLines={2}
           rightIconButton={<PlanOperate
-            onClickDoPlan={this.onClickDoPlan}
+            onClickDoPlan={function () {
+              context.onClickDoPlan(pl.path_id, pl.store_id);
+            } }
             onClickDelete={function () { context.onClickDelete(pl.Plan_Id) } }
             />}
           leftIcon={<HasstartIcon color={cyan600} />}
@@ -305,10 +326,10 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this)}
-                onClickAddTmp={this.onClickAddTmp.bind(this)}
-                onClickAddCall={this.onClickAddCall.bind(this)}
-                onClickAddCheck={this.onClickAddCheck.bind(this)}
+                onClickAddPath={this.onClickAddPath.bind(this) }
+                onClickAddTmp={this.onClickAddTmp.bind(this) }
+                onClickAddCall={this.onClickAddCall.bind(this) }
+                onClickAddCheck={this.onClickAddCheck.bind(this) }
                 />
             </ToolbarGroup>
           </Toolbar>
@@ -316,7 +337,7 @@ class Home extends React.Component {
 
         <div className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist()}
+            {this.getPlanlist() }
           </Spin>
         </div>
         <Dialog

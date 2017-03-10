@@ -24,7 +24,7 @@ class Note extends React.Component {
   componentWillUnmount() {
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, '', this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW, '');
   }
   render() {
     const {finished, stepIndex} = this.state;

@@ -60,7 +60,7 @@ class SelectStore extends React.Component {
     })
   }
   onPlanChange(){
-    Store.emit(StoreEvent.SE_VIEW,'',this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW,'');
   }
   getStorelist() {
     var context = this;
@@ -78,7 +78,7 @@ class SelectStore extends React.Component {
     return domlist;
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, '',this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW, '');
   }
   onClickOk() {
     if (this.state.checkedId == "") {

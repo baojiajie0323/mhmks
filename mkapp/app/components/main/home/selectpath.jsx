@@ -60,7 +60,7 @@ class SelectPath extends React.Component {
     })
   }
   onPlanChange(){
-    Store.emit(StoreEvent.SE_VIEW,'',this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW,'');
   }
   getPathlist() {
     var context = this;
@@ -83,7 +83,7 @@ class SelectPath extends React.Component {
     return domlist;
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, '',this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW, '');
   }
   onClickOk() {
     if (this.state.checkedId == "") {

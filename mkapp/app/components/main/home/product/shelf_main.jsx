@@ -17,6 +17,7 @@ import FileFolder from 'material-ui/svg-icons/file/folder';
 import { List, ListItem } from 'material-ui/List';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -42,7 +43,7 @@ class Shelf_main extends React.Component {
   handleCancel = () => this.setState({ previewVisible: false })
 
   handlePreview = (file) => {
-    console.log('handlePreview',file);
+    console.log('handlePreview', file);
     this.setState({
       previewImage: file.url || file.thumbUrl,
       previewVisible: true,
@@ -57,7 +58,7 @@ class Shelf_main extends React.Component {
   componentWillUnmount() {
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview', this.props.userdata);
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
@@ -96,8 +97,8 @@ class Shelf_main extends React.Component {
                 onPreview={this.handlePreview}
                 onChange={this.handleChange}
                 showUploadList={{
-                  showPreviewIcon:false,
-                  showRemoveIcon:true
+                  showPreviewIcon: false,
+                  showRemoveIcon: true
                 }}
                 >
                 {fileList.length >= 3 ? null : uploadButton}
@@ -105,51 +106,32 @@ class Shelf_main extends React.Component {
               <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
                 <img alt="example" style={{ width: '100%' }} src={previewImage} />
               </Modal>
-              <div className={styles.listItem}>
-                <Avatar icon={<FileFolder />} />
-                <div className={styles.textcontent}>
-                  <p className={styles.primaryText}>巧姿马桶垫1组装</p>
-                  <p className={styles.secondaryText}>31700279</p>
-                </div>
-                <IconButton
-                  style={{ width: 32, height: 32, padding: 4 }}>
-                  <MinusIcon color='rgb(192,192,192)' />
-                </IconButton>
-                <TextField
-                  style={{ width: '35px' }}
-                  hintStyle={{ textAlign: 'center', width: '100%' }}
-                  inputStyle={{ textAlign: 'center' }}
+              <Paper className={styles.headtitle}>
+                <p>产品/货号</p>
+                <p>排面数</p>
+              </Paper>
+              <ListItem
+                leftAvatar={<Avatar icon={<FileFolder />} />}
+                rightIconButton={<TextField
+                  style={{ width: '80px' }}
+                  hintStyle={{ textAlign: 'right', width: '100%',paddingRight:'10px' }}
+                  inputStyle={{ textAlign: 'right',paddingRight:'10px' }}
                   hintText="0"
-                  />
-                <IconButton
-                  style={{ width: 32, height: 32, padding: 4 }}>
-                  <AddIcon color='rgb(192,192,192)' />
-                </IconButton>
-              </div>
-              <Divider />
-              <div className={styles.listItem}>
-                <Avatar icon={<FileFolder />} />
-                <div className={styles.textcontent}>
-                  <p className={styles.primaryText}>巧姿马桶垫1组装</p>
-                  <p className={styles.secondaryText}>31700279</p>
-                </div>
-                <IconButton
-                  style={{ width: 32, height: 32, padding: 4 }}>
-                  <MinusIcon color='rgb(192,192,192)' />
-                </IconButton>
-                <TextField
-                  style={{ width: '35px' }}
-                  hintStyle={{ textAlign: 'center', width: '100%' }}
-                  inputStyle={{ textAlign: 'center' }}
+                  />}
+                primaryText="巧姿马桶垫1组装"
+                secondaryText="31700279"
+                />
+              <ListItem
+                leftAvatar={<Avatar icon={<FileFolder />} />}
+                rightIconButton={<TextField
+                  style={{ width: '80px' }}
+                  hintStyle={{ textAlign: 'right', width: '100%',paddingRight:'10px' }}
+                  inputStyle={{ textAlign: 'right',paddingRight:'10px' }}
                   hintText="0"
-                  />
-                <IconButton
-                  style={{ width: 32, height: 32, padding: 4 }}>
-                  <AddIcon color='rgb(192,192,192)' />
-                </IconButton>
-              </div>
-
-              <Divider />
+                  />}
+                primaryText="巧姿马桶垫1组装"
+                secondaryText="31700279"
+                />
             </Panel>
             <Panel header="好好先生" key="2">
               <p>{text}</p>
