@@ -7,6 +7,9 @@ var ActionEvent = EventConst.ActionEvent;
 var StoreEvent = EventConst.StoreEvent;
 
 var _curDate = new Date();
+var _path_id = '';
+var _store_id = '';
+
 var _loginSuccess = false;
 var _userInfo = {};
 var _curPlanlist = [];
@@ -21,11 +24,21 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_BACK);
   },
 
-  setCurDate(date){
+  setCurDate(date) {
     _curDate = date;
   },
-  getCurDate(){
+  getCurDate() {
     return _curDate;
+  },
+  setCurPlan(path_id, store_id) {
+    _path_id = path_id;
+    _store_id = store_id;
+  },
+  getCurPlan() {
+    return {
+      path_id: _path_id,
+      store_id: _store_id
+    }
   },
 
   setLoginSuccess: function (loginsuccess, userInfo) {
@@ -109,15 +122,48 @@ var Store = assign({}, EventEmitter.prototype, {
     _plan.push(plan);
     this.emit(StoreEvent.SE_PLAN);
   },
-  delPlan: function (plan){
-    for (var i = 0 ; i < _plan.length; i++){
-      if(_plan[i].Plan_Id == plan.Plan_Id){
-        _plan.splice(i,1);
+  delPlan: function (plan) {
+    for (var i = 0; i < _plan.length; i++) {
+      if (_plan[i].Plan_Id == plan.Plan_Id) {
+        _plan.splice(i, 1);
         break;
       }
     }
-    
+
     this.emit(StoreEvent.SE_PLAN);
+  },
+  signInStore: function (signStore) {
+    for (var i = 0; i < _plan.length; i++) {
+      var plan = _plan[i];
+      if (plan.userid == signStore.userid &&
+        plan.year == signStore.year &&
+        plan.month == signStore.month &&
+        plan.day == signStore.day &&
+        plan.store_id == signStore.store_id) {
+        _plan[i].signin_time = signStore.signin_time;
+        _plan[i].signin_gps_x = signStore.lat;
+        _plan[i].signin_gps_y = signStore.lon;
+        this.emit(StoreEvent.SE_PLAN);
+        break;
+      }
+    }
+  },
+  signOutStore: function (signStore) {
+    for (var i = 0; i < _plan.length; i++) {
+      var plan = _plan[i];
+      if (plan.userid == signStore.userid &&
+        plan.year == signStore.year &&
+        plan.month == signStore.month &&
+        plan.day == signStore.day &&
+        plan.store_id == signStore.store_id) {
+        _plan[i].isfinish = true;
+        _plan[i].signout_time = signStore.signout_time;
+        _plan[i].signout_gps_x = signStore.lat;
+        _plan[i].signout_gps_y = signStore.lon;
+        this.emit(StoreEvent.SE_PLAN);
+        break;
+      }
+    }
   },
 
   emitChange: function (eventtype) {
@@ -170,6 +216,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PLAN_DEL: {
       Store.delPlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_SIGN_IN: {
+      Store.signInStore(action.value);
+    }
+      break;
+    case ActionEvent.AE_SIGN_OUT: {
+      Store.signOutStore(action.value);
     }
       break;
     default:

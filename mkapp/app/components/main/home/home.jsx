@@ -178,25 +178,8 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickDoPlan(path_id, store_id) {
-    var storelist = [];
-    if (path_id) {
-      //路线拜访
-      for (var i = 0; i < this.state.plan.length; i++) {
-        var plan = this.state.plan[i];
-        if (plan.plan_type == 1 && plan.path_id == path_id) {
-          data.storelist.push(plan);
-        }
-      }
-    } else {
-      //临时拜访
-      for (var i = 0; i < this.state.plan.length; i++) {
-        var plan = this.state.plan[i];
-        if (plan.plan_type != 1 && plan.store_id == store_id) {
-          data.storelist.push(plan);
-        }
-      }
-    }
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview', storelist);
+    Store.setCurPlan(path_id,store_id);
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   onClickNote() {
     Store.emit(StoreEvent.SE_VIEW, 'noteview');

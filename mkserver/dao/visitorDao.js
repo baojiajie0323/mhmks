@@ -115,7 +115,7 @@ module.exports = {
         sqlstring += ' and year = ' + connection.escape(param.year);
         sqlstring += ' and month = ' + connection.escape(param.month);
         if (param.day) {
-           sqlstring += ' and day = ' + connection.escape(param.day);
+          sqlstring += ' and day = ' + connection.escape(param.day);
         }
         connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
@@ -278,6 +278,45 @@ module.exports = {
               plan: plan
             }
             jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+
+  sign: function (req, res, next) {
+    console.log('visitorDao sign');
+    var param = req.body;
+    if (!param.lat || !param.lon || !param.store_id || !param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = '';
+        if(param.sign_type == 'signin'){
+          sqlstring = _sql.signin;
+        }else{
+          sqlstring = _sql.signout;
+        }
+        
+        var curDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+        connection.query(sqlstring, [curDate, param.lat, param.lon, param.userid, param.year, param.month, param.day, param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              data.signin_time = curDate;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
           }
           connection.release();
         });

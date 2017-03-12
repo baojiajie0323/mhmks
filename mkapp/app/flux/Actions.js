@@ -231,6 +231,42 @@ var Action = {
         }
       })
   },
+  sign: function (data) {
+    var context = this;
+    var dispatchEvent = '';
+    var sign_name = '';
+    data.command = 'sign';
+    if (data.sign_type == 'signin') {
+      dispatchEvent = ActionEvent.AE_SIGN_IN;
+      sign_name = '签到';
+    } else {
+      dispatchEvent = ActionEvent.AE_SIGN_OUT;
+      sign_name = '签出';
+    }
+    console.log('send sign', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('sign:', response);
+        if (response.code == 0) {
+          context.dispatch(dispatchEvent, response.data);
+          message.success(sign_name + '成功');
+        } else {
+          message.error( sign_name + '失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('signIn fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(dispatchEvent, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

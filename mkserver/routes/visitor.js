@@ -38,7 +38,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getplansum") {
     console.log('getplansum');
     visitorDao.getPlanSum(req, res, next);
-  }
+  } else if (req.body.command == "sign") {
+    console.log('sign');
+    visitorDao.sign(req, res, next);
+  } 
 });
 
 router.post('/upload/', function (req, res, next) {
