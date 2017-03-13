@@ -13,7 +13,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
-import {message, Spin} from 'antd';
+import { message, Spin } from 'antd';
 import { List, ListItem } from 'material-ui/List';
 
 
@@ -74,8 +74,8 @@ class DoPlan extends React.Component {
     }, { enableHighAccuracy: true })
   }
 
-  onClickShelfMain() {
-    Store.emit(StoreEvent.SE_VIEW, 'shelfmainview');
+  onClickShelfMain(store) {
+    Store.emit(StoreEvent.SE_VIEW, 'shelfmainview',store);
   }
   onClickChat() {
     Store.emit(StoreEvent.SE_VIEW, 'chatview');
@@ -93,7 +93,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="主货架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickShelfMain}
+              onTouchTap={function(){this.onClickShelfMain(store)}}
               />
             <ListItem
               primaryText="离架陈列"
@@ -127,13 +127,13 @@ class DoPlan extends React.Component {
               onTouchTap={this.onClickChat}
               />
           </List>,
-            <RaisedButton
-              label="签出"
-              secondary={true}
-              onTouchTap={function () {
-                context.handleSign(store, 'signout');
-              } }
-              />] :
+          <RaisedButton
+            label="签出"
+            secondary={true}
+            onTouchTap={function () {
+              context.handleSign(store, 'signout');
+            } }
+            />] :
           <RaisedButton
             label={'签到'}
             primary={true}
@@ -197,17 +197,40 @@ class DoPlan extends React.Component {
     }
   }
   getStep() {
-    return this.state.storelist.map((store, index) => {
+    var stepIndex = -1;
+    var stepDom = this.state.storelist.map((store, index) => {
+      if (stepIndex < 0 && store.isfinish == 0) {
+        stepIndex = index;
+      }
       return <Step>
         <StepLabel>{store.Store_name}</StepLabel>
         <StepContent>
-          {this.renderStepActions(store, index) }
+          {this.renderStepActions(store, index)}
         </StepContent>
       </Step>
     });
+    var stepper = [<Stepper activeStep={stepIndex} orientation="vertical">
+      {stepDom}
+    </Stepper>]
+
+    if (stepIndex < 0) {
+      stepper.push(<p style={{ margin: '20px 0', textAlign: 'center' }}>
+        该线路所有门店都已巡完.
+                  <a
+          href="#"
+          onClick={(event) => {
+            event.preventDefault();
+            this.onClickBack();
+          } }
+          >
+          查看其它计划
+                  </a>
+      </p>)
+    }
+    return stepper;
   }
   render() {
-    const {finished, stepIndex} = this.state;
+    const {finished} = this.state;
 
     var planname = this.getPlanName();
     return (
@@ -218,28 +241,12 @@ class DoPlan extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
 
-            <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+            <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>
               <Subheader>{planname}</Subheader>
-              <Stepper activeStep={stepIndex} orientation="vertical">
-                {this.getStep() }
-              </Stepper>
-              {finished && (
-                <p style={{ margin: '20px 0', textAlign: 'center' }}>
-                  该线路所有门店都已巡完.
-                  <a
-                    href="#"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      this.onClickBack();
-                    } }
-                    >
-                    查看其它计划
-                  </a>
-                </p>
-              ) }
+              {this.getStep()}
             </Spin>
           </div>
         </div>

@@ -28,6 +28,8 @@ class Shelf_main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      productBrand: Store.getProductBrand(),
+
       previewVisible: false,
       previewImage: '',
       fileList: [{
@@ -54,9 +56,18 @@ class Shelf_main extends React.Component {
 
 
   componentDidMount() {
+    this.checkProductBrand();
+    this.checkProductList();
   }
   componentWillUnmount() {
   }
+  checkProductBrand(){
+
+  }
+  checkProductList(){
+    
+  }
+
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
