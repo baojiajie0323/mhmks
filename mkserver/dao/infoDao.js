@@ -28,7 +28,7 @@ module.exports = {
     });
   },
   getStoreBasic: function (req, res, next) {
-    console.log('infoDao getStoreBasic',req.body);
+    console.log('infoDao getStoreBasic', req.body);
 
     var param = req.body;
     pool.getConnection(function (err, connection) {
@@ -37,7 +37,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getstorebasic;
-        if(param.username){
+        if (param.username) {
           sqlstring += ' where user_id = ' + connection.escape(param.username);
         }
         console.log(sqlstring);
@@ -227,6 +227,27 @@ module.exports = {
             }
             connection.release();
           });
+        });
+      }
+    });
+  },
+  getProductByStore: function (req, res, next) {
+    console.log('infoDao getProductByStore', req.body);
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getproductbystore;
+        connection.query(sqlstring, [], function (err, result) {
+          //console.log('dbresult', result);
+          if (result.length > 0) {
+            jsonWrite(res, result, dbcode.SUCCESS, nCount);
+          } else {
+            jsonWrite(res, {}, dbcode.FAIL);
+          }
+          connection.release();
         });
       }
     });

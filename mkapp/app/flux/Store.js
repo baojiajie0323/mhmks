@@ -18,6 +18,8 @@ var _user = [];
 var _storeBasic = [];
 var _path = [];
 var _plan = [];
+var _brand = [];
+var _product = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -166,6 +168,22 @@ var Store = assign({}, EventEmitter.prototype, {
     }
   },
 
+  getBrand: function(){
+    return _brand;
+  },
+  setBrand: function(brand){
+    _brand = brand;
+    this.emitChange(StoreEvent.SE_BRAND);
+  },
+
+  getProduct: function(){
+    return _product;
+  },
+  setProduct: function(product){
+    _product = product;
+    this.emitChange(StoreEvent.SE_PRODUCT);
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -224,6 +242,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_SIGN_OUT: {
       Store.signOutStore(action.value);
+    }
+      break;
+    case ActionEvent.AE_BRAND: {
+      Store.setBrand(action.value);
     }
       break;
     default:

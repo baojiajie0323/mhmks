@@ -254,7 +254,7 @@ var Action = {
           context.dispatch(dispatchEvent, response.data);
           message.success(sign_name + '成功');
         } else {
-          message.error( sign_name + '失败！' + response.msg);
+          message.error(sign_name + '失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {
@@ -264,6 +264,56 @@ var Action = {
           var response = '{"data":{},"result":"ok"}';
           var rsp = JSON.parse(response);
           context.dispatch(dispatchEvent, rsp.data);
+        }
+      })
+  },
+  getBrand: function () {
+    var context = this;
+    var data = { command: 'getproductbrand' };
+    $.ajax({
+      url: _domain_name + '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getBrand:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_BRAND, response.data);
+        } else {
+          message.error('获取品牌失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPlan fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_BRAND, rsp.data);
+        }
+      })
+  },
+  getProductbyStore: function (data) {
+    var context = this;
+    data.command = 'getproductbystore';
+    $.ajax({
+      url: _domain_name + '/info', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getProductbyStore:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PRODUCT, response.data);
+        } else {
+          message.error('获取产品失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPlan fail');
+        if (_debug) {
+          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PRODUCT, rsp.data);
         }
       })
   },

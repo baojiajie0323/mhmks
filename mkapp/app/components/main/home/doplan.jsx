@@ -93,7 +93,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="主货架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function(){this.onClickShelfMain(store)}}
+              onTouchTap={function(){context.onClickShelfMain(store)}}
               />
             <ListItem
               primaryText="离架陈列"

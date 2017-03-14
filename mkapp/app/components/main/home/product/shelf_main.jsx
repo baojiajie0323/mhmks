@@ -28,18 +28,24 @@ class Shelf_main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      productBrand: Store.getProductBrand(),
-
+      brand: Store.getBrand(),
+      product: Store.getProduct(),
       previewVisible: false,
       previewImage: '',
-      fileList: [{
-        uid: -1,
-        name: 'xxx.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      }],
+      fileList: [
+        // {
+        //   uid: -1,
+        //   name: 'xxx.png',
+        //   status: 'done',
+        //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // }
+      ],
     };
     this.onClickBack = this.onClickBack.bind(this);
+    this.onClickSubmit = this.onClickSubmit.bind(this);
+    this.handleUploadChange = this.handleUploadChange.bind(this);
+    this.onBrandChange = this.onBrandChange.bind(this);
+    this.onProductChange = this.onProductChange.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -52,107 +58,130 @@ class Shelf_main extends React.Component {
     });
   }
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  handleUploadChange(file) {
+    console.log('handleUploadChange', file);
+    this.setState({ fileList: file.fileList })
+  }
 
 
   componentDidMount() {
-    this.checkProductBrand();
+    Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
+    Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
+
+    this.checkBrand();
     this.checkProductList();
   }
   componentWillUnmount() {
+    Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
+    Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
   }
-  checkProductBrand(){
+  checkBrand() {
+    if (this.state.brand.length <= 0) {
+      Action.getBrand();
+    }
+  }
+  onBrandChange() {
+    this.setState({
+      brand: Store.getBrand()
+    })
+  }
+  checkProductList() {
+    if (this.state.product.length <= 0) {
+      Action.getProductbyStore();
+    }
+  }
+  onProductChange(){
+    this.setState({
+      product: Store.getProduct({
+        store_id:this.props.userdata.store_id
+      })
+    })
+  }
 
+  onClickSubmit() {
+    console.log('onClickSubmit', this.state.fileList);
   }
-  checkProductList(){
-    
+
+  getPanel() {
+    const { previewVisible, previewImage, fileList } = this.state;
+    var panelList = [];
+    for (var i = 0; i < this.state.brand.length; i++) {
+      var brand = this.state.brand[i];
+      const uploadButton = (
+        <div>
+          <Icon type="plus" />
+          <div className="ant-upload-text">添加照片</div>
+        </div>
+      );
+      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+        <Upload
+          multiple
+          action="/visitor/upload"
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={this.handlePreview}
+          onChange={this.handleUploadChange}
+          showUploadList={{
+            showPreviewIcon: false,
+            showRemoveIcon: true
+          }}
+          >
+          {fileList.length >= 3 ? null : uploadButton}
+        </Upload>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+        <Paper className={styles.headtitle}>
+          <p>产品/货号</p>
+          <p>排面数</p>
+        </Paper>
+        <ListItem
+          leftAvatar={<Avatar icon={<FileFolder />} />}
+          rightIconButton={<TextField
+            style={{ width: '80px' }}
+            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
+            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
+            hintText="0"
+            />}
+          primaryText="巧姿马桶垫1组装"
+          secondaryText="31700279"
+          />
+        <ListItem
+          leftAvatar={<Avatar icon={<FileFolder />} />}
+          rightIconButton={<TextField
+            style={{ width: '80px' }}
+            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
+            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
+            hintText="0"
+            />}
+          primaryText="巧姿马桶垫1组装"
+          secondaryText="31700279"
+          />
+      </Panel>
+      )
+    }
+    return panelList;
   }
 
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   render() {
-    const { previewVisible, previewImage, fileList } = this.state;
-    const uploadButton = (
-      <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">添加照片</div>
-      </div>
-    );
-    const {finished, stepIndex} = this.state;
-
-    const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
-
     return (
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
           title='主货架陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
+          onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="提交" />}
           />
 
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          <Subheader>上海大润发松江店</Subheader>
-          <Collapse accordion defaultActiveKey={['1']}>
-            <Panel header="巧姿" key="1">
-              <Upload
-                action="/visitor/upload"
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={this.handlePreview}
-                onChange={this.handleChange}
-                showUploadList={{
-                  showPreviewIcon: false,
-                  showRemoveIcon: true
-                }}
-                >
-                {fileList.length >= 3 ? null : uploadButton}
-              </Upload>
-              <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                <img alt="example" style={{ width: '100%' }} src={previewImage} />
-              </Modal>
-              <Paper className={styles.headtitle}>
-                <p>产品/货号</p>
-                <p>排面数</p>
-              </Paper>
-              <ListItem
-                leftAvatar={<Avatar icon={<FileFolder />} />}
-                rightIconButton={<TextField
-                  style={{ width: '80px' }}
-                  hintStyle={{ textAlign: 'right', width: '100%',paddingRight:'10px' }}
-                  inputStyle={{ textAlign: 'right',paddingRight:'10px' }}
-                  hintText="0"
-                  />}
-                primaryText="巧姿马桶垫1组装"
-                secondaryText="31700279"
-                />
-              <ListItem
-                leftAvatar={<Avatar icon={<FileFolder />} />}
-                rightIconButton={<TextField
-                  style={{ width: '80px' }}
-                  hintStyle={{ textAlign: 'right', width: '100%',paddingRight:'10px' }}
-                  inputStyle={{ textAlign: 'right',paddingRight:'10px' }}
-                  hintText="0"
-                  />}
-                primaryText="巧姿马桶垫1组装"
-                secondaryText="31700279"
-                />
-            </Panel>
-            <Panel header="好好先生" key="2">
-              <p>{text}</p>
-            </Panel>
-            <Panel header="满好" key="3">
-              <p>{text}</p>
-            </Panel>
-            <Panel header="巧心" key="4">
-              <p>{text}</p>
-            </Panel>
+          <Subheader>{this.props.userdata.Store_name}</Subheader>
+          <Collapse accordion defaultActiveKey={['0']}>
+            {this.getPanel() }
           </Collapse>
         </div>
       </div>

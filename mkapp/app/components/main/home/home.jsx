@@ -112,7 +112,7 @@ class Home extends React.Component {
     //     context.getcurPlan();
     //   })
     // } else {
-      this.getcurPlan();
+    this.getcurPlan();
     //}
 
     setTimeout(function () {
@@ -178,7 +178,7 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickDoPlan(path_id, store_id) {
-    Store.setCurPlan(path_id,store_id);
+    Store.setCurPlan(path_id, store_id);
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   onClickNote() {
@@ -187,6 +187,8 @@ class Home extends React.Component {
   getPlanCount() {
     var planCount = 0;
     var linePlan = false;
+    var finishCount = 0;
+    var linePlanFinish = 1;
     for (var i = 0; i < this.state.plan.length; i++) {
       var plan = this.state.plan[i];
       if (plan.plan_type == 1) {
@@ -194,10 +196,24 @@ class Home extends React.Component {
           linePlan = true;
           planCount++;
         }
+        if (plan.isfinish == 0) {
+          linePlanFinish = 0;
+        }
       } else {
         planCount++;
+        if (plan.isfinish == 1) {
+          finishCount ++;
+        }
       }
     }
+    if(linePlanFinish){
+      finishCount ++;
+    }
+    return {
+      planCount: planCount,
+      nofinishCount: planCount - finishCount,
+      finishCount: finishCount
+    };
   }
   getStoreListName(path_id) {
     var storeNameList = [];
@@ -209,8 +225,53 @@ class Home extends React.Component {
     }
     return storeNameList.join(' ， ');
   }
+  getPlanState(pl){
+    if(pl.plan_type == 1){
+      var allFinish = true; 
+      var hasStart = false;
+      for(var i = 0; i < this.state.plan.length; i ++){
+        var plan = this.state.plan[i];
+        if(plan.plan_type == 1 && plan.path_id == pl.path_id){
+          if(plan.isfinish == 0){
+            allFinish = false;
+          }
+          if(plan.signin_time){
+            hasStart = true;
+          }
+        }
+      }
+      if(allFinish){
+        return 'finish'
+      }else if(hasStart){
+        return 'hasstart'
+      }else{
+        return 'nostart'
+      }
+    }else{
+      if(pl.isfinish == 1){
+        return 'finish'
+      }else {
+        if(pl.signin_time){
+          return 'hasstart'
+        }else{
+          return 'nostart'
+        }
+      }
+    }
+  }
+  getStateIcon(pl){
+    var state = this.getPlanState(pl);
+    if(state == 'finish'){
+      return <FinishIcon color={cyan600} />
+    }else if (state == 'hasstart'){
+      return <HasstartIcon color={cyan600} />
+    }else if (state == 'nostart'){
+      return <NotstartIcon color={cyan600} />
+    }
+  }
   getPlanlist() {
     var context = this;
+    var allPlanInfo = this.getPlanCount();
     if (this.state.plan.length <= 0) {
       return <Noplan />
     } else {
@@ -218,13 +279,14 @@ class Home extends React.Component {
       if (this.state.showAlert || 1) {
         planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
       }
-      var headerTitle = '共' + this.getPlanCount() + '个计划，已完成' + '?' + '个，未完成' + '?' + '个';
+      var headerTitle = '共' + allPlanInfo.planCount + '个计划，已完成' + allPlanInfo.finishCount + '个，未完成' + allPlanInfo.nofinishCount + '个';
       planDom.push(<Subheader>{headerTitle}</Subheader>)
       var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
       var linepath = false;
       this.state.plan.forEach((pl) => {
         var pathName = '';
         var storeName = pl.Store_name;
+        var planstate = this.getPlanState(pl);
         if (pl.plan_type == 1) {
           if (!linepath) {
             pathName = ' ' + pl.Path_Name;
@@ -244,7 +306,7 @@ class Home extends React.Component {
             } }
             onClickDelete={function () { context.onClickDelete(pl.Plan_Id) } }
             />}
-          leftIcon={<HasstartIcon color={cyan600} />}
+          leftIcon={this.getStateIcon(pl)}
           />)
         planDom.push(<Divider />);
       })

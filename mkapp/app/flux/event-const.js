@@ -14,6 +14,8 @@ var eventMap = {
     AE_PLAN_DEL: null,
     AE_SIGN_IN: null,
     AE_SIGN_OUT: null,
+    AE_BRAND: null,
+    AE_PRODUCT: null,
   }),
 
   StoreEvent: keyMirror({
@@ -24,6 +26,8 @@ var eventMap = {
     SE_STOREBASIC: null,
     SE_PATH: null,
     SE_PLAN: null,
+    SE_BRAND: null,
+    SE_PRODUCT: null,
   })
 };
 

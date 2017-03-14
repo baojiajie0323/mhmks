@@ -56,7 +56,7 @@ router.post('/upload/', function (req, res, next) {
   form.uploadDir = 'public' + UPLOAD_FOLDER;	 //设置上传目录
   form.keepExtensions = true;	 //保留后缀
   form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
-
+  var uuid = UUID.v1();
   form.parse(req, function (err, fields, files) {
     console.log('upload parse', err, fields, JSON.stringify(files));
     if (err) {
@@ -89,17 +89,18 @@ router.post('/upload/', function (req, res, next) {
       return;
     }
 
-    var avatarName = UUID.v1() + '.' + extName;
+    var avatarName = uuid + '.' + extName;
     var newPath = form.uploadDir + avatarName;
 
     console.log(newPath);
     fs.renameSync(files.file.path, newPath);  //重命名
 
-    jsonWrite(res,{},dbcode.SUCCESS);
+    //jsonWrite(res,{},dbcode.SUCCESS);
     //res.locals.success = '上传成功';
 
     console.log('上传成功');
   });
+  jsonWrite(res,{uuid:uuid},dbcode.SUCCESS);
 });
 
 module.exports = router;
