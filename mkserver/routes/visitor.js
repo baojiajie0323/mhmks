@@ -4,8 +4,13 @@ var router = express.Router();
 var formidable = require('formidable');
 var fs = require('fs');
 var visitorDao = require('../dao/visitorDao');
+var _dao = require('../dao/dao');
 var UPLOAD_FOLDER = '/upload/';
-var UUID  = require('node-uuid');
+var UUID = require('node-uuid');
+
+
+var jsonWrite = _dao.jsonWrite;
+var dbcode = _dao.dbcode;
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -41,11 +46,11 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "sign") {
     console.log('sign');
     visitorDao.sign(req, res, next);
-  } 
+  }
 });
 
 router.post('/upload/', function (req, res, next) {
-  console.log('upload!!!!');
+  console.log('upload image');
   var form = new formidable.IncomingForm();   //创建上传表单
   form.encoding = 'utf-8';		//设置编辑
   form.uploadDir = 'public' + UPLOAD_FOLDER;	 //设置上传目录
@@ -53,16 +58,15 @@ router.post('/upload/', function (req, res, next) {
   form.maxFieldsSize = 2 * 1024 * 1024;   //文件大小
 
   form.parse(req, function (err, fields, files) {
-    
-    console.log('upload parse',err,fields,JSON.stringify(files));
+    console.log('upload parse', err, fields, JSON.stringify(files));
     if (err) {
-      console.log('upload err',err);
+      console.log('upload err', err);
       res.locals.error = err;
       return;
     }
 
     var extName = '';  //后缀名
-    console.log('files.type',files.file.type);
+    console.log('files.type', files.file.type);
     switch (files.file.type) {
       case 'image/pjpeg':
         extName = 'jpg';
@@ -80,7 +84,7 @@ router.post('/upload/', function (req, res, next) {
 
     if (extName.length == 0) {
       res.locals.error = '只支持png和jpg格式图片';
-      
+
       console.log('upload err 只支持png和jpg格式图片');
       return;
     }
@@ -90,11 +94,12 @@ router.post('/upload/', function (req, res, next) {
 
     console.log(newPath);
     fs.renameSync(files.file.path, newPath);  //重命名
-  });
 
-  res.locals.success = '上传成功';
-  
+    jsonWrite(res,{},dbcode.SUCCESS);
+    //res.locals.success = '上传成功';
+
     console.log('上传成功');
+  });
 });
 
 module.exports = router;
