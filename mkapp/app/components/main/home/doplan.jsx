@@ -53,7 +53,7 @@ class DoPlan extends React.Component {
     var geolocation = new BMap.Geolocation();
     geolocation.getCurrentPosition(function (r) {
       if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-        message.success();
+        //message.success();
         Action.sign({
           userid: localStorage.username,
           year: store.year,
