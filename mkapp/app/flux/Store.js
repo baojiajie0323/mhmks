@@ -19,7 +19,7 @@ var _storeBasic = [];
 var _path = [];
 var _plan = [];
 var _brand = [];
-var _product = [];
+var _product = {};
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -168,19 +168,26 @@ var Store = assign({}, EventEmitter.prototype, {
     }
   },
 
-  getBrand: function(){
+  getBrand: function () {
     return _brand;
   },
-  setBrand: function(brand){
+  setBrand: function (brand) {
     _brand = brand;
     this.emitChange(StoreEvent.SE_BRAND);
   },
 
-  getProduct: function(){
-    return _product;
+  getProduct: function (store_id) {
+    if (_product.hasOwnProperty(store_id)) {
+      return _product[store_id];
+    }
+    return [];
   },
-  setProduct: function(product){
-    _product = product;
+  setProduct: function (product) {
+    product.sort(function (a, b) { return parseInt(a.status) - parseInt(b.status) })
+    if (product.length > 0) {
+      var store_id = product[0].Store_id;
+      _product[store_id] = product;
+    }
     this.emitChange(StoreEvent.SE_PRODUCT);
   },
 
@@ -246,6 +253,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_BRAND: {
       Store.setBrand(action.value);
+    }
+      break;
+    case ActionEvent.AE_PRODUCT: {
+      Store.setProduct(action.value);
+    }
+      break;
+    case ActionEvent.AE_SHELFMAIN_SUBMIT: {
+      Store.emitChange(StoreEvent.SE_SHELFMAIN_SUBMIT);
     }
       break;
     default:

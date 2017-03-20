@@ -323,4 +323,69 @@ module.exports = {
       }
     });
   },
+  submitShelfMain: function (req, res, next) {
+    console.log('visitorDao submitShelfMain', req.body);
+    var param = req.body;
+    if (!param.year || !param.month || !param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    var product = JSON.parse(param.product);
+    var image = JSON.parse(param.image);
+
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        // function数组，需要执行的任务列表，每个function都有一个参数callback函数并且要调用
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        for (var i = 0; i < product.length; i ++ ) {
+          let productInfo = product[i];
+          tasks.push(function (callback) {
+            var sqlstring = _sql.submitshelfmain;
+            connection.query(sqlstring, [param.store_id, productInfo.product_id,param.userid,param.year, param.month, param.day,parseInt(productInfo.count)],
+              function (err, result) {
+                callback(err);
+              });
+          })
+        }
+
+        for (var i = 0; i < image.length; i ++ ) {
+          let productImage = image[i];
+          tasks.push(function (callback) {
+            var sqlstring = _sql.submitproductimage;
+            connection.query(sqlstring, [param.store_id, productImage.brand_id,param.userid,param.year, param.month, param.day,productImage.filename],
+              function (err, result) {
+                callback(err);
+              });
+          })
+        }
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, {}, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };

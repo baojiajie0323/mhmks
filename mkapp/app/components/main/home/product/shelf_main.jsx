@@ -18,6 +18,7 @@ import { List, ListItem } from 'material-ui/List';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
+import Dialog from 'material-ui/Dialog';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -28,24 +29,27 @@ class Shelf_main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      open: false,
       brand: Store.getBrand(),
-      product: Store.getProduct(),
+      product: Store.getProduct(this.props.userdata.store_id),
       previewVisible: false,
       previewImage: '',
-      fileList: [
-        // {
-        //   uid: -1,
-        //   name: 'xxx.png',
-        //   status: 'done',
-        //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        // }
-      ],
+      file: {}
+      // {
+      //   uid: -1,
+      //   name: 'xxx.png',
+      //   status: 'done',
+      //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+      // }
     };
+    this.preSaveProduct = [];
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
     this.onBrandChange = this.onBrandChange.bind(this);
     this.onProductChange = this.onProductChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -58,15 +62,38 @@ class Shelf_main extends React.Component {
     });
   }
 
-  handleUploadChange(file) {
-    console.log('handleUploadChange', file);
-    this.setState({ fileList: file.fileList })
+  handleUploadChange(file, brand_id) {
+    console.log('handleUploadChange', file, brand_id);
+    var files = this.state.file;
+
+    files[brand_id] = file.fileList;
+    this.setState({ file: files })
   }
 
+  addToPreSaveProduct(product) {
+    for (var i = 0; i < this.preSaveProduct.length; i++) {
+      if (this.preSaveProduct[i].Product_id == product.Product_id) {
+        if (product.count == "") {
+          this.preSaveProduct.splice(i, 1);
+        } else {
+          this.preSaveProduct[i] = product;
+        }
+        return true;
+      }
+    }
+    this.preSaveProduct.push(product);
+  }
+
+  onTextChange(product, value) {
+    product.count = value;
+    this.addToPreSaveProduct(product);
+    console.log('onTextChange', this.preSaveProduct);
+  }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
+    Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
 
     this.checkBrand();
     this.checkProductList();
@@ -74,6 +101,10 @@ class Shelf_main extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
+    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+  }
+  onSumitSuccess() {
+    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   checkBrand() {
     if (this.state.brand.length <= 0) {
@@ -87,26 +118,104 @@ class Shelf_main extends React.Component {
   }
   checkProductList() {
     if (this.state.product.length <= 0) {
-      Action.getProductbyStore();
+      var store = this.props.userdata;
+      Action.getProductbyStore({
+        store_id: store.store_id
+      });
     }
   }
-  onProductChange(){
+  onProductChange() {
     this.setState({
-      product: Store.getProduct({
-        store_id:this.props.userdata.store_id
-      })
+      product: Store.getProduct(this.props.userdata.store_id)
     })
   }
 
+  getProductDom(Brand_id) {
+    var productList = [];
+    var context = this;
+    for (let i = 0; i < this.state.product.length; i++) {
+      let product = this.state.product[i];
+      if (product.Brand_id == Brand_id) {
+        productList.push(<ListItem
+          leftAvatar={<Avatar
+            color={"white"}
+            backgroundColor={product.status == 1 ? green600 : red600}
+            style={{ fontSize: '12px' }}
+            >
+            {product.status == 1 ? "正常" : "下架"}
+          </Avatar>}
+          rightIconButton={<TextField
+            onChange={function (e, value) { context.onTextChange(product, value) } }
+            style={{ width: '80px' }}
+            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
+            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
+            hintText="0"
+            />}
+          primaryText={product.Product_name}
+          secondaryText={product.Serial_no}
+          />);
+      }
+    }
+    return productList;
+  }
+
   onClickSubmit() {
-    console.log('onClickSubmit', this.state.fileList);
+    this.setState({ open: true })
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+  }
+  handleSubmit() {
+    this.setState({ open: false });
+    var curDate = Store.getCurDate();
+    var data = {
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+      product: [],
+      image: [],
+    }
+    data.product = this.preSaveProduct.map((product) => {
+      return {
+        product_id: product.Product_id,
+        count: product.count
+      }
+    })
+
+    for (var brand in this.state.file) {
+      var filelist = this.state.file[brand];
+      console.log("filelsit", filelist);
+      for (var i = 0; i < filelist.length; i++) {
+        var file = filelist[i];
+        data.image.push({
+          filename: file.response.data.uuid,
+          brand_id: brand
+        })
+      }
+    }
+
+    data.product = JSON.stringify(data.product);
+    data.image = JSON.stringify(data.image);
+
+    Action.submitShelfmain(data);
   }
 
   getPanel() {
-    const { previewVisible, previewImage, fileList } = this.state;
+    const { previewVisible, previewImage, file } = this.state;
     var panelList = [];
+    var context = this;
     for (var i = 0; i < this.state.brand.length; i++) {
-      var brand = this.state.brand[i];
+      let brand = this.state.brand[i];
+      var fileList = [];
+      if (file.hasOwnProperty(brand.Brand_id)) {
+        fileList = file[brand.Brand_id];
+      }
+
+      //console.log("getPanel", file, fileList, brand.Brand_id)
+
       const uploadButton = (
         <div>
           <Icon type="plus" />
@@ -120,7 +229,7 @@ class Shelf_main extends React.Component {
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}
-          onChange={this.handleUploadChange}
+          onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
           showUploadList={{
             showPreviewIcon: false,
             showRemoveIcon: true
@@ -131,32 +240,11 @@ class Shelf_main extends React.Component {
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-        <Paper className={styles.headtitle}>
+        <Paper zDepth={0} className={styles.headtitle}>
           <p>产品/货号</p>
           <p>排面数</p>
         </Paper>
-        <ListItem
-          leftAvatar={<Avatar icon={<FileFolder />} />}
-          rightIconButton={<TextField
-            style={{ width: '80px' }}
-            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
-            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
-            hintText="0"
-            />}
-          primaryText="巧姿马桶垫1组装"
-          secondaryText="31700279"
-          />
-        <ListItem
-          leftAvatar={<Avatar icon={<FileFolder />} />}
-          rightIconButton={<TextField
-            style={{ width: '80px' }}
-            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
-            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
-            hintText="0"
-            />}
-          primaryText="巧姿马桶垫1组装"
-          secondaryText="31700279"
-          />
+        {this.getProductDom(brand.Brand_id) }
       </Panel>
       )
     }
@@ -167,6 +255,18 @@ class Shelf_main extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   render() {
+    const actions = [
+      <FlatButton
+        label="取消"
+        primary={true}
+        onTouchTap={this.handleClose}
+        />,
+      <FlatButton
+        label="确定"
+        primary={true}
+        onTouchTap={this.handleSubmit}
+        />,
+    ];
     return (
       <div className={styles.container}>
         <AppBar
@@ -184,6 +284,14 @@ class Shelf_main extends React.Component {
             {this.getPanel() }
           </Collapse>
         </div>
+        <Dialog
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose}
+          >
+          确定要提交数据吗？
+        </Dialog>
       </div>
     );
   }

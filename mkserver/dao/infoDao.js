@@ -240,10 +240,10 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getproductbystore;
-        connection.query(sqlstring, [], function (err, result) {
+        connection.query(sqlstring, [param.store_id], function (err, result) {
           //console.log('dbresult', result);
           if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS, nCount);
+            jsonWrite(res, result, dbcode.SUCCESS);
           } else {
             jsonWrite(res, {}, dbcode.FAIL);
           }
