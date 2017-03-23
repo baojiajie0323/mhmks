@@ -14,6 +14,8 @@ import SelectStore from './home/selectstore';
 import DoPlan from './home/doplan';
 import Note from './home/note';
 import ShelfMain from './home/product/shelf_main';
+import ShelfAway from './home/product/shelf_away';
+import Stock from './home/product/stock';
 import Chat from './home/product/chat';
 import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
@@ -75,6 +77,10 @@ class Main extends React.Component {
       return <Note userdata={this.state.userdata} />
     } else if (this.state.subview == 'shelfmainview') {
       return <ShelfMain userdata={this.state.userdata} />
+    } else if (this.state.subview == 'shelfawayview') {
+      return <ShelfAway userdata={this.state.userdata} />
+    } else if (this.state.subview == 'stockview') {
+      return <Stock userdata={this.state.userdata} />
     } else if (this.state.subview == 'chatview') {
       return <Chat userdata={this.state.userdata} />
     }

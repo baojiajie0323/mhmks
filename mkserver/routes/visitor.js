@@ -49,6 +49,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitshelfmain") {
     console.log('submitshelfmain');
     visitorDao.submitShelfMain(req,res,next);
+  } else if (req.body.command == "submitstock") {
+    console.log('submitstock');
+    visitorDao.submitStock(req,res,next);
   }
 });
 

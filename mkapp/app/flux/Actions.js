@@ -344,6 +344,33 @@ var Action = {
         }
       })
   },
+  submitStock: function (data) {
+    var context = this;
+    data.command = 'submitstock';
+    console.log('send submitStock', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('submitStock:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOCK_SUBMIT, response.data);
+          message.success('提交库存信息成功');
+        } else {
+          message.error('提交库存信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('submitStock fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STOCK_SUBMIT, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

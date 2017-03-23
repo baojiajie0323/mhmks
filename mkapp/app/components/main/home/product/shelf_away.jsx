@@ -25,7 +25,7 @@ import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material
 const Panel = Collapse.Panel;
 
 
-class Shelf_main extends React.Component {
+class Shelf_away extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -193,7 +193,7 @@ class Shelf_main extends React.Component {
         data.image.push({
           filename: file.response.data.uuid,
           brand_id: brand,
-          type:0
+          type:1
         })
       }
     }
@@ -272,7 +272,7 @@ class Shelf_main extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
-          title='主货架陈列'
+          title='离架陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
@@ -298,4 +298,4 @@ class Shelf_main extends React.Component {
   }
 }
 
-export default Shelf_main;
+export default Shelf_away;

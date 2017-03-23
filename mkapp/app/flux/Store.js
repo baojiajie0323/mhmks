@@ -263,6 +263,10 @@ AppDispatcher.register((action) => {
       Store.emitChange(StoreEvent.SE_SHELFMAIN_SUBMIT);
     }
       break;
+    case ActionEvent.AE_STOCK_SUBMIT: {
+      Store.emitChange(StoreEvent.SE_STOCK_SUBMIT);
+    }
+      break;
     default:
       break;
   }

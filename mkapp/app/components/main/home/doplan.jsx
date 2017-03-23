@@ -36,6 +36,8 @@ class DoPlan extends React.Component {
     };
     this.handleSign = this.handleSign.bind(this);
     this.onClickShelfMain = this.onClickShelfMain.bind(this);
+    this.onClickShelfAway = this.onClickShelfAway.bind(this);
+    this.onClickStock = this.onClickStock.bind(this);
     this.onClickChat = this.onClickChat.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
   }
@@ -77,6 +79,12 @@ class DoPlan extends React.Component {
   onClickShelfMain(store) {
     Store.emit(StoreEvent.SE_VIEW, 'shelfmainview',store);
   }
+  onClickShelfAway(store) {
+    Store.emit(StoreEvent.SE_VIEW, 'shelfawayview',store);
+  }
+  onClickStock(store) {
+    Store.emit(StoreEvent.SE_VIEW, 'stockview',store);
+  }
   onClickChat() {
     Store.emit(StoreEvent.SE_VIEW, 'chatview');
   }
@@ -98,18 +106,18 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="离架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStore}
+              onTouchTap={function(){context.onClickShelfAway(store)}}
               />
             {/*<ListItem
               primaryText="促销陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStore}
+              onTouchTap={this.onClickStock}
               />
               */}
             <ListItem
               primaryText="库存采集"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStore}
+              onTouchTap={function(){context.onClickStock(store)}}
               />
             {/*<ListItem
               primaryText="异常库存管理"

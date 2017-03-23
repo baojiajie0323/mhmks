@@ -25,7 +25,7 @@ import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material
 const Panel = Collapse.Panel;
 
 
-class Shelf_main extends React.Component {
+class Stock extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -93,7 +93,7 @@ class Shelf_main extends React.Component {
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
-    Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_STOCK_SUBMIT, this.onSumitSuccess);
 
     this.checkBrand();
     this.checkProductList();
@@ -101,7 +101,7 @@ class Shelf_main extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
-    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_STOCK_SUBMIT, this.onSumitSuccess);
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -193,7 +193,7 @@ class Shelf_main extends React.Component {
         data.image.push({
           filename: file.response.data.uuid,
           brand_id: brand,
-          type:0
+          type:2
         })
       }
     }
@@ -201,7 +201,7 @@ class Shelf_main extends React.Component {
     data.product = JSON.stringify(data.product);
     data.image = JSON.stringify(data.image);
 
-    Action.submitShelfmain(data);
+    Action.submitStock(data);
   }
 
   getPanel() {
@@ -243,7 +243,7 @@ class Shelf_main extends React.Component {
         </Modal>
         <Paper zDepth={0} className={styles.headtitle}>
           <p>产品/货号</p>
-          <p>排面数</p>
+          <p>库存数</p>
         </Paper>
         {this.getProductDom(brand.Brand_id) }
       </Panel>
@@ -272,7 +272,7 @@ class Shelf_main extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
-          title='主货架陈列'
+          title='库存采集'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
@@ -298,4 +298,4 @@ class Shelf_main extends React.Component {
   }
 }
 
-export default Shelf_main;
+export default Stock;
