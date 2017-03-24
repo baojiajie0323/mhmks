@@ -19,18 +19,28 @@ import ActionInfo from 'material-ui/svg-icons/action/info';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
+import Checkbox from 'material-ui/Checkbox';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
 const Panel = Collapse.Panel;
 
+var displayInfo = [{
+  display_id: 5,
+  display_name: "挂条"
+}, {
+  display_id: 6,
+  display_name: "网片"
+}, {
+  display_id: 7,
+  display_name: "陈列架"
+}]
 
 class Shelf_away extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
-      brand: Store.getBrand(),
       product: Store.getProduct(this.props.userdata.store_id),
       previewVisible: false,
       previewImage: '',
@@ -46,7 +56,6 @@ class Shelf_away extends React.Component {
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
-    this.onBrandChange = this.onBrandChange.bind(this);
     this.onProductChange = this.onProductChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -62,18 +71,20 @@ class Shelf_away extends React.Component {
     });
   }
 
-  handleUploadChange(file, brand_id) {
-    console.log('handleUploadChange', file, brand_id);
+  handleUploadChange(file, display_id) {
+    console.log('handleUploadChange', file, display_id);
     var files = this.state.file;
 
-    files[brand_id] = file.fileList;
+    files[display_id] = file.fileList;
     this.setState({ file: files })
   }
 
   addToPreSaveProduct(product) {
     for (var i = 0; i < this.preSaveProduct.length; i++) {
-      if (this.preSaveProduct[i].Product_id == product.Product_id) {
-        if (product.count == "") {
+      if (this.preSaveProduct[i].Product_id == product.Product_id &&
+          this.preSaveProduct[i].display_id == product.display_id
+      ) {
+        if (product.check == false) {
           this.preSaveProduct.splice(i, 1);
         } else {
           this.preSaveProduct[i] = product;
@@ -84,38 +95,27 @@ class Shelf_away extends React.Component {
     this.preSaveProduct.push(product);
   }
 
-  onTextChange(product, value) {
-    product.count = value;
+  onCheckChange(product,display_id, value) {
+    product.check = value;
+    product.display_id = display_id;
     this.addToPreSaveProduct(product);
     console.log('onTextChange', this.preSaveProduct);
   }
 
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
 
-    this.checkBrand();
     this.checkProductList();
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
-  checkBrand() {
-    if (this.state.brand.length <= 0) {
-      Action.getBrand();
-    }
-  }
-  onBrandChange() {
-    this.setState({
-      brand: Store.getBrand()
-    })
-  }
+
   checkProductList() {
     if (this.state.product.length <= 0) {
       var store = this.props.userdata;
@@ -130,31 +130,25 @@ class Shelf_away extends React.Component {
     })
   }
 
-  getProductDom(Brand_id) {
+  getProductDom(display_id) {
     var productList = [];
     var context = this;
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
-      if (product.Brand_id == Brand_id) {
-        productList.push(<ListItem
-          leftAvatar={<Avatar
-            color={"white"}
-            backgroundColor={product.status == 1 ? green600 : red600}
-            style={{ fontSize: '12px' }}
-            >
-            {product.status == 1 ? "正常" : "下架"}
-          </Avatar>}
-          rightIconButton={<TextField
-            onChange={function (e, value) { context.onTextChange(product, value) } }
-            style={{ width: '80px' }}
-            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
-            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
-            hintText="0"
-            />}
-          primaryText={product.Product_name}
-          secondaryText={product.Serial_no}
-          />);
-      }
+      productList.push(<ListItem
+        leftCheckbox={<Checkbox 
+          onCheck={function (e, checked) { context.onCheckChange(product,display_id, checked) } }
+          />}
+        rightAvatar={<Avatar
+          color={"white"}
+          backgroundColor={product.status == 1 ? green600 : red600}
+          style={{ fontSize: '12px' }}
+          >
+          {product.status == 1 ? "正常" : "下架"}
+        </Avatar>}
+        primaryText={product.Product_name}
+        secondaryText={product.Serial_no}
+        />);
     }
     return productList;
   }
@@ -185,15 +179,16 @@ class Shelf_away extends React.Component {
       }
     })
 
-    for (var brand in this.state.file) {
-      var filelist = this.state.file[brand];
+    for (var display in this.state.file) {
+      var filelist = this.state.file[display];
       console.log("filelsit", filelist);
       for (var i = 0; i < filelist.length; i++) {
         var file = filelist[i];
         data.image.push({
           filename: file.response.data.uuid,
-          brand_id: brand,
-          type:1
+          brand_id: "",
+          display_id: display,
+          type: 1
         })
       }
     }
@@ -208,11 +203,11 @@ class Shelf_away extends React.Component {
     const { previewVisible, previewImage, file } = this.state;
     var panelList = [];
     var context = this;
-    for (var i = 0; i < this.state.brand.length; i++) {
-      let brand = this.state.brand[i];
+    for (var i = 0; i < displayInfo.length; i++) {
+      let display = displayInfo[i];
       var fileList = [];
-      if (file.hasOwnProperty(brand.Brand_id)) {
-        fileList = file[brand.Brand_id];
+      if (file.hasOwnProperty(display.display_id)) {
+        fileList = file[display.display_id];
       }
 
       //console.log("getPanel", file, fileList, brand.Brand_id)
@@ -223,14 +218,14 @@ class Shelf_away extends React.Component {
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+      panelList.push(<Panel header={display.display_name} key={i.toString()}>
         <Upload
           multiple
           action="/visitor/upload"
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}
-          onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
+          onChange={function (file) { context.handleUploadChange(file, display.display_id) } }
           showUploadList={{
             showPreviewIcon: false,
             showRemoveIcon: true
@@ -241,11 +236,7 @@ class Shelf_away extends React.Component {
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-        <Paper zDepth={0} className={styles.headtitle}>
-          <p>产品/货号</p>
-          <p>排面数</p>
-        </Paper>
-        {this.getProductDom(brand.Brand_id) }
+        {this.getProductDom(display.display_id)}
       </Panel>
       )
     }
@@ -279,10 +270,10 @@ class Shelf_away extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion defaultActiveKey={['0']}>
-            {this.getPanel() }
+            {this.getPanel()}
           </Collapse>
         </div>
         <Dialog

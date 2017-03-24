@@ -192,7 +192,8 @@ class Stock extends React.Component {
         var file = filelist[i];
         data.image.push({
           filename: file.response.data.uuid,
-          brand_id: brand,
+          brand_id: brand,          
+          display_id: 0,
           type:2
         })
       }

@@ -361,7 +361,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, param.userid, param.year, param.month, param.day, productImage.filename,productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id,productImage.display_id, param.userid, param.year, param.month, param.day, productImage.filename,productImage.type],
               function (err, result) {
                 callback(err);
               });
@@ -426,7 +426,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, param.userid, param.year, param.month, param.day, productImage.filename,productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id,productImage.display_id, param.userid, param.year, param.month, param.day, productImage.filename,productImage.type],
               function (err, result) {
                 callback(err);
               });
