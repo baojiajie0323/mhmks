@@ -398,6 +398,33 @@ var Action = {
         }
       })
   },
+  submitChat: function (data) {
+    var context = this;
+    data.command = 'submitchat';
+    console.log('send submitchat', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('submitChat:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHAT_SUBMIT, response.data);
+          message.success('提交洽谈信息成功');
+        } else {
+          message.error('提交洽谈信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('submitChat fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_CHAT_SUBMIT, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

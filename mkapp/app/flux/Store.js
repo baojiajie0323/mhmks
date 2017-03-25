@@ -271,6 +271,10 @@ AppDispatcher.register((action) => {
       Store.emitChange(StoreEvent.SE_SHELFAWAY_SUBMIT);
     }
       break;
+    case ActionEvent.AE_CHAT_SUBMIT: {
+      Store.emitChange(StoreEvent.SE_CHAT_SUBMIT);
+    }
+      break;
     default:
       break;
   }

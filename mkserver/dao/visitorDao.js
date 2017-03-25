@@ -488,11 +488,11 @@ module.exports = {
           })
         }
 
-        for (let display_id in count ) {
+        for (let display_id in count) {
           let countInfo = count[display_id];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitshelfawaycount;
-            console.log("submitshelfawaycount",display_id,countInfo);
+            console.log("submitshelfawaycount", display_id, countInfo);
             connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, display_id, parseInt(countInfo)],
               function (err, result) {
                 callback(err);
@@ -525,6 +525,35 @@ module.exports = {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             jsonWrite(res, {}, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  submitChat: function (req, res, next) {
+    console.log('visitorDao submitChat');
+    var param = req.body;
+    if (!param.year || !param.month || !param.day || !param.store_id) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.submitchat;
+        connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, param.storeUser,param.chatContent,param.chatResult], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              jsonWrite(res, {}, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
           }
           connection.release();
         });

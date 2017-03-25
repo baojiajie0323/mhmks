@@ -45,6 +45,7 @@ var sqlmap = {
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
+  submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
   
 };
 

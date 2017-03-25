@@ -85,8 +85,8 @@ class DoPlan extends React.Component {
   onClickStock(store) {
     Store.emit(StoreEvent.SE_VIEW, 'stockview', store);
   }
-  onClickChat() {
-    Store.emit(StoreEvent.SE_VIEW, 'chatview');
+  onClickChat(store) {
+    Store.emit(StoreEvent.SE_VIEW, 'chatview', store);
   }
 
   renderStepActions(store, step) {
@@ -132,7 +132,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="洽谈记录"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickChat}
+              onTouchTap={function () { context.onClickChat(store) } }
               />
           </List>,
             <RaisedButton

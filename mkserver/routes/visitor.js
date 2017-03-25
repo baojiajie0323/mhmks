@@ -55,7 +55,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitshelfaway") {
     console.log('submitshelfaway');
     visitorDao.submitShelfAway(req, res, next);
-  }
+  } else if (req.body.command == "submitchat") {
+    console.log('submitchat');
+    visitorDao.submitChat(req, res, next);
+  } 
 });
 
 router.post('/upload/', function (req, res, next) {
