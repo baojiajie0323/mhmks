@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../home.less';
 
-
+import $ from 'jquery';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -53,12 +53,14 @@ class Shelf_away extends React.Component {
       // }
     };
     this.preSaveProduct = [];
+    this.preSaveCount = {};
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
     this.onProductChange = this.onProductChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -80,37 +82,41 @@ class Shelf_away extends React.Component {
   }
 
   addToPreSaveProduct(product) {
+    var newProduct = {};
+    $.extend(newProduct,product);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
-      if (this.preSaveProduct[i].Product_id == product.Product_id &&
-          this.preSaveProduct[i].display_id == product.display_id
+      if (this.preSaveProduct[i].Product_id == newProduct.Product_id &&
+          this.preSaveProduct[i].display_id == newProduct.display_id
       ) {
-        if (product.check == false) {
+        if (newProduct.check == false) {
           this.preSaveProduct.splice(i, 1);
         } else {
-          this.preSaveProduct[i] = product;
+          this.preSaveProduct[i] = newProduct;
         }
         return true;
       }
     }
-    this.preSaveProduct.push(product);
+    this.preSaveProduct.push(newProduct);
   }
 
   onCheckChange(product,display_id, value) {
+    console.log("onCheckChange",display_id);
     product.check = value;
     product.display_id = display_id;
+    console.log(this.preSaveProduct);
     this.addToPreSaveProduct(product);
-    console.log('onTextChange', this.preSaveProduct);
+    console.log(this.preSaveProduct);
   }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
-    Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_SHELFAWAY_SUBMIT, this.onSumitSuccess);
 
     this.checkProductList();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
-    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_SHELFAWAY_SUBMIT, this.onSumitSuccess);
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -130,9 +136,23 @@ class Shelf_away extends React.Component {
     })
   }
 
+  onTextChange(display_id,value){
+    this.preSaveCount[display_id] = value;
+  }
+
   getProductDom(display_id) {
     var productList = [];
     var context = this;
+    productList.push(<ListItem
+          rightIconButton={<TextField
+            onChange={function (e, value) { context.onTextChange(display_id, value) } }
+            style={{ width: '80px' }}
+            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
+            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
+            hintText="0"
+            />}
+          primaryText="总陈列"
+          />)
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
       productList.push(<ListItem
@@ -169,13 +189,14 @@ class Shelf_away extends React.Component {
       day: curDate.getDate(),
       userid: localStorage.username,
       store_id: this.props.userdata.store_id,
+      count:this.preSaveCount,
       product: [],
       image: [],
     }
     data.product = this.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
-        count: product.count
+        display_id: product.display_id
       }
     })
 
@@ -195,8 +216,9 @@ class Shelf_away extends React.Component {
 
     data.product = JSON.stringify(data.product);
     data.image = JSON.stringify(data.image);
+    data.count = JSON.stringify(data.count);
 
-    Action.submitShelfmain(data);
+    Action.submitShelfaway(data);
   }
 
   getPanel() {

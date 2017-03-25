@@ -42,7 +42,9 @@ var sqlmap = {
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
   submitproductimage: 'replace into product_image (store_id,brand_id,display_id,user_id,year,month,day,filename,type) values(?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
-  submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)'
+  submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
+  submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
+  submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
   
 };
 

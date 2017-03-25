@@ -77,13 +77,13 @@ class DoPlan extends React.Component {
   }
 
   onClickShelfMain(store) {
-    Store.emit(StoreEvent.SE_VIEW, 'shelfmainview',store);
+    Store.emit(StoreEvent.SE_VIEW, 'shelfmainview', store);
   }
   onClickShelfAway(store) {
-    Store.emit(StoreEvent.SE_VIEW, 'shelfawayview',store);
+    Store.emit(StoreEvent.SE_VIEW, 'shelfawayview', store);
   }
   onClickStock(store) {
-    Store.emit(StoreEvent.SE_VIEW, 'stockview',store);
+    Store.emit(StoreEvent.SE_VIEW, 'stockview', store);
   }
   onClickChat() {
     Store.emit(StoreEvent.SE_VIEW, 'chatview');
@@ -93,7 +93,6 @@ class DoPlan extends React.Component {
     const {stepIndex} = this.state;
     var context = this;
     var bSign = !!store.signin_time;
-    bSign = true;
     console.log('renderStepActions', store, bSign);
     return (
       <div style={{ margin: '12px 0' }}>
@@ -102,12 +101,12 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="主货架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function(){context.onClickShelfMain(store)}}
+              onTouchTap={function () { context.onClickShelfMain(store) } }
               />
             <ListItem
               primaryText="离架陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function(){context.onClickShelfAway(store)}}
+              onTouchTap={function () { context.onClickShelfAway(store) } }
               />
             {/*<ListItem
               primaryText="促销陈列"
@@ -118,7 +117,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="库存采集"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function(){context.onClickStock(store)}}
+              onTouchTap={function () { context.onClickStock(store) } }
               />
             {/*<ListItem
               primaryText="异常库存管理"
@@ -136,13 +135,13 @@ class DoPlan extends React.Component {
               onTouchTap={this.onClickChat}
               />
           </List>,
-          <RaisedButton
-            label="签出"
-            secondary={true}
-            onTouchTap={function () {
-              context.handleSign(store, 'signout');
-            } }
-            />] :
+            <RaisedButton
+              label="签出"
+              secondary={true}
+              onTouchTap={function () {
+                context.handleSign(store, 'signout');
+              } }
+              />] :
           <RaisedButton
             label={'签到'}
             primary={true}
@@ -206,7 +205,7 @@ class DoPlan extends React.Component {
     }
   }
   getStep() {
-    var stepIndex = 0;
+    var stepIndex = -1;
     var stepDom = this.state.storelist.map((store, index) => {
       if (stepIndex < 0 && store.isfinish == 0) {
         stepIndex = index;
@@ -214,7 +213,7 @@ class DoPlan extends React.Component {
       return <Step>
         <StepLabel>{store.Store_name}</StepLabel>
         <StepContent>
-          {this.renderStepActions(store, index)}
+          {this.renderStepActions(store, index) }
         </StepContent>
       </Step>
     });
@@ -225,7 +224,7 @@ class DoPlan extends React.Component {
     if (stepIndex < 0) {
       stepper.push(<p style={{ margin: '20px 0', textAlign: 'center' }}>
         该线路所有门店都已巡完.
-                  <a
+        <a
           href="#"
           onClick={(event) => {
             event.preventDefault();
@@ -233,7 +232,7 @@ class DoPlan extends React.Component {
           } }
           >
           查看其它计划
-                  </a>
+        </a>
       </p>)
     }
     return stepper;
@@ -250,12 +249,12 @@ class DoPlan extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
 
             <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>
               <Subheader>{planname}</Subheader>
-              {this.getStep()}
+              {this.getStep() }
             </Spin>
           </div>
         </div>

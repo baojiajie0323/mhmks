@@ -267,6 +267,10 @@ AppDispatcher.register((action) => {
       Store.emitChange(StoreEvent.SE_STOCK_SUBMIT);
     }
       break;
+    case ActionEvent.AE_SHELFAWAY_SUBMIT: {
+      Store.emitChange(StoreEvent.SE_SHELFAWAY_SUBMIT);
+    }
+      break;
     default:
       break;
   }

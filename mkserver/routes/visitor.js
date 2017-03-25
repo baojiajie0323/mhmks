@@ -48,10 +48,13 @@ router.post('/', function (req, res, next) {
     visitorDao.sign(req, res, next);
   } else if (req.body.command == "submitshelfmain") {
     console.log('submitshelfmain');
-    visitorDao.submitShelfMain(req,res,next);
+    visitorDao.submitShelfMain(req, res, next);
   } else if (req.body.command == "submitstock") {
     console.log('submitstock');
-    visitorDao.submitStock(req,res,next);
+    visitorDao.submitStock(req, res, next);
+  } else if (req.body.command == "submitshelfaway") {
+    console.log('submitshelfaway');
+    visitorDao.submitShelfAway(req, res, next);
   }
 });
 
@@ -106,7 +109,7 @@ router.post('/upload/', function (req, res, next) {
 
     console.log('上传成功');
   });
-  jsonWrite(res,{uuid:uuid},dbcode.SUCCESS);
+  jsonWrite(res, { uuid: uuid }, dbcode.SUCCESS);
 });
 
 module.exports = router;
