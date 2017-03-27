@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Icon, Modal, Input, Tree, Popconfirm, message} from 'antd';
+import { Table, Button, Icon, Modal, Input, Tree, Popconfirm, message, DatePicker } from 'antd';
 import styles from './visitor.less';
 const TreeNode = Tree.TreeNode;
 
@@ -7,121 +7,100 @@ class Plan extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      permissontype: Store.getPermissonType(),
-      role: Store.getRole(),
-      visible: false,
-      rolename: '',
-      permissonvalue: [],
+      signList: Store.getSignList()
     };
-    this.onClickAdd = this.onClickAdd.bind(this);
-    this.handleOk = this.handleOk.bind(this);
-    this.handleCancel = this.handleCancel.bind(this);
-    this.onRoleChange = this.onRoleChange.bind(this);
-    this.onPermissonTypeChange = this.onPermissonTypeChange.bind(this);
-    this.onClickEdit = this.onClickEdit.bind(this);
-    this.onClickDeleteRole = this.onClickDeleteRole.bind(this);
 
-    this.onRolenameChange = this.onRolenameChange.bind(this);
-    this.onPermissonValueChange = this.onPermissonValueChange.bind(this);
+    this.onSignListChange = this.onSignListChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
+    this.onClickQuery = this.onClickQuery.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.map = null;
+    this.queryData = "";
   }
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_ROLE, this.onRoleChange);
-    Store.addChangeListener(StoreEvent.SE_PERMISSONTYPE, this.onPermissonTypeChange);
-    Action.getRole();
-    Action.getPermissonType();
+
+    this.map = new BMap.Map("signmap");
+    var point = new BMap.Point(116.404, 39.915);
+    this.map.centerAndZoom(point, 15);
+    this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    this.map.setCurrentCity("上海");          // 设置地图显示的城市 此项是必须设置的
+    this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    Store.addChangeListener(StoreEvent.SE_SIGNLIST, this.onSignListChange);
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_ROLE, this.onRoleChange);
-    Store.removeChangeListener(StoreEvent.SE_PERMISSONTYPE, this.onPermissonTypeChange);
+    Store.removeChangeListener(StoreEvent.SE_SIGNLIST, this.onSignListChange);
+
   }
-  onDepartnameChange() {
+  onSignListChange() {
+    var context = this;
     this.setState({
-      department: Store.getDepartment()
+      signList: Store.getSignList()
+    }, function () {
+      context.refreshMarker();
     })
   }
-  onRoleChange() {
-    this.setState({
-      role: Store.getRole(),
-      visible: false,
-      loading: false
-    })
-  }
-  onPermissonTypeChange() {
-    this.setState({
-      permissontype: Store.getPermissonType(),
-    })
-  }
-  onRolenameChange(e) {
-    this.setState({
-      rolename: e.target.value
-    })
-  }
-  onPermissonValueChange(value){
-    this.setState({
-      permissonvalue:value
-    })
-  }
-  onClickAdd() {
-    this.modaltype = 'add';
-    this.setState({
-      rolename: '',
-      permissonvalue: [],
-      visible: true
-    })
-  }
-  onClickEdit(e) {
-    var id = e.currentTarget.dataset.id;
-    this.selectedkeys = id;
-    var roleInfo = Store.getRolebyId(id);
-    console.log('test1',roleInfo);
-    this.modaltype = 'mod';
-    this.setState({
-      rolename: roleInfo.name,
-      permissonvalue: JSON.parse(roleInfo.permisson),
-      visible: true
-    })
-  }
-  handleOk() {
+
+  onClickQuery(){
     var data = {
-      name: this.state.rolename,
-      permisson: JSON.stringify(this.state.permissonvalue),
-    }
-    if (this.modaltype == 'add') {
-      console.log('addmode', data);
-      Action.addRole(data);
-    } else if (this.modaltype == 'mod') {
-      data.id = this.selectedkeys;
-      console.log('modmode', data);
-      Action.modRole(data);
+      signtime:this.queryData,
+      userid:this.refs.userinput.value
+    };
+    console.log(data);
+    Action.getSignList(data);
+  }
+
+  refreshMarker() {
+    if (this.map) {
+      this.map.clearOverlays();
+      var addMarker = function (point) {
+        var marker = new BMap.Marker(point);
+        this.map.addOverlay(marker);
+      }
+
+
+      for (var i = 0; i < this.state.signList.length; i++) {
+        var signInfo = this.state.signList[i];
+        var point = new BMap.Point(signInfo.gps_x, signInfo.gps_y);
+        addMarker(point);
+      }
     }
   }
-  handleCancel() {
-    this.setState({ visible: false })
+
+  onDateChange(date, dateString) {
+    this.queryData = dateString;
+    console.log("onDateChange", date, dateString);
   }
-  onClickDeleteRole(id) {
-    var data = {
-      id: id
-    }
-    Action.delRole(data);
+
+  onTextChange(e,value){
+    console.log("onTextChange",e,value);
   }
+
   getTableColumn() {
     var context = this;
     return [{
-      title: '名称',
-      dataIndex: 'name',
-      key: 'name',
+      title: '时间',
+      dataIndex: 'signtime',
+      key: 'signtime',
     }];
   }
   getTableData() {
+    return this.state.signList;
   }
   render() {
     return (
       <div className={styles.visitorcontent}>
-        <p className={styles.visitortitle}>计划</p>
-        <div className={styles.visitortable}>
-          <Table loading={this.state.loading} bordered
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+        <p className={styles.visitortitle}>报到</p>
+        <div className={styles.queryContainer}>
+          <Input onChange={this.onTextChange} style={{ width: '200px', marginRight: '20px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号" />
+          <DatePicker style={{ width: '200px', marginRight: '20px' }} onChange={this.onDateChange} />
+          <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
+        </div>
+        <div className={styles.signContent}>
+          <div className={styles.signList}>
+            <Table showHeader={false} size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
+          </div>
+          <div id="signmap" className={styles.signMap}>
+          </div>
         </div>
       </div>
     );

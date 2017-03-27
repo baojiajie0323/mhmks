@@ -15,6 +15,7 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-
 import { Spin, Alert } from 'antd';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 
 
 import AddIcon from 'material-ui/svg-icons/content/add-box';
@@ -31,6 +32,7 @@ import FinishIcon from 'material-ui/svg-icons/toggle/star';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/menu';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
+import LocationIcon from 'material-ui/svg-icons/maps/near-me';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -98,6 +100,7 @@ class Home extends React.Component {
     this.handleOk = this.handleOk.bind(this);
     this.onClickDelete = this.onClickDelete.bind(this);
     this.onClickDoPlan = this.onClickDoPlan.bind(this);
+    this.onClickLocation = this.onClickLocation.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
@@ -202,12 +205,12 @@ class Home extends React.Component {
       } else {
         planCount++;
         if (plan.isfinish == 1) {
-          finishCount ++;
+          finishCount++;
         }
       }
     }
-    if(linePlanFinish){
-      finishCount ++;
+    if (linePlanFinish) {
+      finishCount++;
     }
     return {
       planCount: planCount,
@@ -225,47 +228,47 @@ class Home extends React.Component {
     }
     return storeNameList.join(' ， ');
   }
-  getPlanState(pl){
-    if(pl.plan_type == 1){
-      var allFinish = true; 
+  getPlanState(pl) {
+    if (pl.plan_type == 1) {
+      var allFinish = true;
       var hasStart = false;
-      for(var i = 0; i < this.state.plan.length; i ++){
+      for (var i = 0; i < this.state.plan.length; i++) {
         var plan = this.state.plan[i];
-        if(plan.plan_type == 1 && plan.path_id == pl.path_id){
-          if(plan.isfinish == 0){
+        if (plan.plan_type == 1 && plan.path_id == pl.path_id) {
+          if (plan.isfinish == 0) {
             allFinish = false;
           }
-          if(plan.signin_time){
+          if (plan.signin_time) {
             hasStart = true;
           }
         }
       }
-      if(allFinish){
+      if (allFinish) {
         return 'finish'
-      }else if(hasStart){
+      } else if (hasStart) {
         return 'hasstart'
-      }else{
+      } else {
         return 'nostart'
       }
-    }else{
-      if(pl.isfinish == 1){
+    } else {
+      if (pl.isfinish == 1) {
         return 'finish'
-      }else {
-        if(pl.signin_time){
+      } else {
+        if (pl.signin_time) {
           return 'hasstart'
-        }else{
+        } else {
           return 'nostart'
         }
       }
     }
   }
-  getStateIcon(pl){
+  getStateIcon(pl) {
     var state = this.getPlanState(pl);
-    if(state == 'finish'){
+    if (state == 'finish') {
       return <FinishIcon color={cyan600} />
-    }else if (state == 'hasstart'){
+    } else if (state == 'hasstart') {
       return <HasstartIcon color={cyan600} />
-    }else if (state == 'nostart'){
+    } else if (state == 'nostart') {
       return <NotstartIcon color={cyan600} />
     }
   }
@@ -325,6 +328,21 @@ class Home extends React.Component {
       Plan_Id: this.curplanid
     });
   }
+  onClickLocation(){
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function (r) {
+      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+        Action.checkSign({
+          userid: localStorage.username,
+          lat: r.latitude,
+          lon: r.longitude
+        });
+      }
+      else {
+        message.error('定位失败' + this.getStatus());
+      }
+    }, { enableHighAccuracy: true })
+  }
   render() {
     const actions = [
       <FlatButton
@@ -371,10 +389,10 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this) }
-                onClickAddTmp={this.onClickAddTmp.bind(this) }
-                onClickAddCall={this.onClickAddCall.bind(this) }
-                onClickAddCheck={this.onClickAddCheck.bind(this) }
+                onClickAddPath={this.onClickAddPath.bind(this)}
+                onClickAddTmp={this.onClickAddTmp.bind(this)}
+                onClickAddCall={this.onClickAddCall.bind(this)}
+                onClickAddCheck={this.onClickAddCheck.bind(this)}
                 />
             </ToolbarGroup>
           </Toolbar>
@@ -382,9 +400,18 @@ class Home extends React.Component {
 
         <div className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist() }
+            {this.getPlanlist()}
           </Spin>
         </div>
+        <FloatingActionButton style={{
+          position:'absolute',
+          bottom: '15px',
+          right:'25px',
+        }}
+        onTouchTap={this.onClickLocation}  
+        >
+          <LocationIcon />
+        </FloatingActionButton>
         <Dialog
           title="确定要删除计划吗？"
           actions={actions}

@@ -29,6 +29,7 @@ var _path = [];
 var _pathdetail = [];
 var _plansum = [];
 var _plan = [];
+var _signlist = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -378,6 +379,14 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emit(StoreEvent.SE_PLAN_UPDATE);
   },
 
+  getSignList: function () {
+    return _signlist;
+  },
+  setSignList: function (sl) {
+    _signlist = sl;
+    this.emitChange(StoreEvent.SE_SIGNLIST);
+  },
+
 
   emitChange: function (eventtype) {
     this.emit(eventtype);
@@ -531,6 +540,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PLAN_UPDATE: {
       Store.updatePlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_SIGNLIST: {
+      Store.setSignList(action.value);
     }
       break;
 

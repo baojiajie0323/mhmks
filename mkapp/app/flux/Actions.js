@@ -267,6 +267,29 @@ var Action = {
         }
       })
   },
+  checkSign: function (data) {
+    var context = this;
+    data.command = 'checksign';
+    console.log('send sign', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('checkSign:', response);
+        if (response.code == 0) {
+          message.success('报到成功');
+        } else {
+          message.error('报到失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('checkSign fail');
+        if (_debug) {
+        }
+      })
+  },
   getBrand: function () {
     var context = this;
     var data = { command: 'getproductbrand' };

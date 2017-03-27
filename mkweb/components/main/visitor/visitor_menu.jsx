@@ -35,7 +35,7 @@ class VisitorMenu extends React.Component {
           mode="inline"
           >
           <SubMenu key="work_sub" title={<span>工作记录</span>}>
-            <Menu.Item key="plan">计划</Menu.Item>
+            <Menu.Item key="plan">报到</Menu.Item>
             <Menu.Item key="chat">洽谈</Menu.Item>
           </SubMenu>
           <SubMenu key="info_sub" title={<span>信息采集</span>}>

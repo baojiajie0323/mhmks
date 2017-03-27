@@ -323,6 +323,37 @@ module.exports = {
       }
     });
   },
+  checkSign: function (req, res, next) {
+    console.log('visitorDao checkSign');
+    var param = req.body;
+    if (!param.lat || !param.lon || !param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.checksign;
+
+        var curDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+        connection.query(sqlstring, [curDate, param.lat, param.lon, param.userid], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              jsonWrite(res, {}, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   submitShelfMain: function (req, res, next) {
     console.log('visitorDao submitShelfMain', req.body);
     var param = req.body;

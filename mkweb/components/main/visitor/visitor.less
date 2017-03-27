@@ -24,6 +24,15 @@
             margin: 30px 35px;
         }
 
+        .queryContainer{
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            height: 50px;
+            padding: 0 30px;
+        }
+
         .addcontent{
             float: right;
             width: 86px;
@@ -44,6 +53,27 @@
             width: 100%;
             padding: 0 30px;
             overflow-y: auto;
+        }
+
+        .signContent{
+            position: absolute;
+            top: 170px;
+            bottom: 0;
+            width: 100%;
+            padding: 0 30px;
+
+            .signList{
+                position: absolute;
+                overflow-y: auto;
+                width: 180px;
+                height: 100%;
+            }
+            .signMap{
+                position: absolute;
+                left: 230px;
+                right: 0;
+                height: 100%;
+            }
         }
     }
 }
