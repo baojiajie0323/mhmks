@@ -37,6 +37,7 @@ class DoPlan extends React.Component {
     this.handleSign = this.handleSign.bind(this);
     this.onClickShelfMain = this.onClickShelfMain.bind(this);
     this.onClickShelfAway = this.onClickShelfAway.bind(this);
+    this.onClickPromotion = this.onClickPromotion.bind(this)
     this.onClickStock = this.onClickStock.bind(this);
     this.onClickChat = this.onClickChat.bind(this);
     this.onPlanChange = this.onPlanChange.bind(this);
@@ -82,6 +83,9 @@ class DoPlan extends React.Component {
   onClickShelfAway(store) {
     Store.emit(StoreEvent.SE_VIEW, 'shelfawayview', store);
   }
+  onClickPromotion(store) {
+    Store.eimt(StoreEvent.SE_VIEW, 'promotionview', store);
+  }
   onClickStock(store) {
     Store.emit(StoreEvent.SE_VIEW, 'stockview', store);
   }
@@ -108,12 +112,11 @@ class DoPlan extends React.Component {
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={function () { context.onClickShelfAway(store) } }
               />
-            {/*<ListItem
+            <ListItem
               primaryText="促销陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={this.onClickStock}
+              onTouchTap={context.onClickPromotion(store)}
               />
-              */}
             <ListItem
               primaryText="库存采集"
               rightIcon={<RightIcon color={cyan600} />}

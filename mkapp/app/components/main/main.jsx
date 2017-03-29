@@ -17,6 +17,7 @@ import ShelfMain from './home/product/shelf_main';
 import ShelfAway from './home/product/shelf_away';
 import Stock from './home/product/stock';
 import Chat from './home/product/chat';
+import Promotion from './home/product/promotion';
 import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
 import Contacts from './contacts/contacts';
@@ -83,6 +84,8 @@ class Main extends React.Component {
       return <Stock userdata={this.state.userdata} />
     } else if (this.state.subview == 'chatview') {
       return <Chat userdata={this.state.userdata} />
+    } else if (this.state.subview == 'promotionview') {
+      return <Promotion userdata={this.state.userdata} />
     }
     else if (this.state.selectedIndex == 0) {
       return <Home userdata={this.state.userdata} />
