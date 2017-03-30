@@ -94,7 +94,7 @@ class Promotion extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
-          title='洽谈记录'
+          title='促销陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
@@ -103,33 +103,6 @@ class Promotion extends React.Component {
 
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
-          <div style={{ padding: '0 18px' }}>
-            <TextField
-              hintText="请输入"
-              floatingLabelText="门店对接人"
-              fullWidth={true}
-              floatingLabelFixed={true}
-              onChange={this.onStoreUser}
-              />
-            <TextField
-              hintText="请输入"
-              floatingLabelText="洽谈内容"
-              multiLine={true}
-              fullWidth={true}
-              floatingLabelFixed={true}
-              onChange={this.onChatContent}
-              rows={3}
-              />
-            <TextField
-              hintText="请输入"
-              floatingLabelText="洽谈结果"
-              multiLine={true}
-              fullWidth={true}
-              floatingLabelFixed={true}
-              onChange={this.onChatResult}
-              rows={3}
-              />
-          </div>
         </div>
         <Dialog
           actions={actions}

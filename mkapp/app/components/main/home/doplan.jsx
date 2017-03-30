@@ -84,7 +84,7 @@ class DoPlan extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'shelfawayview', store);
   }
   onClickPromotion(store) {
-    Store.eimt(StoreEvent.SE_VIEW, 'promotionview', store);
+    Store.emit(StoreEvent.SE_VIEW, 'promotionview', store);
   }
   onClickStock(store) {
     Store.emit(StoreEvent.SE_VIEW, 'stockview', store);
@@ -97,6 +97,7 @@ class DoPlan extends React.Component {
     const {stepIndex} = this.state;
     var context = this;
     var bSign = !!store.signin_time;
+    
     console.log('renderStepActions', store, bSign);
     return (
       <div style={{ margin: '12px 0' }}>
@@ -115,7 +116,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="促销陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={context.onClickPromotion(store)}
+              onTouchTap={function () {context.onClickPromotion(store)}}
               />
             <ListItem
               primaryText="库存采集"
