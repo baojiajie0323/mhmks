@@ -35,4 +35,60 @@
     .content_notoolbar{
         top: 85px;
     }
+
+    .promotionPanel{
+        position: relative;
+        margin: 20px 10px;
+        height: 110px;
+        background-color: white;
+
+        .titlebar{
+            position: absolute;
+            color: white;
+            height: 35px;
+            font-size: 14px;
+            width: 100%;
+            padding: 0 10px;
+            background:lightseagreen;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content{
+            position: absolute;
+            bottom: 30px;
+            top: 35px;
+            width: 100%;
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        .footbar{
+            position: absolute;
+            height: 30px;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+
+            .line{
+                width: 1px;
+                height: 100%;
+                background-color: #ccc;
+            }
+
+            .footcontent{
+                height: 100%;
+                flex-grow: 1;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+        }
+    }
 }

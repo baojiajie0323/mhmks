@@ -11,6 +11,7 @@ import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
+import Paper from 'material-ui/Paper';
 
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
@@ -103,12 +104,40 @@ class Promotion extends React.Component {
 
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
+          <Paper zDepth={1} className={styles.promotionPanel}>
+            <div className={styles.titlebar}>
+              <p>东北大润发1709档</p>
+              <p>店促</p>
+            </div>
+            <div className={styles.content}>
+              <p>{"促销时间：" + "2017-3-28 " + "至" +" 2017-4-11"}</p>
+              <p>档期中</p>             
+            </div>
+            <div className={styles.footbar}>
+              <div className={styles.footcontent}>
+                <p>促销天数</p>
+                <p>14天</p>
+              </div>
+              <p className={styles.line}></p>
+              <div className={styles.footcontent}>
+                <p>剩余天数</p>
+                <p>5天</p>
+              </div>
+              <p className={styles.line}></p>
+              <div className={styles.footcontent}>
+                <p>产品数量</p>
+                <p>3个</p>
+              </div>
+            </div>
+          </Paper>
+          <Paper zDepth={1} className={styles.promotionPanel}>
+          </Paper>
         </div>
         <Dialog
           actions={actions}
           modal={false}
           open={this.state.open}
-          onRequestClose={this.handleClose}
+          onRequestClose={this.handleClose} 
           >
           确定要提交数据吗？
         </Dialog>
