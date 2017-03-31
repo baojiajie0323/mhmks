@@ -47,7 +47,7 @@ var sqlmap = {
   submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
-  
+  getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ?',
 };
 
 module.exports = sqlmap;

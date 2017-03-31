@@ -16,7 +16,7 @@ import Paper from 'material-ui/Paper';
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
 
-class Promotion extends React.Component {
+class PromotionDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,7 +30,6 @@ class Promotion extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.onClickPromotion = this.onClickPromotion.bind(this);
 
     this.storeUser = "";
     this.chatContent = "";
@@ -44,7 +43,7 @@ class Promotion extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
+    Store.emit(StoreEvent.SE_VIEW, 'promotionview',this.props.userdata.store);
   }
   onStoreUser(e, value) {
     this.storeUser = value;
@@ -56,21 +55,13 @@ class Promotion extends React.Component {
     this.chatResult = value;
   }
   onSumitSuccess() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
+    Store.emit(StoreEvent.SE_VIEW, 'promotionview',this.props.userdata.store);
   }
   onClickSubmit() {
     this.setState({ open: true })
   }
   handleClose() {
     this.setState({ open: false });
-  }
-
-  onClickPromotion(){
-    var userdata = {
-      store:this.props.userdata,
-      promotion:{}
-    }
-    Store.emit(StoreEvent.SE_VIEW, 'promotiondetailview',userdata);
   }
 
   handleSubmit() {
@@ -104,14 +95,15 @@ class Promotion extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
-          title='促销陈列'
-          onLeftIconButtonTouchTap={this.onClickBack}          
+          title='促销详情'
+          onLeftIconButtonTouchTap={this.onClickBack}
+          onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
+          iconElementRight={<FlatButton label="提交" />}
           />
 
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          <Subheader>{this.props.userdata.Store_name}</Subheader>
-          <Paper zDepth={1} className={styles.promotionPanel} onClick={this.onClickPromotion}>
+          <Paper zDepth={1} className={styles.promotionPanel}>
             <div className={styles.titlebar}>
               <p>东北大润发1709档</p>
               <p>店促</p>
@@ -137,12 +129,26 @@ class Promotion extends React.Component {
               </div>
             </div>
           </Paper>
-          <Paper zDepth={1} className={styles.promotionPanel}>
+          <Paper zDepth={1} className={styles.productPanel}>
+            <div className={styles.titlebar}>
+              巧心烹调纸8+2米
+            </div>
+            <div className={styles.content}>
+           
+            </div>
           </Paper>
         </div>
+        <Dialog
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose} 
+          >
+          确定要提交数据吗？
+        </Dialog>
       </div>
     );
   }
 }
 
-export default Promotion;
+export default PromotionDetail;
