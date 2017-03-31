@@ -20,6 +20,7 @@ var _path = [];
 var _plan = [];
 var _brand = [];
 var _product = {};
+var _promotion = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -191,6 +192,20 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_PRODUCT);
   },
 
+  getPromotionByStore: function(store_id){
+    var promotion = [];
+    for(var i = 0; i < _promotion.length; i++){
+      if(_promotion[i].Store_id == store_id){
+        promotion.push(_promotion[i]);
+      }
+    }
+    return promotion;
+  },
+  setPromotion: function(pm){
+    _promotion = pm;
+    this.emitChange(StoreEvent.SE_PROMOTION);
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -274,6 +289,10 @@ AppDispatcher.register((action) => {
     case ActionEvent.AE_CHAT_SUBMIT: {
       Store.emitChange(StoreEvent.SE_CHAT_SUBMIT);
     }
+      break;
+    case ActionEvent.AE_PROMOTION: {
+        Store.setPromotion(action.value);
+      }
       break;
     default:
       break;

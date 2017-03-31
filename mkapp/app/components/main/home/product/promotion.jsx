@@ -20,6 +20,7 @@ class Promotion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      promotion:Store.getPromotionByStore(this.props.userdata.Store_id),
       open: false
     };
     this.onClickBack = this.onClickBack.bind(this);
@@ -39,9 +40,16 @@ class Promotion extends React.Component {
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_PROMOTION, this.onPromotionChange);
+    if(this.state.promotion.length == 0){
+        Action.getPromotionbyStore({
+          storeid:this.props.userdata.Store_id,
+        })
+    }
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_PROMOTION, this.onPromotionChange);
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -63,6 +71,9 @@ class Promotion extends React.Component {
   }
   handleClose() {
     this.setState({ open: false });
+  }
+  onPromotionChange(){
+
   }
 
   onClickPromotion(){
