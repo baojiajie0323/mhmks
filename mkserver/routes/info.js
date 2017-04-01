@@ -43,6 +43,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getproductbystore") {
     console.log('getproductbystore');
     infoDao.getProductByStore(req, res, next);
+  } else if (req.body.command == "getpromotionbystore") {
+    console.log('getpromotionbystore');
+    infoDao.getPromotionByStore(req, res, next);
   }
 });
 

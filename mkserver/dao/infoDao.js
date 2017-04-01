@@ -252,4 +252,26 @@ module.exports = {
       }
     });
   },
+  getPromotionByStore: function (req, res, next) {
+    console.log('infoDao getPromotionByStore', req.body);
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotionbystore;
+        var nowdate = new Date().Format("yyyy-MM-dd");
+        connection.query(sqlstring, [param.store_id,nowdate], function (err, result) {
+          console.log('dbresult', result);
+//          if (result.length > 0) {
+          jsonWrite(res, result, dbcode.SUCCESS);
+          // } else {
+          //   jsonWrite(res, {}, dbcode.FAIL);
+          // }
+          connection.release();
+        });
+      }
+    });
+  },
 };

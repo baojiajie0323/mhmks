@@ -20,6 +20,7 @@ class PromotionDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      promotion: Store.getPromotionByStore(this.props.userdata.store.store_id),
       open: false
     };
     this.onClickBack = this.onClickBack.bind(this);
@@ -43,7 +44,7 @@ class PromotionDetail extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
   }
   onClickBack() {
-    Store.emit(StoreEvent.SE_VIEW, 'promotionview',this.props.userdata.store);
+    Store.emit(StoreEvent.SE_VIEW, 'promotionview', this.props.userdata.store);
   }
   onStoreUser(e, value) {
     this.storeUser = value;
@@ -55,13 +56,75 @@ class PromotionDetail extends React.Component {
     this.chatResult = value;
   }
   onSumitSuccess() {
-    Store.emit(StoreEvent.SE_VIEW, 'promotionview',this.props.userdata.store);
+    Store.emit(StoreEvent.SE_VIEW, 'promotionview', this.props.userdata.store);
   }
   onClickSubmit() {
     this.setState({ open: true })
   }
   handleClose() {
     this.setState({ open: false });
+  }
+
+  getProductList(pro) {
+    var promotion = this.state.promotion;
+    var productList = [];
+    for (var i = 0; i < promotion.length; i++) {
+      if (promotion[i].Pro_name == pro.Pro_name &&
+        promotion[i].Promotion_type == pro.Promotion_type) {
+        productList.push(promotion[i]);
+      }
+    }
+    return productList;
+  }
+
+  getPromotionDom() {
+    var context = this;
+
+    var nowDate = new Date();
+    var pmDom = [];
+
+    var pm = this.props.userdata.pm;
+    var proBeginDate = new Date(pm.Date3);
+    var proEndDate = new Date(pm.Date4);
+    var proState = "";
+    if (nowDate < proBeginDate) {
+      proState = "未开档"
+    } else {
+      proState = "档期中"
+    }
+    var productList = this.getProductList(pm);
+    var diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
+    if (diff > pm.Day) {
+      diff = pm.Day;
+    }
+    return <Paper zDepth={1} className={[styles.promotionPanel,styles.nomargin].join(' ')}
+      onClick={function () { context.onClickPromotion(pm) } }>
+      <div className={styles.titlebar}>
+        <p>{pm.Pro_name}</p>
+        <p>{pm.promotion_name}</p>
+      </div>
+      <div className={styles.content}>
+        <p>{"促销时间：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+        <p>{proState}</p>
+      </div>
+      <div className={styles.footbar}>
+        <div className={styles.footcontent}>
+          <p>促销天数</p>
+          <p>{pm.Day + '天'}</p>
+        </div>
+        <p className={styles.line}></p>
+        <div className={styles.footcontent}>
+          <p>剩余天数</p>
+          <p>{diff + '天'}</p>
+        </div>
+        <p className={styles.line}></p>
+        <div className={styles.footcontent}>
+          <p>产品数量</p>
+          <p>{productList.length + "个"}</p>
+        </div>
+      </div>
+    </Paper>
+
   }
 
   handleSubmit() {
@@ -102,39 +165,13 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          <Paper zDepth={1} className={styles.promotionPanel}>
-            <div className={styles.titlebar}>
-              <p>东北大润发1709档</p>
-              <p>店促</p>
-            </div>
-            <div className={styles.content}>
-              <p>{"促销时间：" + "2017-3-28 " + "至" +" 2017-4-11"}</p>
-              <p>档期中</p>             
-            </div>
-            <div className={styles.footbar}>
-              <div className={styles.footcontent}>
-                <p>促销天数</p>
-                <p>14天</p>
-              </div>
-              <p className={styles.line}></p>
-              <div className={styles.footcontent}>
-                <p>剩余天数</p>
-                <p>5天</p>
-              </div>
-              <p className={styles.line}></p>
-              <div className={styles.footcontent}>
-                <p>产品数量</p>
-                <p>3个</p>
-              </div>
-            </div>
-          </Paper>
+        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+          {this.getPromotionDom()}
           <Paper zDepth={1} className={styles.productPanel}>
             <div className={styles.titlebar}>
               巧心烹调纸8+2米
             </div>
             <div className={styles.content}>
-           
             </div>
           </Paper>
         </div>
@@ -142,7 +179,7 @@ class PromotionDetail extends React.Component {
           actions={actions}
           modal={false}
           open={this.state.open}
-          onRequestClose={this.handleClose} 
+          onRequestClose={this.handleClose}
           >
           确定要提交数据吗？
         </Dialog>

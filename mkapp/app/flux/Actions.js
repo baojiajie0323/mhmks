@@ -451,6 +451,7 @@ var Action = {
   getPromotionbyStore: function (data) {
     var context = this;
     data.command = 'getpromotionbystore';
+    console.log("getPromotionbyStore presend",data);
     $.ajax({
       url: _domain_name + '/info', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
@@ -465,11 +466,11 @@ var Action = {
       })
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
-        console.log('getPlan fail');
+        console.log('getPromotionbyStore fail');
         if (_debug) {
-          var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
-          var rsp = JSON.parse(response);
-          context.dispatch(ActionEvent.AE_PRODUCT, rsp.data);
+          // var response = '{"data":[{"Path_id":"Q00001","Path_name":"山东1"},{"Path_id":"Q00002","Path_name":"山东2"}]}';
+          // var rsp = JSON.parse(response);
+          // context.dispatch(ActionEvent.AE_PROMOTION, rsp.data);
         }
       })
   },

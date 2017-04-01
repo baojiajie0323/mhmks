@@ -20,136 +20,131 @@ class Promotion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      promotion:Store.getPromotionByStore(this.props.userdata.Store_id),
-      open: false
+      promotion: Store.getPromotionByStore(this.props.userdata.store_id),
     };
     this.onClickBack = this.onClickBack.bind(this);
-    this.onClickSubmit = this.onClickSubmit.bind(this);
-    this.onStoreUser = this.onStoreUser.bind(this);
-    this.onChatContent = this.onChatContent.bind(this);
-    this.onChatResult = this.onChatResult.bind(this);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.onPromotionChange = this.onPromotionChange.bind(this);
     this.onClickPromotion = this.onClickPromotion.bind(this);
-
-    this.storeUser = "";
-    this.chatContent = "";
-    this.chatResult = "";
   }
 
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
     Store.addChangeListener(StoreEvent.SE_PROMOTION, this.onPromotionChange);
-    if(this.state.promotion.length == 0){
-        Action.getPromotionbyStore({
-          storeid:this.props.userdata.Store_id,
-        })
+    if (this.state.promotion.length == 0) {
+      Action.getPromotionbyStore({
+        store_id: this.props.userdata.store_id,
+      })
     }
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
     Store.removeChangeListener(StoreEvent.SE_PROMOTION, this.onPromotionChange);
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
-  onStoreUser(e, value) {
-    this.storeUser = value;
-  }
-  onChatContent(e, value) {
-    this.chatContent = value;
-  }
-  onChatResult(e, value) {
-    this.chatResult = value;
-  }
-  onSumitSuccess() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
-  }
-  onClickSubmit() {
-    this.setState({ open: true })
-  }
-  handleClose() {
-    this.setState({ open: false });
-  }
-  onPromotionChange(){
 
+  onPromotionChange() {
+    this.setState({ promotion: Store.getPromotionByStore(this.props.userdata.store_id) })
   }
 
-  onClickPromotion(){
+  onClickPromotion(pm) {
     var userdata = {
-      store:this.props.userdata,
-      promotion:{}
+      store: this.props.userdata,
+      pm: pm
     }
-    Store.emit(StoreEvent.SE_VIEW, 'promotiondetailview',userdata);
+    Store.emit(StoreEvent.SE_VIEW, 'promotiondetailview', userdata);
   }
 
-  handleSubmit() {
-    var curDate = Store.getCurDate();
-    var data = {
-      store_id: this.props.userdata.store_id,
-      userid: localStorage.username,
-      year: curDate.getFullYear(),
-      month: curDate.getMonth() + 1,
-      day: curDate.getDate(),
-      storeUser: this.storeUser,
-      chatContent: this.chatContent,
-      chatResult: this.chatResult
+  getProductList(pro) {
+    var promotion = this.state.promotion;
+    var productList = [];
+    for (var i = 0; i < promotion.length; i++) {
+      if (promotion[i].Pro_name == pro.Pro_name &&
+        promotion[i].Promotion_type == pro.Promotion_type) {
+        productList.push(promotion[i]);
+      }
     }
-    Action.submitChat(data);
+    return productList;
   }
+
+  getPromotionListDom() {
+    var promotion = this.state.promotion;
+    var pmList = [];
+    var context = this;
+
+    var AddToPmList = function (pro) {
+      for (var i = 0; i < pmList.length; i++) {
+        if (pmList[i].Pro_name == pro.Pro_name &&
+          pmList[i].Promotion_type == pro.Promotion_type) {
+          return;
+        }
+      }
+      pmList.push(pro);
+    }
+
+    for (var i = 0; i < promotion.length; i++) {
+      AddToPmList(promotion[i]);
+    }
+    var nowDate = new Date();
+    var pmDom = [];
+    for (var nIndex = 0; nIndex < pmList.length; nIndex++) {
+      let pm = pmList[nIndex];
+      var proBeginDate = new Date(pm.Date3);
+      var proEndDate = new Date(pm.Date4);
+      var proState = "";
+      if (nowDate < proBeginDate) {
+        proState = "未开档"
+      } else {
+        proState = "档期中"
+      }
+      var productList = this.getProductList(pm);
+      var diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
+      if (diff > pm.Day) {
+        diff = pm.Day;
+      }
+      pmDom.push(<Paper zDepth={1} className={styles.promotionPanel}
+        onClick={function(){context.onClickPromotion(pm)}}>
+        <div className={styles.titlebar}>
+          <p>{pm.Pro_name}</p>
+          <p>{pm.promotion_name}</p>
+        </div>
+        <div className={styles.content}>
+          <p>{"促销时间：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+          <p>{proState}</p>
+        </div>
+        <div className={styles.footbar}>
+          <div className={styles.footcontent}>
+            <p>促销天数</p>
+            <p>{pm.Day + '天'}</p>
+          </div>
+          <p className={styles.line}></p>
+          <div className={styles.footcontent}>
+            <p>剩余天数</p>
+            <p>{diff + '天'}</p>
+          </div>
+          <p className={styles.line}></p>
+          <div className={styles.footcontent}>
+            <p>产品数量</p>
+            <p>{productList.length + "个"}</p>
+          </div>
+        </div>
+      </Paper>)
+    }
+    return pmDom;
+  }
+
   render() {
-    const actions = [
-      <FlatButton
-        label="取消"
-        primary={true}
-        onTouchTap={this.handleClose}
-        />,
-      <FlatButton
-        label="确定"
-        primary={true}
-        onTouchTap={this.handleSubmit}
-        />,
-    ];
     return (
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: '20px' }}
           title='促销陈列'
-          onLeftIconButtonTouchTap={this.onClickBack}          
+          onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
-          <Paper zDepth={1} className={styles.promotionPanel} onClick={this.onClickPromotion}>
-            <div className={styles.titlebar}>
-              <p>东北大润发1709档</p>
-              <p>店促</p>
-            </div>
-            <div className={styles.content}>
-              <p>{"促销时间：" + "2017-3-28 " + "至" +" 2017-4-11"}</p>
-              <p>档期中</p>             
-            </div>
-            <div className={styles.footbar}>
-              <div className={styles.footcontent}>
-                <p>促销天数</p>
-                <p>14天</p>
-              </div>
-              <p className={styles.line}></p>
-              <div className={styles.footcontent}>
-                <p>剩余天数</p>
-                <p>5天</p>
-              </div>
-              <p className={styles.line}></p>
-              <div className={styles.footcontent}>
-                <p>产品数量</p>
-                <p>3个</p>
-              </div>
-            </div>
-          </Paper>
-          <Paper zDepth={1} className={styles.promotionPanel}>
-          </Paper>
+          {this.getPromotionListDom()}
         </div>
       </div>
     );
