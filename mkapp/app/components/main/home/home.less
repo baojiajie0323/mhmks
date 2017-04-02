@@ -9,9 +9,9 @@
         position: absolute;
         width: 100%;
         top: 141px;
-        bottom: 0;
-        overflow: auto;
-
+        bottom: 0;        
+        overflow-y: auto;
+        overflow-x: hidden;
         
         .noplan{
             position: absolute;
@@ -30,6 +30,39 @@
             justify-content: space-between !important;
             align-items: center !important;
         }
+
+        .productcontent{
+            position: absolute;
+            top: 130px;
+            bottom: 0;
+            width: 100%;
+
+            .productPanel{
+                margin: 0 10px 20px 10px;
+                height: 250px;
+                background-color: white;
+
+                .titlebar{
+                    position: relative;
+                    height: 35px;
+                    font-size: 13px;
+                    line-height: 35px;
+                    padding: 0 10px;
+                    color: #404040;
+                    background: #FFEDB6;
+                    -webkit-box-align: center;
+                }
+                .content{
+                    position: absolute;
+                    top: 35px;
+                    bottom: 30px;
+                    width: 100%;
+                    padding: 5px 10px;
+                    display: flex;
+                    
+                }
+            }
+        }
     }
 
     .content_notoolbar{
@@ -47,6 +80,7 @@
             color: white;
             height: 35px;
             font-size: 14px;
+            font-weight: bold;
             width: 100%;
             padding: 0 10px;
             background:lightseagreen;

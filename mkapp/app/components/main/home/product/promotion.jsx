@@ -108,7 +108,7 @@ class Promotion extends React.Component {
           <p>{pm.promotion_name}</p>
         </div>
         <div className={styles.content}>
-          <p>{"促销时间：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+          <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
           <p>{proState}</p>
         </div>
         <div className={styles.footbar}>

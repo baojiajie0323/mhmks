@@ -6,12 +6,15 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message } from 'antd';
+import { message, Upload, Icon } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import {orange500, blue500} from 'material-ui/styles/colors';
 
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
@@ -97,14 +100,14 @@ class PromotionDetail extends React.Component {
     if (diff > pm.Day) {
       diff = pm.Day;
     }
-    return <Paper zDepth={1} className={[styles.promotionPanel,styles.nomargin].join(' ')}
+    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ') }
       onClick={function () { context.onClickPromotion(pm) } }>
       <div className={styles.titlebar}>
         <p>{pm.Pro_name}</p>
         <p>{pm.promotion_name}</p>
       </div>
       <div className={styles.content}>
-        <p>{"促销时间：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd") }</p>
         <p>{proState}</p>
       </div>
       <div className={styles.footbar}>
@@ -154,6 +157,21 @@ class PromotionDetail extends React.Component {
         onTouchTap={this.handleSubmit}
         />,
     ];
+    const uploadButton = (
+      <div>
+        <Icon type="plus" />
+        <div className="ant-upload-text">添加照片</div>
+      </div>
+    );
+    var fileList = [];
+
+    const items = [
+      <MenuItem key={1} value={1} primaryText="Never" />,
+      <MenuItem key={2} value={2} primaryText="Every Night" />,
+      <MenuItem key={3} value={3} primaryText="Weeknights" />,
+      <MenuItem key={4} value={4} primaryText="Weekends" />,
+      <MenuItem key={5} value={5} primaryText="Weekly" />,
+    ];
     return (
       <div className={styles.container}>
         <AppBar
@@ -165,15 +183,53 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
-          {this.getPromotionDom()}
-          <Paper zDepth={1} className={styles.productPanel}>
-            <div className={styles.titlebar}>
-              巧心烹调纸8+2米
-            </div>
-            <div className={styles.content}>
-            </div>
-          </Paper>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+          {this.getPromotionDom() }
+          <div className={styles.productcontent}>
+            <Paper zDepth={1} className={styles.productPanel}>
+              <div className={styles.titlebar}>
+                巧心烹调纸8+2米
+              </div>
+              <div className={styles.content}>
+                <div className={styles.formcontent}>
+                  <SelectField
+                    //value={this.state.value}
+                    //onChange={this.handleChange}
+                    floatingLabelText="Styled Floating Label Text"
+                    floatingLabelStyle={{ color: orange500 }}
+                    >
+                    {items}
+                  </SelectField>
+                  <TextField
+                    style={{ width: '150px' }}
+                    hintText="Styled Hint Text"
+                    hintStyle={{ color: orange500 }}
+                    />
+                  <TextField
+                    style={{ width: '150px' }}
+                    hintText="Styled Hint Text"
+                    hintStyle={{ color: orange500 }}
+                    />
+                </div>
+                <div className={styles.uploadcontent}>
+                  <Upload
+                    multiple
+                    action="/visitor/upload"
+                    listType="picture-card"
+                    //fileList={fileList}
+                    //onPreview={this.handlePreview}
+                    //onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
+                    showUploadList={{
+                      showPreviewIcon: false,
+                      showRemoveIcon: true
+                    }}
+                    >
+                    {fileList.length >= 2 ? null : uploadButton}
+                  </Upload>
+                </div>
+              </div>
+            </Paper>
+          </div>
         </div>
         <Dialog
           actions={actions}
