@@ -27,3 +27,8 @@ input :-webkit-autofill{
 .ant-spin-nested-loading .ant-spin{
   height: auto;
 }
+
+.ant-upload.ant-upload-select-picture-card{
+  margin-right: 0;
+  margin-bottom: 0;
+}

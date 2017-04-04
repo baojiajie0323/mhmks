@@ -38,8 +38,8 @@
             width: 100%;
 
             .productPanel{
+                position: relative;
                 margin: 0 10px 20px 10px;
-                height: 250px;
                 background-color: white;
 
                 .titlebar{
@@ -52,14 +52,61 @@
                     background: #FFEDB6;
                     -webkit-box-align: center;
                 }
-                .content{
-                    position: absolute;
-                    top: 35px;
-                    bottom: 30px;
+
+                .head{
+                    height: 30px;
                     width: 100%;
-                    padding: 5px 10px;
+                    border-bottom: 1px solid #ccc;
                     display: flex;
-                    
+                    align-items: center;
+                    font-size: 13px;
+                    .line{
+                        width: 1px;
+                        height: 100%;
+                        background-color: #ccc;
+                    }
+
+                    .headcontent{
+                        height: 100%;
+                        padding: 0 10px;
+                        flex-grow: 1;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }                        
+                }
+
+                .usercontent{
+                    display: flex;
+                    height: 106px;
+                    position: relative;
+
+                    .form{
+                        flex-grow: 1;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+
+                        .formcontent{
+                            flex-grow: 1;
+                            width: 100%;
+                            padding: 0 10px;
+                            //border-bottom: 1px solid #DA1616;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            font-size: 13px;
+                        }  
+                    }
+
+                    .uploadcontent{
+                        width: 100px;
+                        height: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }                    
                 }
             }
         }
@@ -99,6 +146,8 @@
             align-items: center;
             font-size: 15px;
             border-bottom: 1px solid #ccc;
+
+            
         }
         .footbar{
             position: absolute;

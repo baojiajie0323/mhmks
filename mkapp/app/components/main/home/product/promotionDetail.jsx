@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message, Upload, Icon } from 'antd';
+import { message, Upload, Icon, Input, Select  } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
@@ -16,6 +16,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import {orange500, blue500} from 'material-ui/styles/colors';
 
+const Option = Select.Option;
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
 
@@ -190,26 +191,39 @@ class PromotionDetail extends React.Component {
               <div className={styles.titlebar}>
                 巧心烹调纸8+2米
               </div>
-              <div className={styles.content}>
-                <div className={styles.formcontent}>
-                  <SelectField
-                    //value={this.state.value}
-                    //onChange={this.handleChange}
-                    floatingLabelText="Styled Floating Label Text"
-                    floatingLabelStyle={{ color: orange500 }}
-                    >
-                    {items}
-                  </SelectField>
-                  <TextField
-                    style={{ width: '150px' }}
-                    hintText="Styled Hint Text"
-                    hintStyle={{ color: orange500 }}
-                    />
-                  <TextField
-                    style={{ width: '150px' }}
-                    hintText="Styled Hint Text"
-                    hintStyle={{ color: orange500 }}
-                    />
+              <div className={styles.head}>
+                <div className={styles.headcontent}>
+                  <p>目标实销量</p>
+                  <p>1500个</p>
+                </div>
+                <p className={styles.line}></p>
+                <div className={styles.headcontent}>
+                  <p>累计实销量</p>
+                  <p>1200个</p>
+                </div>
+              </div>
+              <div className={styles.usercontent}>
+                <div className={styles.form}>
+                  <div className={styles.formcontent}>
+                    <p style={{color:orange500}}>陈列方式</p>
+                    <Select defaultValue="lucy" style={{ width: 100 }}>
+                      <Option value="jack">Jack</Option>
+                      <Option value="lucy">Lucy</Option>
+                      <Option value="disabled" disabled>Disabled</Option>
+                      <Option value="Yiminghe">yiminghe</Option>
+                    </Select>
+                  </div>
+                  <div className={styles.formcontent}>
+                    <p style={{color:orange500}}>陈列位置</p>
+                    <Input placeholder="请填写陈列位置"
+                      style={{ width: '100px' }}
+                      />
+                  </div>
+                  <div className={styles.formcontent}>
+                    <p style={{color:orange500}}>陈列数量</p>
+                    <Input placeholder="请填写陈列数量"
+                      style={{ width: '100px' }}/>
+                  </div>
                 </div>
                 <div className={styles.uploadcontent}>
                   <Upload
