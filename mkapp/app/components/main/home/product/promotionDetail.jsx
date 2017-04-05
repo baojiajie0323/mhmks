@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message, Upload, Icon, Input, Select  } from 'antd';
+import { message, Upload, Icon, Input, Select,Modal } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
@@ -14,7 +14,7 @@ import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import {orange500, blue500} from 'material-ui/styles/colors';
+import { orange500, blue500 } from 'material-ui/styles/colors';
 
 const Option = Select.Option;
 
@@ -25,6 +25,9 @@ class PromotionDetail extends React.Component {
     super(props);
     this.state = {
       promotion: Store.getPromotionByStore(this.props.userdata.store.store_id),
+      file: {},
+      previewVisible: false,
+      previewImage: '',
       open: false
     };
     this.onClickBack = this.onClickBack.bind(this);
@@ -32,6 +35,7 @@ class PromotionDetail extends React.Component {
     this.onStoreUser = this.onStoreUser.bind(this);
     this.onChatContent = this.onChatContent.bind(this);
     this.onChatResult = this.onChatResult.bind(this);
+    this.handleUploadChange = this.handleUploadChange.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -39,6 +43,17 @@ class PromotionDetail extends React.Component {
     this.storeUser = "";
     this.chatContent = "";
     this.chatResult = "";
+
+    this.displayType = [{
+      Display_id: 1,
+      Display_name: '堆箱'
+    }, {
+      Display_id: 2,
+      Display_name: '叠篮'
+    }, {
+      Display_id: 3,
+      Display_name: '端架'
+    }]
   }
 
   componentDidMount() {
@@ -67,6 +82,23 @@ class PromotionDetail extends React.Component {
   }
   handleClose() {
     this.setState({ open: false });
+  }
+
+  handleUploadChange(file, product_id) {
+    console.log('handleUploadChange', file, product_id);
+    var files = this.state.file;
+
+    files[product_id] = file.fileList;
+    this.setState({ file: files })
+  }
+  handleCancel = () => this.setState({ previewVisible: false })
+
+  handlePreview = (file) => {
+    console.log('handlePreview', file);
+    this.setState({
+      previewImage: file.url || file.thumbUrl,
+      previewVisible: true,
+    });
   }
 
   getProductList(pro) {
@@ -101,14 +133,14 @@ class PromotionDetail extends React.Component {
     if (diff > pm.Day) {
       diff = pm.Day;
     }
-    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ') }
+    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ')}
       onClick={function () { context.onClickPromotion(pm) } }>
       <div className={styles.titlebar}>
         <p>{pm.Pro_name}</p>
         <p>{pm.promotion_name}</p>
       </div>
       <div className={styles.content}>
-        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd") }</p>
+        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
         <p>{proState}</p>
       </div>
       <div className={styles.footbar}>
@@ -129,6 +161,83 @@ class PromotionDetail extends React.Component {
       </div>
     </Paper>
 
+  }
+
+  getProduct() {
+    var pm = this.props.userdata.pm;
+    var productList = this.getProductList(pm);
+    var productDom = [];
+    for (var i = 0; i < productList.length; i++) {
+      let product = productList[i];
+
+      var fileList = [];
+      if (this.state.file.hasOwnProperty(product.Product_id)) {
+        fileList = this.state.file[product.Product_id];
+      }
+
+      console.log("product", product);
+      productDom.push(<div className={styles.productcontent}>
+        <Paper zDepth={1} className={styles.productPanel}>
+          <div className={styles.titlebar}>
+            {product.product_name}
+          </div>
+          <div className={styles.head}>
+            <div className={styles.headcontent}>
+              <p>目标实销量</p>
+              <p>未知</p>
+            </div>
+            <p className={styles.line}></p>
+            <div className={styles.headcontent}>
+              <p>累计实销量</p>
+              <p>未知</p>
+            </div>
+          </div>
+          <div className={styles.usercontent}>
+            <div className={styles.form}>
+              <div className={styles.formcontent}>
+                <p style={{ color: orange500 }}>陈列方式</p>
+                <Select placeholder="请选择" style={{ width: 100 }}>
+                  {this.displayType.map((dp) => {
+                    return <Option value={dp.Display_id}>{dp.Display_name}</Option>
+                  })}
+                </Select>
+              </div>
+              <div className={styles.formcontent}>
+                <p style={{ color: orange500 }}>陈列位置</p>
+                <Input placeholder="请填写"
+                  style={{ width: '100px' }}
+                  />
+              </div>
+              <div className={styles.formcontent}>
+                <p style={{ color: orange500 }}>陈列数量</p>
+                <Input placeholder="请填写"
+                  style={{ width: '100px' }} />
+              </div>
+            </div>
+            <div className={styles.uploadcontent}>
+              <Upload
+                multiple
+                action="/visitor/upload"
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={this.handlePreview}
+                onChange={function (file) { context.handleUploadChange(file, product.Product_id) } }
+                showUploadList={{
+                  showPreviewIcon: false,
+                  showRemoveIcon: true
+                }}
+                >
+                {fileList.length >= 1 ? null : <div>
+                  <Icon type="plus" />
+                  <div className="ant-upload-text">添加照片</div>
+                </div>}
+              </Upload>
+            </div>
+          </div>
+        </Paper>
+      </div>);
+    }
+    return productDom;
   }
 
   handleSubmit() {
@@ -158,13 +267,6 @@ class PromotionDetail extends React.Component {
         onTouchTap={this.handleSubmit}
         />,
     ];
-    const uploadButton = (
-      <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">添加照片</div>
-      </div>
-    );
-    var fileList = [];
 
     const items = [
       <MenuItem key={1} value={1} primaryText="Never" />,
@@ -173,6 +275,7 @@ class PromotionDetail extends React.Component {
       <MenuItem key={4} value={4} primaryText="Weekends" />,
       <MenuItem key={5} value={5} primaryText="Weekly" />,
     ];
+    const { previewVisible, previewImage } = this.state;
     return (
       <div className={styles.container}>
         <AppBar
@@ -184,67 +287,13 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          {this.getPromotionDom() }
-          <div className={styles.productcontent}>
-            <Paper zDepth={1} className={styles.productPanel}>
-              <div className={styles.titlebar}>
-                巧心烹调纸8+2米
-              </div>
-              <div className={styles.head}>
-                <div className={styles.headcontent}>
-                  <p>目标实销量</p>
-                  <p>1500个</p>
-                </div>
-                <p className={styles.line}></p>
-                <div className={styles.headcontent}>
-                  <p>累计实销量</p>
-                  <p>1200个</p>
-                </div>
-              </div>
-              <div className={styles.usercontent}>
-                <div className={styles.form}>
-                  <div className={styles.formcontent}>
-                    <p style={{color:orange500}}>陈列方式</p>
-                    <Select defaultValue="lucy" style={{ width: 100 }}>
-                      <Option value="jack">Jack</Option>
-                      <Option value="lucy">Lucy</Option>
-                      <Option value="disabled" disabled>Disabled</Option>
-                      <Option value="Yiminghe">yiminghe</Option>
-                    </Select>
-                  </div>
-                  <div className={styles.formcontent}>
-                    <p style={{color:orange500}}>陈列位置</p>
-                    <Input placeholder="请填写陈列位置"
-                      style={{ width: '100px' }}
-                      />
-                  </div>
-                  <div className={styles.formcontent}>
-                    <p style={{color:orange500}}>陈列数量</p>
-                    <Input placeholder="请填写陈列数量"
-                      style={{ width: '100px' }}/>
-                  </div>
-                </div>
-                <div className={styles.uploadcontent}>
-                  <Upload
-                    multiple
-                    action="/visitor/upload"
-                    listType="picture-card"
-                    //fileList={fileList}
-                    //onPreview={this.handlePreview}
-                    //onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
-                    showUploadList={{
-                      showPreviewIcon: false,
-                      showRemoveIcon: true
-                    }}
-                    >
-                    {fileList.length >= 2 ? null : uploadButton}
-                  </Upload>
-                </div>
-              </div>
-            </Paper>
-          </div>
+        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+          {this.getPromotionDom()}
+          {this.getProduct()}
         </div>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
         <Dialog
           actions={actions}
           modal={false}

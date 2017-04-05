@@ -262,6 +262,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getpromotionbystore;
         var nowdate = new Date().Format("yyyy-MM-dd");
+        nowdate = "2017-04-02";
         connection.query(sqlstring, [param.store_id,nowdate], function (err, result) {
           console.log('dbresult', result);
 //          if (result.length > 0) {
