@@ -41,13 +41,14 @@ var sqlmap = {
   signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? ',
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
-  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,user_id,year,month,day,filename,type) values(?,?,?,?,?,?,?,?,?)',
+  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,filename,type) values(?,?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
   getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ?',
+  submitpromotion: 'replace into visitor_promotion (store_id,product_id,user_id,year,month,day,display_id,pos,count,user_confirm) values(?,?,?,?,?,?,?,?,?,?)',
 };
 
 module.exports = sqlmap;

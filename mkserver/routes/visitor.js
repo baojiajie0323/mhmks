@@ -61,6 +61,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitchat") {
     console.log('submitchat');
     visitorDao.submitChat(req, res, next);
+  } else if (req.body.command == "submitpromotion") {
+    console.log('submitpromotion');
+    visitorDao.submitPromotion(req, res, next);
   } 
 });
 

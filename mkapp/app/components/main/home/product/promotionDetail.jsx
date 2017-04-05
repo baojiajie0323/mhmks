@@ -39,6 +39,7 @@ class PromotionDetail extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.onSumitSuccess = this.onSumitSuccess.bind(this);
 
     this.onPosChange = this.onPosChange.bind(this);
     this.onCountChange = this.onCountChange.bind(this);
@@ -87,6 +88,7 @@ class PromotionDetail extends React.Component {
   }
 
   onPosChange(Product_id, value) {
+    console.log("onPosChange",value,Product_id);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
       var product = this.preSaveProduct[i];
       if (product.Product_id == Product_id) {
@@ -102,6 +104,7 @@ class PromotionDetail extends React.Component {
   }
 
   onCountChange(Product_id, value) {
+    console.log("onCountChange",value,Product_id);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
       var product = this.preSaveProduct[i];
       if (product.Product_id == Product_id) {
@@ -251,13 +254,13 @@ class PromotionDetail extends React.Component {
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列位置</p>
-                <Input onChange={function (e, value) { context.onPosChange(product.Product_id, value) } } placeholder="请填写"
+                <Input onChange={function (e) { context.onPosChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }}
                   />
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列数量</p>
-                <Input onChange={function (e, value) { context.onCountChange(product.Product_id, value) } } placeholder="请填写"
+                <Input onChange={function (e) { context.onCountChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }} />
               </div>
             </div>
@@ -297,6 +300,7 @@ class PromotionDetail extends React.Component {
       store_id: this.props.userdata.store.store_id,
       product: [],
       image: [],
+      confirm_user:'',
     }
     console.log("preSaveProduct",this.preSaveProduct);
     data.product = this.preSaveProduct.map((product) => {
@@ -317,7 +321,7 @@ class PromotionDetail extends React.Component {
           filename: file.response.data.uuid,
           product_id: productid,
           display_id: 0,
-          type: 0
+          type: 3
         })
       }
     }
