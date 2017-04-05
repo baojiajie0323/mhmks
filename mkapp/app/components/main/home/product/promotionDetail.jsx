@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message, Upload, Icon, Input, Select,Modal } from 'antd';
+import { message, Upload, Icon, Input, Select, Modal } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
@@ -40,9 +40,11 @@ class PromotionDetail extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
 
-    this.storeUser = "";
-    this.chatContent = "";
-    this.chatResult = "";
+    this.onPosChange = this.onPosChange.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+    this.onDisplayChange = this.onDisplayChange.bind(this);
+
+    this.preSaveProduct = [];
 
     this.displayType = [{
       Display_id: 1,
@@ -57,10 +59,10 @@ class PromotionDetail extends React.Component {
   }
 
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_PROMOTION_SUBMIT, this.onSumitSuccess);
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_PROMOTION_SUBMIT, this.onSumitSuccess);
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'promotionview', this.props.userdata.store);
@@ -82,6 +84,51 @@ class PromotionDetail extends React.Component {
   }
   handleClose() {
     this.setState({ open: false });
+  }
+
+  onPosChange(Product_id, value) {
+    for (var i = 0; i < this.preSaveProduct.length; i++) {
+      var product = this.preSaveProduct[i];
+      if (product.Product_id == Product_id) {
+        product.pos = value;
+        return;
+      }
+    }
+    var data = {
+      Product_id: Product_id,
+      pos: value
+    }
+    this.preSaveProduct.push(data);
+  }
+
+  onCountChange(Product_id, value) {
+    for (var i = 0; i < this.preSaveProduct.length; i++) {
+      var product = this.preSaveProduct[i];
+      if (product.Product_id == Product_id) {
+        product.count = value;
+        return;
+      }
+    }
+    var data = {
+      Product_id: Product_id,
+      count: value
+    }
+    this.preSaveProduct.push(data);
+  }
+
+  onDisplayChange(Product_id, value) {
+    for (var i = 0; i < this.preSaveProduct.length; i++) {
+      var product = this.preSaveProduct[i];
+      if (product.Product_id == Product_id) {
+        product.display = value;
+        return;
+      }
+    }
+    var data = {
+      Product_id: Product_id,
+      display: value
+    }
+    this.preSaveProduct.push(data);
   }
 
   handleUploadChange(file, product_id) {
@@ -133,8 +180,7 @@ class PromotionDetail extends React.Component {
     if (diff > pm.Day) {
       diff = pm.Day;
     }
-    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ')}
-      onClick={function () { context.onClickPromotion(pm) } }>
+    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ')}>
       <div className={styles.titlebar}>
         <p>{pm.Pro_name}</p>
         <p>{pm.promotion_name}</p>
@@ -164,6 +210,7 @@ class PromotionDetail extends React.Component {
   }
 
   getProduct() {
+    var context = this;
     var pm = this.props.userdata.pm;
     var productList = this.getProductList(pm);
     var productDom = [];
@@ -175,7 +222,6 @@ class PromotionDetail extends React.Component {
         fileList = this.state.file[product.Product_id];
       }
 
-      console.log("product", product);
       productDom.push(<div className={styles.productcontent}>
         <Paper zDepth={1} className={styles.productPanel}>
           <div className={styles.titlebar}>
@@ -196,7 +242,8 @@ class PromotionDetail extends React.Component {
             <div className={styles.form}>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列方式</p>
-                <Select placeholder="请选择" style={{ width: 100 }}>
+                <Select onChange={function (value) { context.onDisplayChange(product.Product_id, value) } }
+                  placeholder="请选择" style={{ width: 100 }}>
                   {this.displayType.map((dp) => {
                     return <Option value={dp.Display_id}>{dp.Display_name}</Option>
                   })}
@@ -204,13 +251,13 @@ class PromotionDetail extends React.Component {
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列位置</p>
-                <Input placeholder="请填写"
+                <Input onChange={function (e, value) { context.onPosChange(product.Product_id, value) } } placeholder="请填写"
                   style={{ width: '100px' }}
                   />
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列数量</p>
-                <Input placeholder="请填写"
+                <Input onChange={function (e, value) { context.onCountChange(product.Product_id, value) } } placeholder="请填写"
                   style={{ width: '100px' }} />
               </div>
             </div>
@@ -243,16 +290,42 @@ class PromotionDetail extends React.Component {
   handleSubmit() {
     var curDate = Store.getCurDate();
     var data = {
-      store_id: this.props.userdata.store_id,
-      userid: localStorage.username,
       year: curDate.getFullYear(),
       month: curDate.getMonth() + 1,
       day: curDate.getDate(),
-      storeUser: this.storeUser,
-      chatContent: this.chatContent,
-      chatResult: this.chatResult
+      userid: localStorage.username,
+      store_id: this.props.userdata.store.store_id,
+      product: [],
+      image: [],
     }
-    Action.submitChat(data);
+    console.log("preSaveProduct",this.preSaveProduct);
+    data.product = this.preSaveProduct.map((product) => {
+      return {
+        product_id: product.Product_id,
+        count: product.count,
+        pos:product.pos,
+        display:product.display
+      }
+    })
+
+    for (var productid in this.state.file) {
+      var filelist = this.state.file[productid];
+      console.log("filelsit", filelist);
+      for (var i = 0; i < filelist.length; i++) {
+        var file = filelist[i];
+        data.image.push({
+          filename: file.response.data.uuid,
+          product_id: productid,
+          display_id: 0,
+          type: 0
+        })
+      }
+    }
+
+    data.product = JSON.stringify(data.product);
+    data.image = JSON.stringify(data.image);
+
+    Action.submitPromotion(data);
   }
   render() {
     const actions = [

@@ -192,16 +192,16 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_PRODUCT);
   },
 
-  getPromotionByStore: function(store_id){
+  getPromotionByStore: function (store_id) {
     var promotion = [];
-    for(var i = 0; i < _promotion.length; i++){
-      if(_promotion[i].Store_id == store_id){
+    for (var i = 0; i < _promotion.length; i++) {
+      if (_promotion[i].Store_id == store_id) {
         promotion.push(_promotion[i]);
       }
     }
     return promotion;
   },
-  setPromotion: function(pm){
+  setPromotion: function (pm) {
     _promotion = pm;
     this.emitChange(StoreEvent.SE_PROMOTION);
   },
@@ -291,8 +291,12 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_PROMOTION: {
-        Store.setPromotion(action.value);
-      }
+      Store.setPromotion(action.value);
+    }
+      break;
+    case ActionEvent.AE_PROMOTION_SUBMIT: {
+      Store.emitChange(StoreEvent.SE_PROMOTION_SUBMIT);
+    }
       break;
     default:
       break;

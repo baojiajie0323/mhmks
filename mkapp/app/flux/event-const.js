@@ -21,6 +21,7 @@ var eventMap = {
     AE_SHELFAWAY_SUBMIT: null,
     AE_CHAT_SUBMIT: null,
     AE_PROMOTION: null,
+    AE_PROMOTION_SUBMIT: null,
   }),
 
   StoreEvent: keyMirror({
@@ -38,6 +39,7 @@ var eventMap = {
     SE_SHELFAWAY_SUBMIT: null,
     SE_CHAT_SUBMIT: null,
     SE_PROMOTION: null,
+    SE_PROMOTION_SUBMIT:null,
   })
 };
 
