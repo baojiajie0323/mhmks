@@ -14,6 +14,7 @@ class Plan extends React.Component {
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
+    this.refreshMarker = this.refreshMarker.bind(this);
     this.map = null;
     this.queryData = "";
   }
@@ -43,7 +44,7 @@ class Plan extends React.Component {
   onClickQuery(){
     var data = {
       signtime:this.queryData,
-      userid:this.refs.userinput.value
+      userid:this.userid
     };
     console.log(data);
     Action.getSignList(data);
@@ -51,10 +52,11 @@ class Plan extends React.Component {
 
   refreshMarker() {
     if (this.map) {
+      var context = this;
       this.map.clearOverlays();
       var addMarker = function (point) {
         var marker = new BMap.Marker(point);
-        this.map.addOverlay(marker);
+        context.map.addOverlay(marker);
       }
 
 
@@ -62,6 +64,7 @@ class Plan extends React.Component {
         var signInfo = this.state.signList[i];
         var point = new BMap.Point(signInfo.gps_x, signInfo.gps_y);
         addMarker(point);
+        this.map.centerAndZoom(point, 15);
       }
     }
   }
@@ -71,8 +74,8 @@ class Plan extends React.Component {
     console.log("onDateChange", date, dateString);
   }
 
-  onTextChange(e,value){
-    console.log("onTextChange",e,value);
+  onTextChange(e){
+    this.userid = e.target.value;
   }
 
   getTableColumn() {

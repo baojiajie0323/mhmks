@@ -49,7 +49,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "checksign") {
     console.log('checksign');
     visitorDao.checkSign(req, res, next);
-  } else if (req.body.command == "submitshelfmain") {
+  } else if (req.body.command == "getsignlist") {
+    console.log('getsignlist');
+    visitorDao.getSignList(req, res, next);
+  }else if (req.body.command == "submitshelfmain") {
     console.log('submitshelfmain');
     visitorDao.submitShelfMain(req, res, next);
   } else if (req.body.command == "submitstock") {

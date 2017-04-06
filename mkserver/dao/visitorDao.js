@@ -305,7 +305,7 @@ module.exports = {
         }
 
         var curDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
-        connection.query(sqlstring, [curDate, param.lat, param.lon, param.userid, param.year, param.month, param.day, param.store_id], function (err, result) {
+        connection.query(sqlstring, [curDate, param.lon, param.lat, param.userid, param.year, param.month, param.day, param.store_id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -338,7 +338,7 @@ module.exports = {
         var sqlstring = _sql.checksign;
 
         var curDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
-        connection.query(sqlstring, [curDate, param.lat, param.lon, param.userid], function (err, result) {
+        connection.query(sqlstring, [curDate, param.lon, param.lat, param.userid], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -348,6 +348,31 @@ module.exports = {
             } else {
               jsonWrite(res, {}, dbcode.FAIL);
             }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getSignList: function (req, res, next) {
+    console.log('visitorDao getSignList');
+    var param = req.body;
+    if (!param.userid || !param.signtime ) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getsignlist;
+        connection.query(sqlstring, [param.userid,"%" + param.signtime + "%"], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });

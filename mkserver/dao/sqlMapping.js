@@ -40,6 +40,7 @@ var sqlmap = {
   signin: 'update plan set signin_time=?,signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? ',
   signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? ',
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
+  getsignlist: 'select * from sign_check where userid=? and signtime like ?',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
   submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,filename,type) values(?,?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
