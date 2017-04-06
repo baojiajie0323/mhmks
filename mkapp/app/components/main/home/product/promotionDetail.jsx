@@ -51,12 +51,12 @@ class PromotionDetail extends React.Component {
       Display_id: 1,
       Display_name: '堆箱'
     }, {
-      Display_id: 2,
-      Display_name: '叠篮'
-    }, {
-      Display_id: 3,
-      Display_name: '端架'
-    }]
+        Display_id: 2,
+        Display_name: '叠篮'
+      }, {
+        Display_id: 3,
+        Display_name: '端架'
+      }]
   }
 
   componentDidMount() {
@@ -88,7 +88,7 @@ class PromotionDetail extends React.Component {
   }
 
   onPosChange(Product_id, value) {
-    console.log("onPosChange",value,Product_id);
+    console.log("onPosChange", value, Product_id);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
       var product = this.preSaveProduct[i];
       if (product.Product_id == Product_id) {
@@ -104,7 +104,7 @@ class PromotionDetail extends React.Component {
   }
 
   onCountChange(Product_id, value) {
-    console.log("onCountChange",value,Product_id);
+    console.log("onCountChange", value, Product_id);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
       var product = this.preSaveProduct[i];
       if (product.Product_id == Product_id) {
@@ -173,23 +173,34 @@ class PromotionDetail extends React.Component {
     var proBeginDate = new Date(pm.Date3);
     var proEndDate = new Date(pm.Date4);
     var proState = "";
+    var diff = 0;
+    var diffkey = "";
+    var titleStyle = [styles.titlebar];
     if (nowDate < proBeginDate) {
       proState = "未开档"
+      titleStyle.push(styles.orangeBkColor);
+      diff = parseInt(Math.abs(nowDate - proBeginDate) / 1000 / 60 / 60 / 24) + 1;
+      diffkey = "距开始天数";
     } else {
-      proState = "档期中"
+      proState = "档期中";
+      diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
+      if (diff > pm.Day) {
+        diff = pm.Day;
+      }
+      diffkey = "剩余天数";
     }
     var productList = this.getProductList(pm);
     var diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
     if (diff > pm.Day) {
       diff = pm.Day;
     }
-    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ')}>
-      <div className={styles.titlebar}>
+    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ') }>
+      <div className={titleStyle.join(' ') }>
         <p>{pm.Pro_name}</p>
         <p>{pm.promotion_name}</p>
       </div>
       <div className={styles.content}>
-        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd") }</p>
         <p>{proState}</p>
       </div>
       <div className={styles.footbar}>
@@ -199,7 +210,7 @@ class PromotionDetail extends React.Component {
         </div>
         <p className={styles.line}></p>
         <div className={styles.footcontent}>
-          <p>剩余天数</p>
+          <p>{diffkey}</p>
           <p>{diff + '天'}</p>
         </div>
         <p className={styles.line}></p>
@@ -249,7 +260,7 @@ class PromotionDetail extends React.Component {
                   placeholder="请选择" style={{ width: 100 }}>
                   {this.displayType.map((dp) => {
                     return <Option value={dp.Display_id}>{dp.Display_name}</Option>
-                  })}
+                  }) }
                 </Select>
               </div>
               <div className={styles.formcontent}>
@@ -300,15 +311,15 @@ class PromotionDetail extends React.Component {
       store_id: this.props.userdata.store.store_id,
       product: [],
       image: [],
-      confirm_user:'',
+      confirm_user: '',
     }
-    console.log("preSaveProduct",this.preSaveProduct);
+    console.log("preSaveProduct", this.preSaveProduct);
     data.product = this.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
         count: product.count,
-        pos:product.pos,
-        display:product.display
+        pos: product.pos,
+        display: product.display
       }
     })
 
@@ -364,9 +375,9 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
-          {this.getPromotionDom()}
-          {this.getProduct()}
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+          {this.getPromotionDom() }
+          {this.getProduct() }
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />

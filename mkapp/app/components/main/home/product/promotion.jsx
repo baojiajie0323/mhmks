@@ -91,24 +91,32 @@ class Promotion extends React.Component {
       var proBeginDate = new Date(pm.Date3);
       var proEndDate = new Date(pm.Date4);
       var proState = "";
+      var diff = 0;
+      var diffkey = "";
+
+      var titleStyle = [styles.titlebar];
       if (nowDate < proBeginDate) {
-        proState = "未开档"
+        proState = "未开档";
+        titleStyle.push(styles.orangeBkColor);
+        diff = parseInt(Math.abs(nowDate - proBeginDate) / 1000 / 60 / 60 / 24) + 1;
+        diffkey = "距开始天数";
       } else {
-        proState = "档期中"
+        proState = "档期中";
+        diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
+        if (diff > pm.Day) {
+          diff = pm.Day;
+        }
+        diffkey = "剩余天数";
       }
       var productList = this.getProductList(pm);
-      var diff = parseInt(Math.abs(nowDate - proEndDate) / 1000 / 60 / 60 / 24) + 1;
-      if (diff > pm.Day) {
-        diff = pm.Day;
-      }
       pmDom.push(<Paper zDepth={1} className={styles.promotionPanel}
-        onClick={function(){context.onClickPromotion(pm)}}>
-        <div className={styles.titlebar}>
+        onClick={function () { context.onClickPromotion(pm) } }>
+        <div className={titleStyle.join(' ') }>
           <p>{pm.Pro_name}</p>
           <p>{pm.promotion_name}</p>
         </div>
         <div className={styles.content}>
-          <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
+          <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd") }</p>
           <p>{proState}</p>
         </div>
         <div className={styles.footbar}>
@@ -118,7 +126,7 @@ class Promotion extends React.Component {
           </div>
           <p className={styles.line}></p>
           <div className={styles.footcontent}>
-            <p>剩余天数</p>
+            <p>{diffkey}</p>
             <p>{diff + '天'}</p>
           </div>
           <p className={styles.line}></p>
@@ -142,9 +150,9 @@ class Promotion extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
-          {this.getPromotionListDom()}
+          {this.getPromotionListDom() }
         </div>
       </div>
     );
