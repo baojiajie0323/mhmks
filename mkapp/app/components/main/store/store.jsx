@@ -7,6 +7,7 @@ import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import { cyan600 } from 'material-ui/styles/colors';
+import config from '../../config';
 
 class StoreView extends React.Component {
   constructor(props) {
@@ -61,7 +62,7 @@ class StoreView extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='门店'
           iconElementLeft={<span></span>}
           />

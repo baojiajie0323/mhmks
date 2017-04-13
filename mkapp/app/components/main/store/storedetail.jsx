@@ -10,6 +10,7 @@ import CommunicationCall from 'material-ui/svg-icons/communication/call';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import { cyan600, cyan300, transparent } from 'material-ui/styles/colors';
+import config from '../../config';
 
 class StoreDetail extends React.Component {
   constructor(props) {
@@ -42,7 +43,7 @@ class StoreDetail extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title={this.state.storeInfo.Store_name}
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

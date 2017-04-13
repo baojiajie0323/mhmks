@@ -20,6 +20,7 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import Checkbox from 'material-ui/Checkbox';
+import config from '../../../config';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -284,7 +285,7 @@ class Shelf_away extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='离架陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}

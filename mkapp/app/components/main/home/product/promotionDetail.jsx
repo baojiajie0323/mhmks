@@ -15,6 +15,7 @@ import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { orange500, blue500 } from 'material-ui/styles/colors';
+import config from '../../../config';
 
 const Option = Select.Option;
 
@@ -367,7 +368,7 @@ class PromotionDetail extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='促销详情'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}

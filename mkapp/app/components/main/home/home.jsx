@@ -12,12 +12,12 @@ import Paper from 'material-ui/Paper';
 import areIntlLocalesSupported from 'intl-locales-supported';
 import { List, ListItem } from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-import { Spin, Alert } from 'antd';
+import { Spin, Alert,message } from 'antd';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
-
+import config from '../../config';
 import AddIcon from 'material-ui/svg-icons/content/add-box';
 import LineIcon from 'material-ui/svg-icons/action/timeline';
 import DoneIcon from 'material-ui/svg-icons/action/done-all';
@@ -172,7 +172,8 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
   }
   onClickAddTmp() {
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    message.info("暂不支持，请在后台安排计划");
+    //Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCall() {
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
@@ -359,7 +360,7 @@ class Home extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='拜访'
           iconElementLeft={<span />}
           />

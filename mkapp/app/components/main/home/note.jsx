@@ -10,6 +10,7 @@ import {message} from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 
+import config from '../../config';
 
 class Note extends React.Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class Note extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='日报'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

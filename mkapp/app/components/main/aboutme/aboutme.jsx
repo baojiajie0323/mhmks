@@ -11,7 +11,7 @@ import Divider from 'material-ui/Divider';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
-
+import config from '../../config';
 import CommunicationCall from 'material-ui/svg-icons/communication/call';
 import CommunicationEmail from 'material-ui/svg-icons/communication/email';
 import AreaIcon from 'material-ui/svg-icons/maps/person-pin';
@@ -71,7 +71,7 @@ class Aboutme extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop:'20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='个人中心'
           iconElementLeft={<span></span>}
           />
@@ -79,35 +79,38 @@ class Aboutme extends React.Component {
           <Paper className={styles.userphoto} zDepth={3} circle={true} />
           <p className={styles.username}>{this.state.userInfo.realname}</p>
         </div>
-        <List>
-          <ListItem primaryText={this.state.userInfo.phone}
-            leftIcon={<CommunicationCall color={cyan300}/>}
+        <div className={styles.usercontent}>
+          <List>
+            <ListItem primaryText={this.state.userInfo.phone}
+              leftIcon={<CommunicationCall color={cyan300}/>}
+              />
+            <ListItem primaryText={this.state.userInfo.email}
+              leftIcon={<CommunicationEmail color={cyan300}/>}
+              />
+            <ListItem primaryText={this.state.userInfo.departname}
+              leftIcon={<AreaIcon color={cyan300}/>}
+              />
+            <Divider />
+            <ListItem primaryText="产品手册"
+              onTouchTap={this.onClickHelp}
+              leftIcon={<HelpIcon color={cyan600} />}
+              rightIcon={<RightIcon color={cyan600} />} />
+            <Divider />
+            <ListItem primaryText="我的位置"
+              onTouchTap={this.onClickPos}
+              leftIcon={<PosIcon color={cyan600} />}
+              rightIcon={<RightIcon color={cyan600} />} />
+          </List>
+          <RaisedButton
+            label="退出登录"
+            primary={true}
+            fullWidth={true}
+            onTouchTap={this.handleOpen}
+            labelStyle={{ fontSize: '16px' }}
+            buttonStyle={{ height: '50px', backgroundColor: 'rgb(241, 48, 25)', marginTop: '10px' }}
             />
-          <ListItem primaryText={this.state.userInfo.email}
-            leftIcon={<CommunicationEmail color={cyan300}/>}
-            />
-          <ListItem primaryText={this.state.userInfo.departname}
-            leftIcon={<AreaIcon color={cyan300}/>}
-            />
-          <Divider />
-          <ListItem primaryText="产品手册"
-            onTouchTap={this.onClickHelp}
-            leftIcon={<HelpIcon color={cyan600} />}
-            rightIcon={<RightIcon color={cyan600} />} />
-          <Divider />
-          <ListItem primaryText="我的位置"
-            onTouchTap={this.onClickPos}
-            leftIcon={<PosIcon color={cyan600} />}
-            rightIcon={<RightIcon color={cyan600} />} />
-        </List>
-        <RaisedButton
-          label="退出登录"
-          primary={true}
-          fullWidth={true}
-          onTouchTap={this.handleOpen}
-          labelStyle={{ fontSize: '16px' }}
-          buttonStyle={{ height: '50px', backgroundColor: 'rgb(241, 48, 25)', marginTop: '10px' }}
-          />
+        </div>
+
         <Dialog
           actions={actions}
           modal={false}

@@ -22,7 +22,7 @@ import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
 
 
 import { cyan600 } from 'material-ui/styles/colors';
-
+import config from '../../config';
 
 class DoPlan extends React.Component {
   constructor(props) {
@@ -248,7 +248,7 @@ class DoPlan extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='执行计划'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

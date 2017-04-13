@@ -190,12 +190,18 @@ class Login extends React.Component {
       savepwd: e.target.checked
     })
   }
+  onClickApp(){
+    window.open("https://www.pgyer.com/wYbE");
+  }
   render() {
     return (
       <div className={styles.container}>
         <canvas id='c1' className={styles.canvas1}></canvas>
         <canvas id='c2' className={styles.canvas2}></canvas>
         <div className={styles.content}>
+          <div className={styles.appdownload} onClick={this.onClickApp} title="app下载">
+           <Icon type="qrcode" />
+          </div>
           <p className={styles.title}>满好营销通后台管理平台</p>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="user" />

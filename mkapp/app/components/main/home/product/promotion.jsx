@@ -12,6 +12,7 @@ import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
+import config from '../../../config';
 
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
@@ -144,7 +145,7 @@ class Promotion extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='促销陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

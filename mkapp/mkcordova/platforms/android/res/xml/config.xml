@@ -24,7 +24,7 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <access origin="http://1658k3l069.iask.in" />
-    <access origin="http://192.168.1.3" />
+    <access origin="http://116.246.2.202" />
     <access origin="http://ajax.googleapis.com" />
     <access origin="http://api.map.baidu.com" />
     <allow-intent href="market:*" />
@@ -37,6 +37,8 @@
     <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
     <splash density="port-xhdpi" src="res/screen/android/splash-port-xhdpi.png" />
     <preference name="loglevel" value="DEBUG" />
+    <preference name="StatusBarOverlaysWebView" value="true" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="SplashMaintainAspectRatio" value="true" />
 </widget>

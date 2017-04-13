@@ -9,6 +9,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { List, ListItem } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import Divider from 'material-ui/Divider';
+import config from '../../config';
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -103,7 +104,7 @@ class SelectStore extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='选择门店'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickOk}

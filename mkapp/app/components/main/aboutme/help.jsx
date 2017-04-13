@@ -5,6 +5,7 @@ import IconButton from 'material-ui/IconButton';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import FlatButton from 'material-ui/FlatButton';
 import {message} from 'antd';
+import config from '../../config';
 
 class Help extends React.Component {
   constructor(props) {
@@ -37,7 +38,7 @@ class Help extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='产品手册'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}

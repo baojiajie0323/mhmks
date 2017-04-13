@@ -37,7 +37,7 @@ var Store = assign({}, EventEmitter.prototype, {
     if (loginsuccess) {
       _userInfo = userInfo;
     } else {
-      _curview = 'homepage';
+      _curview = 'schdule';
       _userInfo = {};
     }
     this.emit(StoreEvent.SE_LOGIN, loginsuccess);

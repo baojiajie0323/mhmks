@@ -5,6 +5,7 @@ import IconButton from 'material-ui/IconButton';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import FlatButton from 'material-ui/FlatButton';
 import {message} from 'antd';
+import config from '../../config';
 
 class Location extends React.Component {
   constructor(props) {
@@ -46,7 +47,7 @@ class Location extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='我的位置'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickLocation}

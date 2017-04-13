@@ -12,6 +12,7 @@ import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 
+import config from '../../../config';
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
 
@@ -93,7 +94,7 @@ class Chat extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: '20px' }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='洽谈记录'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}

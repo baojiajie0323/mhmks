@@ -7,6 +7,7 @@ import PhoneIcon from 'material-ui/svg-icons/communication/phone';
 import Divider from 'material-ui/Divider';
 import Avatar from 'material-ui/Avatar';
 import { cyan600 } from 'material-ui/styles/colors';
+import config from '../../config';
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -53,7 +54,7 @@ class Contacts extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:'20px' }}
+          style={{  paddingTop:config.titlebarPadding }}
           title='通讯录'
           iconElementLeft={<span></span>}
           />

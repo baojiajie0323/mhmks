@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './login.less';
 import $ from 'jquery';
-import { message } from 'antd';
+import { message,Spin } from 'antd';
 
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -10,6 +10,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
+import config from '../config';
 
 class Login extends React.Component {
   constructor(props) {
@@ -60,7 +61,7 @@ class Login extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ marginBottom: '30px', paddingTop:'20px' }}
+          style={{ marginBottom: '30px', paddingTop: config.titlebarPadding }}
           title='满好营销通'
           iconElementLeft={<span></span>}
           />
@@ -70,16 +71,18 @@ class Login extends React.Component {
         <div className={styles.inputform}>
           <TextField floatingLabelText="密码" defaultValue={password} id="password" type="password" fullWidth={true} hintText="请输入密码" />
         </div>
-        <div className={styles.btnform}>
-          <RaisedButton disabled={this.state.loginloading} 
-          onTouchTap={this.onClickLogin} 
-          labelStyle={{ fontSize: '16px' }} 
-          buttonStyle={{ height: '50px' }}
-            label={this.state.loginloading ? "正在登录,请稍后":"登 录"} 
-            primary={!this.state.loginloading} 
-            secondary={true}
-            fullWidth={true} />
-        </div>
+        <Spin spinning={this.state.loginloading}>
+          <div className={styles.btnform}>
+            <RaisedButton disabled={this.state.loginloading}
+              onTouchTap={this.onClickLogin}
+              labelStyle={{ fontSize: '16px' }}
+              buttonStyle={{ height: '50px' }}
+              label={this.state.loginloading ? "正在登录,请稍后" : "登 录"}
+              primary={!this.state.loginloading}
+              secondary={true}
+              fullWidth={true} />
+          </div>
+        </Spin>
       </div>
     );
   }

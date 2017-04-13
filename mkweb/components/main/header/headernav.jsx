@@ -29,7 +29,7 @@ class HeaderNav extends React.Component {
     return (
       <div className={styles.headernav}>
         <div data-view="schdule" className={this.getnavcontentStyle('schdule')} onClick={this.onClickNav}>计划</div>
-        <div data-view="homepage" className={this.getnavcontentStyle('homepage')} onClick={this.onClickNav}>总览</div>
+        {/*<div data-view="homepage" className={this.getnavcontentStyle('homepage')} onClick={this.onClickNav}>总览</div>*/}
         <div data-view="info" className={this.getnavcontentStyle('info')} onClick={this.onClickNav}>信息</div>
         <div data-view="visitor" className={this.getnavcontentStyle('visitor')} onClick={this.onClickNav}>拜访</div>
         <div data-view="config" className={this.getnavcontentStyle('config')} onClick={this.onClickNav}>配置</div>
