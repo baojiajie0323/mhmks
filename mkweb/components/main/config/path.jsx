@@ -22,8 +22,8 @@ class Path extends React.Component {
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PATH, this.onPathChange);
     Store.addChangeListener(StoreEvent.SE_PATHDETAIL, this.onPathDetailChange);
-    Action.getPath();
-    Action.getPathDetail();
+    Action.getPath_app({userid:localStorage.username});
+    //Action.getPathDetail();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PATH, this.onPathChange);
