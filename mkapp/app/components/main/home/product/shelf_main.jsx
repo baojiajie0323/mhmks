@@ -227,9 +227,9 @@ class Shelf_main extends React.Component {
       );
       panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
         <Upload
-          multiple
           action="/visitor/upload"
           listType="picture-card"
+          accept="image/*"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
