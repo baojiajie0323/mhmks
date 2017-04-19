@@ -69,10 +69,10 @@ class DoPlan extends React.Component {
         });
       }
       else {
-        this.setState({
+        context.setState({
           loading: false
         })
-        message.error('定位失败' + this.getStatus());
+        message.error('定位失败: 错误码为' + this.getStatus());
       }
     }, { enableHighAccuracy: true })
   }
