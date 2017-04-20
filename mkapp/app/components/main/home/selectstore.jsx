@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './home.less';
 
 
-import { Spin } from 'antd';
+import { Spin,message } from 'antd';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -91,13 +91,14 @@ class SelectStore extends React.Component {
       tipText: '正在创建拜访计划，请稍后',
     })
     var storeInfo = Store.getStoreById(this.state.checkedId);
-  
+    var curDate = Store.getCurDate();
     Action.addPlan({
-      Plan_Type: 2,
-      Plan_Date: this.props.userdata.Format('yyyy-MM-dd'),
-      Store_Id:storeInfo.Store_id,
-      Store_Name: storeInfo.Store_name,
-      User_Id: localStorage.username,
+      plan_type: 2,
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      store_id:storeInfo.Store_id,
+      user_id: localStorage.username,
     });
   }
   render() {
@@ -112,7 +113,7 @@ class SelectStore extends React.Component {
           iconElementRight={<FlatButton label="确定" />}
           />
         <div className={[styles.content, styles.content_notoolbar].join(' ') }>
-          <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
+          <Spin size="large" tip={this.state.tipText} spinning={this.state.loading}>
             <List>
               {this.getStorelist() }
             </List>

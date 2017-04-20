@@ -97,7 +97,7 @@ class DoPlan extends React.Component {
     const {stepIndex} = this.state;
     var context = this;
     var bSign = !!store.signin_time;
-    
+    //bSign = true;
     console.log('renderStepActions', store, bSign);
     return (
       <div style={{ margin: '12px 0' }}>
@@ -210,6 +210,7 @@ class DoPlan extends React.Component {
   }
   getStep() {
     var stepIndex = -1;
+    //stepIndex = 0;
     var stepDom = this.state.storelist.map((store, index) => {
       if (stepIndex < 0 && store.isfinish == 0) {
         stepIndex = index;

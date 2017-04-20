@@ -51,6 +51,8 @@ class Shelf_main extends React.Component {
     this.onProductChange = this.onProductChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.onClickAddImage = this.onClickAddImage.bind(this);
+    this.removePhoto = this.removePhoto.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -195,7 +197,7 @@ class Shelf_main extends React.Component {
           filename: file.response.data.uuid,
           brand_id: brand,
           display_id: 0,
-          type:0
+          type: 0
         })
       }
     }
@@ -204,6 +206,110 @@ class Shelf_main extends React.Component {
     data.image = JSON.stringify(data.image);
 
     Action.submitShelfmain(data);
+  }
+
+  setOptions(srcType) {
+    var options = {
+      // Some common settings are 20, 50, and 100
+      quality: 100,
+      destinationType: Camera.DestinationType.FILE_URI,
+      // In this app, dynamically set the picture source, Camera or photo gallery
+      sourceType: srcType,
+      encodingType: Camera.EncodingType.JPEG,
+      mediaType: Camera.MediaType.PICTURE,
+      allowEdit: true,
+      correctOrientation: true  //Corrects Android orientation quirks
+    }
+    return options;
+  }
+
+  onClickAddImage(brand_id) {
+    var srcType = Camera.PictureSourceType.CAMERA;
+    var options = this.setOptions(srcType);
+    var context = this;
+    navigator.camera.getPicture(function cameraSuccess(imageUri) {
+
+      window.resolveLocalFileSystemURL(imageUri, function success(fileEntry) {
+        // Do something with the FileEntry object, like write to it, upload it, etc.
+        // writeFile(fileEntry, imgUri);
+        console.log("got file: " + fileEntry.fullPath);
+        message.info("正在上传照片");
+
+        var fileURL = fileEntry.fullPath;
+        function win(r) {
+
+          message.info("上传照片成功");
+          var response = JSON.parse(r.response);
+
+          var files = context.state.file;
+          if (files[brand_id] == undefined) {
+            files[brand_id] = [];
+          }
+          files[brand_id].push({
+            response: response,
+            imageUri: imageUri
+          });
+          context.setState({ file: files })
+          //console.log("Code = " + r.responseCode);
+          //alert("Response = " + r.response);
+          //console.log("Sent = " + r.bytesSent);
+        }
+
+        function fail(error) {
+          alert("An error has occurred: Code = " + error.code);
+          console.log("upload error source " + error.source);
+          console.log("upload error target " + error.target);
+        }
+
+        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+
+        var options = new FileUploadOptions();
+        options.fileKey = "file";
+        options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+        options.mimeType = "image/jpeg";
+
+        var ft = new FileTransfer();
+        ft.onprogress = function (progressEvent) {
+          if (progressEvent.lengthComputable) {
+            //loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+          } else {
+            //loadingStatus.increment();
+          }
+        };
+        ft.upload(imageUri, uri, win, fail, options);
+      }, function () {
+      });
+
+    }, function cameraError(error) {
+      console.debug("Unable to obtain picture: " + error, "app");
+
+    }, options);
+  }
+
+  removePhoto(imageUri) {
+    var files = this.state.file;
+    for (var brand in files) {
+      var filelist = files[brand];
+      for (var i = 0; i < filelist.length; i++) {
+        if (filelist[i].imageUri == imageUri) {
+          filelist.splice(i, 1);
+          break;
+        }
+      }
+    }
+    this.setState({ file: files })
+  }
+
+  getPhotolist(fileList) {
+    var photoDom = [];
+    var context = this;
+    photoDom = fileList.map((file) => {
+      return <div className={styles.photoblock}>
+        <img src={file.imageUri} />
+        <Icon onClick={function () { context.removePhoto(file.imageUri) } } style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
+      </div>
+    })
+    return photoDom;
   }
 
   getPanel() {
@@ -220,13 +326,13 @@ class Shelf_main extends React.Component {
       //console.log("getPanel", file, fileList, brand.Brand_id)
 
       const uploadButton = (
-        <div>
-          <Icon type="plus" />
+        <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(brand.Brand_id) } }>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
       panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
-        <Upload
+        {/*<Upload
           action="/visitor/upload"
           listType="picture-card"
           accept="image/*"
@@ -239,7 +345,11 @@ class Shelf_main extends React.Component {
           }}
           >
           {fileList.length >= 3 ? null : uploadButton}
-        </Upload>
+        </Upload>*/}
+        <div className={styles.photocontent}>
+          {this.getPhotolist(fileList) }
+          {fileList.length >= 3 ? null : uploadButton}
+        </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>

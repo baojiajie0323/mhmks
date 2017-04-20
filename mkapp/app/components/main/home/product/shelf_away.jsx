@@ -30,12 +30,12 @@ var displayInfo = [{
   display_id: 5,
   display_name: "挂条"
 }, {
-  display_id: 6,
-  display_name: "网片"
-}, {
-  display_id: 7,
-  display_name: "陈列架"
-}]
+    display_id: 6,
+    display_name: "网片"
+  }, {
+    display_id: 7,
+    display_name: "陈列架"
+  }]
 
 class Shelf_away extends React.Component {
   constructor(props) {
@@ -62,6 +62,9 @@ class Shelf_away extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
+
+    this.onClickAddImage = this.onClickAddImage.bind(this);
+    this.removePhoto = this.removePhoto.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -84,10 +87,10 @@ class Shelf_away extends React.Component {
 
   addToPreSaveProduct(product) {
     var newProduct = {};
-    $.extend(newProduct,product);
+    $.extend(newProduct, product);
     for (var i = 0; i < this.preSaveProduct.length; i++) {
       if (this.preSaveProduct[i].Product_id == newProduct.Product_id &&
-          this.preSaveProduct[i].display_id == newProduct.display_id
+        this.preSaveProduct[i].display_id == newProduct.display_id
       ) {
         if (newProduct.check == false) {
           this.preSaveProduct.splice(i, 1);
@@ -100,8 +103,8 @@ class Shelf_away extends React.Component {
     this.preSaveProduct.push(newProduct);
   }
 
-  onCheckChange(product,display_id, value) {
-    console.log("onCheckChange",display_id);
+  onCheckChange(product, display_id, value) {
+    console.log("onCheckChange", display_id);
     product.check = value;
     product.display_id = display_id;
     console.log(this.preSaveProduct);
@@ -137,7 +140,7 @@ class Shelf_away extends React.Component {
     })
   }
 
-  onTextChange(display_id,value){
+  onTextChange(display_id, value) {
     this.preSaveCount[display_id] = value;
   }
 
@@ -145,20 +148,20 @@ class Shelf_away extends React.Component {
     var productList = [];
     var context = this;
     productList.push(<ListItem
-          rightIconButton={<TextField
-            onChange={function (e, value) { context.onTextChange(display_id, value) } }
-            style={{ width: '80px' }}
-            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
-            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
-            hintText="0"
-            />}
-          primaryText="总陈列"
-          />)
+      rightIconButton={<TextField
+        onChange={function (e, value) { context.onTextChange(display_id, value) } }
+        style={{ width: '80px' }}
+        hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
+        inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
+        hintText="0"
+        />}
+      primaryText="总陈列"
+      />)
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
       productList.push(<ListItem
-        leftCheckbox={<Checkbox 
-          onCheck={function (e, checked) { context.onCheckChange(product,display_id, checked) } }
+        leftCheckbox={<Checkbox
+          onCheck={function (e, checked) { context.onCheckChange(product, display_id, checked) } }
           />}
         rightAvatar={<Avatar
           color={"white"}
@@ -190,7 +193,7 @@ class Shelf_away extends React.Component {
       day: curDate.getDate(),
       userid: localStorage.username,
       store_id: this.props.userdata.store_id,
-      count:this.preSaveCount,
+      count: this.preSaveCount,
       product: [],
       image: [],
     }
@@ -222,6 +225,111 @@ class Shelf_away extends React.Component {
     Action.submitShelfaway(data);
   }
 
+  setOptions(srcType) {
+    var options = {
+      // Some common settings are 20, 50, and 100
+      quality: 100,
+      destinationType: Camera.DestinationType.FILE_URI,
+      // In this app, dynamically set the picture source, Camera or photo gallery
+      sourceType: srcType,
+      encodingType: Camera.EncodingType.JPEG,
+      mediaType: Camera.MediaType.PICTURE,
+      allowEdit: true,
+      correctOrientation: true  //Corrects Android orientation quirks
+    }
+    return options;
+  }
+
+  onClickAddImage(display_id) {
+    var srcType = Camera.PictureSourceType.CAMERA;
+    var options = this.setOptions(srcType);
+    var context = this;
+    navigator.camera.getPicture(function cameraSuccess(imageUri) {
+
+      window.resolveLocalFileSystemURL(imageUri, function success(fileEntry) {
+        // Do something with the FileEntry object, like write to it, upload it, etc.
+        // writeFile(fileEntry, imgUri);
+        console.log("got file: " + fileEntry.fullPath);
+        message.info("正在上传照片");
+
+        var fileURL = fileEntry.fullPath;
+        function win(r) {
+
+          message.info("上传照片成功");
+          var response = JSON.parse(r.response);
+
+          var files = context.state.file;
+          if (files[display_id] == undefined) {
+            files[display_id] = [];
+          }
+          files[display_id].push({
+            response: response,
+            imageUri: imageUri
+          });
+          context.setState({ file: files })
+          //console.log("Code = " + r.responseCode);
+          //alert("Response = " + r.response);
+          //console.log("Sent = " + r.bytesSent);
+        }
+
+        function fail(error) {
+          alert("An error has occurred: Code = " + error.code);
+          console.log("upload error source " + error.source);
+          console.log("upload error target " + error.target);
+        }
+
+        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+
+        var options = new FileUploadOptions();
+        options.fileKey = "file";
+        options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+        options.mimeType = "image/jpeg";
+
+        var ft = new FileTransfer();
+        ft.onprogress = function (progressEvent) {
+          if (progressEvent.lengthComputable) {
+            //loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+          } else {
+            //loadingStatus.increment();
+          }
+        };
+        ft.upload(imageUri, uri, win, fail, options);
+      }, function () {
+      });
+
+    }, function cameraError(error) {
+      console.debug("Unable to obtain picture: " + error, "app");
+
+    }, options);
+  }
+
+  removePhoto(imageUri) {
+    var files = this.state.file;
+    for (var display in files) {
+      var filelist = files[display];
+      for (var i = 0; i < filelist.length; i++) {
+        if (filelist[i].imageUri == imageUri) {
+          filelist.splice(i, 1);
+          break;
+        }
+      }
+    }
+    this.setState({ file: files })
+  }
+
+  getPhotolist(fileList) {
+    var photoDom = [];
+    var context = this;
+    photoDom = fileList.map((file) => {
+      return <div className={styles.photoblock}>
+        <img src={file.imageUri} />
+        <Icon onClick={function () { context.removePhoto(file.imageUri) } } style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
+      </div>
+    })
+    return photoDom;
+  }
+
+
   getPanel() {
     const { previewVisible, previewImage, file } = this.state;
     var panelList = [];
@@ -236,30 +344,20 @@ class Shelf_away extends React.Component {
       //console.log("getPanel", file, fileList, brand.Brand_id)
 
       const uploadButton = (
-        <div>
-          <Icon type="plus" />
+        <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(display.display_id) } }>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={display.display_name} key={i.toString()}>
-        <Upload
-          multiple
-          action="/visitor/upload"
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={function (file) { context.handleUploadChange(file, display.display_id) } }
-          showUploadList={{
-            showPreviewIcon: false,
-            showRemoveIcon: true
-          }}
-          >
+      panelList.push(<Panel header={display.display_name} key={i.toString() }>
+        <div className={styles.photocontent}>
+          {this.getPhotolist(fileList) }
           {fileList.length >= 3 ? null : uploadButton}
-        </Upload>
+        </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-        {this.getProductDom(display.display_id)}
+        {this.getProductDom(display.display_id) }
       </Panel>
       )
     }
@@ -293,10 +391,10 @@ class Shelf_away extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ')}>
+        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion defaultActiveKey={['0']}>
-            {this.getPanel()}
+            {this.getPanel() }
           </Collapse>
         </div>
         <Dialog

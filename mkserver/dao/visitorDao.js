@@ -132,7 +132,7 @@ module.exports = {
   addPlan: function (req, res, next) {
     console.log('visitorDao addPlan');
     var param = req.body;
-    if (!param.Plan_Type || !param.Plan_Date || !param.Store_Name || !param.User_Id) {
+    if (!param.plan_type || !param.user_id) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
@@ -141,15 +141,15 @@ module.exports = {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var sqlstring = _sql.addplan;
-        connection.query(sqlstring, [param.Plan_Type, param.Plan_Date, param.Path_Id, param.Store_Id, param.Store_Name, param.User_Id], function (err, result) {
-          //console.log('dbresult', err, result);
+        var sqlstring = _sql.insertplan;
+        connection.query(sqlstring, [param.user_id, param.year, param.month, param.day, param.plan_type, "", param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             if (result.affectedRows > 0) {
               var data = req.body;
-              data.Plan_Id = result.insertId;
+              //data.Plan_Id = result.insertId;
               jsonWrite(res, data, dbcode.SUCCESS);
             } else {
               jsonWrite(res, {}, dbcode.FAIL);

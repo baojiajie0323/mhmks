@@ -172,8 +172,8 @@ class Home extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
   }
   onClickAddTmp() {
-    message.info("暂不支持，请在后台安排计划");
-    //Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    //message.info("暂不支持，请在后台安排计划");
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCall() {
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
