@@ -9,6 +9,7 @@ var plugin = {
     //titlebarPadding: "0px",
     //contentTop:'65px'
     //contentLargeTop:'121px',
+    //contentUserTop:'265px',
 }
 
 export default plugin;

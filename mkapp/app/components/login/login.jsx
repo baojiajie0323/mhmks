@@ -62,7 +62,7 @@ class Login extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ marginBottom: '30px', paddingTop: config.titlebarPadding }}
-          title='满好访客通'
+          title='登录'
           iconElementLeft={<span></span>}
           />
         <div className={styles.inputform}>
