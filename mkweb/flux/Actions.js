@@ -449,7 +449,7 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('getDepart fail');
         if (_debug) {
-          var response = '{"data":[{"id":"1","name":"市场部","parentid":"0"},{"id":"2","name":"营销部","parentid":"0"},{"id":"3","name":"华东区","parentid":"1"},{"id":"4","name":"华中区","parentid":"1"},{"id":"5","name":"上海区","parentid":"4"}]}';
+          var response = '{"data":[{"id":"1","name":"市场部","parentid":"0"},{"id":"2","name":"访客部","parentid":"0"},{"id":"3","name":"华东区","parentid":"1"},{"id":"4","name":"华中区","parentid":"1"},{"id":"5","name":"上海区","parentid":"4"}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_DEPARTMENT, rsp.data);
         }

@@ -58,7 +58,7 @@ class Contacts extends React.Component {
           title='通讯录'
           iconElementLeft={<span></span>}
           />
-        <div className={styles.content}>
+        <div style={{top:config.contentTop}} className={styles.content}>
 
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>

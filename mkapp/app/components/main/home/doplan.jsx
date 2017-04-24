@@ -254,7 +254,7 @@ class DoPlan extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
 
             <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>

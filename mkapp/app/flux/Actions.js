@@ -2,8 +2,8 @@
 import $ from 'jquery'
 import { message } from 'antd';
 
-var _domain_name = 'http://116.246.2.202:6115';  //域名
-//var _domain_name = '';  //域名
+//var _domain_name = 'http://116.246.2.202:6115';  //域名
+var _domain_name = '';  //域名
 
 var _debug = _domain_name == '';
 

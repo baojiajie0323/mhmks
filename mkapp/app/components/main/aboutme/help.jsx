@@ -43,7 +43,7 @@ class Help extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div id="framediv1" className={styles.mapContainer}>
+        <div style={{top:config.contentTop}} id="framediv1" className={styles.mapContainer}>
           <div id="framediv2" className={styles.helpContainer}>
             <iframe id="iframe1" width="100%" height="100%" frameBorder="0" scrolling="no" src="http://9a86211e1ad5.ih5.cn/idea/SPSPuHt?vxparam=/vxid_1/"></iframe>
           </div>

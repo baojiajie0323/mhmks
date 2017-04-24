@@ -151,7 +151,7 @@ class Promotion extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           {this.getPromotionListDom() }
         </div>

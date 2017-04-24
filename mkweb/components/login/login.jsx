@@ -202,7 +202,7 @@ class Login extends React.Component {
           <div className={styles.appdownload} onClick={this.onClickApp} title="app下载">
            <Icon type="qrcode" />
           </div>
-          <p className={styles.title}>满好营销通后台管理平台</p>
+          <p className={styles.title}>满好访客通后台管理平台</p>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="user" />
             <input id="username" className={styles.formInput} placeholder="请输入用户名" />

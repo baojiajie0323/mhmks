@@ -79,7 +79,7 @@ class Aboutme extends React.Component {
           <Paper className={styles.userphoto} zDepth={3} circle={true} />
           <p className={styles.username}>{this.state.userInfo.realname}</p>
         </div>
-        <div className={styles.usercontent}>
+        <div style={{top:config.contentUserTop}} className={styles.usercontent}>
           <List>
             <ListItem primaryText={this.state.userInfo.phone}
               leftIcon={<CommunicationCall color={cyan300}/>}

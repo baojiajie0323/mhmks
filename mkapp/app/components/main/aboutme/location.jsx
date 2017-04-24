@@ -54,7 +54,7 @@ class Location extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="定位" />}
           />
-         <div id="localtionmap" className={styles.mapContainer}></div> 
+         <div style={{top:config.contentTop}} id="localtionmap" className={styles.mapContainer}></div> 
       </div>
     );
   }

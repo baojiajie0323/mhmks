@@ -38,7 +38,7 @@ class Note extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="提交" />}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <div style={{padding:'0 40px'}}>
           <TextField
             multiLine={true}

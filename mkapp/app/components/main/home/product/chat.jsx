@@ -102,7 +102,7 @@ class Chat extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <div style={{ padding: '0 18px' }}>
             <TextField

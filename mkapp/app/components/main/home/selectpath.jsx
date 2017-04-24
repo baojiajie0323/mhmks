@@ -116,7 +116,7 @@ class SelectPath extends React.Component {
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <Spin size="large" tip={this.state.tipText} spinning={this.state.loading}>
             <List>
               {this.getPathlist() }

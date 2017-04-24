@@ -280,9 +280,9 @@ class Home extends React.Component {
       return <Noplan />
     } else {
       var planDom = [];
-      if (this.state.showAlert || 1) {
-        planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
-      }
+      // if (this.state.showAlert || 1) {
+      //   planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
+      // }
       var headerTitle = '共' + allPlanInfo.planCount + '个计划，已完成' + allPlanInfo.finishCount + '个，未完成' + allPlanInfo.nofinishCount + '个';
       planDom.push(<Subheader>{headerTitle}</Subheader>)
       var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
@@ -360,7 +360,7 @@ class Home extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: config.titlebarPadding }}
+          style={{ paddingTop: config.titlebarPadding}}
           title='拜访'
           iconElementLeft={<span />}
           />
@@ -399,7 +399,7 @@ class Home extends React.Component {
           </Toolbar>
         </Paper>
 
-        <div className={styles.content}>
+        <div style={{top:config.contentLargeTop}} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             {this.getPlanlist()}
           </Spin>

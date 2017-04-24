@@ -66,7 +66,7 @@ class StoreView extends React.Component {
           title='门店'
           iconElementLeft={<span></span>}
           />
-        <div className={styles.content}>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
               {this.getStoreDom() }

@@ -476,7 +476,7 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div className={[styles.content, styles.content_notoolbar].join(' ') }>
+        <div style={{top:config.contentTop}} className={styles.content}>
           {this.getPromotionDom() }
           {this.getProduct() }
         </div>

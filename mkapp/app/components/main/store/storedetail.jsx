@@ -48,7 +48,7 @@ class StoreDetail extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div className={styles.content}>
+        <div style={{top:config.contentTop}} className={styles.content}>
           <div id="localtionmap" className={styles.mapContainer}></div>
           <List>
             <ListItem
