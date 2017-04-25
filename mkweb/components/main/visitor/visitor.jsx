@@ -1,13 +1,14 @@
 import React from 'react';
 import VisitorMenu from './visitor_menu';
 import Plan from './plan';
+import Record from './record';
 import styles from './visitor.less';
 
 class Visitor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contentkey: 'plan'
+      contentkey: 'record'
     };
     this.onMenuClick = this.onMenuClick.bind(this);
   }
@@ -21,10 +22,12 @@ class Visitor extends React.Component {
     })
   }
   getContent() {
-    if (this.state.contentkey == 'plan') {
+    if (this.state.contentkey == 'record') {
+      return <Record />;
+    } else if (this.state.contentkey == 'plan') {
       return <Plan />;
     }
-    return <Plan />;
+    return <Record />;
   }
   render() {
     return (
