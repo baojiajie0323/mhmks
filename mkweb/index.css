@@ -26,9 +26,9 @@ p{
   font-size: 14px;
 }
 
-.ant-table-tbody>tr>td {
+/*.ant-table-tbody>tr>td {
   padding: 12px 8px;
-}
+}*/
 
 .ant-table{
   color : rgb(58,58,58);

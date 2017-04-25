@@ -8,7 +8,7 @@ class VisitorMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: 'plan',
+      current: 'record',
     };
     this.handleClick = this.handleClick.bind(this);
   }
