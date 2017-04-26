@@ -809,6 +809,26 @@ var Action = {
         }
       })
   },
+  getVisitorPlan: function (data) {
+    var context = this;
+    data.command = 'getvisitorplan';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_PLANLIST, response.data);
+        } else {
+          message.error('获取拜访列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorPlan fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

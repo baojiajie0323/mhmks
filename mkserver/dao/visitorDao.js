@@ -142,7 +142,8 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.insertplan;
-        connection.query(sqlstring, [param.user_id, param.year, param.month, param.day, param.plan_type, "", param.store_id], function (err, result) {
+        var plandate = param.year + '-' + param.month + '-' + param.day;
+        connection.query(sqlstring, [param.user_id, param.year, param.month, param.day,plandate, param.plan_type, "", param.store_id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

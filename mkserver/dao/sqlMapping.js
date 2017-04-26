@@ -31,11 +31,11 @@ var sqlmap = {
   getpathdetail: 'select a.*,b.Store_name from path_detail a INNER JOIN store b on(a.Store_id = b.Store_id)',
   getpath_app: 'select a.*,Path_name,Store_name from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) where c.store_id in (select store_id from store where user_id = ?) order by a.path_seq,a.Path_id',
   getplan: 'select a.*,b.Path_Name,c.Store_name from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
-  addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)', 
+  addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)',
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',
   updateplansum: 'replace into plan_sum(userid,year,month,storeCount,storeACount,storeBCount,storeCCount,storeA,storeB,storeC,cover) VALUES(?,?,?,?,?,?,?,?,?,?,?) ',
-  insertplan: 'insert into plan(userid,year,month,day,plan_type,path_id,store_id) values(?,?,?,?,?,?,?) ',
+  insertplan: 'insert into plan(userid,year,month,day,plan_date,plan_type,path_id,store_id) values(?,?,?,?,?,?,?,?) ',
   getstoreproduct: 'select a.*,b.Product_name,b.Brand_id from product_price a INNER JOIN product b on(a.Product_id = b.product_id) where Store_id = ?',
   signin: 'update plan set signin_time=?,signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? ',
   signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? ',
@@ -50,6 +50,7 @@ var sqlmap = {
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
   getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ?',
   submitpromotion: 'replace into visitor_promotion (store_id,product_id,user_id,year,month,day,display_id,pos,count,user_confirm) values(?,?,?,?,?,?,?,?,?,?)',
+  getvisitorplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where (userid like ? or realname like ?) where plan_date BETWEEN ? and ?',
 };
 
 module.exports = sqlmap;

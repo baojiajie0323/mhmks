@@ -404,7 +404,7 @@ class Home extends React.Component {
             {this.getPlanlist()}
           </Spin>
         </div>
-        <FloatingActionButton style={{
+        {/*<FloatingActionButton style={{
           position:'absolute',
           bottom: '15px',
           right:'25px',
@@ -412,7 +412,7 @@ class Home extends React.Component {
         onTouchTap={this.onClickLocation}  
         >
           <LocationIcon />
-        </FloatingActionButton>
+        </FloatingActionButton>*/}
         <Dialog
           title="确定要删除计划吗？"
           actions={actions}

@@ -12,10 +12,11 @@ class Record extends React.Component {
     this.state = {
       showPicture: false,
       bigPicture: "",
-      signList: Store.getSignList()
+      visitorPlan: Store.getVisitorPlan(),
     };
 
-    this.onSignListChange = this.onSignListChange.bind(this);
+    this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
+
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
@@ -36,13 +37,13 @@ class Record extends React.Component {
     // this.map.setCurrentCity("上海");          // 设置地图显示的城市 此项是必须设置的
     // this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
-    Store.addChangeListener(StoreEvent.SE_SIGNLIST, this.onSignListChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_SIGNLIST, this.onSignListChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
 
   }
-  onSignListChange() {
+  onVisitorPlanChange() {
     var context = this;
     this.setState({
       signList: Store.getSignList()

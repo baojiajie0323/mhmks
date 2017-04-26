@@ -39,6 +39,7 @@ var eventMap = {
     AE_PLAN: null,
     AE_PLAN_UPDATE: null,
     AE_SIGNLIST: null,
+    AE_VISITOR_PLANLIST:null,
   }),
 
   StoreEvent: keyMirror({
@@ -69,6 +70,7 @@ var eventMap = {
     SE_PLAN: null,
     SE_PLAN_UPDATE: null,
     SE_SIGNLIST: null,
+    SE_VISITOR_PLANLIST:null,
   })
 };
 
