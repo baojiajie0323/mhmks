@@ -44,11 +44,8 @@ class Record extends React.Component {
 
   }
   onVisitorPlanChange() {
-    var context = this;
     this.setState({
-      signList: Store.getSignList()
-    }, function () {
-      context.refreshMarker();
+      visitorPlan: Store.getVisitorPlan(),
     })
   }
 
@@ -159,20 +156,23 @@ class Record extends React.Component {
         }];
     }
     var getTableData = function () {
-      var testlist = [];
-      for (var i = 0; i < 50; i++) {
-        testlist.push({
-          plandate: '2017-4-26',
-          Store_name: '大润发松江店',
-          Path_name: '上海14',
-          signin_time: '2017-04-26 10:30:24',
+      var tableData = [];
+      for (var i = 0; i < context.state.visitorPlan.length; i++) {
+        var plan = context.state.visitorPlan[i];
+        var gps_x = plan.Gps_x;
+        var gps_y = plan.Gps_y;
+        tableData.push({
+          plan_date: plan.plan_date,
+          Store_name: plan.Store_name,
+          Path_name: plan.path_name == ""?"临时拜访":plan.path_name,
+          signin_time: plan.signin_time,
           signin_distance: '1203米',
-          signout_time: '2017-04-26 11:33:41',
+          signout_time: plan.signout_time,
           signout_distance: '522米',
         })
       }
 
-      return testlist;
+      return tableData;
     }
     return <Table size="small" columns={getTableColumn() } dataSource={getTableData() } />
   }
@@ -183,16 +183,16 @@ class Record extends React.Component {
         <p className={styles.visitortitle}>拜访</p>
         <div className={styles.queryContainer}>
           <Input onChange={this.onTextChange} style={{ width: '100px', marginRight: '20px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
-          <RangePicker style={{ marginRight: '20px' }} onChange={this.onDateChange} />
+          <RangePicker defaultValue={[moment(),moment()]} style={{ marginRight: '20px' }} onChange={this.onDateChange} />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
           <Tabs tabPosition="left" size="small" >
             <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
-            <TabPane tab="主货架陈列" key="2">Content of Tab 2</TabPane>
-            <TabPane tab="离架陈列" key="3">Content of Tab 3</TabPane>
-            <TabPane tab="库存采集" key="4">Content of Tab 3</TabPane>
-            <TabPane tab="促销陈列" key="5">Content of Tab 3</TabPane>
+            <TabPane tab="主货架陈列" key="2">主货架陈列</TabPane>
+            <TabPane tab="离架陈列" key="3">离架陈列</TabPane>
+            <TabPane tab="库存采集" key="4">库存采集</TabPane>
+            <TabPane tab="促销陈列" key="5">促销陈列</TabPane>
           </Tabs>
         </div>
         <Modal title="大润发松江店" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}
