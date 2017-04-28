@@ -68,6 +68,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitpromotion") {
     console.log('submitpromotion');
     visitorDao.submitPromotion(req, res, next);
+  } else if (req.body.command == "getvisitorplan") {
+    console.log('getvisitorplan');
+    visitorDao.getVisitorPlan(req, res, next);
   }
 });
 

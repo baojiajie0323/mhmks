@@ -143,7 +143,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.insertplan;
         var plandate = param.year + '-' + param.month + '-' + param.day;
-        connection.query(sqlstring, [param.user_id, param.year, param.month, param.day,plandate, param.plan_type, "", param.store_id], function (err, result) {
+        connection.query(sqlstring, [param.user_id, param.year, param.month, param.day, plandate, param.plan_type, "", param.store_id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -216,8 +216,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -358,7 +358,7 @@ module.exports = {
   getSignList: function (req, res, next) {
     console.log('visitorDao getSignList');
     var param = req.body;
-    if (!param.userid || !param.signtime ) {
+    if (!param.userid || !param.signtime) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
@@ -368,7 +368,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getsignlist;
-        connection.query(sqlstring, [param.userid,"%" + param.signtime + "%"], function (err, result) {
+        connection.query(sqlstring, [param.userid, "%" + param.signtime + "%"], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -418,7 +418,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id,productImage.product_id||"", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
               function (err, result) {
                 callback(err);
               });
@@ -483,7 +483,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id,productImage.product_id||"", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
               function (err, result) {
                 callback(err);
               });
@@ -561,7 +561,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id,productImage.product_id||"", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
               function (err, result) {
                 callback(err);
               });
@@ -601,7 +601,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.submitchat;
-        connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, param.storeUser,param.chatContent,param.chatResult], function (err, result) {
+        connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, param.storeUser, param.chatContent, param.chatResult], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -644,7 +644,7 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitpromotion;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day,productInfo.display,productInfo.pos,productInfo.count,param.confirm_user],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, productInfo.display, productInfo.pos, productInfo.count, param.confirm_user],
               function (err, result) {
                 callback(err);
               });
@@ -655,7 +655,7 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id||"", productImage.display_id,productImage.product_id||"",param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id || "", productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type],
               function (err, result) {
                 callback(err);
               });
@@ -676,6 +676,31 @@ module.exports = {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             jsonWrite(res, {}, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getVisitorPlan: function (req, res, next) {
+    console.log('visitorDao getVisitorPlan');
+    var param = req.body;
+    if (!param.userid || !param.begindate || !param.enddate) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getvisitorplan;
+        connection.query(sqlstring, ["%" + param.userid + "%","%" + param.userid + "%",param.begindate,param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });

@@ -22,7 +22,9 @@ class Record extends React.Component {
     this.onTextChange = this.onTextChange.bind(this);
     this.refreshMarker = this.refreshMarker.bind(this);
     this.map = null;
-    this.queryData = "";
+    this.userid = "";
+
+    this.queryData = [moment().format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")];
 
     this.onClickShowPicture = this.onClickShowPicture.bind(this);
     this.handlePictureCancel = this.handlePictureCancel.bind(this);
@@ -30,12 +32,12 @@ class Record extends React.Component {
     this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
   }
   componentDidMount() {
-    // this.map = new BMap.Map("signmap");
-    // var point = new BMap.Point(116.404, 39.915);
-    // this.map.centerAndZoom(point, 15);
-    // this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
-    // this.map.setCurrentCity("上海");          // 设置地图显示的城市 此项是必须设置的
-    // this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    this.map = new BMap.Map("allmap");
+    var point = new BMap.Point(116.404, 39.915);
+    this.map.centerAndZoom(point, 15);
+    this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    this.map.setCurrentCity("上海");          // 设置地图显示的城市 此项是必须设置的
+    this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
   }
@@ -51,11 +53,12 @@ class Record extends React.Component {
 
   onClickQuery() {
     var data = {
-      signtime: this.queryData,
-      userid: this.userid
+      userid: this.userid == "" ? "0" : this.userid,
+      begindate: this.queryData[0],
+      enddate: this.queryData[1],
     };
     console.log(data);
-    Action.getSignList(data);
+    Action.getVisitorPlan(data);
   }
 
   refreshMarker() {
@@ -113,47 +116,53 @@ class Record extends React.Component {
     var getTableColumn = function () {
       return [{
         title: '拜访时间',
-        dataIndex: 'plandate',
-        key: 'plandate',
+        dataIndex: 'plan_date',
+        key: 'plan_date',
       }, {
-          title: '门店名称',
-          dataIndex: 'Store_name',
-          key: 'Store_name',
-        }, {
-          title: '拜访路线',
-          dataIndex: 'Path_name',
-          key: 'Path_name',
-        }, {
-          title: '签到时间',
-          dataIndex: 'signin_time',
-          key: 'signin_time',
-        }, {
-          title: '签到偏差',
-          dataIndex: 'signin_distance',
-          key: 'signin_distance',
-          render: function (text, record) {
-            return <a>{text}<Icon type="environment-o" /></a>
+        title: '门店名称',
+        dataIndex: 'Store_name',
+        key: 'Store_name',
+      }, {
+        title: '拜访路线',
+        dataIndex: 'Path_name',
+        key: 'Path_name',
+      }, {
+        title: '签到时间',
+        dataIndex: 'signin_time',
+        key: 'signin_time',
+      }, {
+        title: '签到偏差',
+        dataIndex: 'signin_distance',
+        key: 'signin_distance',
+        render: function (text, record) {
+          if (text == "") {
+            return null
           }
-        }, {
-          title: '签退时间',
-          dataIndex: 'signout_time',
-          key: 'signout_time',
-        }, {
-          title: '签退偏差',
-          dataIndex: 'signout_distance',
-          key: 'signout_distance',
-          render: function (text, record) {
-            return <a>{text}<Icon type="environment-o" /></a>
+          return <a>{text}<Icon type="environment-o" /></a>
+        }
+      }, {
+        title: '签退时间',
+        dataIndex: 'signout_time',
+        key: 'signout_time',
+      }, {
+        title: '签退偏差',
+        dataIndex: 'signout_distance',
+        key: 'signout_distance',
+        render: function (text, record) {
+          if (text == "") {
+            return null
           }
-        }, {
-          title: '现场照片',
-          key: 'picture',
-          render: function (text, record) {
-            return <a onClick={function () {
-              context.onClickShowPicture(record);
-            } }>查看</a>
-          }
-        }];
+          return <a>{text}<Icon type="environment-o" /></a>
+        }
+      }, {
+        title: '现场照片',
+        key: 'picture',
+        render: function (text, record) {
+          return <a onClick={function () {
+            context.onClickShowPicture(record);
+          } }>查看</a>
+        }
+      }];
     }
     var getTableData = function () {
       var tableData = [];
@@ -161,20 +170,32 @@ class Record extends React.Component {
         var plan = context.state.visitorPlan[i];
         var gps_x = plan.Gps_x;
         var gps_y = plan.Gps_y;
+        var pointStore = new BMap.Point(gps_x, gps_y);
+        var signin_distance = -1;
+        var signout_distance = -1;
+        if (plan.signin_gps_x && plan.signin_gps_y) {
+          var pointSignin = new BMap.Point(plan.signin_gps_x, plan.signin_gps_y);
+          signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
+        }
+        if (plan.signout_gps_x && plan.signout_gps_y) {
+          var pointSignout = new BMap.Point(plan.signout_gps_x, plan.signout_gps_y);
+          signout_distance = parseInt(context.map.getDistance(pointStore, pointSignout));
+        }
+
         tableData.push({
-          plan_date: plan.plan_date,
+          plan_date: new Date(plan.plan_date).Format("yyyy-MM-dd"),
           Store_name: plan.Store_name,
-          Path_name: plan.path_name == ""?"临时拜访":plan.path_name,
-          signin_time: plan.signin_time,
-          signin_distance: '1203米',
-          signout_time: plan.signout_time,
-          signout_distance: '522米',
+          Path_name: plan.path_name == null ? "临时拜访" : plan.path_name,
+          signin_time: plan.signin_time == null ? "未签到" : plan.signin_time,
+          signin_distance: signin_distance < 0 ? "" : (signin_distance + "米"),
+          signout_time: plan.signout_time == null ? "未签退" : plan.signout_time,
+          signout_distance: signout_distance < 0 ? "" : (signout_distance + "米"),
         })
       }
 
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn() } dataSource={getTableData() } />
+    return <Table size="small" columns={getTableColumn()} dataSource={getTableData()} />
   }
   render() {
     var context = this;
@@ -183,12 +204,12 @@ class Record extends React.Component {
         <p className={styles.visitortitle}>拜访</p>
         <div className={styles.queryContainer}>
           <Input onChange={this.onTextChange} style={{ width: '100px', marginRight: '20px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
-          <RangePicker defaultValue={[moment(),moment()]} style={{ marginRight: '20px' }} onChange={this.onDateChange} />
+          <RangePicker defaultValue={[moment(), moment()]} style={{ marginRight: '20px' }} onChange={this.onDateChange} />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
           <Tabs tabPosition="left" size="small" >
-            <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
+            <TabPane tab="门店总览" key="1">{this.getBasicPanel()}</TabPane>
             <TabPane tab="主货架陈列" key="2">主货架陈列</TabPane>
             <TabPane tab="离架陈列" key="3">离架陈列</TabPane>
             <TabPane tab="库存采集" key="4">库存采集</TabPane>
@@ -217,11 +238,15 @@ class Record extends React.Component {
             <p className={styles.pictureTitle}>促销陈列</p>
             {this.state.bigPicture == "" ? null :
               <div className={styles.bigphoto}>
-                <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px',fontSize:"20px" }} type="close-square" />
+                <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
               </div>
             }
           </div>
         </Modal>
+        <div style={{ visibility: 'hidden' }} className={styles.mapModal}>
+          <div id="allmap">
+          </div>
+        </div>
       </div>
     );
   }
