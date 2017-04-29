@@ -35,7 +35,6 @@ class Login extends React.Component {
     this.setState({ loginloading: false });
   }
   onClickLogin() {
-    this.setState({ loginloading: true });
     var username = $('#username').val();
     var password = $('#password').val();
     if (username == "") {
@@ -46,6 +45,7 @@ class Login extends React.Component {
       message.info("请输入密码！");
       return;
     }
+    this.setState({ loginloading: true });
     var data = {
       username: username,
       password: password,

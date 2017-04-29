@@ -12,7 +12,7 @@ import Paper from 'material-ui/Paper';
 import areIntlLocalesSupported from 'intl-locales-supported';
 import { List, ListItem } from 'material-ui/List';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
-import { Spin, Alert,message } from 'antd';
+import { Spin, Alert, message } from 'antd';
 import Divider from 'material-ui/Divider';
 import Dialog from 'material-ui/Dialog';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -210,7 +210,7 @@ class Home extends React.Component {
         }
       }
     }
-    if (linePlanFinish) {
+    if (linePlan && linePlanFinish) {
       finishCount++;
     }
     return {
@@ -310,7 +310,7 @@ class Home extends React.Component {
             } }
             onClickDelete={function () { context.onClickDelete(pl.Plan_Id) } }
             />}
-          leftIcon={this.getStateIcon(pl)}
+          leftIcon={this.getStateIcon(pl) }
           />)
         planDom.push(<Divider />);
       })
@@ -329,20 +329,48 @@ class Home extends React.Component {
       Plan_Id: this.curplanid
     });
   }
-  onClickLocation(){
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function (r) {
-      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-        Action.checkSign({
-          userid: localStorage.username,
-          lat: r.latitude,
-          lon: r.longitude
-        });
-      }
-      else {
-        message.error('定位失败' + this.getStatus());
-      }
-    }, { enableHighAccuracy: true })
+  onClickLocation() {
+    // var geolocation = new BMap.Geolocation();
+    // geolocation.getCurrentPosition(function (r) {
+    //   if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+    //     Action.checkSign({
+    //       userid: localStorage.username,
+    //       lat: r.latitude,
+    //       lon: r.longitude
+    //     });
+    //   }
+    //   else {
+    //     message.error('定位失败' + this.getStatus());
+    //   }
+    // }, { enableHighAccuracy: true })
+
+
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        //onSuccees        
+        var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
+
+        var translateCallback = function (data) {
+          if (data.status === 0) {
+            Action.checkSign({
+              userid: localStorage.username,
+              lat: data.points[0].latitude,
+              lon: data.points[0].longitude
+            });
+          }
+        }
+
+        var convertor = new BMap.Convertor();
+        var pointArr = [];
+        pointArr.push(point);
+        convertor.translate(pointArr, 1, 5, translateCallback);
+
+      }, function (error) {
+        //onError
+        message.error('定位失败' + error.message);
+      }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+    } else { message.error("没有开启定位权限！") }
   }
   render() {
     const actions = [
@@ -360,7 +388,7 @@ class Home extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{ paddingTop: config.titlebarPadding}}
+          style={{ paddingTop: config.titlebarPadding }}
           title='拜访'
           iconElementLeft={<span />}
           />
@@ -390,18 +418,18 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this)}
-                onClickAddTmp={this.onClickAddTmp.bind(this)}
-                onClickAddCall={this.onClickAddCall.bind(this)}
-                onClickAddCheck={this.onClickAddCheck.bind(this)}
+                onClickAddPath={this.onClickAddPath.bind(this) }
+                onClickAddTmp={this.onClickAddTmp.bind(this) }
+                onClickAddCall={this.onClickAddCall.bind(this) }
+                onClickAddCheck={this.onClickAddCheck.bind(this) }
                 />
             </ToolbarGroup>
           </Toolbar>
         </Paper>
 
-        <div style={{top:config.contentLargeTop}} className={styles.content}>
+        <div style={{ top: config.contentLargeTop }} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist()}
+            {this.getPlanlist() }
           </Spin>
         </div>
         {/*<FloatingActionButton style={{
