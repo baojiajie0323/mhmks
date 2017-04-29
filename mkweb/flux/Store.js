@@ -31,6 +31,7 @@ var _plansum = [];
 var _plan = [];
 var _signlist = [];
 var _visitorplan = [];
+var _visitorimage = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -388,12 +389,20 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_SIGNLIST);
   },
 
-  setVisitorPlan(vp){
+  setVisitorPlan(vp) {
     _visitorplan = vp;
     this.emitChange(StoreEvent.SE_VISITOR_PLANLIST);
   },
-  getVisitorPlan(){
+  getVisitorPlan() {
     return _visitorplan;
+  },
+
+  setVisitorImage(vi){
+    _visitorimage = vi;
+    this.emitChange(StoreEvent.SE_VISITOR_IMAGE);
+  },
+  getVisitorImage(){
+    return _visitorimage;
   },
 
   emitChange: function (eventtype) {
@@ -556,6 +565,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_VISITOR_PLANLIST: {
       Store.setVisitorPlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_VISITOR_IMAGE: {
+      Store.setVisitorImage(action.value);
     }
       break;
 

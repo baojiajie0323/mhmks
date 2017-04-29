@@ -707,4 +707,29 @@ module.exports = {
       }
     });
   },
+  getVisitorImage: function (req, res, next) {
+    console.log('visitorDao getVisitorImage');
+    var param = req.body;
+    if (!param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getvisitorimage;
+        connection.query(sqlstring, [param.year,param.month,param.day,param.store_id,param.userid], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };

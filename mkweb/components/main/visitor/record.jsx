@@ -12,15 +12,17 @@ class Record extends React.Component {
     this.state = {
       showPicture: false,
       bigPicture: "",
+      showMap: false,
       visitorPlan: Store.getVisitorPlan(),
+      visitorImage: Store.getVisitorImage(),
     };
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
+    this.onVisitorImageChange = this.onVisitorImageChange.bind(this);
 
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
-    this.refreshMarker = this.refreshMarker.bind(this);
     this.map = null;
     this.userid = "";
 
@@ -30,24 +32,34 @@ class Record extends React.Component {
     this.handlePictureCancel = this.handlePictureCancel.bind(this);
     this.onClickPhoto = this.onClickPhoto.bind(this);
     this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
+    this.handleCloseMap = this.handleCloseMap.bind(this);
+    this.onClickSignin = this.onClickSignin.bind(this);
+    this.onClickSignout = this.onClickSignout.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
     var point = new BMap.Point(116.404, 39.915);
     this.map.centerAndZoom(point, 15);
-    this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+    //this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
     this.map.setCurrentCity("上海");          // 设置地图显示的城市 此项是必须设置的
     this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
   }
   onVisitorPlanChange() {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
+    })
+  }
+  onVisitorImageChange() {
+    this.setState({
+      visitorImage: Store.getVisitorImage(),
     })
   }
 
@@ -61,25 +73,6 @@ class Record extends React.Component {
     Action.getVisitorPlan(data);
   }
 
-  refreshMarker() {
-    if (this.map) {
-      var context = this;
-      this.map.clearOverlays();
-      var addMarker = function (point) {
-        var marker = new BMap.Marker(point);
-        context.map.addOverlay(marker);
-      }
-
-
-      for (var i = 0; i < this.state.signList.length; i++) {
-        var signInfo = this.state.signList[i];
-        var point = new BMap.Point(signInfo.gps_x, signInfo.gps_y);
-        addMarker(point);
-        this.map.centerAndZoom(point, 15);
-      }
-    }
-  }
-
   onDateChange(date, dateString) {
     this.queryData = dateString;
     console.log("onDateChange", date, dateString);
@@ -91,12 +84,21 @@ class Record extends React.Component {
 
   onClickShowPicture(record) {
     this.setState({
-      showPicure: true
+      showPicure: true,
+      visitorImage: []
+    })
+    Action.getVisitorImage({
+      userid: record.userid,
+      year: record.year,
+      month:record.month,
+      day:record.day,
+      store_id:record.store_id,
     })
   }
   handlePictureCancel() {
     this.setState({
-      showPicure: false
+      showPicure: false,
+      bigPicture:""
     })
   }
 
@@ -110,6 +112,60 @@ class Record extends React.Component {
       bigPicture: ""
     })
   }
+  handleCloseMap() {
+    this.setState({
+      showMap: false,
+    })
+  }
+  onClickSignin(record) {
+    this.setState({
+      showMap: true,
+    })
+    this.initSignMap({ x: record.gps_x, y: record.gps_y }, { x: record.signin_gps_x, y: record.signin_gps_y });
+
+  }
+  onClickSignout(record) {
+    this.setState({
+      showMap: true,
+    })
+
+    this.initSignMap({ x: record.gps_x, y: record.gps_y }, { x: record.signout_gps_x, y: record.signout_gps_y });
+  }
+
+  initSignMap(storeGps, signGps) {
+    var storePoint = new BMap.Point(storeGps.x, storeGps.y);
+    var point = new BMap.Point(signGps.x, signGps.y);
+    this.map.centerAndZoom(point, 17);
+    this.map.clearOverlays();
+    var marker = new BMap.Marker(point);  // 创建标注
+    var storeMarker = new BMap.Marker(storePoint);
+    this.map.addOverlay(marker);               // 将标注添加到地图中
+    this.map.addOverlay(storeMarker);
+
+    var polyline = new BMap.Polyline([storePoint, point], { strokeColor: "blue", strokeWeight: 6, strokeOpacity: 0.5 });  //定义折线
+    this.map.addOverlay(polyline);     //添加折线到地图上
+
+    marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+  }
+
+  getPhotoDom(image_type){
+    var context= this;
+    var photoList = [];
+    for(var i = 0; i < this.state.visitorImage.length; i++ ){
+      var imageInfo = this.state.visitorImage[i];
+      if(imageInfo.type == image_type){
+        photoList.push(imageInfo);
+      }
+    }
+
+    var photoDom = [];
+    for(var i = 0; i< photoList.length; i++){
+      var imageInfo = photoList[i];
+      var imagepath = 'url("'+ '../upload/' + imageInfo.filename +'.jpg")';
+      photoDom.push(<div style={{backgroundImage:imagepath}} onClick={function () { context.onClickPhoto(imagepath) } } className={styles.photo}></div>);
+    }
+    return photoDom;
+  }
 
   getBasicPanel() {
     var context = this;
@@ -119,50 +175,54 @@ class Record extends React.Component {
         dataIndex: 'plan_date',
         key: 'plan_date',
       }, {
-        title: '门店名称',
-        dataIndex: 'Store_name',
-        key: 'Store_name',
-      }, {
-        title: '拜访路线',
-        dataIndex: 'Path_name',
-        key: 'Path_name',
-      }, {
-        title: '签到时间',
-        dataIndex: 'signin_time',
-        key: 'signin_time',
-      }, {
-        title: '签到偏差',
-        dataIndex: 'signin_distance',
-        key: 'signin_distance',
-        render: function (text, record) {
-          if (text == "") {
-            return null
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+        }, {          
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+        }, {
+          title: '拜访路线',
+          dataIndex: 'Path_name',
+          key: 'Path_name',
+        }, {
+          title: '签到时间',
+          dataIndex: 'signin_time',
+          key: 'signin_time',
+        }, {
+          title: '签到偏差',
+          dataIndex: 'signin_distance',
+          key: 'signin_distance',
+          render: function (text, record) {
+            if (text == "") {
+              return null
+            }
+            return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
           }
-          return <a>{text}<Icon type="environment-o" /></a>
-        }
-      }, {
-        title: '签退时间',
-        dataIndex: 'signout_time',
-        key: 'signout_time',
-      }, {
-        title: '签退偏差',
-        dataIndex: 'signout_distance',
-        key: 'signout_distance',
-        render: function (text, record) {
-          if (text == "") {
-            return null
+        }, {
+          title: '签退时间',
+          dataIndex: 'signout_time',
+          key: 'signout_time',
+        }, {
+          title: '签退偏差',
+          dataIndex: 'signout_distance',
+          key: 'signout_distance',
+          render: function (text, record) {
+            if (text == "") {
+              return null
+            }
+            return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
           }
-          return <a>{text}<Icon type="environment-o" /></a>
-        }
-      }, {
-        title: '现场照片',
-        key: 'picture',
-        render: function (text, record) {
-          return <a onClick={function () {
-            context.onClickShowPicture(record);
-          } }>查看</a>
-        }
-      }];
+        }, {
+          title: '现场照片',
+          key: 'picture',
+          render: function (text, record) {
+            return <a onClick={function () {
+              context.onClickShowPicture(record);
+            } }>查看</a>
+          }
+        }];
     }
     var getTableData = function () {
       var tableData = [];
@@ -173,11 +233,11 @@ class Record extends React.Component {
         var pointStore = new BMap.Point(gps_x, gps_y);
         var signin_distance = -1;
         var signout_distance = -1;
-        if (plan.signin_gps_x && plan.signin_gps_y) {
+        if (plan.signin_gps_x && plan.signin_gps_y && context.map) {
           var pointSignin = new BMap.Point(plan.signin_gps_x, plan.signin_gps_y);
           signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
         }
-        if (plan.signout_gps_x && plan.signout_gps_y) {
+        if (plan.signout_gps_x && plan.signout_gps_y && context.map) {
           var pointSignout = new BMap.Point(plan.signout_gps_x, plan.signout_gps_y);
           signout_distance = parseInt(context.map.getDistance(pointStore, pointSignout));
         }
@@ -190,12 +250,24 @@ class Record extends React.Component {
           signin_distance: signin_distance < 0 ? "" : (signin_distance + "米"),
           signout_time: plan.signout_time == null ? "未签退" : plan.signout_time,
           signout_distance: signout_distance < 0 ? "" : (signout_distance + "米"),
+          gps_x: gps_x,
+          gps_y: gps_y,
+          signin_gps_x: plan.signin_gps_x,
+          signin_gps_y: plan.signin_gps_y,
+          signout_gps_x: plan.signout_gps_x,
+          signout_gps_y: plan.signout_gps_y,
+          userid: plan.userid,
+          year: plan.year,
+          month:plan.month,
+          day:plan.day,
+          store_id:plan.store_id,
+          realname:plan.realname
         })
       }
 
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn()} dataSource={getTableData()} />
+    return <Table size="small" columns={getTableColumn() } dataSource={getTableData() } />
   }
   render() {
     var context = this;
@@ -209,42 +281,35 @@ class Record extends React.Component {
         </div>
         <div className={styles.resultContent}>
           <Tabs tabPosition="left" size="small" >
-            <TabPane tab="门店总览" key="1">{this.getBasicPanel()}</TabPane>
+            <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
             <TabPane tab="主货架陈列" key="2">主货架陈列</TabPane>
             <TabPane tab="离架陈列" key="3">离架陈列</TabPane>
             <TabPane tab="库存采集" key="4">库存采集</TabPane>
             <TabPane tab="促销陈列" key="5">促销陈列</TabPane>
           </Tabs>
         </div>
-        <Modal title="大润发松江店" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}
+        <Modal title="查看照片" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}
           onCancel={this.handlePictureCancel} >
           <div className={styles.modalcontent}>
             <p className={styles.pictureTitle}>主货架陈列</p>
-            <div onClick={function () { context.onClickPhoto("11") } } className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
-            <div className={styles.photo}></div>
+            {this.getPhotoDom(0)}
             <p className={styles.pictureTitle}>离架陈列</p>
+            {this.getPhotoDom(1)}
             <p className={styles.pictureTitle}>库存采集</p>
+            {this.getPhotoDom(2)}
             <p className={styles.pictureTitle}>促销陈列</p>
+            {this.getPhotoDom(3)}
             {this.state.bigPicture == "" ? null :
-              <div className={styles.bigphoto}>
+              <div style={{backgroundImage:this.state.bigPicture}} className={styles.bigphoto}>
                 <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
               </div>
             }
           </div>
         </Modal>
-        <div style={{ visibility: 'hidden' }} className={styles.mapModal}>
-          <div id="allmap">
+        <div style={{ visibility: this.state.showMap ? 'visible' : 'hidden' }} className={styles.mapModal}>
+          <p className={styles.maptitle}>定位点</p>
+          <Icon onClick={this.handleCloseMap} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "24px", cursor: 'pointer' }} type="close-square" />
+          <div id="allmap" className={styles.allmap}>
           </div>
         </div>
       </div>

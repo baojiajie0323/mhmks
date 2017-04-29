@@ -768,7 +768,7 @@ var Action = {
   updatePlan: function (data) {
     var context = this;
     data.command = 'updateplan';
-    console.log('updatePlan  req: ',data);
+    console.log('updatePlan  req: ', data);
     $.ajax({
       url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
@@ -827,6 +827,26 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('getVisitorPlan fail');
+      })
+  },
+  getVisitorImage: function (data) {
+    var context = this;
+    data.command = 'getvisitorimage';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorImage:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_IMAGE, response.data);
+        } else {
+          message.error('获取照片列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorImage fail');
       })
   },
   dispatch: function (funname, value) {
