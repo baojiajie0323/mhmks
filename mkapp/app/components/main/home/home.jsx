@@ -355,8 +355,8 @@ class Home extends React.Component {
           if (data.status === 0) {
             Action.checkSign({
               userid: localStorage.username,
-              lat: data.points[0].latitude,
-              lon: data.points[0].longitude
+              lat: data.points[0].lat,
+              lon: data.points[0].lon
             });
           }
         }

@@ -53,28 +53,37 @@ class DoPlan extends React.Component {
     this.setState({
       loading: true
     })
-    var geolocation = new BMap.Geolocation();
-    geolocation.getCurrentPosition(function (r) {
-      if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-        //message.success();
-        Action.sign({
-          userid: localStorage.username,
-          year: store.year,
-          month: store.month,
-          day: store.day,
-          store_id: store.store_id,
-          sign_type: signType,
-          lat: r.latitude,
-          lon: r.longitude
-        });
-      }
-      else {
-        context.setState({
-          loading: false
-        })
-        message.error('定位失败: 错误码为' + this.getStatus());
-      }
-    }, { enableHighAccuracy: true })
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        //onSuccees        
+        var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
+        
+        var translateCallback = function (data) {
+          if (data.status === 0) {
+            Action.sign({
+              userid: localStorage.username,
+              year: store.year,
+              month: store.month,
+              day: store.day,
+              store_id: store.store_id,
+              sign_type: signType,
+              lat: data.points[0].lat,
+              lon: data.points[0].lng
+            });
+          }
+        }
+
+        var convertor = new BMap.Convertor();
+        var pointArr = [];
+        pointArr.push(point);
+        convertor.translate(pointArr, 1, 5, translateCallback);
+
+      }, function (error) {
+        //onError
+        message.error('定位失败' + error.message);
+      }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+    } else { message.error("没有开启定位权限！") }
   }
 
   onClickShelfMain(store) {
@@ -116,7 +125,7 @@ class DoPlan extends React.Component {
             <ListItem
               primaryText="促销陈列"
               rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () {context.onClickPromotion(store)}}
+              onTouchTap={function () { context.onClickPromotion(store) } }
               />
             <ListItem
               primaryText="库存采集"
@@ -254,7 +263,7 @@ class DoPlan extends React.Component {
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
 
             <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>
