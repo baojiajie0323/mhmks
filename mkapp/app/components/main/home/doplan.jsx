@@ -7,18 +7,22 @@ import {
   Step,
   Stepper,
   StepLabel,
+  StepButton,
   StepContent,
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
-import { message, Spin } from 'antd';
+import { message, Spin, Modal, Button} from 'antd';
 import { List, ListItem } from 'material-ui/List';
+
+const confirm = Modal.confirm;
 
 
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import RightIcon from 'material-ui/svg-icons/navigation/chevron-right';
+import SortIcon from 'material-ui/svg-icons/content/sort';
 
 
 import { cyan600 } from 'material-ui/styles/colors';
@@ -29,7 +33,7 @@ class DoPlan extends React.Component {
     super(props);
     this.state = {
       finished: false,
-      stepIndex: 0,
+      stepIndex: -1,
       storestate: 0, // 0未签到  1已签到未签出  2已签出
       storelist: [],
       loading: false,
@@ -50,40 +54,49 @@ class DoPlan extends React.Component {
   }
   handleSign(store, signType) {
     var context = this;
-    this.setState({
-      loading: true
-    })
+    confirm({
+      title: '确定要' + (signType == 'signin' ? '签到' : '签退') + '吗？',
+      onOk() {
+        context.setState({
+          loading: true
+        })
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            //onSuccees        
+            var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        //onSuccees        
-        var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
-        
-        var translateCallback = function (data) {
-          if (data.status === 0) {
-            Action.sign({
-              userid: localStorage.username,
-              year: store.year,
-              month: store.month,
-              day: store.day,
-              store_id: store.store_id,
-              sign_type: signType,
-              lat: data.points[0].lat,
-              lon: data.points[0].lng
-            });
-          }
-        }
+            var translateCallback = function (data) {
+              if (data.status === 0) {
+                Action.sign({
+                  userid: localStorage.username,
+                  year: store.year,
+                  month: store.month,
+                  day: store.day,
+                  store_id: store.store_id,
+                  sign_type: signType,
+                  lat: data.points[0].lat,
+                  lon: data.points[0].lng
+                });
+              }
+            }
 
-        var convertor = new BMap.Convertor();
-        var pointArr = [];
-        pointArr.push(point);
-        convertor.translate(pointArr, 1, 5, translateCallback);
+            var convertor = new BMap.Convertor();
+            var pointArr = [];
+            pointArr.push(point);
+            convertor.translate(pointArr, 1, 5, translateCallback);
 
-      }, function (error) {
-        //onError
-        message.error('定位失败' + error.message);
-      }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
-    } else { message.error("没有开启定位权限！") }
+          }, function (error) {
+            //onError
+            message.error('定位失败' + error.message);
+          }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+        } else { message.error("没有开启定位权限！") }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+
+
   }
 
   onClickShelfMain(store) {
@@ -103,7 +116,6 @@ class DoPlan extends React.Component {
   }
 
   renderStepActions(store, step) {
-    const {stepIndex} = this.state;
     var context = this;
     var bSign = !!store.signin_time;
     //bSign = true;
@@ -149,7 +161,7 @@ class DoPlan extends React.Component {
               />
           </List>,
             <RaisedButton
-              label="签出"
+              label="签退"
               secondary={true}
               onTouchTap={function () {
                 context.handleSign(store, 'signout');
@@ -218,24 +230,30 @@ class DoPlan extends React.Component {
     }
   }
   getStep() {
-    var stepIndex = -1;
-    //stepIndex = 0;
+    var stepIndex = this.state.stepIndex;
+    var finishCount = 0;
     var stepDom = this.state.storelist.map((store, index) => {
-      if (stepIndex < 0 && store.isfinish == 0) {
+      if (stepIndex < 0 && !store.isfinish) {
         stepIndex = index;
       }
-      return <Step>
-        <StepLabel>{store.Store_name}</StepLabel>
+      if(store.isfinish){
+        if(stepIndex == index){
+           stepIndex = -1;
+        }
+        finishCount ++;     
+      }
+      return <Step completed={store.isfinish}>
+        <StepButton onTouchTap={() => this.setState({stepIndex: index})}>{store.Store_name}</StepButton>
         <StepContent>
           {this.renderStepActions(store, index) }
         </StepContent>
       </Step>
     });
-    var stepper = [<Stepper activeStep={stepIndex} orientation="vertical">
+    var stepper = [<Stepper activeStep={stepIndex} linear={false} orientation="vertical">
       {stepDom}
     </Stepper>]
 
-    if (stepIndex < 0) {
+    if (finishCount >= this.state.storelist.length) {
       stepper.push(<p style={{ margin: '20px 0', textAlign: 'center' }}>
         该线路所有门店都已巡完.
         <a

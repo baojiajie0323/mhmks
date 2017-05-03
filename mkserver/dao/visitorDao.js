@@ -244,8 +244,9 @@ module.exports = {
             let plan = planlist[i];
             tasks.push(function (callback) {
               var sqlstring = _sql.insertplan;
-              console.log(sqlstring, param.userid, param.year, param.month, day, plan.plan_type, plan.path_id, plan.store_id);
-              connection.query(sqlstring, [param.userid, param.year, param.month, day, plan.plan_type, plan.path_id, plan.store_id],
+              var plandate = param.year + '-' + param.month + '-' + day;
+              console.log(sqlstring, param.userid, param.year, param.month, day,plandate, plan.plan_type, plan.path_id, plan.store_id);
+              connection.query(sqlstring, [param.userid, param.year, param.month, day,plandate, plan.plan_type, plan.path_id, plan.store_id],
                 function (err, result) {
                   callback(err);
                 });
