@@ -58,7 +58,7 @@ class StoreDisplay extends React.Component {
       <div className={styles.infocontent}>
         <p className={styles.infotitle}>陈列方式</p>
         <div className={styles.infotable}>
-          <Table loading={this.state.loading} bordered
+          <Table size="small" loading={this.state.loading} bordered
             columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
       </div>

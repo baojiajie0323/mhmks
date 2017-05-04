@@ -99,7 +99,7 @@ class Promotion extends React.Component {
       <div className={styles.infocontent}>
         <p className={styles.infotitle}>促销活动</p>
         <div className={styles.infotable}>
-          <Table loading={this.state.loading} bordered
+          <Table size="small" loading={this.state.loading} bordered
             columns={this.getTableColumn() } dataSource={this.getTableData() } 
             pagination={this.state.pagination} onChange={this.handleTableChange} />
         </div>

@@ -14,6 +14,8 @@ module.exports = {
       return;
     }
 
+    _dao.log(param.username,"登录");
+
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);

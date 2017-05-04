@@ -158,7 +158,7 @@ class Role extends React.Component {
           <Button onClick={this.onClickAdd} type="primary" icon="plus">新角色</Button>
         </div>
         <div className={styles.configtable}>
-          <Table loading={this.state.loading} bordered
+          <Table size="small" loading={this.state.loading} bordered
             columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
         <Modal width={420} title={this.modaltype == 'add' ? '创建角色' : '修改角色'} visible={this.state.visible}

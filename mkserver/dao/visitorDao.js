@@ -136,6 +136,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
+    _dao.log(param.user_id, "创建拜访计划");
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -216,8 +217,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -245,8 +246,8 @@ module.exports = {
             tasks.push(function (callback) {
               var sqlstring = _sql.insertplan;
               var plandate = param.year + '-' + param.month + '-' + day;
-              console.log(sqlstring, param.userid, param.year, param.month, day,plandate, plan.plan_type, plan.path_id, plan.store_id);
-              connection.query(sqlstring, [param.userid, param.year, param.month, day,plandate, plan.plan_type, plan.path_id, plan.store_id],
+              console.log(sqlstring, param.userid, param.year, param.month, day, plandate, plan.plan_type, plan.path_id, plan.store_id);
+              connection.query(sqlstring, [param.userid, param.year, param.month, day, plandate, plan.plan_type, plan.path_id, plan.store_id],
                 function (err, result) {
                   callback(err);
                 });
@@ -293,6 +294,11 @@ module.exports = {
     if (!param.lat || !param.lon || !param.store_id || !param.userid) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
+    }
+    if (param.sign_type == 'signin') {
+      _dao.log(param.userid, "签到");
+    } else {
+      _dao.log(param.userid, "签退");
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -391,6 +397,9 @@ module.exports = {
     var product = JSON.parse(param.product);
     var image = JSON.parse(param.image);
 
+
+    _dao.log(param.userid, "提交主货架信息");
+
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -455,6 +464,8 @@ module.exports = {
     }
     var product = JSON.parse(param.product);
     var image = JSON.parse(param.image);
+
+    _dao.log(param.userid, "提交库存信息");
 
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -521,6 +532,10 @@ module.exports = {
     var product = JSON.parse(param.product);
     var image = JSON.parse(param.image);
     var count = JSON.parse(param.count);
+
+    
+    _dao.log(param.userid, "提交离架信息");
+
 
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -596,6 +611,10 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
+
+    
+    _dao.log(param.userid, "提交洽谈信息");
+
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -627,6 +646,8 @@ module.exports = {
     }
     var product = JSON.parse(param.product);
     var image = JSON.parse(param.image);
+
+    _dao.log(param.userid, "提交促销信息");
 
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -696,7 +717,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorplan;
-        connection.query(sqlstring, ["%" + param.userid + "%","%" + param.userid + "%",param.begindate,param.enddate], function (err, result) {
+        connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -721,7 +742,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorimage;
-        connection.query(sqlstring, [param.year,param.month,param.day,param.store_id,param.userid], function (err, result) {
+        connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

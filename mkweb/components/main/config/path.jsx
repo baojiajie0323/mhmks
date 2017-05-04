@@ -106,7 +106,7 @@ class Path extends React.Component {
       <div className={styles.configcontent}>
         <p className={styles.configtitle}>路线</p>
         <div className={styles.configtable}>
-          <Table loading={this.state.loading} bordered
+          <Table size="small" loading={this.state.loading} bordered
             columns={this.getTableColumn() } dataSource={this.getTableData() } 
             pagination={this.state.pagination} onChange={this.handleTableChange} />
         </div>

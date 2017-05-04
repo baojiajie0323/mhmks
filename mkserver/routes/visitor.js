@@ -84,6 +84,8 @@ router.post('/upload/', upload.single('file'), function (req, res, next) {
   var newPath = req.file.destination + avatarName;
   fs.renameSync(req.file.path, newPath);  //重命名
   jsonWrite(res, { uuid: uuid }, dbcode.SUCCESS);
+
+  _dao.log("","上传照片");
 })
 
 // router.post('/upload/', function (req, res, next) {

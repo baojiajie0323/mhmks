@@ -1,4 +1,5 @@
 var sqlmap = {
+  log:'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
   login_web: 'select a.*,b.name departname from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
   login_app: 'select a.*,b.name departname from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',

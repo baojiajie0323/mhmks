@@ -110,7 +110,7 @@ class ProductPrice extends React.Component {
       <div className={styles.infocontent}>
         <p className={styles.infotitle}>产品价格</p>
         <div className={styles.infotable}>
-          <Table loading={this.state.loading} bordered
+          <Table size="small" loading={this.state.loading} bordered
             columns={this.getTableColumn() } dataSource={this.getTableData() }
             pagination={this.state.pagination} onChange={this.handleTableChange} />
         </div>

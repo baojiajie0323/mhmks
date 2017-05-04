@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var _sql = require('./sqlMapping');
 var $conf = require('../conf/db');
 var $util = require('../util/util');
 
@@ -24,7 +25,8 @@ var dao = {
         return;
       } else {
         var sqlstring = _sql.log;
-        connection.query(sqlstring, [userid,logstring], function (err, result) {
+        var curDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+        connection.query(sqlstring, [curDate,userid,logstring], function (err, result) {
           connection.release();
         });
       }
