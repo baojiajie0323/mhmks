@@ -38,6 +38,11 @@ var Store = assign({}, EventEmitter.prototype, {
     _loginSuccess = loginsuccess;
     if (loginsuccess) {
       _userInfo = userInfo;
+      if (_userInfo.enableapp) {
+        _curview = 'schdule';
+      }else{
+        _curview = 'visitor';
+      }
     } else {
       _curview = 'schdule';
       _userInfo = {};
@@ -397,11 +402,11 @@ var Store = assign({}, EventEmitter.prototype, {
     return _visitorplan;
   },
 
-  setVisitorImage(vi){
+  setVisitorImage(vi) {
     _visitorimage = vi;
     this.emitChange(StoreEvent.SE_VISITOR_IMAGE);
   },
-  getVisitorImage(){
+  getVisitorImage() {
     return _visitorimage;
   },
 

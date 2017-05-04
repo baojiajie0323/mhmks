@@ -628,7 +628,7 @@ class Schdule extends React.Component {
           <span>岗位：</span>
           <p>{userInfo.post}</p>
           <span>大区主管：</span>
-          <p>白焕霞</p>
+          <p></p>
           <div className={styles.markcontent}>
             <div className={[styles.markblock, styles.next].join(' ')}></div>
             <p>可排计划</p>

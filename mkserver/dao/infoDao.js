@@ -43,11 +43,15 @@ module.exports = {
         console.log(sqlstring);
         connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', result);
-          if (result.length > 0) {
-            jsonWrite(res, result, dbcode.SUCCESS);
-          } else {
+          //if (result.length > 0) {
+          if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
+          // } else {
+          //   jsonWrite(res, {}, dbcode.FAIL);
+          // }
           connection.release();
         });
       }
@@ -263,9 +267,9 @@ module.exports = {
         var sqlstring = _sql.getpromotionbystore;
         var nowdate = new Date().Format("yyyy-MM-dd");
         //nowdate = "2017-04-02";
-        connection.query(sqlstring, [param.store_id,nowdate], function (err, result) {
+        connection.query(sqlstring, [param.store_id, nowdate], function (err, result) {
           console.log('dbresult', result);
-//          if (result.length > 0) {
+          //          if (result.length > 0) {
           jsonWrite(res, result, dbcode.SUCCESS);
           // } else {
           //   jsonWrite(res, {}, dbcode.FAIL);
