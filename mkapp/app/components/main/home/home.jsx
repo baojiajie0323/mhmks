@@ -169,19 +169,49 @@ class Home extends React.Component {
     }, this.getcurPlan)
   }
   onClickAddPath() {
+    if (!this.checkToday()) {
+      message.info("只能增加今日的计划！");
+      return;
+    }
     Store.emit(StoreEvent.SE_VIEW, 'selectpathview');
   }
   onClickAddTmp() {
     //message.info("暂不支持，请在后台安排计划");
+    if (!this.checkToday()) {
+      message.info("只能增加今日的计划！");
+      return;
+    }
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCall() {
+    if (!this.checkToday()) {
+      message.info("只能增加今日的计划！");
+      return;
+    }
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
   onClickAddCheck() {
+    if (!this.checkToday()) {
+      message.info("只能增加今日的计划！");
+      return;
+    }
     Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
   }
+  checkToday() {
+    var nowDate = new Date();
+    var curSelDate = this.state.curDate;
+    if (nowDate.getFullYear() == curSelDate.getFullYear() &&
+      nowDate.getMonth() == curSelDate.getMonth() &&
+      nowDate.getDate() == curSelDate.getDate()) {
+      return true;
+    }
+    return false;
+  }
   onClickDoPlan(path_id, store_id) {
+    if (!this.checkToday()) {
+      message.info("只能执行今日的计划！");
+      return;
+    }
     Store.setCurPlan(path_id, store_id);
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
@@ -308,17 +338,28 @@ class Home extends React.Component {
             onClickDoPlan={function () {
               context.onClickDoPlan(pl.path_id, pl.store_id);
             } }
-            onClickDelete={function () { context.onClickDelete(pl.Plan_Id) } }
+            onClickDelete={function () {
+              context.onClickDelete(pl.path_id, pl.store_id);
+            } }
             />}
-          leftIcon={this.getStateIcon(pl) }
+          leftIcon={this.getStateIcon(pl)}
           />)
         planDom.push(<Divider />);
       })
       return planDom;
     }
   }
-  onClickDelete(planid) {
-    this.curplanid = planid;
+  onClickDelete(path_id,store_id) {
+    if (!this.checkToday()) {
+      message.info("只能删除今日的计划！");
+      return;
+    }
+    if(path_id && path_id != ""){
+      message.info("路线拜访不能被删除！");
+      return;
+    }
+    this.predelpath_id = path_id;
+    this.predelstore_id = store_id;
     this.setState({ open: true });
   }
   handleClose() {
@@ -326,7 +367,7 @@ class Home extends React.Component {
   }
   handleOk() {
     Action.delPlan({
-      Plan_Id: this.curplanid
+      Plan_Id: this.predelstore_id
     });
   }
   onClickLocation() {
@@ -418,10 +459,10 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this) }
-                onClickAddTmp={this.onClickAddTmp.bind(this) }
-                onClickAddCall={this.onClickAddCall.bind(this) }
-                onClickAddCheck={this.onClickAddCheck.bind(this) }
+                onClickAddPath={this.onClickAddPath.bind(this)}
+                onClickAddTmp={this.onClickAddTmp.bind(this)}
+                onClickAddCall={this.onClickAddCall.bind(this)}
+                onClickAddCheck={this.onClickAddCheck.bind(this)}
                 />
             </ToolbarGroup>
           </Toolbar>
@@ -429,7 +470,7 @@ class Home extends React.Component {
 
         <div style={{ top: config.contentLargeTop }} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist() }
+            {this.getPlanlist()}
           </Spin>
         </div>
         {/*<FloatingActionButton style={{

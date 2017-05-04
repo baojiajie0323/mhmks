@@ -40,13 +40,15 @@ class Contacts extends React.Component {
   getContactsDom() {
     var domlist = [];
     this.state.user.forEach((user) => {
-      domlist.push(<a href={'tel:' + user.phone}>
-        <ListItem
-          primaryText={user.realname}
-          rightIcon={<PhoneIcon color={cyan600} />}
-          />
-      </a>);
-      domlist.push(<Divider />);
+      if (user.phone && user.phone != "") {
+        domlist.push(<a href={'tel:' + user.phone}>
+          <ListItem
+            primaryText={user.realname}
+            rightIcon={<PhoneIcon color={cyan600} />}
+            />
+        </a>);
+        domlist.push(<Divider />);
+      }
     })
     return domlist;
   }
@@ -54,15 +56,15 @@ class Contacts extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:config.titlebarPadding }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='通讯录'
           iconElementLeft={<span></span>}
           />
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
 
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
-              {this.getContactsDom() }
+              {this.getContactsDom()}
             </List>
           </Spin>
         </div>
