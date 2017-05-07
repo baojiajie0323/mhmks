@@ -50,6 +50,14 @@ var Store = assign({}, EventEmitter.prototype, {
       _userInfo = userInfo;
     } else {
       _userInfo = {};
+      _curPlanlist = [];
+      _user = [];
+      _storeBasic = [];
+      _path = [];
+      _plan = [];
+      _brand = [];
+      _product = {};
+      _promotion = [];
     }
     this.emit(StoreEvent.SE_LOGIN, loginsuccess);
   },

@@ -134,7 +134,7 @@ class DoPlan extends React.Component {
     var signin_distance = 0;
     var pointStore = new BMap.Point(store.Gps_x,store.Gps_y);
     if (store.signin_gps_x && store.signin_gps_y) {
-      var pointSignin = new BMap.Point(store.signout_gps_x, store.signout_gps_y);
+      var pointSignin = new BMap.Point(store.signin_gps_x, store.signin_gps_y);
       signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
     }
     return (
