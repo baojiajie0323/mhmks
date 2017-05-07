@@ -152,8 +152,8 @@ var Store = assign({}, EventEmitter.prototype, {
         plan.day == signStore.day &&
         plan.store_id == signStore.store_id) {
         _plan[i].signin_time = signStore.signin_time;
-        _plan[i].signin_gps_x = signStore.lat;
-        _plan[i].signin_gps_y = signStore.lon;
+        _plan[i].signin_gps_x = signStore.lon;
+        _plan[i].signin_gps_y = signStore.lat;
         this.emit(StoreEvent.SE_PLAN);
         break;
       }
@@ -169,8 +169,8 @@ var Store = assign({}, EventEmitter.prototype, {
         plan.store_id == signStore.store_id) {
         _plan[i].isfinish = true;
         _plan[i].signout_time = signStore.signout_time;
-        _plan[i].signout_gps_x = signStore.lat;
-        _plan[i].signout_gps_y = signStore.lon;
+        _plan[i].signout_gps_x = signStore.lon;
+        _plan[i].signout_gps_y = signStore.lat;
         this.emit(StoreEvent.SE_PLAN);
         break;
       }
