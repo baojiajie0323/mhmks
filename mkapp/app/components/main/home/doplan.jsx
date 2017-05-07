@@ -60,6 +60,17 @@ class DoPlan extends React.Component {
         context.setState({
           loading: true
         })
+        // Action.sign({
+        //   userid: localStorage.username,
+        //   year: store.year,
+        //   month: store.month,
+        //   day: store.day,
+        //   store_id: store.store_id,
+        //   sign_type: signType,
+        //   lat: 1,
+        //   lon: 2
+        // });
+        // return;
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
             //onSuccees        
@@ -120,31 +131,42 @@ class DoPlan extends React.Component {
     var bSign = !!store.signin_time;
     //bSign = true;
     console.log('renderStepActions', store, bSign);
+    var signin_distance = 0;
+    var pointStore = new BMap.Point(store.Gps_x,store.Gps_y);
+    if (store.signin_gps_x && store.signin_gps_y) {
+      var pointSignin = new BMap.Point(store.signout_gps_x, store.signout_gps_y);
+      signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
+    }
     return (
       <div style={{ margin: '12px 0' }}>
         {bSign ?
-          [<List>
-            <ListItem
-              primaryText="主货架陈列"
-              rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () { context.onClickShelfMain(store) } }
-              />
-            <ListItem
-              primaryText="离架陈列"
-              rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () { context.onClickShelfAway(store) } }
-              />
-            <ListItem
-              primaryText="促销陈列"
-              rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () { context.onClickPromotion(store) } }
-              />
-            <ListItem
-              primaryText="库存采集"
-              rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () { context.onClickStock(store) } }
-              />
-            {/*<ListItem
+          [<p>签到成功，偏差<span style={{
+            margin: '0px 10px',
+            color: '#ef6b1e',
+            fontSize: '20px'
+          }}>{signin_distance}</span>米</p>,
+            <List>
+              <ListItem
+                primaryText="主货架陈列"
+                rightIcon={<RightIcon color={cyan600} />}
+                onTouchTap={function () { context.onClickShelfMain(store) } }
+                />
+              <ListItem
+                primaryText="离架陈列"
+                rightIcon={<RightIcon color={cyan600} />}
+                onTouchTap={function () { context.onClickShelfAway(store) } }
+                />
+              <ListItem
+                primaryText="促销陈列"
+                rightIcon={<RightIcon color={cyan600} />}
+                onTouchTap={function () { context.onClickPromotion(store) } }
+                />
+              <ListItem
+                primaryText="库存采集"
+                rightIcon={<RightIcon color={cyan600} />}
+                onTouchTap={function () { context.onClickStock(store) } }
+                />
+              {/*<ListItem
               primaryText="异常库存管理"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
@@ -154,12 +176,12 @@ class DoPlan extends React.Component {
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />*/}
-            <ListItem
-              primaryText="洽谈记录"
-              rightIcon={<RightIcon color={cyan600} />}
-              onTouchTap={function () { context.onClickChat(store) } }
-              />
-          </List>,
+              <ListItem
+                primaryText="洽谈记录"
+                rightIcon={<RightIcon color={cyan600} />}
+                onTouchTap={function () { context.onClickChat(store) } }
+                />
+            </List>,
             <RaisedButton
               label="签退"
               secondary={true}
@@ -209,6 +231,7 @@ class DoPlan extends React.Component {
   }
 
   componentDidMount() {
+    this.map = new BMap.Map("allmap");
     this.getStorelist();
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
   }
@@ -236,14 +259,14 @@ class DoPlan extends React.Component {
       if (stepIndex < 0 && !store.isfinish) {
         stepIndex = index;
       }
-      if(store.isfinish){
-        if(stepIndex == index){
-           stepIndex = -1;
+      if (store.isfinish) {
+        if (stepIndex == index) {
+          stepIndex = -1;
         }
-        finishCount ++;     
+        finishCount++;
       }
       return <Step completed={store.isfinish}>
-        <StepButton onTouchTap={() => this.setState({stepIndex: index})}>{store.Store_name}</StepButton>
+        <StepButton onTouchTap={() => this.setState({ stepIndex: index }) }>{store.Store_name}</StepButton>
         <StepContent>
           {this.renderStepActions(store, index) }
         </StepContent>
@@ -289,6 +312,8 @@ class DoPlan extends React.Component {
               {this.getStep() }
             </Spin>
           </div>
+        </div>
+        <div id="allmap" style={{visibility:'hidden'}}>
         </div>
       </div>
     );

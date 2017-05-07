@@ -1,9 +1,9 @@
 var sqlmap = {
   log:'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
-  login_web: 'select a.*,b.name departname from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
-  login_app: 'select a.*,b.name departname from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
+  login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
+  login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
-  getstorebasic: 'SELECT store.*, System_name,Region_name,Contacts_name,Tel from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) INNER JOIN store_contacts on (store_contacts.Store_id = store.Store_id)',
+  getstorebasic: 'SELECT store.*, System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) INNER JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username)',
   getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
   getstoredisplay: 'select * from store_display',
   getproduct: 'select * from product',
@@ -31,7 +31,7 @@ var sqlmap = {
   getpath: 'select * from path',
   getpathdetail: 'select a.*,b.Store_name from path_detail a INNER JOIN store b on(a.Store_id = b.Store_id)',
   getpath_app: 'select a.*,Path_name,Store_name from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) where c.store_id in (select store_id from store where user_id = ?) order by a.path_seq,a.Path_id',
-  getplan: 'select a.*,b.Path_Name,c.Store_name from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
+  getplan: 'select a.*,b.Path_Name,c.Store_name,c.Gps_x,c.Gps_y from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
   addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)',
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',
@@ -51,7 +51,7 @@ var sqlmap = {
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
   getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ?',
   submitpromotion: 'replace into visitor_promotion (store_id,product_id,user_id,year,month,day,display_id,pos,count,user_confirm) values(?,?,?,?,?,?,?,?,?,?)',
-  getvisitorplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where (userid like ? or realname like ?) and plan_date BETWEEN ? and ?',
+  getvisitorplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where (userid like ? or realname like ?) and plan_date BETWEEN ? and ? order by a.plan_date desc',
   getvisitorimage: 'select * from product_image where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
 };
 
