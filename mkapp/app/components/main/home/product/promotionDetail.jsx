@@ -236,7 +236,7 @@ class PromotionDetail extends React.Component {
       sourceType: srcType,
       encodingType: Camera.EncodingType.JPEG,
       mediaType: Camera.MediaType.PICTURE,
-      allowEdit: true,
+      allowEdit: false,
       correctOrientation: true  //Corrects Android orientation quirks
     }
     return options;

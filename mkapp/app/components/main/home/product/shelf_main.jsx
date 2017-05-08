@@ -35,7 +35,8 @@ class Shelf_main extends React.Component {
       product: Store.getProduct(this.props.userdata.store_id),
       previewVisible: false,
       previewImage: '',
-      file: {}
+      file: {},
+      preSaveProduct: [],
       // {
       //   uid: -1,
       //   name: 'xxx.png',
@@ -43,7 +44,6 @@ class Shelf_main extends React.Component {
       //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
       // }
     };
-    this.preSaveProduct = [];
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
@@ -74,23 +74,25 @@ class Shelf_main extends React.Component {
   }
 
   addToPreSaveProduct(product) {
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      if (this.preSaveProduct[i].Product_id == product.Product_id) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
         if (product.count == "") {
-          this.preSaveProduct.splice(i, 1);
+          preSaveProduct.splice(i, 1);
         } else {
-          this.preSaveProduct[i] = product;
+          preSaveProduct[i] = product;
         }
+        this.setState({preSaveProduct});
         return true;
       }
     }
-    this.preSaveProduct.push(product);
+    preSaveProduct.push(product);
+    this.setState({preSaveProduct});
   }
 
   onTextChange(product, value) {
     product.count = value;
     this.addToPreSaveProduct(product);
-    console.log('onTextChange', this.preSaveProduct);
   }
 
   componentDidMount() {
@@ -217,7 +219,7 @@ class Shelf_main extends React.Component {
       sourceType: srcType,
       encodingType: Camera.EncodingType.JPEG,
       mediaType: Camera.MediaType.PICTURE,
-      allowEdit: true,
+      allowEdit: false,
       correctOrientation: true  //Corrects Android orientation quirks
     }
     return options;
