@@ -16,12 +16,14 @@ var eventMap = {
     AE_SIGN_OUT: null,
     AE_BRAND: null,
     AE_PRODUCT: null,
+    AE_SHELFMAIN: null,
     AE_SHELFMAIN_SUBMIT:null,
     AE_STOCK_SUBMIT: null,
     AE_SHELFAWAY_SUBMIT: null,
     AE_CHAT_SUBMIT: null,
     AE_PROMOTION: null,
     AE_PROMOTION_SUBMIT: null,
+    AE_VISITOR_IMAGE: null,
   }),
 
   StoreEvent: keyMirror({
@@ -34,12 +36,14 @@ var eventMap = {
     SE_PLAN: null,
     SE_BRAND: null,
     SE_PRODUCT: null,
+    SE_SHELFMAIN: null,
     SE_SHELFMAIN_SUBMIT:null,
     SE_STOCK_SUBMIT: null,
     SE_SHELFAWAY_SUBMIT: null,
     SE_CHAT_SUBMIT: null,
     SE_PROMOTION: null,
     SE_PROMOTION_SUBMIT:null,
+    SE_VISITOR_IMAGE: null,
   })
 };
 

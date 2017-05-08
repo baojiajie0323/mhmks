@@ -60,17 +60,17 @@ class DoPlan extends React.Component {
         context.setState({
           loading: true
         })
-        // Action.sign({
-        //   userid: localStorage.username,
-        //   year: store.year,
-        //   month: store.month,
-        //   day: store.day,
-        //   store_id: store.store_id,
-        //   sign_type: signType,
-        //   lat: 1,
-        //   lon: 2
-        // });
-        // return;
+        Action.sign({
+          userid: localStorage.username,
+          year: store.year,
+          month: store.month,
+          day: store.day,
+          store_id: store.store_id,
+          sign_type: signType,
+          lat: 1,
+          lon: 2
+        });
+        return;
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
             //onSuccees        

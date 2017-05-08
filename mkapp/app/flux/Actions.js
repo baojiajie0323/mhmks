@@ -2,8 +2,8 @@
 import $ from 'jquery'
 import { message } from 'antd';
 
-var _domain_name = 'http://116.246.2.202:6115';  //域名
-//var _domain_name = '';  //域名
+//var _domain_name = 'http://116.246.2.202:6115';  //域名
+var _domain_name = '';  //域名
 
 var _debug = _domain_name == '';
 
@@ -498,12 +498,59 @@ var Action = {
         }
       })
   },
+  getVisitorImage: function (data) {
+    var context = this;
+    data.command = 'getvisitorimage';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorImage:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_IMAGE, response.data);
+        } else {
+          message.error('获取照片列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorImage fail');
+      })
+  },
+  getShelfMain: function (data) {
+    var context = this;
+    data.command = 'getshelfmain';
+    console.log('send getshelfmain', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getShelfmain:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SHELFMAIN, response.data);
+          //message.success('提交主货架信息成功');
+        } else {
+          message.error('获取主货架信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getShelfmain fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_SHELFMAIN, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,
       value: value
     });
-  }
+  },
 };
 
 window.Action = Action;

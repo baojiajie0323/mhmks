@@ -53,6 +53,7 @@ class Shelf_main extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.onClickAddImage = this.onClickAddImage.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
+    this.onShelfMainChange = this.onShelfMainChange.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -82,12 +83,23 @@ class Shelf_main extends React.Component {
         } else {
           preSaveProduct[i] = product;
         }
-        this.setState({preSaveProduct});
+        this.setState({ preSaveProduct });
         return true;
       }
     }
     preSaveProduct.push(product);
-    this.setState({preSaveProduct});
+    this.setState({ preSaveProduct });
+  }
+
+  getPreSaveProduct(product) {
+    
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].count;
+      }
+    }
+    return "";
   }
 
   onTextChange(product, value) {
@@ -99,14 +111,34 @@ class Shelf_main extends React.Component {
     Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_SHELFMAIN,this.onShelfMainChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE,this.onVisitorImage);
 
     this.checkBrand();
     this.checkProductList();
+    
+    var curDate = Store.getCurDate();
+    Action.getShelfMain({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
+    Action.getVisitorImage({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN,this.onShelfMainChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE,this.onVisitorImage);
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -135,11 +167,27 @@ class Shelf_main extends React.Component {
     })
   }
 
+  onShelfMainChange(preSaveProduct){
+    preSaveProduct.forEach((sp) => {
+      sp.Product_id = sp.product_id;
+    })
+
+    this.setState({
+      preSaveProduct
+    })
+    console.log('onShelfMainChange',preSaveProduct);
+  }
+
+  onVisitorImage(imageList){
+    console.log(imageList);
+  }
+
   getProductDom(Brand_id) {
     var productList = [];
     var context = this;
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
+      var product_count = this.getPreSaveProduct(product);
       if (product.Brand_id == Brand_id) {
         productList.push(<ListItem
           leftAvatar={<Avatar
@@ -150,6 +198,7 @@ class Shelf_main extends React.Component {
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
           rightIconButton={<TextField
+            value={product_count}
             onChange={function (e, value) { context.onTextChange(product, value) } }
             style={{ width: '80px' }}
             hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
@@ -183,7 +232,7 @@ class Shelf_main extends React.Component {
       product: [],
       image: [],
     }
-    data.product = this.preSaveProduct.map((product) => {
+    data.product = this.state.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
         count: product.count
@@ -213,7 +262,7 @@ class Shelf_main extends React.Component {
   setOptions(srcType) {
     var options = {
       // Some common settings are 20, 50, and 100
-      quality: 100,
+      quality: 50,
       destinationType: Camera.DestinationType.FILE_URI,
       // In this app, dynamically set the picture source, Camera or photo gallery
       sourceType: srcType,
@@ -393,7 +442,7 @@ class Shelf_main extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion defaultActiveKey={['0']}>
             {this.getPanel() }

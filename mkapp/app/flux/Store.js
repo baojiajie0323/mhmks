@@ -306,6 +306,14 @@ AppDispatcher.register((action) => {
       Store.emitChange(StoreEvent.SE_PROMOTION_SUBMIT);
     }
       break;
+    case ActionEvent.AE_SHELFMAIN: {
+      Store.emit(StoreEvent.SE_SHELFMAIN, action.value);
+    }
+      break;
+    case ActionEvent.AE_VISITOR_IMAGE: {
+      Store.emit(StoreEvent.SE_VISITOR_IMAGE, action.value);
+    }
+      break;
     default:
       break;
   }

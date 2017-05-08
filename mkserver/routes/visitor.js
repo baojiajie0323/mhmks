@@ -74,6 +74,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getvisitorimage") {
     console.log('getvisitorimage');
     visitorDao.getVisitorImage(req, res, next);
+  } else if (req.body.command == "getshelfmain") {
+    console.log('getshelfmain');
+    visitorDao.getShelfMain(req, res, next);
   }
 });
 
