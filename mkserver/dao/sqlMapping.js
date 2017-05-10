@@ -52,7 +52,7 @@ var sqlmap = {
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
   delshelfaway: 'delete from visitor_shelfaway where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?)',
-  getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ?',
+  getpromotionbystore: 'select b.promotion_name,c.product_name,a.* from promotion a LEFT JOIN promotion_type b on a.Promotion_type = b.Promotion_type LEFT JOIN product c on c.Product_id = a.product_id where Store_id = ? and date4 >= ? order by b.promotion_name',
   submitpromotion: 'replace into visitor_promotion (store_id,product_id,user_id,year,month,day,display_id,pos,count,user_confirm) values(?,?,?,?,?,?,?,?,?,?)',
   delpromotion: 'delete from visitor_promotion where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getvisitorplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where (userid like ? or realname like ?) and plan_date BETWEEN ? and ? order by a.plan_date desc',

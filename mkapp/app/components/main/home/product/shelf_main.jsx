@@ -393,23 +393,9 @@ class Shelf_main extends React.Component {
         </div>
       );
       panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
-        {/*<Upload
-          action="/visitor/upload"
-          listType="picture-card"
-          accept="image/*"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={function (file) { context.handleUploadChange(file, brand.Brand_id) } }
-          showUploadList={{
-            showPreviewIcon: false,
-            showRemoveIcon: true
-          }}
-          >
-          {fileList.length >= 3 ? null : uploadButton}
-        </Upload>*/}
         <div className={styles.photocontent}>
           {this.getPhotolist(fileList) }
-          {fileList.length >= 3 ? null : uploadButton}
+          {fileList.length >= 5 ? null : uploadButton}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
@@ -454,7 +440,7 @@ class Shelf_main extends React.Component {
 
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
-          <Collapse accordion defaultActiveKey={['0']}>
+          <Collapse accordion>
             {this.getPanel() }
           </Collapse>
         </div>

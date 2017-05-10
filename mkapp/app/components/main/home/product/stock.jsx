@@ -411,7 +411,7 @@ class Stock extends React.Component {
         </Upload>*/}
         <div className={styles.photocontent}>
           {this.getPhotolist(fileList) }
-          {fileList.length >= 3 ? null : uploadButton}
+          {fileList.length >= 5 ? null : uploadButton}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
@@ -456,7 +456,7 @@ class Stock extends React.Component {
 
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
-          <Collapse accordion defaultActiveKey={['0']}>
+          <Collapse accordion >
             {this.getPanel() }
           </Collapse>
         </div>

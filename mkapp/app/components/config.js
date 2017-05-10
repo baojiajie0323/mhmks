@@ -15,12 +15,12 @@ var config = {
 
 
     //release
-    release:true,
-    domain_name:"http://116.246.2.202:6115",
+    // release:true,
+    // domain_name:"http://116.246.2.202:6115",
 
     //debug
-    // debug:true,
-    // domain_name:"http://localhost:3000",
+    debug:true,
+    domain_name:"http://localhost:3000",
 }
 window.config = config;
 export default config;
