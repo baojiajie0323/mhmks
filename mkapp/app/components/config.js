@@ -1,4 +1,4 @@
-var plugin = {
+var config = {
     // ios
     platform:"ios",
     titlebarPadding: "10px",
@@ -12,6 +12,15 @@ var plugin = {
     // contentTop:'65px',
     // contentLargeTop:'121px',
     // contentUserTop:'265px',
-}
 
-export default plugin;
+
+    //release
+    release:true,
+    domain_name:"http://116.246.2.202:6115",
+
+    //debug
+    // debug:true,
+    // domain_name:"http://localhost:3000",
+}
+window.config = config;
+export default config;

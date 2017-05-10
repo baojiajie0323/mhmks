@@ -45,16 +45,10 @@ class Shelf_away extends React.Component {
       product: Store.getProduct(this.props.userdata.store_id),
       previewVisible: false,
       previewImage: '',
-      file: {}
-      // {
-      //   uid: -1,
-      //   name: 'xxx.png',
-      //   status: 'done',
-      //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      // }
+      file: {},
+      preSaveProduct: [],
+      preSaveCount: {},
     };
-    this.preSaveProduct = [];
-    this.preSaveCount = {};
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
@@ -62,9 +56,10 @@ class Shelf_away extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
-
     this.onClickAddImage = this.onClickAddImage.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
+    this.onShelfAwayChange = this.onShelfAwayChange.bind(this);
+    this.onVisitorImage = this.onVisitorImage.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -86,41 +81,73 @@ class Shelf_away extends React.Component {
   }
 
   addToPreSaveProduct(product) {
+    var preSaveProduct = this.state.preSaveProduct;
     var newProduct = {};
     $.extend(newProduct, product);
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      if (this.preSaveProduct[i].Product_id == newProduct.Product_id &&
-        this.preSaveProduct[i].display_id == newProduct.display_id
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == newProduct.Product_id &&
+        preSaveProduct[i].display_id == newProduct.display_id
       ) {
         if (newProduct.check == false) {
-          this.preSaveProduct.splice(i, 1);
+          preSaveProduct.splice(i, 1);
         } else {
-          this.preSaveProduct[i] = newProduct;
+          preSaveProduct[i] = newProduct;
         }
+        this.setState({ preSaveProduct });
         return true;
       }
     }
-    this.preSaveProduct.push(newProduct);
+    preSaveProduct.push(newProduct);
+    this.setState({ preSaveProduct });
   }
 
   onCheckChange(product, display_id, value) {
-    console.log("onCheckChange", display_id);
     product.check = value;
     product.display_id = display_id;
-    console.log(this.preSaveProduct);
     this.addToPreSaveProduct(product);
-    console.log(this.preSaveProduct);
+  }
+
+  getPreSaveProduct(product, display_id) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id &&
+        preSaveProduct[i].display_id == display_id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getPreSaveProductCount(display_id) {
+    var preSaveCount = this.state.preSaveCount;
+    if (preSaveCount.hasOwnProperty(display_id)) {
+      return preSaveCount[display_id];
+    }
+    return "";
   }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.addChangeListener(StoreEvent.SE_SHELFAWAY_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_SHELFAWAY, this.onShelfAwayChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
 
     this.checkProductList();
+    var curDate = Store.getCurDate();
+    Action.getShelfAway({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.removeChangeListener(StoreEvent.SE_SHELFAWAY_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_SHELFAWAY, this.onShelfAwayChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
+
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -141,14 +168,59 @@ class Shelf_away extends React.Component {
   }
 
   onTextChange(display_id, value) {
-    this.preSaveCount[display_id] = value;
+    var preSaveCount = this.state.preSaveCount;
+    preSaveCount[display_id] = value;
+    this.setState({ preSaveCount });
+  }
+
+  onShelfAwayChange(data) {
+    data.shelfaway.forEach((sp) => {
+      sp.Product_id = sp.product_id;
+    })
+    var shelfawayCount = {};
+    data.shelfawayCount.forEach((sp) => {
+      shelfawayCount[sp.display_id] = sp.count;
+    })
+    this.setState({
+      preSaveProduct: data.shelfaway,
+      preSaveCount: shelfawayCount
+    })
+    var curDate = Store.getCurDate();
+    Action.getVisitorImage({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
+    console.log('onShelfAwayChange', data.shelfaway, shelfawayCount);
+  }
+
+  onVisitorImage(imageList) {
+    var files = this.state.file;
+    for (var i = 0; i < imageList.length; i++) {
+      if (imageList[i].type == 1) {
+        var file = {};
+        if (!files.hasOwnProperty(imageList[i].display_id)) {
+          files[imageList[i].display_id] = [];
+        }
+        var response = { data: { uuid: imageList[i].filename } };
+        file.response = response;
+        file.imageUri = config.domain_name + "/upload/" + imageList[i].filename + ".jpg";
+        files[imageList[i].display_id].push(file);
+      }
+    }
+    this.setState({ file: files });
+    console.log(files);
   }
 
   getProductDom(display_id) {
     var productList = [];
     var context = this;
+    var count = this.getPreSaveProductCount(display_id);
     productList.push(<ListItem
       rightIconButton={<TextField
+        value={count}
         onChange={function (e, value) { context.onTextChange(display_id, value) } }
         style={{ width: '80px' }}
         hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
@@ -159,8 +231,10 @@ class Shelf_away extends React.Component {
       />)
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
+      var checked = this.getPreSaveProduct(product, display_id);
       productList.push(<ListItem
         leftCheckbox={<Checkbox
+          checked={checked}
           onCheck={function (e, checked) { context.onCheckChange(product, display_id, checked) } }
           />}
         rightAvatar={<Avatar
@@ -193,11 +267,11 @@ class Shelf_away extends React.Component {
       day: curDate.getDate(),
       userid: localStorage.username,
       store_id: this.props.userdata.store_id,
-      count: this.preSaveCount,
+      count: this.state.preSaveCount,
       product: [],
       image: [],
     }
-    data.product = this.preSaveProduct.map((product) => {
+    data.product = this.state.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
         display_id: product.display_id
@@ -278,7 +352,7 @@ class Shelf_away extends React.Component {
           console.log("upload error target " + error.target);
         }
 
-        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+        var uri = encodeURI(config.domain_name + "/visitor/upload");
 
         var options = new FileUploadOptions();
         options.fileKey = "file";
@@ -322,8 +396,7 @@ class Shelf_away extends React.Component {
     var context = this;
     photoDom = fileList.map((file) => {
       return <div className={styles.photoblock}>
-        <img src={file.imageUri} />
-        <Icon onClick={function () { context.removePhoto(file.imageUri) } } style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
+        <img src={file.imageUri} /><Icon onClick={function () { context.removePhoto(file.imageUri) } } style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
       </div>
     })
     return photoDom;
@@ -391,7 +464,7 @@ class Shelf_away extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion defaultActiveKey={['0']}>
             {this.getPanel() }

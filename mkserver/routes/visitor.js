@@ -77,6 +77,18 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getshelfmain") {
     console.log('getshelfmain');
     visitorDao.getShelfMain(req, res, next);
+  } else if (req.body.command == "getstock") {
+    console.log('getstock');
+    visitorDao.getStock(req, res, next);
+  } else if (req.body.command == "getshelfaway") {
+    console.log('getshelfaway');
+    visitorDao.getShelfaway(req, res, next);
+  } else if (req.body.command == "getstorepromotion") {
+    console.log('getstorepromotion');
+    visitorDao.getPromotion(req, res, next);
+  } else if (req.body.command == "getchat") {
+    console.log('getchat');
+    visitorDao.getChat(req, res, next);
   }
 });
 

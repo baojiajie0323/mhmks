@@ -37,12 +37,6 @@ class Shelf_main extends React.Component {
       previewImage: '',
       file: {},
       preSaveProduct: [],
-      // {
-      //   uid: -1,
-      //   name: 'xxx.png',
-      //   status: 'done',
-      //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      // }
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
@@ -54,6 +48,7 @@ class Shelf_main extends React.Component {
     this.onClickAddImage = this.onClickAddImage.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
     this.onShelfMainChange = this.onShelfMainChange.bind(this);
+    this.onVisitorImage = this.onVisitorImage.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -92,7 +87,7 @@ class Shelf_main extends React.Component {
   }
 
   getPreSaveProduct(product) {
-    
+
     var preSaveProduct = this.state.preSaveProduct;
     for (var i = 0; i < preSaveProduct.length; i++) {
       if (preSaveProduct[i].Product_id == product.Product_id) {
@@ -111,21 +106,14 @@ class Shelf_main extends React.Component {
     Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.addChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
-    Store.addChangeListener(StoreEvent.SE_SHELFMAIN,this.onShelfMainChange);
-    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE,this.onVisitorImage);
+    Store.addChangeListener(StoreEvent.SE_SHELFMAIN, this.onShelfMainChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
 
     this.checkBrand();
     this.checkProductList();
-    
+
     var curDate = Store.getCurDate();
     Action.getShelfMain({
-      year: curDate.getFullYear(),
-      month: curDate.getMonth() + 1,
-      day: curDate.getDate(),
-      userid: localStorage.username,
-      store_id: this.props.userdata.store_id,
-    });
-    Action.getVisitorImage({
       year: curDate.getFullYear(),
       month: curDate.getMonth() + 1,
       day: curDate.getDate(),
@@ -137,8 +125,8 @@ class Shelf_main extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.removeChangeListener(StoreEvent.SE_SHELFMAIN_SUBMIT, this.onSumitSuccess);
-    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN,this.onShelfMainChange);
-    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE,this.onVisitorImage);
+    Store.removeChangeListener(StoreEvent.SE_SHELFMAIN, this.onShelfMainChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -167,7 +155,7 @@ class Shelf_main extends React.Component {
     })
   }
 
-  onShelfMainChange(preSaveProduct){
+  onShelfMainChange(preSaveProduct) {
     preSaveProduct.forEach((sp) => {
       sp.Product_id = sp.product_id;
     })
@@ -175,11 +163,33 @@ class Shelf_main extends React.Component {
     this.setState({
       preSaveProduct
     })
-    console.log('onShelfMainChange',preSaveProduct);
+    var curDate = Store.getCurDate();
+    Action.getVisitorImage({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
+    console.log('onShelfMainChange', preSaveProduct);
   }
 
-  onVisitorImage(imageList){
-    console.log(imageList);
+  onVisitorImage(imageList) {
+    var files = this.state.file;
+    for (var i = 0; i < imageList.length; i++) {
+      if (imageList[i].type == 0) {
+        var file = {};
+        if (!files.hasOwnProperty(imageList[i].brand_id)) {
+          files[imageList[i].brand_id] = [];
+        }
+        var response = { data: { uuid: imageList[i].filename } };
+        file.response = response;
+        file.imageUri = config.domain_name + "/upload/" + imageList[i].filename + ".jpg";
+        files[imageList[i].brand_id].push(file);
+      }
+    }
+    this.setState({ file: files });
+    console.log(files);
   }
 
   getProductDom(Brand_id) {
@@ -312,7 +322,7 @@ class Shelf_main extends React.Component {
           console.log("upload error target " + error.target);
         }
 
-        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+        var uri = encodeURI(config.domain_name + "/visitor/upload");
 
         var options = new FileUploadOptions();
         options.fileKey = "file";

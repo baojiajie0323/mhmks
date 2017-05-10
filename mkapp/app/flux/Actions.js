@@ -2,8 +2,7 @@
 import $ from 'jquery'
 import { message } from 'antd';
 
-//var _domain_name = 'http://116.246.2.202:6115';  //域名
-var _domain_name = '';  //域名
+var _domain_name = config.domain_name;  //域名
 
 var _debug = _domain_name == '';
 
@@ -502,19 +501,20 @@ var Action = {
     var context = this;
     data.command = 'getvisitorimage';
     $.ajax({
-      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {
         console.log('getVisitorImage:', response);
+        
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_VISITOR_IMAGE, response.data);
         } else {
           message.error('获取照片列表失败！' + response.msg);
         }
       })
-      .fail(function (xhr, textStatus, thrownError) {
-        message.error('与服务器建立连接失败');
+      .fail(function (xhr, textStatus, thrownError) {        
+        message.error('与服务器建立连接失败' + xhr.status);
         console.log('getVisitorImage fail');
       })
   },
@@ -542,6 +542,114 @@ var Action = {
           var response = '{"data":{},"result":"ok"}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_SHELFMAIN, rsp.data);
+        }
+      })
+  },
+  getShelfAway: function (data) {
+    var context = this;
+    data.command = 'getshelfaway';
+    console.log('send getshelfaway', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getShelfAway:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SHELFAWAY, response.data);
+          //message.success('提交主货架信息成功');
+        } else {
+          message.error('获取离架信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getShelfAway fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_SHELFAWAY, rsp.data);
+        }
+      })
+  },
+  getStock: function (data) {
+    var context = this;
+    data.command = 'getstock';
+    console.log('send getstock', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStock:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOCK, response.data);
+          //message.success('提交主货架信息成功');
+        } else {
+          message.error('获取库存信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStock fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STOCK, rsp.data);
+        }
+      })
+  },
+  getPromotion: function (data) {
+    var context = this;
+    data.command = 'getstorepromotion';
+    console.log('send getPromotion', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotion:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STORE_PROMOTION, response.data);
+          //message.success('提交主货架信息成功');
+        } else {
+          message.error('获取促销信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotion fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_STORE_PROMOTION, rsp.data);
+        }
+      })
+  },
+  getChat: function (data) {
+    var context = this;
+    data.command = 'getchat';
+    console.log('send getchat', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChat:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHAT, response.data);
+          //message.success('提交主货架信息成功');
+        } else {
+          message.error('获取洽谈信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChat fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_CHAT, rsp.data);
         }
       })
   },

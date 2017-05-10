@@ -413,6 +413,14 @@ module.exports = {
           });
         }];
 
+        tasks.push(function (callback) {
+          var sqlstring = _sql.delshelfmain;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              callback(err);
+            });
+        })
+
         for (var i = 0; i < product.length; i++) {
           let productInfo = product[i];
           tasks.push(function (callback) {
@@ -479,6 +487,14 @@ module.exports = {
             callback(err);
           });
         }];
+
+        tasks.push(function (callback) {
+          var sqlstring = _sql.delstock;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              callback(err);
+            });
+        })
 
         for (var i = 0; i < product.length; i++) {
           let productInfo = product[i];
@@ -549,6 +565,13 @@ module.exports = {
             callback(err);
           });
         }];
+        tasks.push(function (callback) {
+          var sqlstring = _sql.delshelfaway;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              callback(err);
+            });
+        })
 
         for (var i = 0; i < product.length; i++) {
           let productInfo = product[i];
@@ -662,6 +685,14 @@ module.exports = {
           });
         }];
 
+        tasks.push(function (callback) {
+          var sqlstring = _sql.delpromotion;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              callback(err);
+            });
+        })
+
         for (var i = 0; i < product.length; i++) {
           let productInfo = product[i];
           tasks.push(function (callback) {
@@ -767,6 +798,144 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getshelfmain;
+        connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getStock: function (req, res, next) {
+    console.log('visitorDao getStock');
+    var param = req.body;
+    if (!param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getstock;
+        connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getShelfaway: function (req, res, next) {
+    console.log('visitorDao getShelfaway', req.body);
+    var param = req.body;
+    if (!param.year || !param.month || !param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    var shelfaway = [];
+    var shelfawayCount = [];
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        // function数组，需要执行的任务列表，每个function都有一个参数callback函数并且要调用
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        tasks.push(function (callback) {
+          var sqlstring = _sql.getshelfaway;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              if (!err) {
+                shelfaway = result;
+              }
+              callback(err);
+            });
+        });
+        tasks.push(function (callback) {
+          var sqlstring = _sql.getshelfawaycount;
+          connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid],
+            function (err, result) {
+              if (!err) {
+                shelfawayCount = result;
+              }
+              callback(err);
+            });
+        });
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, { shelfaway: shelfaway, shelfawayCount: shelfawayCount }, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotion: function (req, res, next) {
+    console.log('visitorDao getPromotion');
+    var param = req.body;
+    if (!param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getstorepromotion;
+        connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },  
+  getChat: function (req, res, next) {
+    console.log('visitorDao getChat');
+    var param = req.body;
+    if (!param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getchat;
         connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {

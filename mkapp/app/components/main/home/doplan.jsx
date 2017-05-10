@@ -60,17 +60,19 @@ class DoPlan extends React.Component {
         context.setState({
           loading: true
         })
-        Action.sign({
-          userid: localStorage.username,
-          year: store.year,
-          month: store.month,
-          day: store.day,
-          store_id: store.store_id,
-          sign_type: signType,
-          lat: 1,
-          lon: 2
-        });
-        return;
+        if (config.debug) {
+          Action.sign({
+            userid: localStorage.username,
+            year: store.year,
+            month: store.month,
+            day: store.day,
+            store_id: store.store_id,
+            sign_type: signType,
+            lat: 1,
+            lon: 2
+          });
+          return;
+        }
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
             //onSuccees        
@@ -132,7 +134,7 @@ class DoPlan extends React.Component {
     //bSign = true;
     console.log('renderStepActions', store, bSign);
     var signin_distance = 0;
-    var pointStore = new BMap.Point(store.Gps_x,store.Gps_y);
+    var pointStore = new BMap.Point(store.Gps_x, store.Gps_y);
     if (store.signin_gps_x && store.signin_gps_y) {
       var pointSignin = new BMap.Point(store.signin_gps_x, store.signin_gps_y);
       signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
@@ -313,7 +315,7 @@ class DoPlan extends React.Component {
             </Spin>
           </div>
         </div>
-        <div id="allmap" style={{visibility:'hidden'}}>
+        <div id="allmap" style={{ visibility: 'hidden' }}>
         </div>
       </div>
     );

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import App from './components/app';
 import './index.css';
+import './components/config';
 import './flux/Store';
 import './flux/Actions';
 import './flux/event-const';

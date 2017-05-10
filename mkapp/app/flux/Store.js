@@ -310,6 +310,22 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_SHELFMAIN, action.value);
     }
       break;
+    case ActionEvent.AE_SHELFAWAY: {
+      Store.emit(StoreEvent.SE_SHELFAWAY, action.value);
+    }
+      break;
+    case ActionEvent.AE_STOCK: {
+      Store.emit(StoreEvent.SE_STOCK, action.value);
+    }
+      break;
+    case ActionEvent.AE_STORE_PROMOTION: {
+      Store.emit(StoreEvent.SE_STORE_PROMOTION, action.value);
+    }
+      break;
+    case ActionEvent.AE_CHAT: {
+      Store.emit(StoreEvent.SE_CHAT, action.value);
+    }
+      break;
     case ActionEvent.AE_VISITOR_IMAGE: {
       Store.emit(StoreEvent.SE_VISITOR_IMAGE, action.value);
     }

@@ -29,7 +29,8 @@ class PromotionDetail extends React.Component {
       file: {},
       previewVisible: false,
       previewImage: '',
-      open: false
+      open: false,
+      preSaveProduct: [],
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
@@ -48,8 +49,8 @@ class PromotionDetail extends React.Component {
 
     this.onClickAddImage = this.onClickAddImage.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
-
-    this.preSaveProduct = [];
+    this.onPromotionChange = this.onPromotionChange.bind(this);
+    this.onVisitorImage = this.onVisitorImage.bind(this);
 
     this.displayType = [{
       Display_id: 1,
@@ -65,9 +66,22 @@ class PromotionDetail extends React.Component {
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PROMOTION_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_STORE_PROMOTION, this.onPromotionChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
+    var curDate = Store.getCurDate();
+    Action.getPromotion({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store.store_id,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PROMOTION_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_STORE_PROMOTION, this.onPromotionChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
+
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'promotionview', this.props.userdata.store);
@@ -91,12 +105,83 @@ class PromotionDetail extends React.Component {
     this.setState({ open: false });
   }
 
+  onPromotionChange(preSaveProduct) {
+    console.log('onPromotionChange', preSaveProduct);
+    preSaveProduct.forEach((sp) => {
+      sp.Product_id = sp.product_id;
+      sp.display = sp.display_id;
+    })
+
+    this.setState({
+      preSaveProduct
+    })
+    var curDate = Store.getCurDate();
+    Action.getVisitorImage({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store.store_id,
+    });
+  }
+
+  onVisitorImage(imageList) {
+    var files = this.state.file;
+    for (var i = 0; i < imageList.length; i++) {
+      if (imageList[i].type == 3) {
+        var file = {};
+        if (!files.hasOwnProperty(imageList[i].product_id)) {
+          files[imageList[i].product_id] = [];
+        }
+        var response = { data: { uuid: imageList[i].filename } };
+        file.response = response;
+        file.imageUri = config.domain_name + "/upload/" + imageList[i].filename + ".jpg";
+        files[imageList[i].product_id].push(file);
+      }
+    }
+    this.setState({ file: files });
+    console.log(files);
+  }
+
+  getPreSaveDisplayid(product) {
+    console.log("getPreSaveDisplayid", this.state.preSaveProduct);
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].display;
+      }
+    }
+    return "";
+  }
+  getPreSaveDisplaypos(product) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].pos;
+      }
+    }
+    return "";
+  }
+  getPreSaveDisplaycount(product) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].count;
+      }
+    }
+    return "";
+  }
+
   onPosChange(Product_id, value) {
     console.log("onPosChange", value, Product_id);
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      var product = this.preSaveProduct[i];
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      var product = preSaveProduct[i];
       if (product.Product_id == Product_id) {
         product.pos = value;
+        this.setState({
+          preSaveProduct
+        })
         return;
       }
     }
@@ -104,15 +189,22 @@ class PromotionDetail extends React.Component {
       Product_id: Product_id,
       pos: value
     }
-    this.preSaveProduct.push(data);
+    preSaveProduct.push(data);
+    this.setState({
+      preSaveProduct
+    })
   }
 
   onCountChange(Product_id, value) {
     console.log("onCountChange", value, Product_id);
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      var product = this.preSaveProduct[i];
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      var product = preSaveProduct[i];
       if (product.Product_id == Product_id) {
         product.count = value;
+        this.setState({
+          preSaveProduct
+        })
         return;
       }
     }
@@ -120,14 +212,22 @@ class PromotionDetail extends React.Component {
       Product_id: Product_id,
       count: value
     }
-    this.preSaveProduct.push(data);
+    preSaveProduct.push(data);
+    this.setState({
+      preSaveProduct
+    })
   }
 
   onDisplayChange(Product_id, value) {
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      var product = this.preSaveProduct[i];
+    console.log("onDisplayChange", value, Product_id);
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      var product = preSaveProduct[i];
       if (product.Product_id == Product_id) {
         product.display = value;
+        this.setState({
+          preSaveProduct
+        })
         return;
       }
     }
@@ -135,7 +235,10 @@ class PromotionDetail extends React.Component {
       Product_id: Product_id,
       display: value
     }
-    this.preSaveProduct.push(data);
+    preSaveProduct.push(data);
+    this.setState({
+      preSaveProduct
+    })
   }
 
   handleUploadChange(file, product_id) {
@@ -280,7 +383,7 @@ class PromotionDetail extends React.Component {
           console.log("upload error target " + error.target);
         }
 
-        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+        var uri = encodeURI(config.domain_name + "/visitor/upload");
 
         var options = new FileUploadOptions();
         options.fileKey = "file";
@@ -350,6 +453,10 @@ class PromotionDetail extends React.Component {
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
+      var displayid = this.getPreSaveDisplayid(product);
+      var displaypos = this.getPreSaveDisplaypos(product);
+      var displaycount = this.getPreSaveDisplaycount(product);
+      console.log("displayid", displayid);
       productDom.push(<div className={styles.productcontent}>
         <Paper zDepth={1} className={styles.productPanel}>
           <div className={styles.titlebar}>
@@ -370,22 +477,22 @@ class PromotionDetail extends React.Component {
             <div className={styles.form}>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列方式</p>
-                <Select onChange={function (value) { context.onDisplayChange(product.Product_id, value) } }
+                <Select value={displayid.toString() } onChange={function (value) { context.onDisplayChange(product.Product_id, value) } }
                   placeholder="请选择" style={{ width: 100 }}>
                   {this.displayType.map((dp) => {
-                    return <Option value={dp.Display_id}>{dp.Display_name}</Option>
+                    return <Option value={dp.Display_id.toString() }>{dp.Display_name}</Option>
                   }) }
                 </Select>
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列位置</p>
-                <Input onChange={function (e) { context.onPosChange(product.Product_id, e.target.value) } } placeholder="请填写"
+                <Input value={displaypos} onChange={function (e) { context.onPosChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }}
                   />
               </div>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列数量</p>
-                <Input onChange={function (e) { context.onCountChange(product.Product_id, e.target.value) } } placeholder="请填写"
+                <Input value={displaycount} onChange={function (e) { context.onCountChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }} />
               </div>
             </div>
@@ -414,8 +521,8 @@ class PromotionDetail extends React.Component {
       image: [],
       confirm_user: '',
     }
-    console.log("preSaveProduct", this.preSaveProduct);
-    data.product = this.preSaveProduct.map((product) => {
+    console.log("preSaveProduct", this.state.preSaveProduct);
+    data.product = this.state.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
         count: product.count,
@@ -476,7 +583,7 @@ class PromotionDetail extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           {this.getPromotionDom() }
           {this.getProduct() }
         </div>

@@ -35,15 +35,9 @@ class Stock extends React.Component {
       product: Store.getProduct(this.props.userdata.store_id),
       previewVisible: false,
       previewImage: '',
-      file: {}
-      // {
-      //   uid: -1,
-      //   name: 'xxx.png',
-      //   status: 'done',
-      //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      // }
+      file: {},
+      preSaveProduct: [],
     };
-    this.preSaveProduct = [];
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
     this.handleUploadChange = this.handleUploadChange.bind(this);
@@ -53,6 +47,8 @@ class Stock extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.onClickAddImage = this.onClickAddImage.bind(this);
     this.removePhoto = this.removePhoto.bind(this);
+    this.onStockChange = this.onStockChange.bind(this);
+    this.onVisitorImage = this.onVisitorImage.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -74,37 +70,65 @@ class Stock extends React.Component {
   }
 
   addToPreSaveProduct(product) {
-    for (var i = 0; i < this.preSaveProduct.length; i++) {
-      if (this.preSaveProduct[i].Product_id == product.Product_id) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
         if (product.count == "") {
-          this.preSaveProduct.splice(i, 1);
+          preSaveProduct.splice(i, 1);
         } else {
-          this.preSaveProduct[i] = product;
+          preSaveProduct[i] = product;
         }
+        this.setState({ preSaveProduct });
         return true;
       }
     }
-    this.preSaveProduct.push(product);
+    preSaveProduct.push(product);
+    this.setState({ preSaveProduct });
+  }
+
+  getPreSaveProduct(product) {
+
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].count;
+      }
+    }
+    return "";
   }
 
   onTextChange(product, value) {
     product.count = value;
     this.addToPreSaveProduct(product);
-    console.log('onTextChange', this.preSaveProduct);
   }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.addChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.addChangeListener(StoreEvent.SE_STOCK_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_STOCK, this.onStockChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
+
 
     this.checkBrand();
     this.checkProductList();
+
+    var curDate = Store.getCurDate();
+    Action.getStock({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_BRAND, this.onBrandChange);
     Store.removeChangeListener(StoreEvent.SE_PRODUCT, this.onProductChange);
     Store.removeChangeListener(StoreEvent.SE_STOCK_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_STOCK, this.onStockChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImage);
+
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -133,11 +157,49 @@ class Stock extends React.Component {
     })
   }
 
+  onStockChange(preSaveProduct) {
+    preSaveProduct.forEach((sp) => {
+      sp.Product_id = sp.product_id;
+    })
+
+    this.setState({
+      preSaveProduct
+    })
+    var curDate = Store.getCurDate();
+    Action.getVisitorImage({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
+    console.log('onStockChange', preSaveProduct);
+  }
+
+  onVisitorImage(imageList) {
+    var files = this.state.file;
+    for (var i = 0; i < imageList.length; i++) {
+      if (imageList[i].type == 2) {
+        var file = {};
+        if (!files.hasOwnProperty(imageList[i].brand_id)) {
+          files[imageList[i].brand_id] = [];
+        }
+        var response = { data: { uuid: imageList[i].filename } };
+        file.response = response;
+        file.imageUri = config.domain_name + "/upload/" + imageList[i].filename + ".jpg";
+        files[imageList[i].brand_id].push(file);
+      }
+    }
+    this.setState({ file: files });
+    console.log(files);
+  }
+
   getProductDom(Brand_id) {
     var productList = [];
     var context = this;
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
+      var product_count = this.getPreSaveProduct(product);
       if (product.Brand_id == Brand_id) {
         productList.push(<ListItem
           leftAvatar={<Avatar
@@ -148,6 +210,7 @@ class Stock extends React.Component {
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
           rightIconButton={<TextField
+            value={product_count}
             onChange={function (e, value) { context.onTextChange(product, value) } }
             style={{ width: '80px' }}
             hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
@@ -181,7 +244,7 @@ class Stock extends React.Component {
       product: [],
       image: [],
     }
-    data.product = this.preSaveProduct.map((product) => {
+    data.product = this.state.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
         count: product.count
@@ -233,7 +296,7 @@ class Stock extends React.Component {
         // Do something with the FileEntry object, like write to it, upload it, etc.
         // writeFile(fileEntry, imgUri);
         console.log("got file: " + fileEntry.fullPath);
-        
+
         message.info("正在上传照片");
         var fileURL = fileEntry.fullPath;
         function win(r) {
@@ -260,7 +323,7 @@ class Stock extends React.Component {
           console.log("upload error target " + error.target);
         }
 
-        var uri = encodeURI("http://116.246.2.202:6115/visitor/upload");
+        var uri = encodeURI(config.domain_name + "/visitor/upload");
 
         var options = new FileUploadOptions();
         options.fileKey = "file";
@@ -391,7 +454,7 @@ class Stock extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion defaultActiveKey={['0']}>
             {this.getPanel() }

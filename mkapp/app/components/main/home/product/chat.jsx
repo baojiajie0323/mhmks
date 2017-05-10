@@ -20,7 +20,10 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
+      open: false,
+      storeUser: "",
+      chatContent: "",
+      chatResult: "",
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
@@ -30,29 +33,43 @@ class Chat extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
-
-    this.storeUser = "";
-    this.chatContent = "";
-    this.chatResult = "";
+    this.onChatChange = this.onChatChange.bind(this);
   }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.addChangeListener(StoreEvent.SE_CHAT, this.onChatChange);
+    
+    var curDate = Store.getCurDate();
+    Action.getChat({
+      year: curDate.getFullYear(),
+      month: curDate.getMonth() + 1,
+      day: curDate.getDate(),
+      userid: localStorage.username,
+      store_id: this.props.userdata.store_id,
+    });
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
+    Store.removeChangeListener(StoreEvent.SE_CHAT, this.onChatChange);
   }
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   onStoreUser(e, value) {
-    this.storeUser = value;
+    this.setState({
+      storeUser: value
+    })
   }
   onChatContent(e, value) {
-    this.chatContent = value;
+    this.setState({
+      chatContent: value
+    })
   }
   onChatResult(e, value) {
-    this.chatResult = value;
+    this.setState({
+      chatResult: value
+    })
   }
   onSumitSuccess() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
@@ -63,6 +80,15 @@ class Chat extends React.Component {
   handleClose() {
     this.setState({ open: false });
   }
+  onChatChange(data) {
+    if (data.length > 0) {
+      this.setState({
+        storeUser: data[0].storeuser,
+        chatContent: data[0].chatcontent,
+        chatResult: data[0].chatresult,
+      })
+    }
+  }
 
   handleSubmit() {
     var curDate = Store.getCurDate();
@@ -72,9 +98,9 @@ class Chat extends React.Component {
       year: curDate.getFullYear(),
       month: curDate.getMonth() + 1,
       day: curDate.getDate(),
-      storeUser: this.storeUser,
-      chatContent: this.chatContent,
-      chatResult: this.chatResult
+      storeUser: this.state.storeUser,
+      chatContent: this.state.chatContent,
+      chatResult: this.state.chatResult
     }
     Action.submitChat(data);
   }
@@ -102,10 +128,11 @@ class Chat extends React.Component {
           iconElementRight={<FlatButton label="提交" />}
           />
 
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <div style={{ padding: '0 18px' }}>
             <TextField
+              value={this.state.storeUser}
               hintText="请输入"
               floatingLabelText="门店对接人"
               fullWidth={true}
@@ -113,6 +140,7 @@ class Chat extends React.Component {
               onChange={this.onStoreUser}
               />
             <TextField
+            value={this.state.chatContent}
               hintText="请输入"
               floatingLabelText="洽谈内容"
               multiLine={true}
@@ -122,6 +150,7 @@ class Chat extends React.Component {
               rows={3}
               />
             <TextField
+            value={this.state.chatResult}
               hintText="请输入"
               floatingLabelText="洽谈结果"
               multiLine={true}
