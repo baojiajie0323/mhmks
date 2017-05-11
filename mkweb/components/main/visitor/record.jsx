@@ -160,8 +160,8 @@ class Record extends React.Component {
 
     var photoDom = [];
     for(var i = 0; i< photoList.length; i++){
-      var imageInfo = photoList[i];
-      var imagepath = 'url("'+ '../upload/' + imageInfo.filename +'.jpg")';
+      let imageInfo = photoList[i];
+      let imagepath = 'url("'+ '../upload/' + imageInfo.filename +'.jpg")';
       photoDom.push(<div style={{backgroundImage:imagepath}} onClick={function () { context.onClickPhoto(imagepath) } } className={styles.photo}></div>);
     }
     return photoDom;

@@ -85,6 +85,7 @@ class Promotion extends React.Component {
     for (var i = 0; i < promotion.length; i++) {
       AddToPmList(promotion[i]);
     }
+    pmList.sort(function(a,b){return a.Pro_name > b.Pro_name});
     var nowDate = new Date();
     var pmDom = [];
     for (var nIndex = 0; nIndex < pmList.length; nIndex++) {

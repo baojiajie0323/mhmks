@@ -20,6 +20,9 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import config from '../../../config';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -37,6 +40,7 @@ class Shelf_main extends React.Component {
       previewImage: '',
       file: {},
       preSaveProduct: [],
+      menuopen: false,
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
@@ -49,6 +53,8 @@ class Shelf_main extends React.Component {
     this.removePhoto = this.removePhoto.bind(this);
     this.onShelfMainChange = this.onShelfMainChange.bind(this);
     this.onVisitorImage = this.onVisitorImage.bind(this);
+    this.handleMenuClose = this.handleMenuClose.bind(this);
+    this.onTouchMenu = this.onTouchMenu.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -67,6 +73,12 @@ class Shelf_main extends React.Component {
 
     files[brand_id] = file.fileList;
     this.setState({ file: files })
+  }
+
+  handleMenuClose() {
+    this.setState({
+      menuopen: false,
+    });
   }
 
   addToPreSaveProduct(product) {
@@ -258,7 +270,8 @@ class Shelf_main extends React.Component {
           filename: file.response.data.uuid,
           brand_id: brand,
           display_id: 0,
-          type: 0
+          type: 0,
+          category:file.category
         })
       }
     }
@@ -284,7 +297,33 @@ class Shelf_main extends React.Component {
     return options;
   }
 
-  onClickAddImage(brand_id) {
+  onClickAddImage(event, brand_id) {
+    console.log(event);
+    this.brand_id = brand_id;
+    if (brand_id == "MH" || brand_id == "QX") {
+      this.setState({
+        menuopen: true,
+        anchorEl: event.currentTarget,
+      });
+    } else {
+      this._onClickAddImage();
+    }
+  }
+  onTouchMenu(event,menuItem,index){
+    var category = 0;
+    if(this.brand_id == "MH"){
+      category = index + 1;
+    }else{
+      category = index + 4; 
+    }
+    this.setState({
+      menuopen: false,
+    })
+    this._onClickAddImage(category)
+  }
+
+  _onClickAddImage(category) {
+    var brand_id = this.brand_id;
     var srcType = Camera.PictureSourceType.CAMERA;
     var options = this.setOptions(srcType);
     var context = this;
@@ -308,7 +347,8 @@ class Shelf_main extends React.Component {
           }
           files[brand_id].push({
             response: response,
-            imageUri: imageUri
+            imageUri: imageUri,
+            category: category
           });
           context.setState({ file: files })
           //console.log("Code = " + r.responseCode);
@@ -387,14 +427,14 @@ class Shelf_main extends React.Component {
       //console.log("getPanel", file, fileList, brand.Brand_id)
 
       const uploadButton = (
-        <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(brand.Brand_id) } }>
-          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
+        <div className={styles.addPhotoButton} onClick={function (e) { context.onClickAddImage(e, brand.Brand_id) } }>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+      panelList.push(<Panel header={brand.Brand_name} key={i.toString()}>
         <div className={styles.photocontent}>
-          {this.getPhotolist(fileList) }
+          {this.getPhotolist(fileList)}
           {fileList.length >= 5 ? null : uploadButton}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
@@ -404,7 +444,7 @@ class Shelf_main extends React.Component {
           <p>产品/货号</p>
           <p>排面数</p>
         </Paper>
-        {this.getProductDom(brand.Brand_id) }
+        {this.getProductDom(brand.Brand_id)}
       </Panel>
       )
     }
@@ -441,9 +481,29 @@ class Shelf_main extends React.Component {
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion>
-            {this.getPanel() }
+            {this.getPanel()}
           </Collapse>
         </div>
+        <Popover
+          open={this.state.menuopen}
+          anchorEl={this.state.anchorEl}
+          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+          onRequestClose={this.handleMenuClose}
+          >
+          <Menu onItemTouchTap={this.onTouchMenu}>
+            {this.brand_id == "MH" ?
+              [
+                <MenuItem primaryText="手套类" />,
+                <MenuItem primaryText="抹布类" />,
+                <MenuItem primaryText="摩擦类" />
+              ] :
+              [
+                <MenuItem primaryText="一次性品类" />,
+                <MenuItem primaryText="垃圾袋类" />
+              ]}
+          </Menu>
+        </Popover>
         <Dialog
           actions={actions}
           modal={false}

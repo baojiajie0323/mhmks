@@ -56,12 +56,12 @@ class PromotionDetail extends React.Component {
       Display_id: 1,
       Display_name: '堆箱'
     }, {
-        Display_id: 2,
-        Display_name: '叠篮'
-      }, {
-        Display_id: 3,
-        Display_name: '端架'
-      }]
+      Display_id: 2,
+      Display_name: '叠篮'
+    }, {
+      Display_id: 3,
+      Display_name: '端架'
+    }]
   }
 
   componentDidMount() {
@@ -301,13 +301,13 @@ class PromotionDetail extends React.Component {
     if (diff > pm.Day) {
       diff = pm.Day;
     }
-    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ') }>
-      <div className={titleStyle.join(' ') }>
+    return <Paper zDepth={1} className={[styles.promotionPanel, styles.nomargin].join(' ')}>
+      <div className={titleStyle.join(' ')}>
         <p>{pm.Pro_name}</p>
         <p>{pm.promotion_name}</p>
       </div>
       <div className={styles.content}>
-        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd") }</p>
+        <p>{"日期：" + proBeginDate.Format("yyyy-MM-dd ") + "至" + proEndDate.Format(" yyyy-MM-dd")}</p>
         <p>{proState}</p>
       </div>
       <div className={styles.footbar}>
@@ -449,7 +449,7 @@ class PromotionDetail extends React.Component {
 
       const uploadButton = (
         <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(product.Product_id) } }>
-          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
@@ -473,15 +473,20 @@ class PromotionDetail extends React.Component {
               <p>未知</p>
             </div>
           </div>
+          <div className={styles.photocontent}>
+            {this.getPhotolist(fileList)}
+            {fileList.length >= 5 ? null : uploadButton}
+
+          </div>
           <div className={styles.usercontent}>
             <div className={styles.form}>
               <div className={styles.formcontent}>
                 <p style={{ color: orange500 }}>陈列方式</p>
-                <Select value={displayid.toString() } onChange={function (value) { context.onDisplayChange(product.Product_id, value) } }
+                <Select value={displayid.toString()} onChange={function (value) { context.onDisplayChange(product.Product_id, value) } }
                   placeholder="请选择" style={{ width: 100 }}>
                   {this.displayType.map((dp) => {
-                    return <Option value={dp.Display_id.toString() }>{dp.Display_name}</Option>
-                  }) }
+                    return <Option value={dp.Display_id.toString()}>{dp.Display_name}</Option>
+                  })}
                 </Select>
               </div>
               <div className={styles.formcontent}>
@@ -494,12 +499,6 @@ class PromotionDetail extends React.Component {
                 <p style={{ color: orange500 }}>陈列数量</p>
                 <Input value={displaycount} onChange={function (e) { context.onCountChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }} />
-              </div>
-            </div>
-            <div className={styles.uploadcontent}>
-              <div className={styles.photocontent}>
-                {this.getPhotolist(fileList) }
-                {fileList.length >= 1 ? null : uploadButton}
               </div>
             </div>
           </div>
@@ -584,8 +583,8 @@ class PromotionDetail extends React.Component {
           />
 
         <div style={{ top: config.contentTop }} className={styles.content}>
-          {this.getPromotionDom() }
-          {this.getProduct() }
+          {this.getPromotionDom()}
+          {this.getProduct()}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
