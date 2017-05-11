@@ -197,6 +197,7 @@ class Shelf_main extends React.Component {
         var response = { data: { uuid: imageList[i].filename } };
         file.response = response;
         file.imageUri = config.domain_name + "/upload/" + imageList[i].filename + ".jpg";
+        file.category = imageList[i].category;
         files[imageList[i].brand_id].push(file);
       }
     }
