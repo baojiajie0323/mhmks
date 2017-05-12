@@ -335,9 +335,9 @@ class User extends React.Component {
             <span className={styles.formstar}>*</span>
           </div>
           <div className={styles.formcontent}>
-            <span className={styles.formtitle}>角色</span>
+            <span className={styles.formtitle}>岗位</span>
             <div className={styles.form}>
-              <Select style={{ width: '100%' }} value={this.state.rolevalue} placeholder="请选择角色" onChange={this.handleRoleChange}>
+              <Select style={{ width: '100%' }} value={this.state.rolevalue} placeholder="请选择岗位" onChange={this.handleRoleChange}>
                 {this.getRoleOption()}
               </Select>
             </div>

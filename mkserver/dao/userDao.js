@@ -334,7 +334,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.addrole;
-        connection.query(sqlstring, [param.name, param.permisson], function (err, result) {
+        connection.query(sqlstring, [param.name,param.level,param.permisson], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -365,7 +365,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.modrole;
-        connection.query(sqlstring, [param.name, param.permisson, param.id], function (err, result) {
+        connection.query(sqlstring, [param.name, param.level, param.permisson, param.id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
