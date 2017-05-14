@@ -120,14 +120,14 @@ class Role extends React.Component {
   getTableColumn() {
     var context = this;
     return [{
-      title: '岗位职等',
-      dataIndex: 'level',
-      key: 'level',
-    },{
       title: '岗位名称',
       dataIndex: 'name',
       key: 'name',
     }, {
+      title: '岗位职等',
+      dataIndex: 'level',
+      key: 'level',
+    },{
       title: '操作',
       key: 'operate',
       render: function (text, record) {

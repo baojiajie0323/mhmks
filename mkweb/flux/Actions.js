@@ -29,9 +29,9 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('login fail');
         if (_debug) {
-          var response = '{"data":{},"result":"ok"}';
+          var response = '{"code":0,"data":[{"id":6,"username":"001837","realname":"卢琴","password":"123456","phone":"","email":"luqin@myhome-sh.com","depart":12,"role":6,"enableweb":1,"enableapp":1,"check":0,"departname":"沪浙区","userid":6}]}';
           var rsp = JSON.parse(response);
-          context.dispatch(ActionEvent.AE_LOGIN, rsp.data);
+          context.dispatch(ActionEvent.AE_LOGIN, rsp.data[0]);
         }
       })
   },
@@ -847,6 +847,55 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('getVisitorImage fail');
+      })
+  },
+
+  getSubsidy: function () {
+    var context = this;
+    var data = {
+      command: 'getsubsidy'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getSubsidy:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SUBSIDY, response.data);
+        } else {
+          message.error('获取补贴失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getSubsidy fail');
+        if (_debug) {
+          var response = '{"data":[{"id":1,"name":"系统管理员"},{"id":2,"name":"大区主管"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_SUBSIDY, rsp.data);
+        }
+      })
+  },
+  updateSubsidy: function (data) {
+    var context = this;
+    data.command = 'updatesubsidy';
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('updateSubsidy:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SUBSIDY_UPDATE, response.data);
+          message.success('更新补贴报销标准成功！');
+        } else {
+          message.error('更新补贴报销标准失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('updateSubsidy fail');
       })
   },
   dispatch: function (funname, value) {

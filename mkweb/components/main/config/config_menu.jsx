@@ -21,7 +21,7 @@ class ConfigMenu extends React.Component {
     this.setState({
       current: e.key,
     });
-    if(this.props.clickcb){
+    if (this.props.clickcb) {
       this.props.clickcb(e.key);
     }
   }
@@ -30,14 +30,17 @@ class ConfigMenu extends React.Component {
       <div className={styles.contentmenu}>
         <Menu onClick={this.handleClick}
           style={{ width: 210 }}
-          defaultOpenKeys={['user_sub','path_sub']}
+          defaultOpenKeys={['user_sub','standard_sub', 'path_sub']}
           selectedKeys={[this.state.current]}
           mode="inline"
           >
           <SubMenu key="user_sub" title={<span>用户管理</span>}>
-              <Menu.Item key="user">用户</Menu.Item>
-              <Menu.Item key="depart">部门</Menu.Item>
-              <Menu.Item key="role">岗位</Menu.Item>
+            <Menu.Item key="user">用户</Menu.Item>
+            <Menu.Item key="depart">部门</Menu.Item>
+            <Menu.Item key="role">岗位</Menu.Item>
+          </SubMenu>
+          <SubMenu key="standard_sub" title={<span>标准管理</span>}>
+            <Menu.Item key="subsidy">补贴报销</Menu.Item>
           </SubMenu>
           <SubMenu key="path_sub" title={<span>路线管理</span>}>
             <Menu.Item key="path">路线</Menu.Item>

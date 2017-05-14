@@ -14,8 +14,6 @@ module.exports = {
       return;
     }
 
-    _dao.log(param.username,"登录");
-
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -29,8 +27,10 @@ module.exports = {
         connection.query(sqlstring, [param.username, param.password], function (err, result) {
           console.log('dbresult', result);
           if (result.length > 0) {
+            _dao.log(param.username,"登录成功[登录终端类型：" + param.type + "]");
             jsonWrite(res, result, dbcode.SUCCESS);
           } else {
+            _dao.log(param.username,"登录[登录终端类型：" + param.type + " 登录密码："+ param.password +"]");
             jsonWrite(res, {}, dbcode.LOGIN_FAIL);
           }
           connection.release();
@@ -396,6 +396,64 @@ module.exports = {
       } else {
         var sqlstring = _sql.delrole;
         connection.query(sqlstring, [param.id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getSubsidy: function (req, res, next) {
+    console.log('userDao getSubsidy');
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getsubsidy;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  updateSubsidy: function (req, res, next) {
+    console.log('userDao updateSubsidy');
+    var param = req.body;
+    if (param.role_id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    _dao.log("后台","更新补贴报销标准");
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.updatesubsidy;
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += connection.escape(param.value);
+        sqlstring += " on DUPLICATE KEY UPDATE ";
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += connection.escape(param.value);
+        connection.query(sqlstring, [param.role_id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

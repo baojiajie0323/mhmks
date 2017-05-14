@@ -63,6 +63,8 @@ var sqlmap = {
   getshelfawaycount: 'select * from visitor_shelfaway_count where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getstorepromotion: 'select * from visitor_promotion where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getchat: 'select * from visitor_chat where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
+  getsubsidy: 'select a.*,b.* from role a left join subsidy b on (a.id = b.role_id)',
+  updatesubsidy: 'insert into subsidy set role_id = ?, ',
 };
 
 module.exports = sqlmap;

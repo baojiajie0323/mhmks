@@ -33,6 +33,8 @@ var _signlist = [];
 var _visitorplan = [];
 var _visitorimage = [];
 
+var _subsidy = [];
+
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
     _loginSuccess = loginsuccess;
@@ -40,7 +42,7 @@ var Store = assign({}, EventEmitter.prototype, {
       _userInfo = userInfo;
       if (_userInfo.enableapp) {
         _curview = 'schdule';
-      }else{
+      } else {
         _curview = 'visitor';
       }
     } else {
@@ -410,6 +412,25 @@ var Store = assign({}, EventEmitter.prototype, {
     return _visitorimage;
   },
 
+  setSubsidy(ss) {
+    _subsidy = ss;
+    this.emitChange(StoreEvent.SE_SUBSIDY);
+  },
+
+  updateSubsidy(ss) {
+    for(var i = 0; i < _subsidy.length; i++){
+      if(_subsidy[i].id == ss.role_id){
+        _subsidy[i][ss.key] = ss.value;
+        break;
+      }
+    }
+    this.emitChange(StoreEvent.SE_SUBSIDY);
+  },
+
+  getSubsidy() {
+    return _subsidy;
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -574,6 +595,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_VISITOR_IMAGE: {
       Store.setVisitorImage(action.value);
+    }
+      break;
+    case ActionEvent.AE_SUBSIDY: {
+      Store.setSubsidy(action.value);
+    }
+      break;
+    case ActionEvent.AE_SUBSIDY_UPDATE: {
+      Store.updateSubsidy(action.value);
     }
       break;
 

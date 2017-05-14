@@ -55,6 +55,12 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "delrole") {
     console.log('delrole');
     userDao.delRole(req, res, next);
+  } else if (req.body.command == "getsubsidy") {
+    console.log('getsubsidy');
+    userDao.getSubsidy(req, res, next);
+  } else if (req.body.command == "updatesubsidy") {
+    console.log('updatesubsidy');
+    userDao.updateSubsidy(req, res, next);
   }
 });
 

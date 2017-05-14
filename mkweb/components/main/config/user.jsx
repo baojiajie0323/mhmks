@@ -202,7 +202,7 @@ class User extends React.Component {
         return (<span>{depart ? depart.name : ''}</span>)
       }
     }, {
-      title: '角色',
+      title: '岗位',
       dataIndex: 'role',
       key: 'role',
       render: function (text, record) {

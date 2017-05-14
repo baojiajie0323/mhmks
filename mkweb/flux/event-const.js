@@ -41,6 +41,9 @@ var eventMap = {
     AE_SIGNLIST: null,
     AE_VISITOR_PLANLIST:null,
     AE_VISITOR_IMAGE:null,
+
+    AE_SUBSIDY: null,
+    AE_SUBSIDY_UPDATE: null,
   }),
 
   StoreEvent: keyMirror({
@@ -73,6 +76,8 @@ var eventMap = {
     SE_SIGNLIST: null,
     SE_VISITOR_PLANLIST:null,
     SE_VISITOR_IMAGE:null,
+
+    SE_SUBSIDY: null,
   })
 };
 

@@ -4,6 +4,7 @@ import User from './user';
 import Depart from './department';
 import Role from './role';
 import Path from './path';
+import Subsidy from './subsidy';
 import styles from './config.less';
 
 class Config extends React.Component {
@@ -32,7 +33,9 @@ class Config extends React.Component {
       return <Role />
     } else if(this.state.contentkey == 'path') {
       return <Path />
-    }
+    } else if(this.state.contentkey == 'subsidy') {
+      return <Subsidy />
+    } 
     return <User />;
   }
   render() {
