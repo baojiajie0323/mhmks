@@ -30,13 +30,15 @@ class VisitorMenu extends React.Component {
       <div className={styles.contentmenu}>
         <Menu onClick={this.handleClick}
           style={{ width: 210 }}
-          defaultOpenKeys={['work_sub','info_sub']}
+          defaultOpenKeys={['work_sub', 'plan_sub']}
           selectedKeys={[this.state.current]}
           mode="inline"
           >
           <SubMenu key="work_sub" title={<span>工作记录</span>}>
             <Menu.Item key="record">拜访</Menu.Item>
-            <Menu.Item key="plan">报到</Menu.Item>
+          </SubMenu>
+          <SubMenu key="plan_sub" title={<span>工作计划</span>}>
+            <Menu.Item key="storesum">门店拜访频次</Menu.Item>
           </SubMenu>
           {/*<SubMenu key="info_sub" title={<span>信息采集</span>}>
             <Menu.Item key="mainstore">主货架陈列</Menu.Item>

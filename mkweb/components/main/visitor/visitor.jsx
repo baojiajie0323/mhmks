@@ -1,7 +1,7 @@
 import React from 'react';
 import VisitorMenu from './visitor_menu';
-import Plan from './plan';
 import Record from './record';
+import StoreSum from './storesum';
 import styles from './visitor.less';
 
 class Visitor extends React.Component {
@@ -24,8 +24,8 @@ class Visitor extends React.Component {
   getContent() {
     if (this.state.contentkey == 'record') {
       return <Record />;
-    } else if (this.state.contentkey == 'plan') {
-      return <Plan />;
+    } else if (this.state.contentkey == 'storesum') {
+      return <StoreSum />;
     }
     return <Record />;
   }

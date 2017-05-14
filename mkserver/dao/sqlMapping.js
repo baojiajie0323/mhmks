@@ -15,7 +15,7 @@ var sqlmap = {
   getpromotiontype: 'select * from promotion_type order by promotion_type',
   getpromotioncount: 'select count(*) from promotion',
   getpromotion: 'select promotion.*,Store_name,Product_name from promotion left join store on (promotion.Store_id = store.Store_id ) left join product on (promotion.Product_id = product.Product_id) left join promotion_type on (promotion.Promotion_type = promotion_type.Promotion_type) limit ?,10',
-  getuser: 'select * from user',
+  getuser: 'select a.*,b.name departname,b.userid from user a left join department b on (a.depart = b.id)',
   adduser: 'insert into user(username,password,realname,phone,email,depart,role,enableweb,enableapp) values(?,?,?,?,?,?,?,?,?)',
   moduser: 'update user set username = ? , password = ?, realname = ?, phone = ?, email = ?, depart = ?, role = ?, enableweb = ?, enableapp = ? where id = ?',
   deluser: 'delete from user where id = ?',
