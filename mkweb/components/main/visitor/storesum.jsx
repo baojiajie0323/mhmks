@@ -15,8 +15,11 @@ function getMonthWeek(today) {
   a + b 的和在除以7 就是当天是当前月份的第几周 
   */
   var date = new Date(a, parseInt(b) - 1, c), w = date.getDay(), d = date.getDate();
+  if (w == 0) {
+    w = 7;
+  }
   return Math.ceil(
-    (d + 6 - w) / 7
+    (d + 7 - w) / 7
   );
 };
 
@@ -90,6 +93,11 @@ class StoreSum extends React.Component {
       return;
     }
 
+    this.setState({
+      storeBasic: [],
+      visitorPlan: [],
+    })
+
     var plandata = {
       userid: userInfo.username,
       begindate: this.queryData[0],
@@ -123,76 +131,6 @@ class StoreSum extends React.Component {
     this.userid = e.target.value;
   }
 
-  getTableColumn() {
-    var context = this;
-    return [{
-      title: '大区',
-      dataIndex: 'Region_name',
-      key: 'Region_name',
-      width: 56,
-    }, {
-      title: '代表',
-      dataIndex: 'realname',
-      key: 'realname',
-      width: 50,
-    }, {
-      title: '门店名称',
-      dataIndex: 'Store_name',
-      key: 'Store_name',
-      width: 130,
-    }, {
-      title: '门店地址',
-      dataIndex: 'Address',
-      key: 'Address',
-      width: 240
-    }, {
-      title: '类型',
-      dataIndex: 'Level',
-      key: 'Level',
-      width: 50,
-    }, {
-      title: '路线',
-      dataIndex: 'Path_name',
-      key: 'Path_name',
-      width: 70,
-    }, {
-      //   title: '时间',
-      //   dataIndex: 'visitor_date',
-      //   key: 'visitor_date',
-      //   width: 56,
-      // }, {
-      title: '总次数',
-      dataIndex: 'visitor_count',
-      key: 'visitor_count',
-      width: 50,
-    }, {
-      title: '第一周',
-      dataIndex: 'visitor_count1',
-      key: 'visitor_count1',
-      width: 50,
-    }, {
-      title: '第二周',
-      dataIndex: 'visitor_count2',
-      key: 'visitor_count2',
-      width: 50,
-    }, {
-      title: '第三周',
-      dataIndex: 'visitor_count3',
-      key: 'visitor_count3',
-      width: 50,
-    }, {
-      title: '第四周',
-      dataIndex: 'visitor_count4',
-      key: 'visitor_count4',
-      width: 50,
-    }, {
-      title: '第五周',
-      dataIndex: 'visitor_count5',
-      key: 'visitor_count5',
-      width: 50,
-    }];
-  }
-
   getStoreBasic(store_id) {
     for (var i = 0; i < this.state.storeBasic.length; i++) {
       if (this.state.storeBasic[i].Store_id == store_id) {
@@ -202,11 +140,82 @@ class StoreSum extends React.Component {
     return null;
   }
 
+  getTableColumn() {
+    var context = this;
+    return [{
+      title: '大区',
+      dataIndex: 'Region_name',
+      key: 'Region_name',
+      width: 80,
+    }, {
+        title: '代表',
+        dataIndex: 'realname',
+        key: 'realname',
+        width: 50,
+      }, {
+        title: '门店名称',
+        dataIndex: 'Store_name',
+        key: 'Store_name',
+        width: 130,
+      }, {
+        title: '门店地址',
+        dataIndex: 'Address',
+        key: 'Address',
+        width: 240
+      }, {
+        title: '类型',
+        dataIndex: 'Level',
+        key: 'Level',
+        width: 50,
+      }, {
+        title: '路线',
+        dataIndex: 'Path_name',
+        key: 'Path_name',
+        width: 70,
+      }, {
+        //   title: '时间',
+        //   dataIndex: 'visitor_date',
+        //   key: 'visitor_date',
+        //   width: 56,
+        // }, {
+        title: '总次数',
+        dataIndex: 'visitor_count',
+        key: 'visitor_count',
+        width: 50,
+      }, {
+        title: '第一周',
+        dataIndex: 'visitor_count1',
+        key: 'visitor_count1',
+        width: 50,
+      }, {
+        title: '第二周',
+        dataIndex: 'visitor_count2',
+        key: 'visitor_count2',
+        width: 50,
+      }, {
+        title: '第三周',
+        dataIndex: 'visitor_count3',
+        key: 'visitor_count3',
+        width: 50,
+      }, {
+        title: '第四周',
+        dataIndex: 'visitor_count4',
+        key: 'visitor_count4',
+        width: 50,
+      }, {
+        title: '第五周',
+        dataIndex: 'visitor_count5',
+        key: 'visitor_count5',
+        width: 50,
+      }];
+  }
+
+
   getTableData() {
     var tableData = [];
     for (var i = 0; i < this.state.visitorPlan.length; i++) {
       var plan = this.state.visitorPlan[i];
-      if(plan.plan_type != 1){
+      if (plan.plan_type != 1) {
         continue;
       }
       var storeInfo = this.getStoreBasic(plan.store_id);
@@ -247,45 +256,49 @@ class StoreSum extends React.Component {
 
       }
     }
+    var storelist = this.state.storeBasic;
+    console.log("storeBasic_1", storelist);
+    storelist.sort(function (a, b) {
+      var counta = a.visitor_count || -1;
+      var counta1 = a.visitor_count1 || -1;
+      var counta2 = a.visitor_count2 || -1;
+      var counta3 = a.visitor_count3 || -1;
+      var counta4 = a.visitor_count4 || -1;
+      var counta5 = a.visitor_count5 || -1;
 
-    this.state.storeBasic.sort(function(a,b){
-      var counta = a.visitor_count || 0;
-      var counta1 = a.visitor_count1 || 0;
-      var counta2 = a.visitor_count2 || 0;
-      var counta3 = a.visitor_count3 || 0;
-      var counta4 = a.visitor_count4 || 0;
-      var counta5 = a.visitor_count5 || 0;
+      var countb = b.visitor_count || -1;
+      var countb1 = b.visitor_count1 || -1;
+      var countb2 = b.visitor_count2 || -1;
+      var countb3 = b.visitor_count3 || -1;
+      var countb4 = b.visitor_count4 || -1;
+      var countb5 = b.visitor_count5 || -1;
 
-      var countb = b.visitor_count || 0;
-      var countb1 = b.visitor_count1 || 0;
-      var countb2 = b.visitor_count2 || 0;
-      var countb3 = b.visitor_count3 || 0;
-      var countb4 = b.visitor_count4 || 0;
-      var countb5 = b.visitor_count5 || 0;
+      //return counta < countb;
 
-      if(counta == countb){
-        if(counta1 == countb1){
-          if(counta2 == countb2){
-            if(counta3 == countb3){
-              if(counta4 == countb4){
-                return counta5 < countb5;
-              }else{
-                return counta4 < countb4
+      if (counta == countb) {
+        if (counta1 == countb1) {
+          if (counta2 == countb2) {
+            if (counta3 == countb3) {
+              if (counta4 == countb4) {
+                return countb5 - counta5 || storelist.indexOf(b) - storelist.indexOf(a);
+              } else {
+                return countb4 - counta4
               }
-            }else{
-              return counta3 < countb3;
+            } else {
+              return countb3 - counta3;
             }
-          }else{
-            return counta2 < countb2
+          } else {
+            return countb2 - counta2
           }
-        }else{
-          return counta1 < countb1;
+        } else {
+          return countb1 - counta1;
         }
-      }else{
-        return counta < countb;
+      } else {
+        return countb - counta;
       }
-    })
-    return this.state.storeBasic;
+    });
+    console.log("storeBasic_2", storelist);
+    return storelist;
   }
   render() {
     var context = this;
@@ -304,7 +317,7 @@ class StoreSum extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
-          <Table pagination={false} scroll={{ y: scrolly }} size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
+          <Table pagination={false} scroll={{ y: scrolly }} size="small" columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
       </div>
     );

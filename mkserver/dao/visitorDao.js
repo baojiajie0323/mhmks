@@ -51,7 +51,7 @@ module.exports = {
   getPath_app: function (req, res, next) {
     console.log('visitorDao getPath');
     var param = req.body;
-    if (!param.userid) {
+    if (!param.userid && !param.depart) {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
@@ -61,7 +61,17 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getpath_app;
-        connection.query(sqlstring, [param.userid], function (err, result) {
+        if(param.userid){
+          sqlstring += "(select store_id from store where user_id = ";
+          sqlstring += connection.escape(param.userid);
+          sqlstring += ") order by a.path_seq,a.Path_id" 
+        }else if(param.depart){
+          sqlstring += "(select store_id from store where user_id in (SELECT username from user where depart = ";
+          sqlstring += connection.escape(param.depart);
+          sqlstring += ")) order by a.path_seq,a.Path_id"           
+        }
+        
+        connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -198,6 +208,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
+    _dao.log(param.userid,"更新计划");
     var sumInfo = JSON.parse(param.sumInfo);
     var modifyData = JSON.parse(param.modifyData);
 
@@ -255,7 +266,7 @@ module.exports = {
           }
         }
         tasks.push(function (callback) {
-          connection.query('select * from plan where userid = ? and year = ? and month = ?',
+          connection.query('select a.*,b.Path_name Path_Name from plan a left join path b on (a.path_id = b.Path_id) where userid = ? and year = ? and month = ?',
             [param.userid, param.year, param.month], function (err, result) {
               //console.log('dbresult', err, result);
               plan = result;
