@@ -41,6 +41,7 @@ class ConfigMenu extends React.Component {
           </SubMenu>
           <SubMenu key="standard_sub" title={<span>标准管理</span>}>
             <Menu.Item key="subsidy">补贴报销</Menu.Item>
+            <Menu.Item key="routecost">路线费用</Menu.Item>
           </SubMenu>
           <SubMenu key="path_sub" title={<span>路线管理</span>}>
             <Menu.Item key="path">路线</Menu.Item>

@@ -5,6 +5,7 @@ import Depart from './department';
 import Role from './role';
 import Path from './path';
 import Subsidy from './subsidy';
+import Routecost from './routecost';
 import styles from './config.less';
 
 class Config extends React.Component {
@@ -35,6 +36,8 @@ class Config extends React.Component {
       return <Path />
     } else if(this.state.contentkey == 'subsidy') {
       return <Subsidy />
+    } else if(this.state.contentkey == 'routecost') {
+      return <Routecost />
     } 
     return <User />;
   }

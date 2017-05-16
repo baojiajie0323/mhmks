@@ -1,9 +1,10 @@
 import React from 'react';
-import { Table, Button, Icon, Modal, Input, Tree, Popconfirm, message, Select } from 'antd';
+import { Table, Button, Radio, Icon, Modal, Input, Popconfirm, message, Select } from 'antd';
 import styles from './config.less';
-const TreeNode = Tree.TreeNode;
+const RadioButton = Radio.Button;
+const RadioGroup = Radio.Group;
 
-class Subsidy extends React.Component {
+class Routecost extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,14 +67,14 @@ class Subsidy extends React.Component {
       key: this._cate,
       value: this.state.modalvalue,
     }
-    console.log("updateSubsidy",data);
+    console.log("updateSubsidy", data);
     Action.updateSubsidy(data);
   }
   handleCancel() {
     this.setState({ visible: false })
   }
 
-  onClickText(text,record,cate) {
+  onClickText(text, record, cate) {
     this._curRecord = record;
     this._cate = cate;
     this.setState({
@@ -110,7 +111,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record, 'jt1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'jt1') } } >{text}</p>
             }
           }, {
             title: <p style={{ textAlign: 'center' }}>500公里以下</p>,
@@ -122,7 +123,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record, 'jt2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'jt2') } } >{text}</p>
             }
           },
         ]
@@ -139,7 +140,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'gzdcf1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdcf1') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(16,142,233)', textAlign: 'center' }}>二线城市 (元/日) </p>,
@@ -151,7 +152,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record, 'gzdcf2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdcf2') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(16,142,233)', textAlign: 'center' }}>三线城市 (元/日) </p>,
@@ -163,7 +164,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'gzdcf3') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdcf3') } } >{text}</p>
             }
           }
         ]
@@ -180,7 +181,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'gzdjt1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdjt1') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(16,142,233)', textAlign: 'center' }}>二线城市 (元/日) </p>,
@@ -192,7 +193,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'gzdjt2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdjt2') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(16,142,233)', textAlign: 'center' }}>三线城市 (元/日) </p>,
@@ -204,7 +205,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'gzdjt3') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'gzdjt3') } } >{text}</p>
             }
           }
         ]
@@ -221,7 +222,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'cczs1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'cczs1') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>二线城市 (元/日) </p>,
@@ -233,7 +234,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record, 'cczs2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'cczs2') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>三线城市 (元/日) </p>,
@@ -245,7 +246,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record,'cczs3') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'cczs3') } } >{text}</p>
             }
           }
         ]
@@ -262,7 +263,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text,record, 'ccjt1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccjt1') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>二线城市 (元/日) </p>,
@@ -274,7 +275,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'ccjt2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccjt2') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>三线城市 (元/日) </p>,
@@ -286,7 +287,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'ccjt3') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccjt3') } } >{text}</p>
             }
           }
         ]
@@ -303,7 +304,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'ccbt1') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccbt1') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>二线城市 (元/日) </p>,
@@ -315,7 +316,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'ccbt2') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccbt2') } } >{text}</p>
             }
           }, {
             title: <p style={{ color: 'rgb(62, 134, 85)', textAlign: 'center' }}>三线城市 (元/日) </p>,
@@ -327,7 +328,7 @@ class Subsidy extends React.Component {
                 text = "无数据";
               }
               return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-                onClick={function () { context.onClickText(text, record,'ccbt3') } } >{text}</p>
+                onClick={function () { context.onClickText(text, record, 'ccbt3') } } >{text}</p>
             }
           }
         ]
@@ -342,10 +343,24 @@ class Subsidy extends React.Component {
   render() {
     return (
       <div className={styles.configcontent}>
-        <p className={styles.configtitle}>补贴报销标准</p>
+        <p className={styles.configtitle}>路线费用标准</p>
+        <div className={styles.editcontent}>
+          <Select defaultValue="lucy" style={{ width: 120 }}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>Disabled</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
+          <Select defaultValue="lucy" style={{ width: 120 }}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="disabled" disabled>Disabled</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
+        </div>
         <div className={styles.configtable}>
           <Table size="small" loading={this.state.loading} bordered scroll={{ x: 1500 }}
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -362,4 +377,4 @@ class Subsidy extends React.Component {
   }
 }
 
-export default Subsidy;
+export default Routecost;
