@@ -14,25 +14,13 @@ class Routecost extends React.Component {
       modaltitle: "",
       modalvalue: '',
     };
-    this.subsidyInfo = {
-      jt1: { name: '交通工具 500公里以上(含)' },
-      jt2: { name: '交通工具 500公里以下' },
-      gzdcf1: { name: '工作地餐费 一线城市' },
-      gzdcf2: { name: '工作地餐费 二线城市' },
-      gzdcf3: { name: '工作地餐费 三线城市' },
-      gzdjt1: { name: '工作地交通 一线城市' },
-      gzdjt2: { name: '工作地交通 二线城市' },
-      gzdjt3: { name: '工作地交通 三线城市' },
-      cczs1: { name: '出差住宿 一线城市' },
-      cczs2: { name: '出差住宿 二线城市' },
-      cczs3: { name: '出差住宿 三线城市' },
-      ccjt1: { name: '出差交通 一线城市' },
-      ccjt2: { name: '出差交通 二线城市' },
-      ccjt3: { name: '出差交通 三线城市' },
-      ccbt1: { name: '出差补贴 一线城市' },
-      ccbt2: { name: '出差补贴 二线城市' },
-      ccbt3: { name: '出差补贴 三线城市' },
-    }
+    this.routetype = [{
+      type:1,
+      name:"所辖门店"
+    },{
+      type:2,
+      name:"稽核门店"
+    }];
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
@@ -345,7 +333,7 @@ class Routecost extends React.Component {
       <div className={styles.configcontent}>
         <p className={styles.configtitle}>路线费用标准</p>
         <div className={styles.editcontent}>
-          <Select defaultValue="lucy" style={{ width: 120 }}>
+          <Select defaultValue="" style={{ width: 120,marginRight:'20px'}}>
             <Option value="jack">Jack</Option>
             <Option value="lucy">Lucy</Option>
             <Option value="disabled" disabled>Disabled</Option>

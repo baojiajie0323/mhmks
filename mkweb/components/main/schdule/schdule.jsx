@@ -420,6 +420,7 @@ class Schdule extends React.Component {
       >
       <Select
         style={{ width: '100%' }}
+        size="small"
         allowClear
         value={path_id}
         notFoundContent='没有路线'
