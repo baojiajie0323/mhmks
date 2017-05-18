@@ -442,7 +442,7 @@ var Action = {
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT, response.data);
         } else {
-          message.error('获取部门失败！' + response.msg);
+          message.error('获取区域失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {
@@ -466,9 +466,9 @@ var Action = {
         console.log('addDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_ADD, response.data);
-          message.success('创建部门成功！');
+          message.success('创建区域成功！');
         } else {
-          message.error('创建部门失败！' + response.msg);
+          message.error('创建区域失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {
@@ -487,9 +487,9 @@ var Action = {
         console.log('modDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_MOD, response.data);
-          message.success('修改部门成功！');
+          message.success('修改区域成功！');
         } else {
-          message.error('修改部门失败！' + response.msg);
+          message.error('修改区域失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {
@@ -508,9 +508,9 @@ var Action = {
         console.log('delDepartment:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_DEPARTMENT_DEL, response.data);
-          message.success('删除部门成功！');
+          message.success('删除区域成功！');
         } else {
-          message.error('删除部门失败！' + response.msg);
+          message.error('删除区域失败！' + response.msg);
         }
       })
       .fail(function (xhr, textStatus, thrownError) {

@@ -36,6 +36,7 @@ class Subsidy extends React.Component {
 
     this.onModalvalueChange = this.onModalvalueChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
+    this.noValue = " ";
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
@@ -74,6 +75,9 @@ class Subsidy extends React.Component {
   onClickText(text, record, cate) {
     this._curRecord = record;
     this._cate = cate;
+    if(text == this.noValue){
+      text = "";
+    }
     this.setState({
       visible: true,
       modaltitle: this.subsidyInfo[cate].name,
@@ -105,9 +109,9 @@ class Subsidy extends React.Component {
             width: 120,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'jt1') } } >{text}</p>
             }
           }, {
@@ -117,9 +121,9 @@ class Subsidy extends React.Component {
             width: 180,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'jt2') } } >{text}</p>
             }
           },
@@ -134,9 +138,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdcf1') } } >{text}</p>
             }
           }, {
@@ -146,9 +150,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdcf2') } } >{text}</p>
             }
           }, {
@@ -158,9 +162,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdcf3') } } >{text}</p>
             }
           }
@@ -169,15 +173,15 @@ class Subsidy extends React.Component {
         title: <p>工作地交通费标准</p>,
         children: [
           {
-            title: <p style={{ textAlign: 'center' }}>一线城市 (元/日) </p>,
+            title: <p style={{ whiteSpace:'pre-wrap', textAlign: 'center' }}>一线城市 (元/日) </p>,
             dataIndex: 'gzdjt1',
             key: 'gzdjt1',
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdjt1') } } >{text}</p>
             }
           }, {
@@ -187,9 +191,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdjt2') } } >{text}</p>
             }
           }, {
@@ -199,9 +203,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'gzdjt3') } } >{text}</p>
             }
           }
@@ -216,9 +220,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccjt1') } } >{text}</p>
             }
           }, {
@@ -228,9 +232,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccjt2') } } >{text}</p>
             }
           }, {
@@ -240,9 +244,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccjt3') } } >{text}</p>
             }
           }
@@ -257,9 +261,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccbt1') } } >{text}</p>
             }
           }, {
@@ -269,9 +273,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccbt2') } } >{text}</p>
             }
           }, {
@@ -281,9 +285,9 @@ class Subsidy extends React.Component {
             width: 65,
             render: function (text, record) {
               if (!text) {
-                text = "无数据";
+                text = context.noValue;
               }
-              return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+              return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
                 onClick={function () { context.onClickText(text, record, 'ccbt3') } } >{text}</p>
             }
           }
@@ -295,9 +299,9 @@ class Subsidy extends React.Component {
         width: 60,
         render: function (text, record) {
           if (!text) {
-            text = "无数据";
+            text = context.noValue;
           }
-          return <p style={{ textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
             onClick={function () { context.onClickText(text, record, 'txf') } } >{text}</p>
         }
       }];
@@ -322,7 +326,7 @@ class Subsidy extends React.Component {
           <div className={styles.formcontent}>
             <span className={styles.formtitle}>标准</span>
             <div className={styles.form}>
-              <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入标准" />
+              <Input value={this.state.modalvalue} autoFocus="autoFocus" onChange={this.onModalvalueChange} placeholder="请输入标准" />
             </div>
           </div>
         </Modal>

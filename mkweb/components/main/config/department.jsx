@@ -79,7 +79,7 @@ class Department extends React.Component {
   onClickEdit() {
     console.log(this.selectedkeys);
     if (this.selectedkeys == '0') {
-      message.info('请选择部门');
+      message.info('请选择区域');
       return;
     }
     var depart = Store.getDepartmentbyId(this.selectedkeys);
@@ -117,14 +117,14 @@ class Department extends React.Component {
   }
   onClickDeleteDepartment() {
     if (this.selectedkeys == '0') {
-      message.info('请选择部门');
+      message.info('请选择区域');
       return;
     }
     var data = {
       id: this.selectedkeys
     }
     confirm({
-      title: '确定要删除该部门吗？',
+      title: '确定要删除该区域吗？',
       onOk() {
         Action.delDepartment(data);
       },
@@ -190,11 +190,11 @@ class Department extends React.Component {
   render() {
     return (
       <div className={styles.configcontent}>
-        <p className={styles.configtitle}>部门</p>
+        <p className={styles.configtitle}>区域</p>
         <div className={styles.editcontent}>
-          <Button style={{ marginRight: '5px' }} onClick={this.onClickAdd} type="primary" icon="plus">创建子部门</Button>
-          <Button style={{ marginRight: '5px' }} onClick={this.onClickEdit} type="ghost" icon="edit">编辑部门</Button>
-          <Button style={{ marginRight: '5px' }} onClick={this.onClickDeleteDepartment} type="ghost" icon="delete">删除部门</Button>
+          <Button style={{ marginRight: '5px' }} onClick={this.onClickAdd} type="primary" icon="plus">创建子区域</Button>
+          <Button style={{ marginRight: '5px' }} onClick={this.onClickEdit} type="ghost" icon="edit">编辑区域</Button>
+          <Button style={{ marginRight: '5px' }} onClick={this.onClickDeleteDepartment} type="ghost" icon="delete">删除区域</Button>
         </div>
         <div className={styles.configtable}>
           {this.state.department.length > 0 ? <Tree onSelect={this.onSelect} defaultSelectedKeys='0' defaultExpandAll={true} >
@@ -202,7 +202,7 @@ class Department extends React.Component {
           </Tree> : null
           }
         </div>
-        <Modal width={420} title={this.modaltype == 'add' ? '创建部门' : '修改部门'} visible={this.state.visible}
+        <Modal width={420} title={this.modaltype == 'add' ? '创建区域' : '修改区域'} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
           >
           <div className={styles.formcontent}>
@@ -220,14 +220,14 @@ class Department extends React.Component {
               </Select>
             </div>
           </div>
-          <div className={[styles.formcontent,styles.formmultiselcontent].join(' ')}>
+          {/*<div className={[styles.formcontent,styles.formmultiselcontent].join(' ')}>
             <span className={styles.formtitle}>路线</span>
             <div className={styles.form}>
               <Select style={{ width: '100%' }} multiple placeholder="请选择路线" value={this.state.pathvalue} onChange={this.handlePathChange}>
                 {this.getPathOption() }
               </Select>
             </div>
-          </div>
+          </div>*/}
         </Modal>
       </div>
     );

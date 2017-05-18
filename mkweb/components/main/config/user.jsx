@@ -194,7 +194,7 @@ class User extends React.Component {
       dataIndex: 'realname',
       key: 'realname',
     }, {
-      title: '部门',
+      title: '区域',
       dataIndex: 'depart',
       key: 'depart',
       render: function (text, record) {
@@ -326,9 +326,9 @@ class User extends React.Component {
             </div>
           </div>
           <div className={styles.formcontent}>
-            <span className={styles.formtitle}>部门</span>
+            <span className={styles.formtitle}>区域</span>
             <div className={styles.form}>
-              <Select style={{ width: '100%' }} value={this.state.departvalue} placeholder="请选择部门" onChange={this.handleDepartChange}>
+              <Select style={{ width: '100%' }} value={this.state.departvalue} placeholder="请选择区域" onChange={this.handleDepartChange}>
                 {this.getDepartOption()}
               </Select>
             </div>

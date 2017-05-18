@@ -36,7 +36,7 @@ class ConfigMenu extends React.Component {
           >
           <SubMenu key="user_sub" title={<span>用户管理</span>}>
             <Menu.Item key="user">用户</Menu.Item>
-            <Menu.Item key="depart">部门</Menu.Item>
+            <Menu.Item key="depart">区域</Menu.Item>
             <Menu.Item key="role">岗位</Menu.Item>
           </SubMenu>
           <SubMenu key="standard_sub" title={<span>标准管理</span>}>
