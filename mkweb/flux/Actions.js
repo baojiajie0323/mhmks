@@ -898,6 +898,33 @@ var Action = {
         console.log('updateSubsidy fail');
       })
   },
+  getRouteBasic: function () {
+    var context = this;
+    var data = {
+      command: 'getroutebasic'
+    }
+    $.ajax({
+      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getRouteBasic:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROUTEBASIC, response.data);
+        } else {
+          message.error('获取路线基础失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getRouteBasic fail');
+        if (_debug) {
+          var response = '{"data":[{"id":1,"name":"系统管理员"},{"id":2,"name":"大区主管"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_ROUTEBASIC, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

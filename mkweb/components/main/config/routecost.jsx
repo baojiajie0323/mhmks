@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Radio, Icon, Modal, Input, Popconfirm, message, Select, DatePicker  } from 'antd';
+import { Table, Button, Radio, Icon, Modal, Input, Popconfirm, message, Select, DatePicker } from 'antd';
 import styles from './config.less';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -16,18 +16,23 @@ class Routecost extends React.Component {
       modalvalue: '',
       department: Store.getDepartment(),
       monthDate: moment(),
+      user: Store.getUser(),
+      routeBasic: []
     };
     this.routetype = [{
       type: 1,
       name: "所辖门店"
     }, {
-        type: 2,
-        name: "稽核门店"
-      }];
+      type: 2,
+      name: "稽核门店"
+    }];
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
     this.onDepartnameChange = this.onDepartnameChange.bind(this);
+    this.onRouteTypeChange = this.onRouteTypeChange.bind(this);
+    this.onDepartChange = this.onDepartChange.bind(this);
+    this.onUserChange = this.onUserChange.bind(this);
 
     this.onModalvalueChange = this.onModalvalueChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
@@ -38,16 +43,31 @@ class Routecost extends React.Component {
 
     this.userid = "";
     this.path = "";
+    this.routetype = 1;
+    this.depart = 0;
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
+    Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+
+    Action.getUser();
     Action.getDepartment();
     Action.getSubsidy();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
+    Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
+  }
+  onUserChange() {
+    this.setState({ user: Store.getUser() })
+  }
+  onRouteTypeChange(value) {
+    this.routetype = value;
+  }
+  onDepartChange(value) {
+    this.depart = value;
   }
 
   onMonthChange(date, dateString) {
@@ -63,14 +83,38 @@ class Routecost extends React.Component {
   onPathTextChange(e) {
     this.path = e.target.value;
   }
+
+  checkUserId() {
+    var userlist = this.state.user;
+    for (var i = 0; i < userlist.length; i++) {
+      var userInfo = userlist[i];
+      if (userInfo.username == this.userid || userInfo.realname == this.userid) {
+        return userInfo;
+      }
+    }
+    return null;
+  }
+
   onClickQuery() {
-    // var data = {
-    //   userid: this.userid == "" ? "0" : this.userid,
-    //   begindate: this.queryData[0],
-    //   enddate: this.queryData[1],
-    // };
-    // console.log(data);
-    // Action.getVisitorPlan(data);
+    var userInfo = this.checkUserId();
+    if (this.userid != "" && !userInfo) {
+      message.info("工号或姓名错误，请重新输入");
+      return;
+    }
+
+    var data = {
+      path: this.path,
+    };
+
+    if (userInfo.userid == userInfo.id) {
+      //用户为区域主管
+      data.depart = userInfo.depart;
+    } else {
+      data.userid = userInfo.username;
+    }
+
+    console.log(data);
+    Action.getRouteBasic(data);
   }
 
   onSubsidyChange() {
@@ -283,41 +327,41 @@ class Routecost extends React.Component {
   }
   getTableData() {
     return [{
-      departname:'苏皖区',
-      realname:'李春香',
-      rolename:'销售代表',
-      Path_name:'合肥9-1',
-      Store_name:'家乐福合肥肥西名邦店',
-      Level:'A',
-      Province:'安徽省',
-      City:'合肥市',
-      Area:'肥西县',
-      City_lev:'1级',
-      Address:'安徽省合肥市肥西县巢湖路与站前路交叉口名邦广场',
-      nature:'室内拜访',
-      gzdjt:'40',
-      gzdcf:'20',
-      txf:'20',
-      routedes:'合肥-肥西-合肥',
-      jtgj:'高铁',
-      jtbc:'D5653',
-      starttime:'9:20',
+      departname: '苏皖区',
+      realname: '李春香',
+      rolename: '销售代表',
+      Path_name: '合肥9-1',
+      Store_name: '家乐福合肥肥西名邦店',
+      Level: 'A',
+      Province: '安徽省',
+      City: '合肥市',
+      Area: '肥西县',
+      City_lev: '1级',
+      Address: '安徽省合肥市肥西县巢湖路与站前路交叉口名邦广场',
+      nature: '室内拜访',
+      gzdjt: '40',
+      gzdcf: '20',
+      txf: '20',
+      routedes: '合肥-肥西-合肥',
+      jtgj: '高铁',
+      jtbc: 'D5653',
+      starttime: '9:20',
       arrivetime: '11:20',
-      cc_city_level:'1级',
-      ctjtf:'80',
-      ccjt:'20',
-      ccbt:'15',
-      cczs:'200',
-      hotelname:'锦江之星（蚌埠高铁站胜利路店）',
-      hoteladdress:'蚌埠市蚌山区 胜利东路1200号，近蚌埠电视塔附近',
-      hotelphone:'0552-3838777',
+      cc_city_level: '1级',
+      ctjtf: '80',
+      ccjt: '20',
+      ccbt: '15',
+      cczs: '200',
+      hotelname: '锦江之星（蚌埠高铁站胜利路店）',
+      hoteladdress: '蚌埠市蚌山区 胜利东路1200号，近蚌埠电视塔附近',
+      hotelphone: '0552-3838777',
     }];
     this.state.subsidy.forEach((sa, i) => {
       sa.key = i.toString();
     })
     return this.state.subsidy;
   }
-  rowClassName(record,index){
+  rowClassName(record, index) {
     return styles.table_row;
   }
   render() {
@@ -326,22 +370,22 @@ class Routecost extends React.Component {
         <p className={styles.configtitle}>路线费用标准</p>
         <div className={styles.editcontent}>
           <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} placeholder="Select month" />
-          <Select defaultValue={1} style={{ width: 120, margin: '0 10px' }}>
+          <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this.routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            }) }
+            })}
           </Select>
-          <Select defaultValue={0} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption() }
+          <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
+            {this.getDepartOption()}
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered  pagination={false} scroll={{ x: 1900 }} 
+          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1900 }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}

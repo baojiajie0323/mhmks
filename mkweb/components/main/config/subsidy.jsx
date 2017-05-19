@@ -293,7 +293,7 @@ class Subsidy extends React.Component {
           }
         ]
       }, {
-        title: <p>通讯费 (元/月)</p>,
+        title: <p>通讯费 (元/日)</p>,
         dataIndex: 'txf',
         key: 'txf',
         width: 60,
