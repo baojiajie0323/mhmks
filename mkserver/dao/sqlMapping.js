@@ -3,7 +3,7 @@ var sqlmap = {
   login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
   login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
-  getstorebasic: 'SELECT store.*, System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) INNER JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username)',
+  getstorebasic: 'SELECT store.*, System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) left JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username)',
   getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
   getstoredisplay: 'select * from store_display',
   getproduct: 'select * from product',
