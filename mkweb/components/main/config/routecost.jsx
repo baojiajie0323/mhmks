@@ -23,9 +23,9 @@ class Routecost extends React.Component {
       type: 1,
       name: "所辖门店"
     }, {
-      type: 2,
-      name: "稽核门店"
-    }];
+        type: 2,
+        name: "稽核门店"
+      }];
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
@@ -50,6 +50,7 @@ class Routecost extends React.Component {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.addChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
 
     Action.getUser();
     Action.getDepartment();
@@ -59,6 +60,7 @@ class Routecost extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.removeChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
   }
   onUserChange() {
     this.setState({ user: Store.getUser() })
@@ -69,7 +71,6 @@ class Routecost extends React.Component {
   onDepartChange(value) {
     this.depart = value;
   }
-
   onMonthChange(date, dateString) {
     this.setState({
       monthDate: date
@@ -84,6 +85,12 @@ class Routecost extends React.Component {
     this.path = e.target.value;
   }
 
+  onRouteBasicChange(routeBasic) {
+    this.setState({
+      routeBasic
+    })
+  }
+
   checkUserId() {
     var userlist = this.state.user;
     for (var i = 0; i < userlist.length; i++) {
@@ -96,15 +103,27 @@ class Routecost extends React.Component {
   }
 
   onClickQuery() {
-    var userInfo = this.checkUserId();
-    if (this.userid != "" && !userInfo) {
-      message.info("工号或姓名错误，请重新输入");
-      return;
+    // 查询基础路线     
+    if (this.userid != "") {
+      var userInfo = this.checkUserId();
+      if (!userInfo) {
+        message.info("工号或姓名错误，请重新输入");
+        return;
+      }
+      if (this.depart != 0 && userInfo.depart != this.depart) {
+        message.info("员工不在该区域下，请重新选择");
+        return;
+      }
+      if (this.routetype == 2 && userInfo.userid != userInfo.id){
+        message.info("员工不是大区主管，没有稽核路线");
+        return;
+      }
     }
 
     var data = {
       path: this.path,
     };
+    
 
     if (userInfo.userid == userInfo.id) {
       //用户为区域主管
@@ -112,9 +131,12 @@ class Routecost extends React.Component {
     } else {
       data.userid = userInfo.username;
     }
-
     console.log(data);
     Action.getRouteBasic(data);
+    if (this.routetype == 1) { //所辖路线
+
+
+    }
   }
 
   onSubsidyChange() {
@@ -373,10 +395,10 @@ class Routecost extends React.Component {
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this.routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            })}
+            }) }
           </Select>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption()}
+            {this.getDepartOption() }
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
@@ -385,7 +407,7 @@ class Routecost extends React.Component {
         <div className={styles.configtable}>
           <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1900 }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}

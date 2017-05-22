@@ -79,6 +79,7 @@ var eventMap = {
     SE_VISITOR_IMAGE:null,
 
     SE_SUBSIDY: null,
+    SE_ROUTEBASIC: null,
   })
 };
 
