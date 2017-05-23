@@ -14,7 +14,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
-import { message, Spin, Modal, Button} from 'antd';
+import { message, Spin, Modal, Button } from 'antd';
 import { List, ListItem } from 'material-ui/List';
 
 const confirm = Modal.confirm;
@@ -73,36 +73,71 @@ class DoPlan extends React.Component {
           });
           return;
         }
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            //onSuccees        
-            var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
 
-            var translateCallback = function (data) {
-              if (data.status === 0) {
-                Action.sign({
-                  userid: localStorage.username,
-                  year: store.year,
-                  month: store.month,
-                  day: store.day,
-                  store_id: store.store_id,
-                  sign_type: signType,
-                  lat: data.points[0].lat,
-                  lon: data.points[0].lng
-                });
-              }
+        //ANDROID 定位
+        if (config.platform == "android") {
+          baidu_location.getCurrentPosition(function (data) {
+            if (data.locType == 61 || data.locType == 161) {
+              //定位成功
+              Action.sign({
+                userid: localStorage.username,
+                year: store.year,
+                month: store.month,
+                day: store.day,
+                store_id: store.store_id,
+                sign_type: signType,
+                lat: data.latitude,
+                lon: data.lontitude
+              });
+            } else {
+              message.error(data.describe);
+              context.setState({
+                loading: false
+              })
             }
+          }, function (data) {
+            //定位失败
+            message.error("定位失败");
+            context.setState({
+              loading: false
+            })
+          });
+        } else {
+          //IOS 定位
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              //onSuccees        
+              var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
 
-            var convertor = new BMap.Convertor();
-            var pointArr = [];
-            pointArr.push(point);
-            convertor.translate(pointArr, 1, 5, translateCallback);
+              var translateCallback = function (data) {
+                if (data.status === 0) {
+                  Action.sign({
+                    userid: localStorage.username,
+                    year: store.year,
+                    month: store.month,
+                    day: store.day,
+                    store_id: store.store_id,
+                    sign_type: signType,
+                    lat: data.points[0].lat,
+                    lon: data.points[0].lng
+                  });
+                }
+              }
 
-          }, function (error) {
-            //onError
-            message.error('定位失败' + error.message);
-          }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
-        } else { message.error("没有开启定位权限！") }
+              var convertor = new BMap.Convertor();
+              var pointArr = [];
+              pointArr.push(point);
+              convertor.translate(pointArr, 1, 5, translateCallback);
+
+            }, function (error) {
+              //onError
+              message.error('定位失败' + error.message);
+              context.setState({
+                loading: false
+              })
+            }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
+          } else { message.error("没有开启定位权限！") }
+        }
       },
       onCancel() {
         console.log('Cancel');
@@ -147,28 +182,28 @@ class DoPlan extends React.Component {
             color: '#ef6b1e',
             fontSize: '20px'
           }}>{signin_distance}</span>米</p>,
-            <List>
-              <ListItem
-                primaryText="主货架陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickShelfMain(store) } }
-                />
-              <ListItem
-                primaryText="离架陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickShelfAway(store) } }
-                />
-              <ListItem
-                primaryText="促销陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickPromotion(store) } }
-                />
-              <ListItem
-                primaryText="库存采集"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickStock(store) } }
-                />
-              {/*<ListItem
+          <List>
+            <ListItem
+              primaryText="主货架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickShelfMain(store) } }
+              />
+            <ListItem
+              primaryText="离架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickShelfAway(store) } }
+              />
+            <ListItem
+              primaryText="促销陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickPromotion(store) } }
+              />
+            <ListItem
+              primaryText="库存采集"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickStock(store) } }
+              />
+            {/*<ListItem
               primaryText="异常库存管理"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
@@ -178,19 +213,19 @@ class DoPlan extends React.Component {
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />*/}
-              <ListItem
-                primaryText="洽谈记录"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickChat(store) } }
-                />
-            </List>,
-            <RaisedButton
-              label="签退"
-              secondary={true}
-              onTouchTap={function () {
-                context.handleSign(store, 'signout');
-              } }
-              />] :
+            <ListItem
+              primaryText="洽谈记录"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickChat(store) } }
+              />
+          </List>,
+          <RaisedButton
+            label="签退"
+            secondary={true}
+            onTouchTap={function () {
+              context.handleSign(store, 'signout');
+            } }
+            />] :
           <RaisedButton
             label={'签到'}
             primary={true}
@@ -226,7 +261,11 @@ class DoPlan extends React.Component {
         }
       }
     }
-
+    if (_plan.length <= 0) {
+      message.error("没有找到相应的计划");
+    } else if (storelist.length <= 0) {
+      message.error("没有找到相应的门店" + path_id + "_" + store_id);
+    }
     this.setState({
       storelist: storelist
     })
@@ -268,9 +307,9 @@ class DoPlan extends React.Component {
         finishCount++;
       }
       return <Step completed={store.isfinish}>
-        <StepButton onTouchTap={() => this.setState({ stepIndex: index }) }>{store.Store_name}</StepButton>
+        <StepButton onTouchTap={() => this.setState({ stepIndex: index })}>{store.Store_name}</StepButton>
         <StepContent>
-          {this.renderStepActions(store, index) }
+          {this.renderStepActions(store, index)}
         </StepContent>
       </Step>
     });
@@ -311,7 +350,7 @@ class DoPlan extends React.Component {
 
             <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>
               <Subheader>{planname}</Subheader>
-              {this.getStep() }
+              {this.getStep()}
             </Spin>
           </div>
         </div>
