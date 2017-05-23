@@ -19,7 +19,7 @@ class Routecost extends React.Component {
       user: Store.getUser(),
       routeBasic: []
     };
-    this.routetype = [{
+    this._routetype = [{
       type: 1,
       name: "所辖门店"
     }, {
@@ -33,6 +33,7 @@ class Routecost extends React.Component {
     this.onRouteTypeChange = this.onRouteTypeChange.bind(this);
     this.onDepartChange = this.onDepartChange.bind(this);
     this.onUserChange = this.onUserChange.bind(this);
+    this.onRouteBasicChange = this.onRouteBasicChange.bind(this);
 
     this.onModalvalueChange = this.onModalvalueChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
@@ -103,9 +104,9 @@ class Routecost extends React.Component {
   }
 
   onClickQuery() {
+    var userInfo = this.checkUserId();
     // 查询基础路线     
     if (this.userid != "") {
-      var userInfo = this.checkUserId();
       if (!userInfo) {
         message.info("工号或姓名错误，请重新输入");
         return;
@@ -114,29 +115,37 @@ class Routecost extends React.Component {
         message.info("员工不在该区域下，请重新选择");
         return;
       }
-      if (this.routetype == 2 && userInfo.userid != userInfo.id){
+      if (this.routetype == 2 && userInfo.userid != userInfo.id) {
         message.info("员工不是大区主管，没有稽核路线");
         return;
       }
     }
 
+    if (this.userid == "" && this.depart == 0 && this.path == "") {
+      message.info("请选择条件进行查询");
+      return;
+    }
+
     var data = {
       path: this.path,
     };
-    
 
-    if (userInfo.userid == userInfo.id) {
-      //用户为区域主管
-      data.depart = userInfo.depart;
-    } else {
-      data.userid = userInfo.username;
-    }
-    console.log(data);
-    Action.getRouteBasic(data);
     if (this.routetype == 1) { //所辖路线
-
-
+      if (userInfo) {
+        data.userid = userInfo.username;
+      }
+      if (this.depart != 0) {
+        data.depart = this.depart;
+      }
+    } else { //稽核路线
+      if (this.depart != 0) {
+        data.depart = this.depart;
+      } else if (userInfo) {
+        data.depart = userInfo.depart;
+      }
     }
+    console.log("onClickQuery", data);
+    Action.getRouteBasic(data);
   }
 
   onSubsidyChange() {
@@ -222,7 +231,7 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>路线</p>,
         dataIndex: 'Path_name',
         key: 'Path_name',
-        width: 65,
+        width: 85,
         fixed: 'left'
       }, {
         title: <p style={{ textAlign: 'center' }}>门店名称</p>,
@@ -259,7 +268,7 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>门店地址</p>,
         dataIndex: 'Address',
         key: 'Address',
-        width: 120,
+        width: 150,
       }, {
         title: <p style={{ textAlign: 'center' }}>拜访性质</p>,
         dataIndex: 'nature',
@@ -347,53 +356,119 @@ class Routecost extends React.Component {
         width: 80,
       }];
   }
+  getUserInfo(userid) {
+    for (var i = 0; i < this.state.user.length; i++) {
+      if (this.state.user[i].username == userid) {
+        return this.state.user[i];
+      }
+    }
+  }
+  getDepartName(depart) {
+    for (var i = 0; i < this.state.department.length; i++) {
+      if (this.state.department[i].id == depart) {
+        return this.state.department[i].name;
+      }
+    }
+  }
+  getRoutePath() {
+    var context = this;
+    var routebasic = this.state.routeBasic;
+
+    var path = [];
+    var isExist = function (Path_id) {
+      for (var i = 0; i < path.length; i++) {
+        if (path[i].Path_id == Path_id) {
+          return true;
+        }
+      }
+      return false;
+    }
+    routebasic.forEach((rb) => {
+      if (!isExist(rb.Path_id)) {
+        var userInfo = context.getUserInfo(rb.user_id);
+        path.push({
+          routemark: 1,
+          Path_id: rb.Path_id,
+          Path_name: rb.Path_name,
+          rolename: rb.rolename,
+          realname: userInfo ? userInfo.realname : "",
+          departname: userInfo ? context.getDepartName(userInfo.depart) : ""
+        })
+      }
+    });
+    return path;
+  }
   getTableData() {
-    return [{
-      departname: '苏皖区',
-      realname: '李春香',
-      rolename: '销售代表',
-      Path_name: '合肥9-1',
-      Store_name: '家乐福合肥肥西名邦店',
-      Level: 'A',
-      Province: '安徽省',
-      City: '合肥市',
-      Area: '肥西县',
-      City_lev: '1级',
-      Address: '安徽省合肥市肥西县巢湖路与站前路交叉口名邦广场',
-      nature: '室内拜访',
-      gzdjt: '40',
-      gzdcf: '20',
-      txf: '20',
-      routedes: '合肥-肥西-合肥',
-      jtgj: '高铁',
-      jtbc: 'D5653',
-      starttime: '9:20',
-      arrivetime: '11:20',
-      cc_city_level: '1级',
-      ctjtf: '80',
-      ccjt: '20',
-      ccbt: '15',
-      cczs: '200',
-      hotelname: '锦江之星（蚌埠高铁站胜利路店）',
-      hoteladdress: '蚌埠市蚌山区 胜利东路1200号，近蚌埠电视塔附近',
-      hotelphone: '0552-3838777',
-    }];
-    this.state.subsidy.forEach((sa, i) => {
+    var routebasic = this.state.routeBasic;
+    var tableData = [];
+    var routePath = this.getRoutePath();
+    for (var i = 0; i < routePath.length; i++) {
+      var PathInfo = routePath[i];
+      tableData.push(PathInfo);
+      for (var j = 0; j < routebasic.length; j++) {
+        if (routebasic[j].Path_id == PathInfo.Path_id) {
+          routebasic[j].departname = PathInfo.departname;
+          routebasic[j].rolename = "";
+          tableData.push(routebasic[j]);
+        }
+      }
+    }
+
+    // return [{
+    //   departname: '苏皖区',
+    //   realname: '李春香',
+    //   rolename: '销售代表',
+    //   Path_name: '合肥9-1',
+    //   Store_name: '家乐福合肥肥西名邦店',
+    //   Level: 'A',
+    //   Province: '安徽省',
+    //   City: '合肥市',
+    //   Area: '肥西县',
+    //   City_lev: '1级',
+    //   Address: '安徽省合肥市肥西县巢湖路与站前路交叉口名邦广场',
+    //   nature: '室内拜访',
+    //   gzdjt: '40',
+    //   gzdcf: '20',
+    //   txf: '20',
+    //   routedes: '合肥-肥西-合肥',
+    //   jtgj: '高铁',
+    //   jtbc: 'D5653',
+    //   starttime: '9:20',
+    //   arrivetime: '11:20',
+    //   cc_city_level: '1级',
+    //   ctjtf: '80',
+    //   ccjt: '20',
+    //   ccbt: '15',
+    //   cczs: '200',
+    //   hotelname: '锦江之星（蚌埠高铁站胜利路店）',
+    //   hoteladdress: '蚌埠市蚌山区 胜利东路1200号，近蚌埠电视塔附近',
+    //   hotelphone: '0552-3838777',
+    // }];
+    tableData.forEach((sa, i) => {
       sa.key = i.toString();
     })
-    return this.state.subsidy;
+    return tableData;
   }
   rowClassName(record, index) {
-    return styles.table_row;
+    var style = [styles.table_row];
+    if (record.routemark == 1) {
+      style.push(styles.path_cell);
+    }
+    return style.join(' ');
   }
   render() {
+    var scrolly = 350;
+    var height = document.body.clientHeight;
+    if (height > 0) {
+      scrolly = height - 280;
+    }
     return (
       <div className={styles.configcontent}>
         <p className={styles.configtitle}>路线费用标准</p>
         <div className={styles.editcontent}>
           <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} placeholder="Select month" />
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
-            {this.routetype.map((rt) => {
+            {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
             }) }
           </Select>
@@ -405,7 +480,7 @@ class Routecost extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1900 }}
+          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950,y:scrolly }}
             rowClassName={this.rowClassName}
             columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>

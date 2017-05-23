@@ -418,8 +418,8 @@ var Store = assign({}, EventEmitter.prototype, {
   },
 
   updateSubsidy(ss) {
-    for(var i = 0; i < _subsidy.length; i++){
-      if(_subsidy[i].id == ss.role_id){
+    for (var i = 0; i < _subsidy.length; i++) {
+      if (_subsidy[i].id == ss.role_id) {
         _subsidy[i][ss.key] = ss.value;
         break;
       }
@@ -603,6 +603,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_SUBSIDY_UPDATE: {
       Store.updateSubsidy(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROUTEBASIC: {
+      Store.emit(StoreEvent.SE_ROUTEBASIC,action.value);
     }
       break;
 

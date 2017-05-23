@@ -898,13 +898,11 @@ var Action = {
         console.log('updateSubsidy fail');
       })
   },
-  getRouteBasic: function () {
+  getRouteBasic: function (data) {
     var context = this;
-    var data = {
-      command: 'getroutebasic'
-    }
+    data.command = 'getroutebasic';
     $.ajax({
-      url: '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
     })
       .done(function (response) {

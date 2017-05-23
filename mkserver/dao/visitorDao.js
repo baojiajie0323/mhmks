@@ -208,7 +208,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
-    _dao.log(param.userid,"更新计划");
+    _dao.log(param.userid, "更新计划");
     var sumInfo = JSON.parse(param.sumInfo);
     var modifyData = JSON.parse(param.modifyData);
 
@@ -933,7 +933,7 @@ module.exports = {
         });
       }
     });
-  },  
+  },
   getChat: function (req, res, next) {
     console.log('visitorDao getChat');
     var param = req.body;
@@ -949,6 +949,53 @@ module.exports = {
         var sqlstring = _sql.getchat;
         connection.query(sqlstring, [param.year, param.month, param.day, param.store_id, param.userid], function (err, result) {
           //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getRouteBasic: function (req, res, next) {
+    console.log('visitorDao getRouteBasic');
+    var param = req.body;
+    if (!param.userid && !param.depart && !param.path) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getroutebasic;
+        if (param.path) {
+          sqlstring += "a.path_id like '%";
+          sqlstring += param.path;
+          sqlstring += "%'";
+          sqlstring += "or Path_name like '%";
+          sqlstring += param.path;
+          sqlstring += "%'";
+        } else {
+          if (param.userid) {
+            sqlstring += "c.store_id in (select store_id from store where user_id = ";
+            sqlstring += connection.escape(param.userid);
+            sqlstring += ") ";
+            sqlstring += "order by a.path_seq,a.Path_id"
+          } else if (param.depart) {
+            sqlstring += "c.store_id in (select store_id from store where user_id in (SELECT username from user where depart = ";
+            sqlstring += connection.escape(param.depart);
+            sqlstring += ")) ";
+            sqlstring += "order by a.path_seq,a.Path_id"
+          }
+        }
+
+
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {

@@ -89,7 +89,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getchat") {
     console.log('getchat');
     visitorDao.getChat(req, res, next);
-  }
+  } else if (req.body.command == "getroutebasic") {
+    console.log('getroutebasic');
+    visitorDao.getRouteBasic(req, res, next);
+  } 
 });
 
 router.post('/upload/', upload.single('file'), function (req, res, next) {
@@ -100,7 +103,7 @@ router.post('/upload/', upload.single('file'), function (req, res, next) {
   fs.renameSync(req.file.path, newPath);  //重命名
   jsonWrite(res, { uuid: uuid }, dbcode.SUCCESS);
 
-  _dao.log("","上传照片");
+  _dao.log("", "上传照片");
 })
 
 // router.post('/upload/', function (req, res, next) {
