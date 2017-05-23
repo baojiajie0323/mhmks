@@ -15,6 +15,7 @@ class Record extends React.Component {
       showMap: false,
       visitorPlan: Store.getVisitorPlan(),
       visitorImage: Store.getVisitorImage(),
+      pagination: {}
     };
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
@@ -35,6 +36,7 @@ class Record extends React.Component {
     this.handleCloseMap = this.handleCloseMap.bind(this);
     this.onClickSignin = this.onClickSignin.bind(this);
     this.onClickSignout = this.onClickSignout.bind(this);
+    this.handleTableChange = this.handleTableChange.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -51,6 +53,13 @@ class Record extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
+  }
+  handleTableChange(pagination, filters, sorter) {
+    const pager = this.state.pagination;
+    pager.current = pagination.current;
+    this.setState({
+      pagination: pager,
+    });
   }
   onVisitorPlanChange() {
     this.setState({
@@ -90,15 +99,15 @@ class Record extends React.Component {
     Action.getVisitorImage({
       userid: record.userid,
       year: record.year,
-      month:record.month,
-      day:record.day,
-      store_id:record.store_id,
+      month: record.month,
+      day: record.day,
+      store_id: record.store_id,
     })
   }
   handlePictureCancel() {
     this.setState({
       showPicure: false,
-      bigPicture:""
+      bigPicture: ""
     })
   }
 
@@ -148,21 +157,21 @@ class Record extends React.Component {
     marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
   }
 
-  getPhotoDom(image_type){
-    var context= this;
+  getPhotoDom(image_type) {
+    var context = this;
     var photoList = [];
-    for(var i = 0; i < this.state.visitorImage.length; i++ ){
+    for (var i = 0; i < this.state.visitorImage.length; i++) {
       var imageInfo = this.state.visitorImage[i];
-      if(imageInfo.type == image_type){
+      if (imageInfo.type == image_type) {
         photoList.push(imageInfo);
       }
     }
 
     var photoDom = [];
-    for(var i = 0; i< photoList.length; i++){
+    for (var i = 0; i < photoList.length; i++) {
       let imageInfo = photoList[i];
-      let imagepath = 'url("'+ '../upload/' + imageInfo.filename +'.jpg")';
-      photoDom.push(<div style={{backgroundImage:imagepath}} onClick={function () { context.onClickPhoto(imagepath) } } className={styles.photo}></div>);
+      let imagepath = 'url("' + '../upload/' + imageInfo.filename + '.jpg")';
+      photoDom.push(<div style={{ backgroundImage: imagepath }} onClick={function () { context.onClickPhoto(imagepath) } } className={styles.photo}></div>);
     }
     return photoDom;
   }
@@ -178,7 +187,7 @@ class Record extends React.Component {
           title: '门店名称',
           dataIndex: 'Store_name',
           key: 'Store_name',
-        }, {          
+        }, {
           title: '拜访人',
           dataIndex: 'realname',
           key: 'realname',
@@ -212,7 +221,7 @@ class Record extends React.Component {
             if (text == "") {
               return null
             }
-            return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
+            return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
           }
         }, {
           title: '现场照片',
@@ -258,16 +267,16 @@ class Record extends React.Component {
           signout_gps_y: plan.signout_gps_y,
           userid: plan.userid,
           year: plan.year,
-          month:plan.month,
-          day:plan.day,
-          store_id:plan.store_id,
-          realname:plan.realname
+          month: plan.month,
+          day: plan.day,
+          store_id: plan.store_id,
+          realname: plan.realname
         })
       }
 
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn() } dataSource={getTableData() } />
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination}  dataSource={getTableData() } />
   }
   render() {
     var context = this;
@@ -292,15 +301,15 @@ class Record extends React.Component {
           onCancel={this.handlePictureCancel} >
           <div className={styles.modalcontent}>
             <p className={styles.pictureTitle}>主货架陈列</p>
-            {this.getPhotoDom(0)}
+            {this.getPhotoDom(0) }
             <p className={styles.pictureTitle}>离架陈列</p>
-            {this.getPhotoDom(1)}
+            {this.getPhotoDom(1) }
             <p className={styles.pictureTitle}>库存采集</p>
-            {this.getPhotoDom(2)}
+            {this.getPhotoDom(2) }
             <p className={styles.pictureTitle}>促销陈列</p>
-            {this.getPhotoDom(3)}
+            {this.getPhotoDom(3) }
             {this.state.bigPicture == "" ? null :
-              <div style={{backgroundImage:this.state.bigPicture}} className={styles.bigphoto}>
+              <div style={{ backgroundImage: this.state.bigPicture }} className={styles.bigphoto}>
                 <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
               </div>
             }
