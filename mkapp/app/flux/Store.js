@@ -135,7 +135,11 @@ var Store = assign({}, EventEmitter.prototype, {
   },
   delPlan: function (plan) {
     for (var i = 0; i < _plan.length; i++) {
-      if (_plan[i].Plan_Id == plan.Plan_Id) {
+      if (_plan[i].store_id == plan.store_id && 
+      _plan[i].userid.toUpperCase() == plan.userid.toUpperCase() && 
+      _plan[i].year == plan.year &&
+      _plan[i].month == plan.month &&
+      _plan[i].day == plan.day ) {
         _plan.splice(i, 1);
         break;
       }

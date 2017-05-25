@@ -342,19 +342,19 @@ class Home extends React.Component {
               context.onClickDelete(pl.path_id, pl.store_id);
             } }
             />}
-          leftIcon={this.getStateIcon(pl)}
+          leftIcon={this.getStateIcon(pl) }
           />)
         planDom.push(<Divider />);
       })
       return planDom;
     }
   }
-  onClickDelete(path_id,store_id) {
+  onClickDelete(path_id, store_id) {
     if (!this.checkToday()) {
       message.info("只能删除今日的计划！");
       return;
     }
-    if(path_id && path_id != ""){
+    if (path_id && path_id != "") {
       message.info("路线拜访不能被删除！");
       return;
     }
@@ -367,7 +367,11 @@ class Home extends React.Component {
   }
   handleOk() {
     Action.delPlan({
-      Plan_Id: this.predelstore_id
+      userid: localStorage.username,
+      store_id: this.predelstore_id,
+      year: this.state.curDate.getFullYear(),
+      month: this.state.curDate.getMonth() + 1,
+      day: this.state.curDate.getDate()
     });
   }
   onClickLocation() {
@@ -459,10 +463,10 @@ class Home extends React.Component {
             <ToolbarGroup >
               <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this)}
-                onClickAddTmp={this.onClickAddTmp.bind(this)}
-                onClickAddCall={this.onClickAddCall.bind(this)}
-                onClickAddCheck={this.onClickAddCheck.bind(this)}
+                onClickAddPath={this.onClickAddPath.bind(this) }
+                onClickAddTmp={this.onClickAddTmp.bind(this) }
+                onClickAddCall={this.onClickAddCall.bind(this) }
+                onClickAddCheck={this.onClickAddCheck.bind(this) }
                 />
             </ToolbarGroup>
           </Toolbar>
@@ -470,7 +474,7 @@ class Home extends React.Component {
 
         <div style={{ top: config.contentLargeTop }} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist()}
+            {this.getPlanlist() }
           </Spin>
         </div>
         {/*<FloatingActionButton style={{

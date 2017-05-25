@@ -40,6 +40,7 @@ class Record extends React.Component {
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
+    console.log(this.map.getDistance);
     var point = new BMap.Point(116.404, 39.915);
     this.map.centerAndZoom(point, 15);
     //this.map.addControl(new BMap.MapTypeControl());   //添加地图类型控件

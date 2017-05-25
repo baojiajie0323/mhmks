@@ -272,7 +272,7 @@ class Shelf_main extends React.Component {
           brand_id: brand,
           display_id: 0,
           type: 0,
-          category:file.category
+          category: file.category
         })
       }
     }
@@ -310,12 +310,12 @@ class Shelf_main extends React.Component {
       this._onClickAddImage();
     }
   }
-  onTouchMenu(event,menuItem,index){
+  onTouchMenu(event, menuItem, index) {
     var category = 0;
-    if(this.brand_id == "MH"){
+    if (this.brand_id == "MH") {
       category = index + 1;
-    }else{
-      category = index + 4; 
+    } else {
+      category = index + 4;
     }
     this.setState({
       menuopen: false,
@@ -379,11 +379,30 @@ class Shelf_main extends React.Component {
           }
         };
         ft.upload(imageUri, uri, win, fail, options);
-      }, function () {
+      }, function errorHandler(err) {
+        var msg = '照片加载失败: ';
+        switch (err.code) {
+          case FileError.NOT_FOUND_ERR:
+            msg += '文件或目录未找到';
+            break;
+          case FileError.NOT_READABLE_ERR:
+            msg += '文件或目录不能读取';
+            break;
+          case FileError.PATH_EXISTS_ERR:
+            msg += '文件已经存在';
+            break;
+          case FileError.TYPE_MISMATCH_ERR:
+            msg += '文件类型未知';
+            break;
+          default:
+            msg += '未知错误_' + err.code;
+            break;
+        };
+        message.error(msg + err);
       });
 
     }, function cameraError(error) {
-      console.debug("Unable to obtain picture: " + error, "app");
+      message.error("无法获取照片: " + error);
 
     }, options);
   }
@@ -433,9 +452,9 @@ class Shelf_main extends React.Component {
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={brand.Brand_name} key={i.toString()}>
+      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
         <div className={styles.photocontent}>
-          {this.getPhotolist(fileList)}
+          {this.getPhotolist(fileList) }
           {fileList.length >= 5 ? null : uploadButton}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
@@ -445,7 +464,7 @@ class Shelf_main extends React.Component {
           <p>产品/货号</p>
           <p>排面数</p>
         </Paper>
-        {this.getProductDom(brand.Brand_id)}
+        {this.getProductDom(brand.Brand_id) }
       </Panel>
       )
     }
@@ -482,7 +501,7 @@ class Shelf_main extends React.Component {
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion>
-            {this.getPanel()}
+            {this.getPanel() }
           </Collapse>
         </div>
         <Popover

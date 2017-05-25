@@ -14,6 +14,7 @@ import Dialog from 'material-ui/Dialog';
 import config from '../../config';
 import CommunicationCall from 'material-ui/svg-icons/communication/call';
 import CommunicationEmail from 'material-ui/svg-icons/communication/email';
+import InfoIcon from 'material-ui/svg-icons/action/info-outline';
 import AreaIcon from 'material-ui/svg-icons/maps/person-pin';
 
 class Aboutme extends React.Component {
@@ -79,14 +80,18 @@ class Aboutme extends React.Component {
           <Paper className={styles.userphoto} zDepth={3} circle={true} />
           <p className={styles.username}>{this.state.userInfo.realname}</p>
         </div>
-        <div style={{top:config.contentUserTop}} className={styles.usercontent}>
+        <div style={{ top: config.contentUserTop }} className={styles.usercontent}>
           <List>
-            <ListItem primaryText={this.state.userInfo.phone}
+            {/*<ListItem primaryText={this.state.userInfo.phone}
               leftIcon={<CommunicationCall color={cyan300}/>}
               />
             <ListItem primaryText={this.state.userInfo.email}
               leftIcon={<CommunicationEmail color={cyan300}/>}
+              />*/}
+            <ListItem primaryText={"版本：" + config.version}
+              leftIcon={<InfoIcon color={cyan300}/>}
               />
+            <Divider />
             <ListItem primaryText={this.state.userInfo.departname}
               leftIcon={<AreaIcon color={cyan300}/>}
               />

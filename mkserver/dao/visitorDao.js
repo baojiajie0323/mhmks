@@ -175,17 +175,20 @@ module.exports = {
   delPlan: function (req, res, next) {
     console.log('visitorDao delPlan');
     var param = req.body;
-    if (!param.Plan_Id) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
+    // if (!param.Plan_Id) {
+    //   jsonWrite(res, {}, dbcode.PARAM_ERROR);
+    //   return;
+    // }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.delplan;
-        connection.query(sqlstring, [parseInt(param.Plan_Id)], function (err, result) {
+        sqlstring += " and store_id = ";
+        sqlstring += connection.escape(param.store_id);
+        sqlstring += " and plan_type = 2";
+        connection.query(sqlstring, [param.userid,param.year,param.month,param.day], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
