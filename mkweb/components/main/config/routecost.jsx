@@ -246,8 +246,8 @@ class Routecost extends React.Component {
         width: 50,
       }, {
         title: <p style={{ textAlign: 'center' }}>省</p>,
-        dataIndex: 'Province',
-        key: 'Province',
+        dataIndex: 'province',
+        key: 'province',
         width: 60,
       }, {
         title: <p style={{ textAlign: 'center' }}>市</p>,
@@ -264,6 +264,9 @@ class Routecost extends React.Component {
         dataIndex: 'City_lev',
         key: 'City_lev',
         width: 50,
+        render: function(text, record, index) {
+            return text + "级";
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>门店地址</p>,
         dataIndex: 'Address',
@@ -407,8 +410,9 @@ class Routecost extends React.Component {
       tableData.push(PathInfo);
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
-          routebasic[j].departname = PathInfo.departname;
+          //routebasic[j].departname = PathInfo.departname;
           routebasic[j].rolename = "";
+          routebasic[j].Path_name = "";
           tableData.push(routebasic[j]);
         }
       }
@@ -421,7 +425,7 @@ class Routecost extends React.Component {
     //   Path_name: '合肥9-1',
     //   Store_name: '家乐福合肥肥西名邦店',
     //   Level: 'A',
-    //   Province: '安徽省',
+    //   province: '安徽省',
     //   City: '合肥市',
     //   Area: '肥西县',
     //   City_lev: '1级',
