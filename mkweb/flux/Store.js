@@ -31,6 +31,7 @@ var _plansum = [];
 var _plan = [];
 var _signlist = [];
 var _visitorplan = [];
+var _visitorchat = [];
 var _visitorimage = [];
 
 var _subsidy = [];
@@ -404,6 +405,14 @@ var Store = assign({}, EventEmitter.prototype, {
     return _visitorplan;
   },
 
+  setVisitorChat(vp) {
+    _visitorchat = vp;
+    this.emitChange(StoreEvent.SE_VISITOR_CHATLIST);
+  },
+  getVisitorChat() {
+    return _visitorchat;
+  },
+
   setVisitorImage(vi) {
     _visitorimage = vi;
     this.emitChange(StoreEvent.SE_VISITOR_IMAGE);
@@ -593,6 +602,10 @@ AppDispatcher.register((action) => {
       Store.setVisitorPlan(action.value);
     }
       break;
+    case ActionEvent.AE_VISITOR_CHATLIST: {
+      Store.setVisitorChat(action.value);
+    }
+      break;
     case ActionEvent.AE_VISITOR_IMAGE: {
       Store.setVisitorImage(action.value);
     }
@@ -606,7 +619,7 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_ROUTEBASIC: {
-      Store.emit(StoreEvent.SE_ROUTEBASIC,action.value);
+      Store.emit(StoreEvent.SE_ROUTEBASIC, action.value);
     }
       break;
 

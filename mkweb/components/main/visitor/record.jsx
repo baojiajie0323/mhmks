@@ -14,16 +14,20 @@ class Record extends React.Component {
       bigPicture: "",
       showMap: false,
       visitorPlan: Store.getVisitorPlan(),
+      visitorChat: Store.getVisitorChat(),
       visitorImage: Store.getVisitorImage(),
-      pagination: {}
+      pagination_plan: {},
+      pagination_chat: {}
     };
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
+    this.onVisitorChatChange = this.onVisitorChatChange.bind(this);
     this.onVisitorImageChange = this.onVisitorImageChange.bind(this);
 
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
+    this.onTabChange = this.onTabChange.bind(this);
     this.map = null;
     this.userid = "";
 
@@ -36,7 +40,8 @@ class Record extends React.Component {
     this.handleCloseMap = this.handleCloseMap.bind(this);
     this.onClickSignin = this.onClickSignin.bind(this);
     this.onClickSignout = this.onClickSignout.bind(this);
-    this.handleTableChange = this.handleTableChange.bind(this);
+    this.handleTablePlanChange = this.handleTablePlanChange.bind(this);
+    this.handleTableChatChange = this.handleTableChatChange.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -48,23 +53,37 @@ class Record extends React.Component {
     this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
   }
-  handleTableChange(pagination, filters, sorter) {
-    const pager = this.state.pagination;
+  handleTablePlanChange(pagination, filters, sorter) {
+    const pager = this.state.pagination_plan;
     pager.current = pagination.current;
     this.setState({
-      pagination: pager,
+      pagination_plan: pager,
+    });
+  }
+  handleTableChatChange(pagination, filters, sorter) {
+    const pager = this.state.pagination_chat;
+    pager.current = pagination.current;
+    this.setState({
+      pagination_chat: pager,
     });
   }
   onVisitorPlanChange() {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
+    })
+  }
+  onVisitorChatChange() {
+    this.setState({
+      visitorChat: Store.getVisitorChat(),
     })
   }
   onVisitorImageChange() {
@@ -81,6 +100,7 @@ class Record extends React.Component {
     };
     console.log(data);
     Action.getVisitorPlan(data);
+    Action.getVisitorChat(data);
   }
 
   onDateChange(date, dateString) {
@@ -90,6 +110,14 @@ class Record extends React.Component {
 
   onTextChange(e) {
     this.userid = e.target.value;
+  }
+  onTabChange(key) {
+    console.log(key);
+    // if(key == 1){
+
+    // }else if(key == 2){
+
+    // }
   }
 
   onClickShowPicture(record) {
@@ -185,54 +213,54 @@ class Record extends React.Component {
         dataIndex: 'plan_date',
         key: 'plan_date',
       }, {
-          title: '门店名称',
-          dataIndex: 'Store_name',
-          key: 'Store_name',
-        }, {
-          title: '拜访人',
-          dataIndex: 'realname',
-          key: 'realname',
-        }, {
-          title: '拜访路线',
-          dataIndex: 'Path_name',
-          key: 'Path_name',
-        }, {
-          title: '签到时间',
-          dataIndex: 'signin_time',
-          key: 'signin_time',
-        }, {
-          title: '签到偏差',
-          dataIndex: 'signin_distance',
-          key: 'signin_distance',
-          render: function (text, record) {
-            if (text == "") {
-              return null
-            }
-            return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
+        title: '门店名称',
+        dataIndex: 'Store_name',
+        key: 'Store_name',
+      }, {
+        title: '拜访人',
+        dataIndex: 'realname',
+        key: 'realname',
+      }, {
+        title: '拜访路线',
+        dataIndex: 'Path_name',
+        key: 'Path_name',
+      }, {
+        title: '签到时间',
+        dataIndex: 'signin_time',
+        key: 'signin_time',
+      }, {
+        title: '签到偏差',
+        dataIndex: 'signin_distance',
+        key: 'signin_distance',
+        render: function (text, record) {
+          if (text == "") {
+            return null
           }
-        }, {
-          title: '签退时间',
-          dataIndex: 'signout_time',
-          key: 'signout_time',
-        }, {
-          title: '签退偏差',
-          dataIndex: 'signout_distance',
-          key: 'signout_distance',
-          render: function (text, record) {
-            if (text == "") {
-              return null
-            }
-            return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
+          return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
+        }
+      }, {
+        title: '签退时间',
+        dataIndex: 'signout_time',
+        key: 'signout_time',
+      }, {
+        title: '签退偏差',
+        dataIndex: 'signout_distance',
+        key: 'signout_distance',
+        render: function (text, record) {
+          if (text == "") {
+            return null
           }
-        }, {
-          title: '现场照片',
-          key: 'picture',
-          render: function (text, record) {
-            return <a onClick={function () {
-              context.onClickShowPicture(record);
-            } }>查看</a>
-          }
-        }];
+          return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
+        }
+      }, {
+        title: '现场照片',
+        key: 'picture',
+        render: function (text, record) {
+          return <a onClick={function () {
+            context.onClickShowPicture(record);
+          } }>查看</a>
+        }
+      }];
     }
     var getTableData = function () {
       var tableData = [];
@@ -277,7 +305,56 @@ class Record extends React.Component {
 
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination}  dataSource={getTableData() } />
+    return <Table size="small" columns={getTableColumn()} pagination={this.state.pagination_plan} dataSource={getTableData()} />
+  }
+  getChatPanel() {
+    var context = this;
+    var getTableColumn = function () {
+      return [{
+        title: '拜访时间',
+        dataIndex: 'plan_date',
+        key: 'plan_date',
+        width: 100,
+      }, {
+        title: '门店名称',
+        dataIndex: 'Store_name',
+        key: 'Store_name',
+      }, {
+        title: '拜访人',
+        dataIndex: 'realname',
+        key: 'realname',
+        width: 80,
+      }, {
+        title: '对接人',
+        dataIndex: 'storeuser',
+        key: 'storeuser',
+        width: 100,
+      }, {
+        title: '洽谈内容',
+        dataIndex: 'chatcontent',
+        key: 'chatcontent',
+      }, {
+        title: '洽谈结果',
+        dataIndex: 'chatresult',
+        key: 'chatresult',
+      }];
+    }
+    var getTableData = function () {
+      var tableData = [];
+      for (var i = 0; i < context.state.visitorChat.length; i++) {
+        var plan = context.state.visitorChat[i];
+        tableData.push({
+          plan_date: new Date(plan.plan_date).Format("yyyy-MM-dd"),
+          Store_name: plan.Store_name,
+          realname: plan.realname,
+          storeuser: plan.storeuser,
+          chatcontent: plan.chatcontent,
+          chatresult: plan.chatresult,
+        })
+      }
+      return tableData;
+    }
+    return <Table size="small" columns={getTableColumn()} pagination={this.state.pagination_chat} dataSource={getTableData()} />
   }
   render() {
     var context = this;
@@ -290,25 +367,26 @@ class Record extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
-          <Tabs tabPosition="left" size="small" >
-            <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
-            <TabPane tab="主货架陈列" key="2">主货架陈列</TabPane>
-            <TabPane tab="离架陈列" key="3">离架陈列</TabPane>
-            <TabPane tab="库存采集" key="4">库存采集</TabPane>
-            <TabPane tab="促销陈列" key="5">促销陈列</TabPane>
+          <Tabs tabPosition="left" size="small" onChange={this.onTabChange} >
+            <TabPane tab="门店总览" key="1">{this.getBasicPanel()}</TabPane>
+            <TabPane tab="洽谈记录" key="2">{this.getChatPanel()}</TabPane>
+            <TabPane tab="主货架陈列" key="3">主货架陈列</TabPane>
+            <TabPane tab="离架陈列" key="4">离架陈列</TabPane>
+            <TabPane tab="库存采集" key="5">库存采集</TabPane>
+            <TabPane tab="促销陈列" key="6">促销陈列</TabPane>
           </Tabs>
         </div>
         <Modal title="查看照片" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}
           onCancel={this.handlePictureCancel} >
           <div className={styles.modalcontent}>
             <p className={styles.pictureTitle}>主货架陈列</p>
-            {this.getPhotoDom(0) }
+            {this.getPhotoDom(0)}
             <p className={styles.pictureTitle}>离架陈列</p>
-            {this.getPhotoDom(1) }
+            {this.getPhotoDom(1)}
             <p className={styles.pictureTitle}>库存采集</p>
-            {this.getPhotoDom(2) }
+            {this.getPhotoDom(2)}
             <p className={styles.pictureTitle}>促销陈列</p>
-            {this.getPhotoDom(3) }
+            {this.getPhotoDom(3)}
             {this.state.bigPicture == "" ? null :
               <div style={{ backgroundImage: this.state.bigPicture }} className={styles.bigphoto}>
                 <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />

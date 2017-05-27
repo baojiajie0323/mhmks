@@ -829,6 +829,26 @@ var Action = {
         console.log('getVisitorPlan fail');
       })
   },
+  getVisitorChat: function (data) {
+    var context = this;
+    data.command = 'getvisitorchat';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorChat:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_CHATLIST, response.data);
+        } else {
+          message.error('获取洽谈列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorChat fail');
+      })
+  },
   getVisitorImage: function (data) {
     var context = this;
     data.command = 'getvisitorimage';

@@ -61,16 +61,16 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getpath_app;
-        if(param.userid){
+        if (param.userid) {
           sqlstring += "(select store_id from store where user_id = ";
           sqlstring += connection.escape(param.userid);
-          sqlstring += ") order by a.path_seq,a.Path_id" 
-        }else if(param.depart){
+          sqlstring += ") order by a.path_seq,a.Path_id"
+        } else if (param.depart) {
           sqlstring += "(select store_id from store where user_id in (SELECT username from user where depart = ";
           sqlstring += connection.escape(param.depart);
-          sqlstring += ")) order by a.path_seq,a.Path_id"           
+          sqlstring += ")) order by a.path_seq,a.Path_id"
         }
-        
+
         connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -188,7 +188,7 @@ module.exports = {
         sqlstring += " and store_id = ";
         sqlstring += connection.escape(param.store_id);
         sqlstring += " and plan_type = 2";
-        connection.query(sqlstring, [param.userid,param.year,param.month,param.day], function (err, result) {
+        connection.query(sqlstring, [param.userid, param.year, param.month, param.day], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -231,8 +231,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -658,7 +658,8 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.submitchat;
-        connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, param.storeUser, param.chatContent, param.chatResult], function (err, result) {
+        var plandate = param.year + '-' + param.month + '-' + param.day;
+        connection.query(sqlstring, [param.store_id, param.userid, param.year, param.month, param.day, plandate, param.storeUser, param.chatContent, param.chatResult], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -762,6 +763,31 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorplan;
+        connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getVisitorChat: function (req, res, next) {
+    console.log('visitorDao getVisitorChat');
+    var param = req.body;
+    if (!param.userid || !param.begindate || !param.enddate) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getvisitorchat;
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
