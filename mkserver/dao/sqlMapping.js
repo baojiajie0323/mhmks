@@ -67,6 +67,7 @@ var sqlmap = {
   getsubsidy: 'select a.*,b.* from role a left join subsidy b on (a.id = b.role_id)',
   updatesubsidy: 'insert into subsidy set role_id = ?, ',
   getroutebasic: 'select a.*,b.*,c.*,e.name rolename,f.City_lev from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) LEFT JOIN user d on (c.user_id = d.username) LEFT JOIN role e on (e.id = d.role) LEFT JOIN city f on (c.City_id = f.City_id) where ',
+  getroutecost: 'select a.* from visitor_route a where cdate in (select max(cdate) from visitor_route where path_id = a.path_id and routetype = a.routetype and store_id = a.store_id and cdate <= ?) and path_id in ',
 };
 
 module.exports = sqlmap;

@@ -50,7 +50,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getuser;
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', err, result);
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.LOGIN_FAIL);
           } else {

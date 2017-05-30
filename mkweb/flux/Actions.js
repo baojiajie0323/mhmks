@@ -943,6 +943,31 @@ var Action = {
         }
       })
   },
+  getRouteCost: function (data) {
+    var context = this;
+    data.command = 'getroutecost';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getRouteCost:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROUTECOST, response.data);
+        } else {
+          message.error('获取路线费用失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getRouteBasic fail');
+        if (_debug) {
+          var response = '{"data":[{"id":1,"name":"系统管理员"},{"id":2,"name":"大区主管"}]}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_ROUTECOST, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

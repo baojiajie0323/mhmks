@@ -622,7 +622,11 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_ROUTEBASIC, action.value);
     }
       break;
-
+    case ActionEvent.AE_ROUTECOST: {
+      Store.emit(StoreEvent.SE_ROUTECOST, action.value);
+    }
+      break;
+    
     default:
       break;
   }

@@ -1024,7 +1024,33 @@ module.exports = {
 
 
         connection.query(sqlstring, [], function (err, result) {
-          console.log('dbresult', err, result);
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getRouteCost: function (req, res, next) {
+    console.log('visitorDao getRouteCost');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var pathlist = param.pathlist;
+        pathlist = pathlist.substr(1,pathlist.length - 2);
+        var sqlstring = _sql.getroutecost;
+        sqlstring += "(";
+        sqlstring += pathlist;
+        sqlstring += ")";
+        connection.query(sqlstring, [param.routedate], function (err, result) {
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {

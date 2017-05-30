@@ -3,6 +3,8 @@ import { Table, Button, Radio, Icon, Modal, Input, Popconfirm, message, Select, 
 import styles from './config.less';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+
+const Option = Select.Option;
 const { MonthPicker } = DatePicker;
 
 class Routecost extends React.Component {
@@ -17,7 +19,8 @@ class Routecost extends React.Component {
       department: Store.getDepartment(),
       monthDate: moment(),
       user: Store.getUser(),
-      routeBasic: []
+      routeBasic: [],
+      routeCost: [],
     };
     this._routetype = [{
       type: 1,
@@ -26,6 +29,39 @@ class Routecost extends React.Component {
         type: 2,
         name: "稽核门店"
       }];
+
+    this._routeNature = [{
+      nature: 1,
+      name: "室内拜访"
+    }, {
+        nature: 2,
+        name: "出差住宿"
+      }, {
+        nature: 3,
+        name: "出差不住宿"
+      }, {
+        nature: 4,
+        name: "电话拜访"
+      }]
+
+    this._routeCostTable = {
+      nature: {
+        name: '拜访性质',
+        key: '拜访性质：',
+        selectoption: this._routeNature.map((rn) => {
+          return {
+            key: rn.nature,
+            value: rn.name
+          }
+        }),
+        selectmode: 'select',
+      },
+      routedes: {
+        name: '路线描述',
+        key: '路线描述：',
+        selectmode: 'text',
+      },
+    }
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
@@ -34,6 +70,7 @@ class Routecost extends React.Component {
     this.onDepartChange = this.onDepartChange.bind(this);
     this.onUserChange = this.onUserChange.bind(this);
     this.onRouteBasicChange = this.onRouteBasicChange.bind(this);
+    this.onRouteCostChange = this.onRouteCostChange.bind(this);
 
     this.onModalvalueChange = this.onModalvalueChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
@@ -42,7 +79,7 @@ class Routecost extends React.Component {
     this.onPathTextChange = this.onPathTextChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
 
-    this.userid = "";
+    this.userid = "Z00001";
     this.path = "";
     this.routetype = 1;
     this.depart = 0;
@@ -52,6 +89,7 @@ class Routecost extends React.Component {
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.addChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
+    Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
 
     Action.getUser();
     Action.getDepartment();
@@ -62,6 +100,7 @@ class Routecost extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
+    Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
   }
   onUserChange() {
     this.setState({ user: Store.getUser() })
@@ -87,9 +126,39 @@ class Routecost extends React.Component {
   }
 
   onRouteBasicChange(routeBasic) {
+    var context = this;
     this.setState({
       routeBasic
+    }, function () {
+      var pathList = context.getRoutePath();
+      var data = {
+        routedate: this.state.monthDate.format("YYYY-MM"),
+        pathlist: pathList.map((pl) => {
+          return pl.Path_id;
+        })
+      }
+      data.pathlist = JSON.stringify(data.pathlist);
+
+      console.log("getRouteCost", data);
+      Action.getRouteCost(data);
     })
+
+  }
+
+  onRouteCostChange(routeCost) {
+    console.log("onRouteCostChange", routeCost);
+    this.setState({
+      routeCost
+    })
+  }
+
+  getNaure(nature) {
+    for (var i = 0; i < this._routeNature.length; i++) {
+      if (this._routeNature[i].nature == nature) {
+        return this._routeNature[i];
+      }
+    }
+    return null;
   }
 
   checkUserId() {
@@ -163,7 +232,7 @@ class Routecost extends React.Component {
 
   onModalvalueChange(e) {
     this.setState({
-      modalvalue: e.target.value
+      modalvalue: this.state.modalselectmode == "select" ? e : e.target.value
     })
   }
   handleOk() {
@@ -184,7 +253,10 @@ class Routecost extends React.Component {
     this._cate = cate;
     this.setState({
       visible: true,
-      modaltitle: this.subsidyInfo[cate].name,
+      modaltitle: this._routeCostTable[cate].name,
+      modalselectmode: this._routeCostTable[cate].selectmode,
+      modalselectoption: this._routeCostTable[cate].selectoption,
+      modalkey: this._routeCostTable[cate].key,
       modalvalue: text,
     })
   }
@@ -226,13 +298,23 @@ class Routecost extends React.Component {
         dataIndex: 'rolename',
         key: 'rolename',
         width: 65,
-        fixed: 'left'
+        fixed: 'left',
+        render: function (text, record, index) {
+          if (record.routemark == 1) {
+            return text;
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>路线</p>,
         dataIndex: 'Path_name',
         key: 'Path_name',
         width: 85,
-        fixed: 'left'
+        fixed: 'left',
+        render: function (text, record, index) {
+          if (record.routemark == 1) {
+            return text;
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>门店名称</p>,
         dataIndex: 'Store_name',
@@ -264,8 +346,10 @@ class Routecost extends React.Component {
         dataIndex: 'City_lev',
         key: 'City_lev',
         width: 50,
-        render: function(text, record, index) {
+        render: function (text, record, index) {
+          if (record.routemark == 2) {
             return text + "级";
+          }
         }
       }, {
         title: <p style={{ textAlign: 'center' }}>门店地址</p>,
@@ -277,6 +361,17 @@ class Routecost extends React.Component {
         dataIndex: 'nature',
         key: 'nature',
         width: 80,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var nature = context.getNaure(text);
+            var natureValue = "未选择";
+            if (nature) {
+              natureValue = nature.name;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'nature') } } >{natureValue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>工作地交通补贴</p>,
         dataIndex: 'gzdjt',
@@ -297,6 +392,12 @@ class Routecost extends React.Component {
         dataIndex: 'routedes',
         key: 'routedes',
         width: 100,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'routedes') } } >{text}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>交通工具</p>,
         dataIndex: 'jtgj',
@@ -373,6 +474,16 @@ class Routecost extends React.Component {
       }
     }
   }
+  getRouteCostInfo(routemark, path_id, store_id) {
+    var routeCost = this.state.routeCost;
+    for (var i = 0; i < routeCost.length; i++) {
+      if (routeCost[i].routemark == routemark &&
+        routeCost[i].path_id == path_id &&
+        (!store_id || routeCost[i].store_id == store_id)) {
+        return routeCost[i];
+      }
+    }
+  }
   getRoutePath() {
     var context = this;
     var routebasic = this.state.routeBasic;
@@ -389,13 +500,16 @@ class Routecost extends React.Component {
     routebasic.forEach((rb) => {
       if (!isExist(rb.Path_id)) {
         var userInfo = context.getUserInfo(rb.user_id);
+        var routeCostInfo = context.getRouteCostInfo(1, rb.Path_id, null);
         path.push({
           routemark: 1,
           Path_id: rb.Path_id,
           Path_name: rb.Path_name,
           rolename: rb.rolename,
           realname: userInfo ? userInfo.realname : "",
-          departname: userInfo ? context.getDepartName(userInfo.depart) : ""
+          departname: userInfo ? context.getDepartName(userInfo.depart) : "",
+          nature: routeCostInfo ? routeCostInfo.nature : "",
+          routedes: routeCostInfo ? routeCostInfo.routedes : "",
         })
       }
     });
@@ -411,8 +525,9 @@ class Routecost extends React.Component {
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
           //routebasic[j].departname = PathInfo.departname;
-          routebasic[j].rolename = "";
-          routebasic[j].Path_name = "";
+          routebasic[j].routemark = 2;
+          // routebasic[j].rolename = "";
+          // routebasic[j].Path_name = "";
           tableData.push(routebasic[j]);
         }
       }
@@ -484,7 +599,7 @@ class Routecost extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950,y:scrolly }}
+          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950, y: scrolly }}
             rowClassName={this.rowClassName}
             columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
@@ -492,9 +607,17 @@ class Routecost extends React.Component {
           onOk={this.handleOk} onCancel={this.handleCancel}
           >
           <div className={styles.formcontent}>
-            <span className={styles.formtitle}>标准</span>
+            <span className={styles.formtitle}>{this.state.modalkey}</span>
             <div className={styles.form}>
-              <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入标准" />
+              {this.state.modalselectmode == "select" ?
+                <Select style={{ width: '100%' }} value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请选择" >
+                  {this.state.modalselectoption.map((so) => {
+                    return <Option value={so.key}>{so.value}</Option>
+                  }) }
+                </Select> :
+                <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
+              }
+
             </div>
           </div>
         </Modal>

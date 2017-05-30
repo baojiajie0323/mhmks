@@ -95,6 +95,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getroutebasic") {
     console.log('getroutebasic');
     visitorDao.getRouteBasic(req, res, next);
+  } else if (req.body.command == "getroutecost") {
+    console.log('getroutecost');
+    visitorDao.getRouteCost(req, res, next);
   } 
 });
 

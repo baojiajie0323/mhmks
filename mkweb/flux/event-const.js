@@ -46,6 +46,7 @@ var eventMap = {
     AE_SUBSIDY: null,
     AE_SUBSIDY_UPDATE: null,
     AE_ROUTEBASIC: null,
+    AE_ROUTECOST: null,
   }),
 
   StoreEvent: keyMirror({
@@ -82,6 +83,7 @@ var eventMap = {
 
     SE_SUBSIDY: null,
     SE_ROUTEBASIC: null,
+    SE_ROUTECOST: null,
   })
 };
 
