@@ -144,9 +144,9 @@ class StoreSum extends React.Component {
     var context = this;
     return [{
       title: '大区',
-      dataIndex: 'Region_name',
-      key: 'Region_name',
-      width: 80,
+      dataIndex: 'departname',
+      key: 'departname',
+      width: 50,
     }, {
         title: '代表',
         dataIndex: 'realname',
@@ -257,7 +257,6 @@ class StoreSum extends React.Component {
       }
     }
     var storelist = this.state.storeBasic;
-    console.log("storeBasic_1", storelist);
     storelist.sort(function (a, b) {
       var counta = a.visitor_count || -1;
       var counta1 = a.visitor_count1 || -1;
@@ -297,7 +296,6 @@ class StoreSum extends React.Component {
         return countb - counta;
       }
     });
-    console.log("storeBasic_2", storelist);
     return storelist;
   }
   render() {
@@ -305,9 +303,8 @@ class StoreSum extends React.Component {
     var scrolly = 350;
     var height = document.body.clientHeight;
     if (height > 0) {
-      scrolly = height - 285;
+      scrolly = height - 290;
     }
-    console.log('storesum render', document.body, height);
     return (
       <div className={styles.visitorcontent}>
         <p className={styles.visitortitle}>门店拜访频次</p>

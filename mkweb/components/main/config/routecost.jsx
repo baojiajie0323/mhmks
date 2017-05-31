@@ -26,23 +26,23 @@ class Routecost extends React.Component {
       type: 1,
       name: "所辖门店"
     }, {
-      type: 2,
-      name: "稽核门店"
-    }];
+        type: 2,
+        name: "稽核门店"
+      }];
 
     this._routeNature = [{
-      nature: 1,
+      nature: "1",
       name: "室内拜访"
     }, {
-      nature: 2,
-      name: "出差住宿"
-    }, {
-      nature: 3,
-      name: "出差不住宿"
-    }, {
-      nature: 4,
-      name: "电话拜访"
-    }]
+        nature: "2",
+        name: "出差住宿"
+      }, {
+        nature: "3",
+        name: "出差不住宿"
+      }, {
+        nature: "4",
+        name: "电话拜访"
+      }]
 
     this._routeCostTable = {
       nature: {
@@ -61,6 +61,16 @@ class Routecost extends React.Component {
         key: '路线描述：',
         selectmode: 'text',
       },
+      jtgj: {
+        name: '交通工具',
+        key: '交通工具：',
+        selectmode: 'text',
+      },
+      jtbc: {
+        name: '交通班次',
+        key: '交通班次：',
+        selectmode: 'text',
+      }
     }
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -83,6 +93,7 @@ class Routecost extends React.Component {
     this.path = "";
     this.routetype = 1;
     this.depart = 0;
+    this.noValue = " ";
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
@@ -147,7 +158,8 @@ class Routecost extends React.Component {
 
   onRouteCostChange() {
     this.setState({
-      routeCost: Store.getRouteCost()
+      routeCost: Store.getRouteCost(),
+      visible: false
     })
   }
 
@@ -222,9 +234,9 @@ class Routecost extends React.Component {
       loading: false,
     })
   }
-  getSubsidyInfo(role_id){
-    for(var i = 0; i < this.state.subsidy.length; i++ ){
-      if(this.state.subsidy[i].role_id == role_id){
+  getSubsidyInfo(role_id) {
+    for (var i = 0; i < this.state.subsidy.length; i++) {
+      if (this.state.subsidy[i].role_id == role_id) {
         return this.state.subsidy[i];
       }
     }
@@ -244,10 +256,10 @@ class Routecost extends React.Component {
   handleOk() {
     var data = {
       routedate: this.state.monthDate.format("YYYY-MM"),
-      routetype: this._routetype,
+      routetype: this.routetype,
       routemark: this._record.routemark,
       path_id: this._record.Path_id,
-      store_id: this._record.store_id,
+      store_id: this._record.Store_id,
       key: this._cate,
       value: this.state.modalvalue,
     }
@@ -268,7 +280,7 @@ class Routecost extends React.Component {
       modalselectmode: this._routeCostTable[cate].selectmode,
       modalselectoption: this._routeCostTable[cate].selectoption,
       modalkey: this._routeCostTable[cate].key,
-      modalvalue: text,
+      modalvalue: text.toString(),
     })
   }
   getDepartOption() {
@@ -388,16 +400,50 @@ class Routecost extends React.Component {
         dataIndex: 'gzdjt',
         key: 'gzdjt',
         width: 55,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            if (record.nature == 1 || record.nature == 4) {
+              if (record.citylev == 1) {
+                return subsidyInfo.gzdjt1;
+              } else if (record.citylev == 2) {
+                return subsidyInfo.gzdjt2;
+              } else {
+                return subsidyInfo.gzdjt3;
+              }
+            } else {
+              return "/";
+            }
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>误餐补贴</p>,
         dataIndex: 'gzdcf',
         key: 'gzdcf',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            if (record.citylev == 1) {
+              return subsidyInfo.gzdcf1;
+            } else if (record.citylev == 2) {
+              return subsidyInfo.gzdcf2;
+            } else {
+              return subsidyInfo.gzdcf3;
+            }
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>通讯费</p>,
         dataIndex: 'txf',
         key: 'txf',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            return subsidyInfo.txf;
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>路线描述</p>,
         dataIndex: 'routedes',
@@ -405,8 +451,12 @@ class Routecost extends React.Component {
         width: 100,
         render: function (text, record) {
           if (record.routemark == 1) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
             return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
-              onClick={function () { context.onClickText(text, record, 'routedes') } } >{text}</p>
+              onClick={function () { context.onClickText(text, record, 'routedes') } } >{textvalue}</p>
           }
         }
       }, {
@@ -416,8 +466,12 @@ class Routecost extends React.Component {
         width: 65,
         render: function (text, record) {
           if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
             return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
-              onClick={function () { context.onClickText(text, record, 'jtgj') } } >{text}</p>
+              onClick={function () { context.onClickText(text, record, 'jtgj') } } >{textvalue}</p>
           }
         }
       }, {
@@ -425,6 +479,16 @@ class Routecost extends React.Component {
         dataIndex: 'jtbc',
         key: 'jtbc',
         width: 65,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'jtbc') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>出发时间</p>,
         dataIndex: 'starttime',
@@ -450,11 +514,43 @@ class Routecost extends React.Component {
         dataIndex: 'ccjt',
         key: 'ccjt',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            if (record.nature == 2 || record.nature == 3) {
+              if (record.citylev == 1) {
+                return subsidyInfo.ccjt1;
+              } else if (record.citylev == 2) {
+                return subsidyInfo.ccjt2;
+              } else {
+                return subsidyInfo.ccjt3;
+              }
+            } else {
+              return "/";
+            }
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>出差补贴</p>,
         dataIndex: 'ccbt',
         key: 'ccbt',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1) {
+            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            if (record.nature == 2 || record.nature == 3) {
+              if (record.citylev == 1) {
+                return subsidyInfo.ccbt1;
+              } else if (record.citylev == 2) {
+                return subsidyInfo.ccbt2;
+              } else {
+                return subsidyInfo.ccbt3;
+              }
+            } else {
+              return "/";
+            }
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>住宿费</p>,
         dataIndex: 'cczs',
@@ -493,10 +589,11 @@ class Routecost extends React.Component {
   }
   getRouteCostInfo(routemark, path_id, store_id) {
     var routeCost = this.state.routeCost;
+    store_id = store_id || "";
     for (var i = 0; i < routeCost.length; i++) {
       if (routeCost[i].routemark == routemark &&
         routeCost[i].path_id == path_id &&
-        (!store_id || routeCost[i].store_id == store_id)) {
+        routeCost[i].store_id == store_id) {
         return routeCost[i];
       }
     }
@@ -523,10 +620,11 @@ class Routecost extends React.Component {
           Path_id: rb.Path_id,
           Path_name: rb.Path_name,
           rolename: rb.rolename,
+          role_id: rb.role_id,
           realname: userInfo ? userInfo.realname : "",
           departname: userInfo ? context.getDepartName(userInfo.depart) : "",
           nature: routeCostInfo ? routeCostInfo.nature : "",
-          routedes: routeCostInfo ? routeCostInfo.routedes : "",
+          routedes: routeCostInfo && routeCostInfo.routedes ? routeCostInfo.routedes : "",
         })
       }
     });
@@ -539,12 +637,20 @@ class Routecost extends React.Component {
     for (var i = 0; i < routePath.length; i++) {
       var PathInfo = routePath[i];
       tableData.push(PathInfo);
+      var citylev = 3;
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
+          var routeCostInfo = this.getRouteCostInfo(2, routebasic[j].Path_id, routebasic[j].Store_id);
           routebasic[j].routemark = 2;
+          routebasic[j].jtgj = routeCostInfo && routeCostInfo.jtgj ? routeCostInfo.jtgj : "";
+          routebasic[j].jtbc = routeCostInfo && routeCostInfo.jtbc ? routeCostInfo.jtbc : "";
+          if (routebasic[j].City_lev < citylev) {
+            citylev = routebasic[j].City_lev;
+          }
           tableData.push(routebasic[j]);
         }
       }
+      PathInfo.citylev = citylev;
     }
 
     // return [{
@@ -603,10 +709,10 @@ class Routecost extends React.Component {
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            })}
+            }) }
           </Select>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption()}
+            {this.getDepartOption() }
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
@@ -615,7 +721,7 @@ class Routecost extends React.Component {
         <div className={styles.configtable}>
           <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950, y: scrolly }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -627,7 +733,7 @@ class Routecost extends React.Component {
                 <Select style={{ width: '100%' }} value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请选择" >
                   {this.state.modalselectoption.map((so) => {
                     return <Option value={so.key}>{so.value}</Option>
-                  })}
+                  }) }
                 </Select> :
                 <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
               }

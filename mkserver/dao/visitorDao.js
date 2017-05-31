@@ -1078,7 +1078,8 @@ module.exports = {
         sqlstring += param.key;
         sqlstring += " = ";
         sqlstring += connection.escape(param.value);
-        connection.query(sqlstring, [param.routedate,param.routetype,param.routemark,param.path_id,param.store_id], function (err, result) {
+        console.log(sqlstring);
+        connection.query(sqlstring, [param.routedate,parseInt(param.routetype),parseInt(param.routemark),param.path_id,param.store_id?param.store_id:""], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

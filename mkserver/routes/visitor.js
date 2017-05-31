@@ -98,7 +98,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getroutecost") {
     console.log('getroutecost');
     visitorDao.getRouteCost(req, res, next);
-  } 
+  } else if (req.body.command == "updateroutecost") {
+    console.log('updateroutecost');
+    visitorDao.updateRouteCost(req, res, next);
+  }
 });
 
 router.post('/upload/', upload.single('file'), function (req, res, next) {

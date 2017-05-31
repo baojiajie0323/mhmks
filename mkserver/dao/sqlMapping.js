@@ -3,7 +3,7 @@ var sqlmap = {
   login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
   login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
-  getstorebasic: 'SELECT store.*, System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) left JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username)',
+  getstorebasic: 'SELECT store.*,  department.name departname,System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) left JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username) left join department on (department.id = user.depart)',
   getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
   getstoredisplay: 'select * from store_display',
   getproduct: 'select * from product',
@@ -66,7 +66,7 @@ var sqlmap = {
   getchat: 'select * from visitor_chat where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getsubsidy: 'select a.*,b.* from role a left join subsidy b on (a.id = b.role_id)',
   updatesubsidy: 'insert into subsidy set role_id = ?, ',
-  getroutebasic: 'select a.*,b.*,c.*,e.name rolename,f.City_lev from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) LEFT JOIN user d on (c.user_id = d.username) LEFT JOIN role e on (e.id = d.role) LEFT JOIN city f on (c.City_id = f.City_id) where ',
+  getroutebasic: 'select a.*,b.*,c.*,e.id role_id,e.name rolename,f.City_lev from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) LEFT JOIN user d on (c.user_id = d.username) LEFT JOIN role e on (e.id = d.role) LEFT JOIN city f on (c.City_id = f.City_id) where ',
   getroutecost: 'select a.* from visitor_route a where cdate in (select max(cdate) from visitor_route where path_id = a.path_id and routetype = a.routetype and store_id = a.store_id and cdate <= ?) and path_id in ',
   updateroutecost: 'insert into visitor_route set cdate = ?, routetype = ?, routemark = ?,path_id = ?, store_id = ?,',
 };

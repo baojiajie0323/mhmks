@@ -446,13 +446,15 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_ROUTECOST);
   },
   updateRouteCost(rc) {
+    rc.store_id = rc.store_id || "";
     for (var i = 0; i < _routeCost.length; i++) {
       if (_routeCost[i].cdate == rc.routedate &&
         _routeCost[i].routetype == rc.routetype &&
         _routeCost[i].routemark == rc.routemark &&
         _routeCost[i].path_id == rc.path_id &&
-        _routeCost[i].store_id == rc.store_id) {
-        _subsidy[i][rc.key] = rc.value;
+        _routeCost[i].store_id == rc.store_id ) {
+        _routeCost[i][rc.key] = rc.value;
+        
         this.emitChange(StoreEvent.SE_ROUTECOST);
         return;
       }
@@ -656,6 +658,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_ROUTECOST: {
       Store.setRouteCost(action.value);
+    }
+      break;
+    case ActionEvent.AE_ROUTECOST_UPDATE: {
+      Store.updateRouteCost(action.value);
     }
       break;
 
