@@ -20,29 +20,29 @@ class Routecost extends React.Component {
       monthDate: moment(),
       user: Store.getUser(),
       routeBasic: [],
-      routeCost: [],
+      routeCost: Store.getRouteCost(),
     };
     this._routetype = [{
       type: 1,
       name: "所辖门店"
     }, {
-        type: 2,
-        name: "稽核门店"
-      }];
+      type: 2,
+      name: "稽核门店"
+    }];
 
     this._routeNature = [{
       nature: 1,
       name: "室内拜访"
     }, {
-        nature: 2,
-        name: "出差住宿"
-      }, {
-        nature: 3,
-        name: "出差不住宿"
-      }, {
-        nature: 4,
-        name: "电话拜访"
-      }]
+      nature: 2,
+      name: "出差住宿"
+    }, {
+      nature: 3,
+      name: "出差不住宿"
+    }, {
+      nature: 4,
+      name: "电话拜访"
+    }]
 
     this._routeCostTable = {
       nature: {
@@ -145,10 +145,9 @@ class Routecost extends React.Component {
 
   }
 
-  onRouteCostChange(routeCost) {
-    console.log("onRouteCostChange", routeCost);
+  onRouteCostChange() {
     this.setState({
-      routeCost
+      routeCost: Store.getRouteCost()
     })
   }
 
@@ -223,6 +222,13 @@ class Routecost extends React.Component {
       loading: false,
     })
   }
+  getSubsidyInfo(role_id){
+    for(var i = 0; i < this.state.subsidy.length; i++ ){
+      if(this.state.subsidy[i].role_id == role_id){
+        return this.state.subsidy[i];
+      }
+    }
+  }
   onDepartnameChange() {
     this.setState({
       department: Store.getDepartment(),
@@ -237,12 +243,16 @@ class Routecost extends React.Component {
   }
   handleOk() {
     var data = {
-      role_id: this._curRecord.id,
+      routedate: this.state.monthDate.format("YYYY-MM"),
+      routetype: this._routetype,
+      routemark: this._record.routemark,
+      path_id: this._record.Path_id,
+      store_id: this._record.store_id,
       key: this._cate,
       value: this.state.modalvalue,
     }
-    console.log("updateSubsidy", data);
-    Action.updateSubsidy(data);
+    console.log("updateRouteCost", data);
+    Action.updateRouteCost(data);
   }
   handleCancel() {
     this.setState({ visible: false })
@@ -251,6 +261,7 @@ class Routecost extends React.Component {
   onClickText(text, record, cate) {
     this._curRecord = record;
     this._cate = cate;
+    this._record = record;
     this.setState({
       visible: true,
       modaltitle: this._routeCostTable[cate].name,
@@ -403,6 +414,12 @@ class Routecost extends React.Component {
         dataIndex: 'jtgj',
         key: 'jtgj',
         width: 65,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'jtgj') } } >{text}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>交通班次</p>,
         dataIndex: 'jtbc',
@@ -524,10 +541,7 @@ class Routecost extends React.Component {
       tableData.push(PathInfo);
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
-          //routebasic[j].departname = PathInfo.departname;
           routebasic[j].routemark = 2;
-          // routebasic[j].rolename = "";
-          // routebasic[j].Path_name = "";
           tableData.push(routebasic[j]);
         }
       }
@@ -589,10 +603,10 @@ class Routecost extends React.Component {
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            }) }
+            })}
           </Select>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption() }
+            {this.getDepartOption()}
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
@@ -601,7 +615,7 @@ class Routecost extends React.Component {
         <div className={styles.configtable}>
           <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950, y: scrolly }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -613,7 +627,7 @@ class Routecost extends React.Component {
                 <Select style={{ width: '100%' }} value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请选择" >
                   {this.state.modalselectoption.map((so) => {
                     return <Option value={so.key}>{so.value}</Option>
-                  }) }
+                  })}
                 </Select> :
                 <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
               }

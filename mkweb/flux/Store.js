@@ -35,6 +35,7 @@ var _visitorchat = [];
 var _visitorimage = [];
 
 var _subsidy = [];
+var _routeCost = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -440,6 +441,37 @@ var Store = assign({}, EventEmitter.prototype, {
     return _subsidy;
   },
 
+  setRouteCost(rc) {
+    _routeCost = rc;
+    this.emitChange(StoreEvent.SE_ROUTECOST);
+  },
+  updateRouteCost(rc) {
+    for (var i = 0; i < _routeCost.length; i++) {
+      if (_routeCost[i].cdate == rc.routedate &&
+        _routeCost[i].routetype == rc.routetype &&
+        _routeCost[i].routemark == rc.routemark &&
+        _routeCost[i].path_id == rc.path_id &&
+        _routeCost[i].store_id == rc.store_id) {
+        _subsidy[i][rc.key] = rc.value;
+        this.emitChange(StoreEvent.SE_ROUTECOST);
+        return;
+      }
+    }
+    var data = {
+      cdate: rc.routedate,
+      routetype: rc.routetype,
+      routemark: rc.routemark,
+      path_id: rc.path_id,
+      store_id: rc.store_id,
+    };
+    data[rc.key] = rc.value;
+    _routeCost.push(data);
+    this.emitChange(StoreEvent.SE_ROUTECOST);
+  },
+  getRouteCost() {
+    return _routeCost;
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -623,10 +655,10 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_ROUTECOST: {
-      Store.emit(StoreEvent.SE_ROUTECOST, action.value);
+      Store.setRouteCost(action.value);
     }
       break;
-    
+
     default:
       break;
   }

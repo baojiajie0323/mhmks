@@ -1061,4 +1061,38 @@ module.exports = {
       }
     });
   },
+  updateRouteCost: function (req, res, next) {
+    console.log('userDao updateRouteCost');
+    var param = req.body;
+    _dao.log("后台","更新路线费用标准");
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.updateroutecost;
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += connection.escape(param.value);
+        sqlstring += " on DUPLICATE KEY UPDATE ";
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += connection.escape(param.value);
+        connection.query(sqlstring, [param.routedate,param.routetype,param.routemark,param.path_id,param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };
