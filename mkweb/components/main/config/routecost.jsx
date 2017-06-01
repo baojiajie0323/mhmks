@@ -26,23 +26,23 @@ class Routecost extends React.Component {
       type: 1,
       name: "所辖门店"
     }, {
-      type: 2,
-      name: "稽核门店"
-    }];
+        type: 2,
+        name: "稽核门店"
+      }];
 
     this._routeNature = [{
       nature: "1",
-      name: "室内拜访"
+      name: "市内拜访"
     }, {
-      nature: "2",
-      name: "出差住宿"
-    }, {
-      nature: "3",
-      name: "出差不住宿"
-    }, {
-      nature: "4",
-      name: "电话拜访"
-    }]
+        nature: "2",
+        name: "出差住宿"
+      }, {
+        nature: "3",
+        name: "出差不住宿"
+      }, {
+        nature: "4",
+        name: "电话拜访"
+      }]
 
     this._routeCostTable = {
       nature: {
@@ -83,7 +83,7 @@ class Routecost extends React.Component {
       },
       ctjtf: {
         name: '长途交通费',
-        key: '长途交通费：',
+        key: '交通费：',
         selectmode: 'text',
       },
       cczs: {
@@ -124,7 +124,7 @@ class Routecost extends React.Component {
     this.onPathTextChange = this.onPathTextChange.bind(this);
     this.onClickQuery = this.onClickQuery.bind(this);
 
-    this.userid = "Z00001";
+    this.userid = "";
     this.path = "";
     this.routetype = 1;
     this.depart = 0;
@@ -437,7 +437,14 @@ class Routecost extends React.Component {
         width: 55,
         render: function (text, record) {
           if (record.routemark == 1) {
-            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            var role_id = record.role_id;
+            if (context.routetype == 2) {
+              var checkuser = context.getCheckPathUser(record.user_id);
+              if (checkuser) {
+                role_id = checkuser.role;
+              }
+            }
+            var subsidyInfo = context.getSubsidyInfo(role_id);
             if (record.nature == 1 || record.nature == 4) {
               if (record.citylev == 1) {
                 return subsidyInfo.gzdjt1;
@@ -458,7 +465,14 @@ class Routecost extends React.Component {
         width: 50,
         render: function (text, record) {
           if (record.routemark == 1) {
-            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            var role_id = record.role_id;
+            if (context.routetype == 2) {
+              var checkuser = context.getCheckPathUser(record.user_id);
+              if (checkuser) {
+                role_id = checkuser.role;
+              }
+            }
+            var subsidyInfo = context.getSubsidyInfo(role_id);
             if (record.citylev == 1) {
               return subsidyInfo.gzdcf1;
             } else if (record.citylev == 2) {
@@ -475,7 +489,14 @@ class Routecost extends React.Component {
         width: 50,
         render: function (text, record) {
           if (record.routemark == 1) {
-            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            var role_id = record.role_id;
+            if (context.routetype == 2) {
+              var checkuser = context.getCheckPathUser(record.user_id);
+              if (checkuser) {
+                role_id = checkuser.role;
+              }
+            }
+            var subsidyInfo = context.getSubsidyInfo(role_id);
             return subsidyInfo.txf;
           }
         }
@@ -483,16 +504,16 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>路线描述</p>,
         dataIndex: 'routedes',
         key: 'routedes',
-        width: 100,
+        width: 200,
         render: function (text, record) {
-          if (record.routemark == 1) {
+          //if (record.routemark == 1) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
             }
             return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
               onClick={function () { context.onClickText(text, record, 'routedes') } } >{textvalue}</p>
-          }
+          //}
         }
       }, {
         title: <p style={{ textAlign: 'center' }}>交通工具</p>,
@@ -555,19 +576,19 @@ class Routecost extends React.Component {
           }
         }
       }, {
-      //   title: <p style={{ textAlign: 'center' }}>出差地城市等级</p>,
-      //   dataIndex: 'cc_city_level',
-      //   key: 'cc_city_level',
-      //   width: 55,
-      // }, {
+        //   title: <p style={{ textAlign: 'center' }}>出差地城市等级</p>,
+        //   dataIndex: 'cc_city_level',
+        //   key: 'cc_city_level',
+        //   width: 55,
+        // }, {
         title: <p style={{ textAlign: 'center' }}>长途交通费</p>,
         dataIndex: 'ctjtf',
         key: 'ctjtf',
         width: 50,
         render: function (text, record) {
-          if (record.routemark == 1){
+          if (record.routemark == 1) {
             return record.ctjtf_all;
-          }else if (record.routemark == 2) {
+          } else if (record.routemark == 2) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
@@ -583,7 +604,14 @@ class Routecost extends React.Component {
         width: 50,
         render: function (text, record) {
           if (record.routemark == 1) {
-            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            var role_id = record.role_id;
+            if (context.routetype == 2) {
+              var checkuser = context.getCheckPathUser(record.user_id);
+              if (checkuser) {
+                role_id = checkuser.role;
+              }
+            }
+            var subsidyInfo = context.getSubsidyInfo(role_id);
             if (record.nature == 2 || record.nature == 3) {
               if (record.citylev == 1) {
                 return subsidyInfo.ccjt1;
@@ -604,7 +632,14 @@ class Routecost extends React.Component {
         width: 50,
         render: function (text, record) {
           if (record.routemark == 1) {
-            var subsidyInfo = context.getSubsidyInfo(record.role_id);
+            var role_id = record.role_id;
+            if (context.routetype == 2) {
+              var checkuser = context.getCheckPathUser(record.user_id);
+              if (checkuser) {
+                role_id = checkuser.role;
+              }
+            }
+            var subsidyInfo = context.getSubsidyInfo(role_id);
             if (record.nature == 2 || record.nature == 3) {
               if (record.citylev == 1) {
                 return subsidyInfo.ccbt1;
@@ -624,9 +659,7 @@ class Routecost extends React.Component {
         key: 'cczs',
         width: 50,
         render: function (text, record) {
-          if (record.routemark == 1){
-            return record.cczs_all;
-          }else if (record.routemark == 2) {
+          if (record.routemark == 1) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
@@ -639,9 +672,9 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>住宿酒店</p>,
         dataIndex: 'hotelname',
         key: 'hotelname',
-        width: 100,
+        width: 150,
         render: function (text, record) {
-          if (record.routemark == 2) {
+          if (record.routemark == 1) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
@@ -654,9 +687,9 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>酒店地址</p>,
         dataIndex: 'hoteladdress',
         key: 'hoteladdress',
-        width: 120,
+        width: 200,
         render: function (text, record) {
-          if (record.routemark == 2) {
+          if (record.routemark == 1) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
@@ -669,9 +702,9 @@ class Routecost extends React.Component {
         title: <p style={{ textAlign: 'center' }}>酒店电话</p>,
         dataIndex: 'hotelphone',
         key: 'hotelphone',
-        width: 80,
+        width: 100,
         render: function (text, record) {
-          if (record.routemark == 2) {
+          if (record.routemark == 1) {
             var textvalue = text;
             if (textvalue == "") {
               textvalue = context.noValue;
@@ -689,6 +722,13 @@ class Routecost extends React.Component {
       }
     }
   }
+  getUserInfoById(id) {
+    for (var i = 0; i < this.state.user.length; i++) {
+      if (this.state.user[i].id == id) {
+        return this.state.user[i];
+      }
+    }
+  }
   getDepartName(depart) {
     for (var i = 0; i < this.state.department.length; i++) {
       if (this.state.department[i].id == depart) {
@@ -696,11 +736,33 @@ class Routecost extends React.Component {
       }
     }
   }
+  getDepart(depart) {
+    for (var i = 0; i < this.state.department.length; i++) {
+      if (this.state.department[i].id == depart) {
+        return this.state.department[i];
+      }
+    }
+  }
+  isCheckPath(userid) {
+    var checkUser = this.getCheckPathUser(userid);
+    if(checkUser){
+      return checkUser.username != userid;
+    }
+    return true;
+  }
+  getCheckPathUser(userid) {
+    var userInfo = this.getUserInfo(userid);
+    var departInfo = this.getDepart(userInfo.depart);
+    if (departInfo) {
+      return this.getUserInfoById(departInfo.userid);
+    }
+  }
   getRouteCostInfo(routemark, path_id, store_id) {
     var routeCost = this.state.routeCost;
     store_id = store_id || "";
     for (var i = 0; i < routeCost.length; i++) {
       if (routeCost[i].routemark == routemark &&
+        routeCost[i].routetype == this.routetype &&
         routeCost[i].path_id == path_id &&
         routeCost[i].store_id == store_id) {
         return routeCost[i];
@@ -722,6 +784,11 @@ class Routecost extends React.Component {
     }
     routebasic.forEach((rb) => {
       if (!isExist(rb.Path_id)) {
+        if (this.routetype == 2) {
+          if (!this.isCheckPath(rb.user_id)) {
+            return;
+          }
+        }
         var userInfo = context.getUserInfo(rb.user_id);
         var routeCostInfo = context.getRouteCostInfo(1, rb.Path_id, null);
         path.push({
@@ -730,10 +797,15 @@ class Routecost extends React.Component {
           Path_name: rb.Path_name,
           rolename: rb.rolename,
           role_id: rb.role_id,
+          user_id: rb.user_id,
           realname: userInfo ? userInfo.realname : "",
           departname: userInfo ? context.getDepartName(userInfo.depart) : "",
           nature: routeCostInfo ? routeCostInfo.nature : "",
-          routedes: routeCostInfo && routeCostInfo.routedes ? routeCostInfo.routedes : "",
+          routedes: routeCostInfo && routeCostInfo.routedes ? routeCostInfo.routedes : "",          
+          cczs: routeCostInfo && routeCostInfo.cczs ? routeCostInfo.cczs : "",
+          hotelname: routeCostInfo && routeCostInfo.hotelname ? routeCostInfo.hotelname : "",
+          hoteladdress: routeCostInfo && routeCostInfo.hoteladdress ? routeCostInfo.hoteladdress : "",
+          hotelphone: routeCostInfo && routeCostInfo.hotelphone ? routeCostInfo.hotelphone : "",
         })
       }
     });
@@ -748,7 +820,6 @@ class Routecost extends React.Component {
       tableData.push(PathInfo);
       var citylev = 3;
       var ctjtf_all = 0;
-      var cczs_all = 0;
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
           var routeCostInfo = this.getRouteCostInfo(2, routebasic[j].Path_id, routebasic[j].Store_id);
@@ -758,21 +829,16 @@ class Routecost extends React.Component {
           routebasic[j].starttime = routeCostInfo && routeCostInfo.starttime ? routeCostInfo.starttime : "";
           routebasic[j].arrivetime = routeCostInfo && routeCostInfo.arrivetime ? routeCostInfo.arrivetime : "";
           routebasic[j].ctjtf = routeCostInfo && routeCostInfo.ctjtf ? routeCostInfo.ctjtf : "";
-          routebasic[j].cczs = routeCostInfo && routeCostInfo.cczs ? routeCostInfo.cczs : "";
-          routebasic[j].hotelname = routeCostInfo && routeCostInfo.hotelname ? routeCostInfo.hotelname : "";
-          routebasic[j].hoteladdress = routeCostInfo && routeCostInfo.hoteladdress ? routeCostInfo.hoteladdress : "";
-          routebasic[j].hotelphone = routeCostInfo && routeCostInfo.hotelphone ? routeCostInfo.hotelphone : "";
+          routebasic[j].routedes = routeCostInfo && routeCostInfo.routedes ? routeCostInfo.routedes : "";
           if (routebasic[j].City_lev < citylev) {
             citylev = routebasic[j].City_lev;
           }
-          ctjtf_all += parseInt(routebasic[j].ctjtf);
-          cczs_all += parseInt(routebasic[j].cczs);
+          ctjtf_all += parseInt(routebasic[j].ctjtf ? routebasic[j].ctjtf : 0);
           tableData.push(routebasic[j]);
         }
       }
       PathInfo.citylev = citylev;
       PathInfo.ctjtf_all = ctjtf_all;
-      PathInfo.cczs_all = cczs_all;
     }
 
     // return [{
@@ -831,19 +897,19 @@ class Routecost extends React.Component {
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            })}
+            }) }
           </Select>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption()}
+            {this.getDepartOption() }
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1895, y: scrolly }}
+          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 2145, y: scrolly }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            columns={this.getTableColumn() } dataSource={this.getTableData() } />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -855,7 +921,7 @@ class Routecost extends React.Component {
                 <Select style={{ width: '100%' }} value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请选择" >
                   {this.state.modalselectoption.map((so) => {
                     return <Option value={so.key}>{so.value}</Option>
-                  })}
+                  }) }
                 </Select> :
                 <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
               }

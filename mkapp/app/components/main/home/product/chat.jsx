@@ -6,13 +6,14 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 
 import config from '../../../config';
+const confirm = Modal.confirm;
 
 import { cyan800, cyan100, cyan600 } from 'material-ui/styles/colors';
 
@@ -39,7 +40,7 @@ class Chat extends React.Component {
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
     Store.addChangeListener(StoreEvent.SE_CHAT, this.onChatChange);
-    
+
     var curDate = Store.getCurDate();
     Action.getChat({
       year: curDate.getFullYear(),
@@ -75,7 +76,17 @@ class Chat extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
   onClickSubmit() {
-    this.setState({ open: true })
+    var context = this;
+    confirm({
+      title: '确定要提交数据吗？',
+      onOk() {
+        context.handleSubmit();
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+    //this.setState({ open: true })
   }
   handleClose() {
     this.setState({ open: false });
@@ -140,7 +151,7 @@ class Chat extends React.Component {
               onChange={this.onStoreUser}
               />
             <TextField
-            value={this.state.chatContent}
+              value={this.state.chatContent}
               hintText="请输入"
               floatingLabelText="洽谈内容"
               multiLine={true}
@@ -150,7 +161,7 @@ class Chat extends React.Component {
               rows={3}
               />
             <TextField
-            value={this.state.chatResult}
+              value={this.state.chatResult}
               hintText="请输入"
               floatingLabelText="洽谈结果"
               multiLine={true}

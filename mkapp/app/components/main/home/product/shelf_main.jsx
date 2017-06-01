@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message, Collapse, Upload, Icon, Modal } from 'antd';
+import { message, Collapse, Upload, Icon, Modal, Menu, Dropdown } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import AddIcon from 'material-ui/svg-icons/content/add';
 import MinusIcon from 'material-ui/svg-icons/content/remove';
@@ -21,8 +21,9 @@ import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import config from '../../../config';
 import Popover from 'material-ui/Popover';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
+//import Menu from 'material-ui/Menu';
+//import MenuItem from 'material-ui/MenuItem';
+const confirm = Modal.confirm;
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -237,7 +238,17 @@ class Shelf_main extends React.Component {
   }
 
   onClickSubmit() {
-    this.setState({ open: true })
+    var context = this;
+    confirm({
+      title: '确定要提交数据吗？',
+      onOk() {
+        context.handleSubmit();
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+    //this.setState({ open: true })
   }
 
   handleClose() {
@@ -286,7 +297,7 @@ class Shelf_main extends React.Component {
   setOptions(srcType) {
     var options = {
       // Some common settings are 20, 50, and 100
-      quality: 50,
+      quality: 20,
       destinationType: Camera.DestinationType.FILE_URI,
       // In this app, dynamically set the picture source, Camera or photo gallery
       sourceType: srcType,
@@ -302,10 +313,10 @@ class Shelf_main extends React.Component {
     console.log(event);
     this.brand_id = brand_id;
     if (brand_id == "MH" || brand_id == "QX") {
-      this.setState({
-        menuopen: true,
-        anchorEl: event.currentTarget,
-      });
+      //this.setState({
+      //menuopen: true,
+      //anchorEl: event.currentTarget,
+      //});
     } else {
       this._onClickAddImage();
     }
@@ -445,28 +456,59 @@ class Shelf_main extends React.Component {
       }
 
       //console.log("getPanel", file, fileList, brand.Brand_id)
+      var uploadButton = null;
+      var menu = null;
+      if (brand.Brand_id == "MH") {
+        menu = (
+          <Menu>
+            <Menu.Item key="0">
+              <a onClick={function(){context._onClickAddImage(1)}} >手套类</a>
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="1">
+              <a onClick={function(){context._onClickAddImage(2)}} >抹布类</a>
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="3">
+              <a onClick={function(){context._onClickAddImage(3)}} >摩擦类</a>
+            </Menu.Item>
+          </Menu>)
+        uploadButton = (
+          <Dropdown overlay={menu} trigger={['click']}>
+          <div className={styles.addPhotoButton}>
+            <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
+            <div className="ant-upload-text">添加照片</div>
+          </div>
+          </Dropdown>
+        );
+      } else if (brand.Brand_id == "QX") {
+--009000---
+      } else {
+        uploadButton = (
+          <div className={styles.addPhotoButton} onClick={function (e) { context.onClickAddImage(e, brand.Brand_id) } }>
+            <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
+            <div className="ant-upload-text">添加照片</div>
+          </div>
+        );
+      }
+            // <MenuItem primaryText="一次性品类" />,
+            // <MenuItem primaryText="垃圾袋类" />
 
-      const uploadButton = (
-        <div className={styles.addPhotoButton} onClick={function (e) { context.onClickAddImage(e, brand.Brand_id) } }>
-          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
-          <div className="ant-upload-text">添加照片</div>
-        </div>
-      );
-      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
-        <div className={styles.photocontent}>
-          {this.getPhotolist(fileList) }
-          {fileList.length >= 5 ? null : uploadButton}
-        </div>
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-        <Paper zDepth={0} className={styles.headtitle}>
-          <p>产品/货号</p>
-          <p>排面数</p>
-        </Paper>
-        {this.getProductDom(brand.Brand_id) }
-      </Panel>
-      )
+        panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+          <div className={styles.photocontent}>
+            {this.getPhotolist(fileList) }
+            {fileList.length >= 5 ? null : uploadButton}
+          </div>
+          <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+            <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          </Modal>
+          <Paper zDepth={0} className={styles.headtitle}>
+            <p>产品/货号</p>
+            <p>排面数</p>
+          </Paper>
+          {this.getProductDom(brand.Brand_id) }
+        </Panel>
+        )
     }
     return panelList;
   }
@@ -504,7 +546,7 @@ class Shelf_main extends React.Component {
             {this.getPanel() }
           </Collapse>
         </div>
-        <Popover
+        {/*<Popover
           open={this.state.menuopen}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
@@ -523,7 +565,7 @@ class Shelf_main extends React.Component {
                 <MenuItem primaryText="垃圾袋类" />
               ]}
           </Menu>
-        </Popover>
+        </Popover>*/}
         <Dialog
           actions={actions}
           modal={false}

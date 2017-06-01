@@ -21,7 +21,7 @@ import Paper from 'material-ui/Paper';
 import Dialog from 'material-ui/Dialog';
 import Checkbox from 'material-ui/Checkbox';
 import config from '../../../config';
-
+const confirm = Modal.confirm;
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
 const Panel = Collapse.Panel;
@@ -252,7 +252,17 @@ class Shelf_away extends React.Component {
   }
 
   onClickSubmit() {
-    this.setState({ open: true })
+    var context = this;
+    confirm({
+      title: '确定要提交数据吗？',
+      onOk() {
+        context.handleSubmit();
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+    //this.setState({ open: true })
   }
 
   handleClose() {
@@ -302,7 +312,7 @@ class Shelf_away extends React.Component {
   setOptions(srcType) {
     var options = {
       // Some common settings are 20, 50, and 100
-      quality: 50,
+      quality: 20,
       destinationType: Camera.DestinationType.FILE_URI,
       // In this app, dynamically set the picture source, Camera or photo gallery
       sourceType: srcType,
