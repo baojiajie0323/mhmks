@@ -231,6 +231,7 @@ class Shelf_main extends React.Component {
             />}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
+          disableTouchRipple={true}
           />);
       }
     }
@@ -335,6 +336,7 @@ class Shelf_main extends React.Component {
   }
 
   _onClickAddImage(category) {
+    console.log("_onClickAddImage", category);
     var brand_id = this.brand_id;
     var srcType = Camera.PictureSourceType.CAMERA;
     var options = this.setOptions(srcType);
@@ -462,27 +464,44 @@ class Shelf_main extends React.Component {
         menu = (
           <Menu>
             <Menu.Item key="0">
-              <a onClick={function(){context._onClickAddImage(1)}} >手套类</a>
+              <a onClick={function () { context._onClickAddImage(1) } } >手套类</a>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="1">
-              <a onClick={function(){context._onClickAddImage(2)}} >抹布类</a>
+              <a onClick={function () { context._onClickAddImage(2) } } >抹布类</a>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="3">
-              <a onClick={function(){context._onClickAddImage(3)}} >摩擦类</a>
+              <a onClick={function () { context._onClickAddImage(3) } } >摩擦类</a>
             </Menu.Item>
           </Menu>)
         uploadButton = (
           <Dropdown overlay={menu} trigger={['click']}>
-          <div className={styles.addPhotoButton}>
-            <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
-            <div className="ant-upload-text">添加照片</div>
-          </div>
+            <div className={styles.addPhotoButton}>
+              <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
+              <div className="ant-upload-text">添加照片</div>
+            </div>
           </Dropdown>
         );
       } else if (brand.Brand_id == "QX") {
---009000---
+        menu = (
+          <Menu>
+            <Menu.Item key="0">
+              <a onClick={function () { context._onClickAddImage(4) } } >一次性品类</a>
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="1">
+              <a onClick={function () { context._onClickAddImage(5) } } >垃圾袋类</a>
+            </Menu.Item>
+          </Menu>)
+        uploadButton = (
+          <Dropdown overlay={menu} trigger={['click']}>
+            <div className={styles.addPhotoButton}>
+              <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
+              <div className="ant-upload-text">添加照片</div>
+            </div>
+          </Dropdown>
+        );
       } else {
         uploadButton = (
           <div className={styles.addPhotoButton} onClick={function (e) { context.onClickAddImage(e, brand.Brand_id) } }>
@@ -491,24 +510,24 @@ class Shelf_main extends React.Component {
           </div>
         );
       }
-            // <MenuItem primaryText="一次性品类" />,
-            // <MenuItem primaryText="垃圾袋类" />
+      // <MenuItem primaryText="一次性品类" />,
+      // <MenuItem primaryText="垃圾袋类" />
 
-        panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
-          <div className={styles.photocontent}>
-            {this.getPhotolist(fileList) }
-            {fileList.length >= 5 ? null : uploadButton}
-          </div>
-          <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-            <img alt="example" style={{ width: '100%' }} src={previewImage} />
-          </Modal>
-          <Paper zDepth={0} className={styles.headtitle}>
-            <p>产品/货号</p>
-            <p>排面数</p>
-          </Paper>
-          {this.getProductDom(brand.Brand_id) }
-        </Panel>
-        )
+      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+        <div className={styles.photocontent}>
+          {this.getPhotolist(fileList) }
+          {fileList.length >= 5 ? null : uploadButton}
+        </div>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+        <Paper zDepth={0} className={styles.headtitle}>
+          <p>产品/货号</p>
+          <p>排面数</p>
+        </Paper>
+        {this.getProductDom(brand.Brand_id) }
+      </Panel>
+      )
     }
     return panelList;
   }
@@ -536,8 +555,8 @@ class Shelf_main extends React.Component {
           title='主货架陈列'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickSubmit}
-          iconElementLeft={<IconButton><LeftIcon /></IconButton>}
-          iconElementRight={<FlatButton label="提交" />}
+          iconElementLeft={<IconButton disableTouchRipple={true} ><LeftIcon /></IconButton>}
+          iconElementRight={<FlatButton disableTouchRipple={true} label="提交" />}
           />
 
         <div style={{ top: config.contentTop }} className={styles.content}>

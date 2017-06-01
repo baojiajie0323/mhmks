@@ -112,21 +112,25 @@ class Main extends React.Component {
         <Paper style={PaperStyle} zDepth={1}>
           <BottomNavigation selectedIndex={this.state.selectedIndex}>
             <BottomNavigationItem
+              disableTouchRipple={true}
               label="拜访"
               icon={homeIcon}
               onTouchTap={() => this.select(0) }
               />
             <BottomNavigationItem
+              disableTouchRipple={true}
               label="门店"
               icon={storeIcon}
               onTouchTap={() => this.select(1) }
               />
             <BottomNavigationItem
+              disableTouchRipple={true}
               label="通讯录"
               icon={contactsIcon}
               onTouchTap={() => this.select(2) }
               />
             <BottomNavigationItem
+              disableTouchRipple={true}
               label="我"
               icon={myIcon}
               onTouchTap={() => this.select(3) }
