@@ -26,23 +26,23 @@ class Routecost extends React.Component {
       type: 1,
       name: "所辖门店"
     }, {
-        type: 2,
-        name: "稽核门店"
-      }];
+      type: 2,
+      name: "稽核门店"
+    }];
 
     this._routeNature = [{
       nature: "1",
       name: "室内拜访"
     }, {
-        nature: "2",
-        name: "出差住宿"
-      }, {
-        nature: "3",
-        name: "出差不住宿"
-      }, {
-        nature: "4",
-        name: "电话拜访"
-      }]
+      nature: "2",
+      name: "出差住宿"
+    }, {
+      nature: "3",
+      name: "出差不住宿"
+    }, {
+      nature: "4",
+      name: "电话拜访"
+    }]
 
     this._routeCostTable = {
       nature: {
@@ -70,7 +70,42 @@ class Routecost extends React.Component {
         name: '交通班次',
         key: '交通班次：',
         selectmode: 'text',
-      }
+      },
+      starttime: {
+        name: '出发时间',
+        key: '出发时间：',
+        selectmode: 'text',
+      },
+      arrivetime: {
+        name: '到达时间',
+        key: '到达时间：',
+        selectmode: 'text',
+      },
+      ctjtf: {
+        name: '长途交通费',
+        key: '长途交通费：',
+        selectmode: 'text',
+      },
+      cczs: {
+        name: '住宿费',
+        key: '住宿费：',
+        selectmode: 'text',
+      },
+      hotelname: {
+        name: '酒店名称',
+        key: '酒店名称：',
+        selectmode: 'text',
+      },
+      hoteladdress: {
+        name: '酒店地址',
+        key: '酒店地址：',
+        selectmode: 'text',
+      },
+      hotelphone: {
+        name: '酒店电话',
+        key: '酒店电话：',
+        selectmode: 'text',
+      },
     }
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -494,21 +529,53 @@ class Routecost extends React.Component {
         dataIndex: 'starttime',
         key: 'starttime',
         width: 65,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'starttime') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>到达时间</p>,
         dataIndex: 'arrivetime',
         key: 'arrivetime',
         width: 65,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'arrivetime') } } >{textvalue}</p>
+          }
+        }
       }, {
-        title: <p style={{ textAlign: 'center' }}>出差地城市等级</p>,
-        dataIndex: 'cc_city_level',
-        key: 'cc_city_level',
-        width: 55,
-      }, {
+      //   title: <p style={{ textAlign: 'center' }}>出差地城市等级</p>,
+      //   dataIndex: 'cc_city_level',
+      //   key: 'cc_city_level',
+      //   width: 55,
+      // }, {
         title: <p style={{ textAlign: 'center' }}>长途交通费</p>,
         dataIndex: 'ctjtf',
         key: 'ctjtf',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1){
+            return record.ctjtf_all;
+          }else if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'ctjtf') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>出差地交通费</p>,
         dataIndex: 'ccjt',
@@ -556,21 +623,63 @@ class Routecost extends React.Component {
         dataIndex: 'cczs',
         key: 'cczs',
         width: 50,
+        render: function (text, record) {
+          if (record.routemark == 1){
+            return record.cczs_all;
+          }else if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'cczs') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>住宿酒店</p>,
         dataIndex: 'hotelname',
         key: 'hotelname',
         width: 100,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'hotelname') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>酒店地址</p>,
         dataIndex: 'hoteladdress',
         key: 'hoteladdress',
         width: 120,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'hoteladdress') } } >{textvalue}</p>
+          }
+        }
       }, {
         title: <p style={{ textAlign: 'center' }}>酒店电话</p>,
         dataIndex: 'hotelphone',
         key: 'hotelphone',
         width: 80,
+        render: function (text, record) {
+          if (record.routemark == 2) {
+            var textvalue = text;
+            if (textvalue == "") {
+              textvalue = context.noValue;
+            }
+            return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
+              onClick={function () { context.onClickText(text, record, 'hotelphone') } } >{textvalue}</p>
+          }
+        }
       }];
   }
   getUserInfo(userid) {
@@ -638,19 +747,32 @@ class Routecost extends React.Component {
       var PathInfo = routePath[i];
       tableData.push(PathInfo);
       var citylev = 3;
+      var ctjtf_all = 0;
+      var cczs_all = 0;
       for (var j = 0; j < routebasic.length; j++) {
         if (routebasic[j].Path_id == PathInfo.Path_id) {
           var routeCostInfo = this.getRouteCostInfo(2, routebasic[j].Path_id, routebasic[j].Store_id);
           routebasic[j].routemark = 2;
           routebasic[j].jtgj = routeCostInfo && routeCostInfo.jtgj ? routeCostInfo.jtgj : "";
           routebasic[j].jtbc = routeCostInfo && routeCostInfo.jtbc ? routeCostInfo.jtbc : "";
+          routebasic[j].starttime = routeCostInfo && routeCostInfo.starttime ? routeCostInfo.starttime : "";
+          routebasic[j].arrivetime = routeCostInfo && routeCostInfo.arrivetime ? routeCostInfo.arrivetime : "";
+          routebasic[j].ctjtf = routeCostInfo && routeCostInfo.ctjtf ? routeCostInfo.ctjtf : "";
+          routebasic[j].cczs = routeCostInfo && routeCostInfo.cczs ? routeCostInfo.cczs : "";
+          routebasic[j].hotelname = routeCostInfo && routeCostInfo.hotelname ? routeCostInfo.hotelname : "";
+          routebasic[j].hoteladdress = routeCostInfo && routeCostInfo.hoteladdress ? routeCostInfo.hoteladdress : "";
+          routebasic[j].hotelphone = routeCostInfo && routeCostInfo.hotelphone ? routeCostInfo.hotelphone : "";
           if (routebasic[j].City_lev < citylev) {
             citylev = routebasic[j].City_lev;
           }
+          ctjtf_all += parseInt(routebasic[j].ctjtf);
+          cczs_all += parseInt(routebasic[j].cczs);
           tableData.push(routebasic[j]);
         }
       }
       PathInfo.citylev = citylev;
+      PathInfo.ctjtf_all = ctjtf_all;
+      PathInfo.cczs_all = cczs_all;
     }
 
     // return [{
@@ -709,19 +831,19 @@ class Routecost extends React.Component {
           <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
-            }) }
+            })}
           </Select>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption() }
+            {this.getDepartOption()}
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1950, y: scrolly }}
+          <Table size="small" loading={this.state.loading} bordered pagination={false} scroll={{ x: 1895, y: scrolly }}
             rowClassName={this.rowClassName}
-            columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
@@ -733,7 +855,7 @@ class Routecost extends React.Component {
                 <Select style={{ width: '100%' }} value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请选择" >
                   {this.state.modalselectoption.map((so) => {
                     return <Option value={so.key}>{so.value}</Option>
-                  }) }
+                  })}
                 </Select> :
                 <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
               }
