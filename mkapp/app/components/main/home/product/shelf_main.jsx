@@ -464,15 +464,19 @@ class Shelf_main extends React.Component {
         menu = (
           <Menu>
             <Menu.Item key="0">
-              <a onClick={function () { context._onClickAddImage(1) } } >手套类</a>
+              <a onClick={function () {
+                context.brand_id = brand.Brand_id; 
+                context._onClickAddImage(1) } } >手套类</a>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="1">
-              <a onClick={function () { context._onClickAddImage(2) } } >抹布类</a>
+              <a onClick={function () { 
+                context.brand_id = brand.Brand_id; context._onClickAddImage(2) } } >抹布类</a>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="3">
-              <a onClick={function () { context._onClickAddImage(3) } } >摩擦类</a>
+              <a onClick={function () { 
+                context.brand_id = brand.Brand_id; context._onClickAddImage(3) } } >摩擦类</a>
             </Menu.Item>
           </Menu>)
         uploadButton = (
@@ -487,11 +491,13 @@ class Shelf_main extends React.Component {
         menu = (
           <Menu>
             <Menu.Item key="0">
-              <a onClick={function () { context._onClickAddImage(4) } } >一次性品类</a>
+              <a onClick={function () { 
+                context.brand_id = brand.Brand_id; context._onClickAddImage(4) } } >一次性品类</a>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="1">
-              <a onClick={function () { context._onClickAddImage(5) } } >垃圾袋类</a>
+              <a onClick={function () { 
+                context.brand_id = brand.Brand_id; context._onClickAddImage(5) } } >垃圾袋类</a>
             </Menu.Item>
           </Menu>)
         uploadButton = (
