@@ -34,6 +34,8 @@ class Record extends React.Component {
     this.queryData = [moment().format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")];
 
     this.onClickShowPicture = this.onClickShowPicture.bind(this);
+    this.onClickReSign = this.onClickReSign.bind(this);
+    this.onClickDelPlan = this.onClickDelPlan.bind(this);
     this.handlePictureCancel = this.handlePictureCancel.bind(this);
     this.onClickPhoto = this.onClickPhoto.bind(this);
     this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
@@ -132,6 +134,18 @@ class Record extends React.Component {
       day: record.day,
       store_id: record.store_id,
     })
+  }
+  onClickReSign(record) {
+
+  }
+  onClickDelPlan(record) {
+    Action.delPlan({
+      userid: localStorage.username,
+      store_id: this.predelstore_id,
+      year: this.state.curDate.getFullYear(),
+      month: this.state.curDate.getMonth() + 1,
+      day: this.state.curDate.getDate()
+    });
   }
   handlePictureCancel() {
     this.setState({
@@ -253,12 +267,26 @@ class Record extends React.Component {
           return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
         }
       }, {
-        title: '现场照片',
+        title: '操作',
         key: 'picture',
         render: function (text, record) {
-          return <a onClick={function () {
-            context.onClickShowPicture(record);
-          } }>查看</a>
+          return [
+            <a onClick={function () {
+              context.onClickShowPicture(record);
+            } }>照片</a>,
+            <span className="ant-divider" />,
+            <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
+              context.onClickReSign(record);
+            } } >
+              <a>重签</a>
+            </Popconfirm>,
+            <span className="ant-divider" />,
+            <Popconfirm title="确定要删除这条记录吗?" onConfirm={function () {
+              context.onClickDelPlan(record);
+            } } >
+              <a>删除</a>
+            </Popconfirm>
+          ]
         }
       }];
     }

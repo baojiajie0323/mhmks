@@ -984,6 +984,32 @@ var Action = {
         console.log('updateRouteCost fail');
       })
   },
+  delPlan: function (data) {
+    var context = this;
+    data.command = 'delplan';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('delPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PLAN_DEL, data);
+          message.success('删除计划成功');
+        } else {
+          message.error('删除计划失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('delPlan fail');
+        if (_debug) {
+          var response = '{"data":{},"result":"ok"}';
+          var rsp = JSON.parse(response);
+          context.dispatch(ActionEvent.AE_PLAN_DEL, rsp.data);
+        }
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

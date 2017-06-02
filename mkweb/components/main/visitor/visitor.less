@@ -119,13 +119,17 @@
     }
 
     .bigphoto{
-        position: absolute;
+        position: fixed;
         width:100%;
-        height: 100%;
+        left: 0;
+        top: 60px;
+        bottom: 0;
         z-index: 10;
         cursor: pointer;
         background-color: #e2e2e2;
-        background-size: 100% 100%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
     }
 }
 

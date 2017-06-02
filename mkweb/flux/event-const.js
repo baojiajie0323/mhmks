@@ -37,6 +37,7 @@ var eventMap = {
     AE_PATHDETAIL: null,
     AE_PLANSUM: null,
     AE_PLAN: null,
+    AE_PLAN_DEL: null,
     AE_PLAN_UPDATE: null,
     AE_SIGNLIST: null,
     AE_VISITOR_PLANLIST:null,
