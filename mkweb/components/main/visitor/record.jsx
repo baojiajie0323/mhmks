@@ -136,15 +136,23 @@ class Record extends React.Component {
     })
   }
   onClickReSign(record) {
-
+    console.log("onClickReSign", record);
+    Action.reSign({
+      userid: record.userid,
+      store_id: record.store_id,
+      year: record.year,
+      month: record.month,
+      day: record.day
+    });
   }
   onClickDelPlan(record) {
+    console.log("onClickDelPlan", record);
     Action.delPlan({
-      userid: localStorage.username,
-      store_id: this.predelstore_id,
-      year: this.state.curDate.getFullYear(),
-      month: this.state.curDate.getMonth() + 1,
-      day: this.state.curDate.getDate()
+      userid: record.userid,
+      store_id: record.store_id,
+      year: record.year,
+      month: record.month,
+      day: record.day
     });
   }
   handlePictureCancel() {
@@ -227,68 +235,71 @@ class Record extends React.Component {
         dataIndex: 'plan_date',
         key: 'plan_date',
       }, {
-        title: '门店名称',
-        dataIndex: 'Store_name',
-        key: 'Store_name',
-      }, {
-        title: '拜访人',
-        dataIndex: 'realname',
-        key: 'realname',
-      }, {
-        title: '拜访路线',
-        dataIndex: 'Path_name',
-        key: 'Path_name',
-      }, {
-        title: '签到时间',
-        dataIndex: 'signin_time',
-        key: 'signin_time',
-      }, {
-        title: '签到偏差',
-        dataIndex: 'signin_distance',
-        key: 'signin_distance',
-        render: function (text, record) {
-          if (text == "") {
-            return null
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+        }, {
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+        }, {
+          title: '拜访路线',
+          dataIndex: 'Path_name',
+          key: 'Path_name',
+        }, {
+          title: '签到时间',
+          dataIndex: 'signin_time',
+          key: 'signin_time',
+        }, {
+          title: '签到偏差',
+          dataIndex: 'signin_distance',
+          key: 'signin_distance',
+          render: function (text, record) {
+            if (text == "") {
+              return null
+            }
+            return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
           }
-          return <a onClick={function () { context.onClickSignin(record) } }>{text}<Icon type="environment-o" /></a>
-        }
-      }, {
-        title: '签退时间',
-        dataIndex: 'signout_time',
-        key: 'signout_time',
-      }, {
-        title: '签退偏差',
-        dataIndex: 'signout_distance',
-        key: 'signout_distance',
-        render: function (text, record) {
-          if (text == "") {
-            return null
+        }, {
+          title: '签退时间',
+          dataIndex: 'signout_time',
+          key: 'signout_time',
+        }, {
+          title: '签退偏差',
+          dataIndex: 'signout_distance',
+          key: 'signout_distance',
+          render: function (text, record) {
+            if (text == "") {
+              return null
+            }
+            return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
           }
-          return <a onClick={function () { context.onClickSignout(record) } }>{text}<Icon type="environment-o" /></a>
-        }
-      }, {
-        title: '操作',
-        key: 'picture',
-        render: function (text, record) {
-          return [
-            <a onClick={function () {
-              context.onClickShowPicture(record);
-            } }>照片</a>,
-            <span className="ant-divider" />,
-            <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
-              context.onClickReSign(record);
-            } } >
-              <a>重签</a>
-            </Popconfirm>,
-            <span className="ant-divider" />,
-            <Popconfirm title="确定要删除这条记录吗?" onConfirm={function () {
-              context.onClickDelPlan(record);
-            } } >
-              <a>删除</a>
-            </Popconfirm>
-          ]
-        }
-      }];
+        }, {
+          title: '操作',
+          key: 'picture',
+          render: function (text, record) {
+            var operateDom = [
+              <a onClick={function () {
+                context.onClickShowPicture(record);
+              } }>照片</a>,
+              <span className="ant-divider" />,
+              <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
+                context.onClickReSign(record);
+              } } >
+                <a>重签</a>
+              </Popconfirm>
+            ];
+            if (record.plan_type == 2) {
+              operateDom.push(<span className="ant-divider" />);
+              operateDom.push(<Popconfirm title="确定要删除这条记录吗?" onConfirm={function () {
+                context.onClickDelPlan(record);
+              } } >
+                <a>删除</a>
+              </Popconfirm>);
+            }
+            return operateDom;
+          }
+        }];
     }
     var getTableData = function () {
       var tableData = [];
@@ -311,6 +322,7 @@ class Record extends React.Component {
         tableData.push({
           plan_date: new Date(plan.plan_date).Format("yyyy-MM-dd"),
           Store_name: plan.Store_name,
+          plan_type: plan.plan_type,
           Path_name: plan.path_name == null ? "临时拜访" : plan.path_name,
           signin_time: plan.signin_time == null ? "未签到" : plan.signin_time,
           signin_distance: signin_distance < 0 ? "" : (signin_distance + "米"),
@@ -333,7 +345,7 @@ class Record extends React.Component {
 
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn()} pagination={this.state.pagination_plan} dataSource={getTableData()} />
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_plan} dataSource={getTableData() } />
   }
   getChatPanel() {
     var context = this;
@@ -344,28 +356,28 @@ class Record extends React.Component {
         key: 'plan_date',
         width: 100,
       }, {
-        title: '门店名称',
-        dataIndex: 'Store_name',
-        key: 'Store_name',
-      }, {
-        title: '拜访人',
-        dataIndex: 'realname',
-        key: 'realname',
-        width: 80,
-      }, {
-        title: '对接人',
-        dataIndex: 'storeuser',
-        key: 'storeuser',
-        width: 100,
-      }, {
-        title: '洽谈内容',
-        dataIndex: 'chatcontent',
-        key: 'chatcontent',
-      }, {
-        title: '洽谈结果',
-        dataIndex: 'chatresult',
-        key: 'chatresult',
-      }];
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+        }, {
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+          width: 80,
+        }, {
+          title: '对接人',
+          dataIndex: 'storeuser',
+          key: 'storeuser',
+          width: 100,
+        }, {
+          title: '洽谈内容',
+          dataIndex: 'chatcontent',
+          key: 'chatcontent',
+        }, {
+          title: '洽谈结果',
+          dataIndex: 'chatresult',
+          key: 'chatresult',
+        }];
     }
     var getTableData = function () {
       var tableData = [];
@@ -382,7 +394,7 @@ class Record extends React.Component {
       }
       return tableData;
     }
-    return <Table size="small" columns={getTableColumn()} pagination={this.state.pagination_chat} dataSource={getTableData()} />
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_chat} dataSource={getTableData() } />
   }
   render() {
     var context = this;
@@ -396,8 +408,8 @@ class Record extends React.Component {
         </div>
         <div className={styles.resultContent}>
           <Tabs tabPosition="left" size="small" onChange={this.onTabChange} >
-            <TabPane tab="门店总览" key="1">{this.getBasicPanel()}</TabPane>
-            <TabPane tab="洽谈记录" key="2">{this.getChatPanel()}</TabPane>
+            <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
+            <TabPane tab="洽谈记录" key="2">{this.getChatPanel() }</TabPane>
             <TabPane tab="主货架陈列" key="3">主货架陈列</TabPane>
             <TabPane tab="离架陈列" key="4">离架陈列</TabPane>
             <TabPane tab="库存采集" key="5">库存采集</TabPane>
@@ -408,13 +420,13 @@ class Record extends React.Component {
           onCancel={this.handlePictureCancel} >
           <div className={styles.modalcontent}>
             <p className={styles.pictureTitle}>主货架陈列</p>
-            {this.getPhotoDom(0)}
+            {this.getPhotoDom(0) }
             <p className={styles.pictureTitle}>离架陈列</p>
-            {this.getPhotoDom(1)}
+            {this.getPhotoDom(1) }
             <p className={styles.pictureTitle}>库存采集</p>
-            {this.getPhotoDom(2)}
+            {this.getPhotoDom(2) }
             <p className={styles.pictureTitle}>促销陈列</p>
-            {this.getPhotoDom(3)}
+            {this.getPhotoDom(3) }
             {this.state.bigPicture == "" ? null :
               <div style={{ backgroundImage: this.state.bigPicture }} className={styles.bigphoto}>
                 <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />

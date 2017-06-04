@@ -36,18 +36,11 @@ class VisitorMenu extends React.Component {
           >
           <SubMenu key="work_sub" title={<span>工作记录</span>}>
             <Menu.Item key="record">拜访</Menu.Item>
+            <Menu.Item key="promotionsum">促销陈列统计</Menu.Item>
           </SubMenu>
           <SubMenu key="plan_sub" title={<span>工作计划</span>}>
             <Menu.Item key="storesum">门店拜访频次</Menu.Item>
           </SubMenu>
-          {/*<SubMenu key="info_sub" title={<span>信息采集</span>}>
-            <Menu.Item key="mainstore">主货架陈列</Menu.Item>
-            <Menu.Item key="offlinestore">离架陈列</Menu.Item>
-            <Menu.Item key="promotionstore">促销陈列</Menu.Item>
-            <Menu.Item key="stock">库存采集</Menu.Item>
-            <Menu.Item key="abnormalstock">异常库存</Menu.Item>
-            <Menu.Item key="competitor">竞品采集</Menu.Item>
-          </SubMenu>*/}
         </Menu>
       </div>
     );

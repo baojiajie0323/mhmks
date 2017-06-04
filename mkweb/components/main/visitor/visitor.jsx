@@ -1,6 +1,7 @@
 import React from 'react';
 import VisitorMenu from './visitor_menu';
 import Record from './record';
+import PromotionSum from './promotionsum';
 import StoreSum from './storesum';
 import styles from './visitor.less';
 
@@ -24,6 +25,8 @@ class Visitor extends React.Component {
   getContent() {
     if (this.state.contentkey == 'record') {
       return <Record />;
+    } else if (this.state.contentkey == 'promotionsum') {
+      return <PromotionSum />;
     } else if (this.state.contentkey == 'storesum') {
       return <StoreSum />;
     }

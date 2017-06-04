@@ -39,16 +39,18 @@ var eventMap = {
     AE_PLAN: null,
     AE_PLAN_DEL: null,
     AE_PLAN_UPDATE: null,
+    AE_RESIGN: null,
     AE_SIGNLIST: null,
-    AE_VISITOR_PLANLIST:null,
-    AE_VISITOR_CHATLIST:null,
-    AE_VISITOR_IMAGE:null,
+    AE_VISITOR_PLANLIST: null,
+    AE_VISITOR_CHATLIST: null,
+    AE_VISITOR_IMAGE: null,
 
     AE_SUBSIDY: null,
     AE_SUBSIDY_UPDATE: null,
     AE_ROUTEBASIC: null,
     AE_ROUTECOST: null,
     AE_ROUTECOST_UPDATE: null,
+    AE_PROMOTIONSUM: null,
   }),
 
   StoreEvent: keyMirror({
@@ -79,13 +81,14 @@ var eventMap = {
     SE_PLAN: null,
     SE_PLAN_UPDATE: null,
     SE_SIGNLIST: null,
-    SE_VISITOR_PLANLIST:null,
-    SE_VISITOR_CHATLIST:null,
-    SE_VISITOR_IMAGE:null,
+    SE_VISITOR_PLANLIST: null,
+    SE_VISITOR_CHATLIST: null,
+    SE_VISITOR_IMAGE: null,
 
     SE_SUBSIDY: null,
     SE_ROUTEBASIC: null,
     SE_ROUTECOST: null,
+    SE_PROMOTIONSUM: null,
   })
 };
 

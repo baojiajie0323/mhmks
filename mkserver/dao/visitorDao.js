@@ -194,7 +194,32 @@ module.exports = {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             if (result.affectedRows > 0) {
-              jsonWrite(res, {}, dbcode.SUCCESS);
+              jsonWrite(res, req.body, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  reSign: function (req, res, next) {
+    console.log('visitorDao reSign');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.resign;
+        connection.query(sqlstring, [param.userid, param.year, param.month, param.day,param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              jsonWrite(res, req.body, dbcode.SUCCESS);
             } else {
               jsonWrite(res, {}, dbcode.FAIL);
             }
@@ -231,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -1044,7 +1069,7 @@ module.exports = {
         return;
       } else {
         var pathlist = param.pathlist;
-        pathlist = pathlist.substr(1,pathlist.length - 2);
+        pathlist = pathlist.substr(1, pathlist.length - 2);
         var sqlstring = _sql.getroutecost;
         sqlstring += "(";
         sqlstring += pathlist;
@@ -1064,7 +1089,7 @@ module.exports = {
   updateRouteCost: function (req, res, next) {
     console.log('userDao updateRouteCost');
     var param = req.body;
-    _dao.log("后台","更新路线费用标准");
+    _dao.log("后台", "更新路线费用标准");
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -1079,7 +1104,7 @@ module.exports = {
         sqlstring += " = ";
         sqlstring += connection.escape(param.value);
         console.log(sqlstring);
-        connection.query(sqlstring, [param.routedate,parseInt(param.routetype),parseInt(param.routemark),param.path_id,param.store_id?param.store_id:""], function (err, result) {
+        connection.query(sqlstring, [param.routedate, parseInt(param.routetype), parseInt(param.routemark), param.path_id, param.store_id ? param.store_id : ""], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

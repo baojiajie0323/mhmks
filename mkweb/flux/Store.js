@@ -36,6 +36,7 @@ var _visitorimage = [];
 
 var _subsidy = [];
 var _routeCost = [];
+var _promotionsum = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -402,6 +403,38 @@ var Store = assign({}, EventEmitter.prototype, {
     _visitorplan = vp;
     this.emitChange(StoreEvent.SE_VISITOR_PLANLIST);
   },
+  delVisotorPlan(vp) {
+    for (var i = 0; i < _visitorplan.length; i++) {
+      if (_visitorplan[i].userid == vp.userid &&
+        _visitorplan[i].store_id == vp.store_id &&
+        _visitorplan[i].year == vp.year &&
+        _visitorplan[i].month == vp.month &&
+        _visitorplan[i].day == vp.day) {
+        _visitorplan.splice(i, 1);
+        this.emitChange(StoreEvent.SE_VISITOR_PLANLIST);
+        break;
+      }
+    }
+  },
+  reSignPlan(vp) {
+    for (var i = 0; i < _visitorplan.length; i++) {
+      if (_visitorplan[i].userid == vp.userid &&
+        _visitorplan[i].store_id == vp.store_id &&
+        _visitorplan[i].year == vp.year &&
+        _visitorplan[i].month == vp.month &&
+        _visitorplan[i].day == vp.day) {
+        _visitorplan[i].isfinish = 0;
+        _visitorplan[i].signin_time = null;
+        _visitorplan[i].signin_gps_x = null;
+        _visitorplan[i].signin_gps_y = null;
+        _visitorplan[i].signout_time = null;
+        _visitorplan[i].signout_gps_x = null;
+        _visitorplan[i].signout_gps_y = null;
+        this.emitChange(StoreEvent.SE_VISITOR_PLANLIST);
+        break;
+      }
+    }
+  },
   getVisitorPlan() {
     return _visitorplan;
   },
@@ -452,9 +485,9 @@ var Store = assign({}, EventEmitter.prototype, {
         _routeCost[i].routetype == rc.routetype &&
         _routeCost[i].routemark == rc.routemark &&
         _routeCost[i].path_id == rc.path_id &&
-        _routeCost[i].store_id == rc.store_id ) {
+        _routeCost[i].store_id == rc.store_id) {
         _routeCost[i][rc.key] = rc.value;
-        
+
         this.emitChange(StoreEvent.SE_ROUTECOST);
         return;
       }
@@ -472,6 +505,13 @@ var Store = assign({}, EventEmitter.prototype, {
   },
   getRouteCost() {
     return _routeCost;
+  },
+  setPromotionSum(ps) {
+    _promotionsum = ps;
+    this.emitChange(StoreEvent.SE_PROMOTIONSUM)
+  },
+  getPromotionSum() {
+    return _promotionsum;
   },
 
   emitChange: function (eventtype) {
@@ -658,6 +698,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_ROUTECOST: {
       Store.setRouteCost(action.value);
+    }
+      break;
+    case ActionEvent.AE_PLAN_DEL: {
+      Store.delVisotorPlan(action.value);
+    }
+      break;
+    case ActionEvent.AE_RESIGN: {
+      Store.reSignPlan(action.value);
     }
       break;
     case ActionEvent.AE_ROUTECOST_UPDATE: {

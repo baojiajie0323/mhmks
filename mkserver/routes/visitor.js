@@ -47,6 +47,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "sign") {
     console.log('sign');
     visitorDao.sign(req, res, next);
+  } else if (req.body.command == "resign") {
+    console.log('resign');
+    visitorDao.reSign(req, res, next);
   } else if (req.body.command == "checksign") {
     console.log('checksign');
     visitorDao.checkSign(req, res, next);

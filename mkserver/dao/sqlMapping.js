@@ -34,6 +34,7 @@ var sqlmap = {
   getplan: 'select a.*,b.Path_Name,c.Store_name,c.Gps_x,c.Gps_y from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
   addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)',
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
+  resign: 'update plan set isfinish = 0, signin_time = null, signin_gps_x = null,signin_gps_y = NULL, signout_time = NULL,signout_gps_x = null,signout_gps_y = NULL where userid = ? and year = ? and month = ? and day = ? and store_id = ?',
   getplansum: 'select * from plan_sum where userid = ? and year = ?',
   updateplansum: 'replace into plan_sum(userid,year,month,storeCount,storeACount,storeBCount,storeCCount,storeA,storeB,storeC,cover) VALUES(?,?,?,?,?,?,?,?,?,?,?) ',
   insertplan: 'insert into plan(userid,year,month,day,plan_date,plan_type,path_id,store_id) values(?,?,?,?,?,?,?,?) ',

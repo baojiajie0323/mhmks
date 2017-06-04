@@ -1003,11 +1003,47 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('delPlan fail');
-        if (_debug) {
-          var response = '{"data":{},"result":"ok"}';
-          var rsp = JSON.parse(response);
-          context.dispatch(ActionEvent.AE_PLAN_DEL, rsp.data);
+      })
+  },
+  reSign: function (data) {
+    var context = this;
+    data.command = 'resign';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('reSign:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_RESIGN, data);
+          message.success('设置重签成功');
+        } else {
+          message.error('设置重签失败！' + response.msg);
         }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('reSign fail');
+      })
+  },
+  getPromotionSum: function (data) {
+    var context = this;
+    data.command = 'getpromotionsum';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotionSum:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONSUM, response.data);
+        } else {
+          message.error('获取促销统计失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotionSum fail');
       })
   },
   dispatch: function (funname, value) {
