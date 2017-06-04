@@ -213,7 +213,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.resign;
-        connection.query(sqlstring, [param.userid, param.year, param.month, param.day,param.store_id], function (err, result) {
+        connection.query(sqlstring, [param.userid, param.year, param.month, param.day, param.store_id], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
@@ -1115,6 +1115,27 @@ module.exports = {
             } else {
               jsonWrite(res, {}, dbcode.FAIL);
             }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotionSum: function (req, res, next) {
+    console.log('visitorDao getPromotionSum');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotionsum;
+        connection.query(sqlstring, [param.areaid,param.schedule], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });
