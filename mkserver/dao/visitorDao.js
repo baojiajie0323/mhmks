@@ -1134,7 +1134,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getpromotionsum;
-        connection.query(sqlstring, [param.areaid,param.schedule], function (err, result) {
+        connection.query(sqlstring, [param.areaid,"%" + param.schedule + "%"], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

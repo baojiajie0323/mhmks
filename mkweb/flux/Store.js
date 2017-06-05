@@ -712,6 +712,10 @@ AppDispatcher.register((action) => {
       Store.updateRouteCost(action.value);
     }
       break;
+    case ActionEvent.AE_PROMOTIONSUM: {
+      Store.setPromotionSum(action.value);
+    }
+      break;
 
     default:
       break;

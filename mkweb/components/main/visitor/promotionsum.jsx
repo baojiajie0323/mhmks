@@ -35,9 +35,78 @@ class PromotionSum extends React.Component {
       storeArea: Store.getStoreArea()
     })
   }
+
+  checkPromotion() {
+    var promotionSum = Store.getPromotionSum();
+    var pro_name = "";
+    for (var i = 0; i < promotionSum.length; i++) {
+      if (i == 0) {
+        pro_name = promotionSum[i].Pro_name;
+      } else {
+        if (pro_name != promotionSum[i].Pro_name) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  getAllProduct() {
+    var promotionSum = Store.getPromotionSum();
+    var product_hb = [];
+    var product_ip = [];
+    for (var i = 0; i < promotionSum.length; i++) {
+      var product = promotionSum[i];
+      var product_name = product.product_name;
+      if (product.Promotion_type == "002") { //海报促销
+        if (product_hb.indexOf(product_name) < 0) {
+          product_hb.push(product_name);
+        }
+      } else {
+        if (product_ip.indexOf(product_name) < 0) {
+          product_ip.push(product_name);
+        }
+      }
+    }
+    return {
+      product_hb,
+      product_ip
+    }
+  }
+
+  getProductDom() {
+    var product = this.getAllProduct();
+    var product_hb_dom = <div className={styles.productcontent} >
+      <span style={{ width: '80px', display: 'inline-block' }}>{"海报产品(" + product.product_hb.length + ")"}</span>
+      {product.product_hb.map((pro) => {
+        return <Tag color="rgb(98, 132, 108)">{pro}</Tag>
+      }) }
+    </div>
+
+
+    var product_ip_dom = <div className={styles.productcontent} >
+      <span style={{ width: '80px', display: 'inline-block' }}>{"IP产品(" + product.product_ip.length + ")"}</span>
+      {product.product_ip.map((pro) => {
+        return <Tag color="rgb(98, 132, 108)">{pro}</Tag>
+      }) }
+    </div>
+    return [
+      product_hb_dom,
+      product_ip_dom
+    ]
+  }
+
   onPromotionSumChange() {
+    if (!this.checkPromotion()) {
+      message.info("该条件有多个促销，请确认条件后重新查询");
+      return;
+    }
+    var promotionSum = Store.getPromotionSum();
+    promotionSum.forEach((ps, index) => {
+      ps.sortIndex = index;
+    })
     this.setState({
-      promotionSum: Store.getPromotionSum()
+      promotionSum
     })
   }
   onAreaChange(e) {
@@ -45,7 +114,7 @@ class PromotionSum extends React.Component {
   }
 
   onClickQuery() {
-    if(this.areaid == "" || this.schedule == ""){
+    if (this.areaid == "" || this.schedule == "") {
       message.info("请输入查询条件！");
       return;
     }
@@ -67,24 +136,41 @@ class PromotionSum extends React.Component {
     })
   }
 
+  getproductCount(store_id, hb) {
+    var promotionSum = this.state.promotionSum;
+    var productCount = 0;
+    for (var i = 0; i < promotionSum.length; i++) {
+      if (promotionSum[i].Store_id == store_id &&
+        ((hb && promotionSum[i].Promotion_type == "002") ||
+          (!hb && promotionSum[i].Promotion_type != "002"))) {
+        productCount++;
+      }
+    }
+    return productCount;
+  }
+
   getTableColumn() {
     var context = this;
     return [{
       title: '销售代表',
-      dataIndex: 'username',
-      key: 'username',
+      dataIndex: 'realname',
+      key: 'realname',
     }, {
         title: '门店名称',
-        dataIndex: 'username',
-        key: 'username',
+        dataIndex: 'store_name',
+        key: 'store_name',
       }, {
         title: '海报产品量',
-        dataIndex: 'username',
-        key: 'username',
+        key: 'hb_count',
+        render: function (text, record) {
+          return context.getproductCount(record.Store_id, true);
+        }
       }, {
         title: 'IP产品量',
-        dataIndex: 'username',
-        key: 'username',
+        key: 'ip_count',
+        render: function (text, record) {
+          return context.getproductCount(record.Store_id, false);
+        }
       }, {
         title: '照片',
         dataIndex: 'username',
@@ -120,9 +206,34 @@ class PromotionSum extends React.Component {
       }];
   }
   getTableData() {
-    return this.state.signList;
+    var promotionSum = this.state.promotionSum;
+    promotionSum.sort((a, b) => {
+      return a.user_id - b.user_id || a.sortIndex - b.sortIndex;
+    })
+    var promotionSum_data = [];
+    var isExist = function(ps){
+      for(var i = 0; i < promotionSum_data.length; i++){
+        if(promotionSum_data[i].user_id == ps.user_id &&
+        promotionSum_data[i].Store_id == ps.Store_id){
+          return true;
+        }
+      }
+      return false;
+    }
+    promotionSum.forEach((ps)=>{
+      if(!isExist(ps)){
+        promotionSum_data.push(ps);
+      }
+    })
+
+    return promotionSum_data;
   }
   render() {
+    var scrolly = 350;
+    var height = document.body.clientHeight;
+    if (height > 0) {
+      scrolly = height - 350;
+    }
     return (
       <div className={styles.visitorcontent}>
         <p className={styles.visitortitle}>促销陈列统计</p>
@@ -134,27 +245,11 @@ class PromotionSum extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.promotionresult}>
-          <div className={styles.productcontent} >
-            <span style={{ width: '80px', display: 'inline-block' }}>海报产品(8) </span>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-          </div>
-          <div className={styles.productcontent} >
-            <span style={{ width: '80px', display: 'inline-block' }}>IP产品(3) </span>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-            <Tag color="rgb(98, 132, 108)">#87d068</Tag>
-          </div>
+          {this.getProductDom() }
         </div>
         <div className={styles.promotiontable}>
           <div className={styles.signList}>
-            <Table size="small" columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            <Table size="small" pagination={false} scroll={{ y: scrolly }} columns={this.getTableColumn() } dataSource={this.getTableData() } />
           </div>
         </div>
       </div>
