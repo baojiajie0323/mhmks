@@ -44,7 +44,7 @@ var sqlmap = {
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
   getsignlist: 'select * from sign_check where userid=? and signtime like ?',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
-  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?)',
+  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,submitdate,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   delshelfmain: 'delete from visitor_shelfmain where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
@@ -70,7 +70,8 @@ var sqlmap = {
   getroutebasic: 'select a.*,b.*,c.*,e.id role_id,e.name rolename,f.City_lev from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) LEFT JOIN user d on (c.user_id = d.username) LEFT JOIN role e on (e.id = d.role) LEFT JOIN city f on (c.City_id = f.City_id) where ',
   getroutecost: 'select a.* from visitor_route a where cdate in (select max(cdate) from visitor_route where path_id = a.path_id and routetype = a.routetype and store_id = a.store_id and cdate <= ?) and path_id in ',
   updateroutecost: 'insert into visitor_route set cdate = ?, routetype = ?, routemark = ?,path_id = ?, store_id = ?,',
-  getpromotionsum: '',
+  getpromotionsum: 'select b.user_id,a.* from promotion a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND pro_name like ?',
+  getpromotionimage: 'select a.* from product_image a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND type = 3',
 };
 
 module.exports = sqlmap;

@@ -475,7 +475,8 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type, productImage.category || 0],
+            var submitdate = param.year + "-" + param.month + "-" + param.day;
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day,submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -550,7 +551,8 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type, productImage.category || 0],
+            var submitdate = param.year + "-" + param.month + "-" + param.day;
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day,submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -639,7 +641,8 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type, productImage.category || 0],
+            var submitdate = param.year + "-" + param.month + "-" + param.day;
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -748,7 +751,8 @@ module.exports = {
           let productImage = image[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id || "", productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, productImage.filename, productImage.type, productImage.category || 0],
+            var submitdate = param.year + "-" + param.month + "-" + param.day;
+            connection.query(sqlstring, [param.store_id, productImage.brand_id || "", productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate,productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
