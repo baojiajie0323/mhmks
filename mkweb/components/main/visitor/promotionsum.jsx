@@ -73,6 +73,7 @@ class PromotionSum extends React.Component {
         }
       }
     }
+    console.log("getAllProduct", product_hb, product_ip);
     return {
       product_hb,
       product_ip
@@ -84,16 +85,16 @@ class PromotionSum extends React.Component {
     var product_hb_dom = <div className={styles.productcontent} >
       <span style={{ width: '80px', display: 'inline-block' }}>{"海报产品(" + product.product_hb.length + ")"}</span>
       {product.product_hb.map((pro) => {
-        return <Tag color="rgb(98, 132, 108)">{pro}</Tag>
-      })}
+        return <Tag color="rgb(98, 132, 108)">{pro||"未知产品"}</Tag>
+      }) }
     </div>
 
 
     var product_ip_dom = <div className={styles.productcontent} >
       <span style={{ width: '80px', display: 'inline-block' }}>{"IP产品(" + product.product_ip.length + ")"}</span>
       {product.product_ip.map((pro) => {
-        return <Tag color="rgb(98, 132, 108)">{pro}</Tag>
-      })}
+        return <Tag color="rgb(98, 132, 108)">{pro||"未知产品"}</Tag>
+      }) }
     </div>
     return [
       product_hb_dom,
@@ -188,8 +189,8 @@ class PromotionSum extends React.Component {
       if (promotionImage[i].store_id == store_id) {
         var productInfo = this.getProduct(store_id, promotionImage[i].product_id);
         if (productInfo &&
-          ((hb && productInfo[i].Promotion_type == "002") ||
-            (!hb && productInfo[i].Promotion_type != "002"))) {
+          ((hb && productInfo.Promotion_type == "002") ||
+            (!hb && productInfo.Promotion_type != "002"))) {
           productCount++;
         }
       }
@@ -204,64 +205,57 @@ class PromotionSum extends React.Component {
       dataIndex: 'Pro_name',
       key: 'Pro_name',
     }, {
-      title: '销售代表',
-      dataIndex: 'realname',
-      key: 'realname',
-    }, {
-      title: '门店名称',
-      dataIndex: 'store_name',
-      key: 'store_name',
-    }, {
-      title: '海报产品量',
-      key: 'hb_count',
-      render: function (text, record) {
-        return context.getproductCount(record.Store_id, true);
-      }
-    }, {
-      title: 'IP产品量',
-      key: 'ip_count',
-      render: function (text, record) {
-        return context.getproductCount(record.Store_id, false);
-      }
-    }, {
-      title: '照片',
-      dataIndex: 'username',
-      key: 'username',
-    }, {
-      title: '海报陈列量',
-      key: 'hb_image',
-      render: function (text, record) {
-        return context.getImageCount(record.Store_id, true);
-      }
-    }, {
-      title: 'IP陈列量',
-      key: 'ip_image',
-      render: function (text, record) {
-        return context.getImageCount(record.Store_id, false);
-      }
-    }, {
-      title: '海报调整量',
-      dataIndex: 'username',
-      key: 'username',
-    }, {
-      title: 'IP调整量',
-      dataIndex: 'username',
-      key: 'username',
-    }, {
-      title: '海报陈列率',
-      dataIndex: 'username',
-      key: 'username',
-    }, {
-      title: 'IP陈列率',
-      dataIndex: 'username',
-      key: 'username',
-    }, {
-      title: '合计陈列率',
-      dataIndex: 'username',
-      key: 'username',
-    }];
+        title: '销售代表',
+        dataIndex: 'realname',
+        key: 'realname',
+      }, {
+        title: '门店名称',
+        dataIndex: 'store_name',
+        key: 'store_name',
+      }, {
+        title: '海报产品量',
+        dataIndex: 'hb_count',
+        key: 'hb_count'
+      }, {
+        title: 'IP产品量',
+        dataIndex: 'ip_count',
+        key: 'ip_count'
+      }, {
+        title: '照片',
+        dataIndex: 'username',
+        key: 'username',
+      }, {
+        title: '海报陈列量',
+        dataIndex: 'hb_image',
+        key: 'hb_image'
+      }, {
+        title: 'IP陈列量',
+        dataIndex: 'ip_image',
+        key: 'ip_image'
+      }, {
+        title: '海报调整量',
+        dataIndex: 'username',
+        key: 'username',
+      }, {
+        title: 'IP调整量',
+        dataIndex: 'username',
+        key: 'username',
+      }, {
+        title: '海报陈列率',
+        dataIndex: 'username',
+        key: 'username',
+      }, {
+        title: 'IP陈列率',
+        dataIndex: 'username',
+        key: 'username',
+      }, {
+        title: '合计陈列率',
+        dataIndex: 'username',
+        key: 'username',
+      }];
   }
   getTableData() {
+    var context = this;
     var promotionSum = this.state.promotionSum;
     promotionSum.sort((a, b) => {
       return a.user_id - b.user_id || a.sortIndex - b.sortIndex;
@@ -278,6 +272,11 @@ class PromotionSum extends React.Component {
     }
     promotionSum.forEach((ps) => {
       if (!isExist(ps)) {
+        ps.hb_image = context.getImageCount(ps.Store_id, true);
+        ps.ip_image = context.getImageCount(ps.Store_id, false);
+        ps.hb_count = context.getproductCount(ps.Store_id, true);
+        ps.ip_count = context.getproductCount(ps.Store_id, false);
+
         promotionSum_data.push(ps);
       }
     })
@@ -295,17 +294,17 @@ class PromotionSum extends React.Component {
         <p className={styles.visitortitle}>促销陈列统计</p>
         <div className={styles.queryContainer}>
           <Select onChange={this.onAreaChange} placeholder="请选择系统区域" style={{ width: 120, marginRight: '10px' }}>
-            {this.getAreaOption()}
+            {this.getAreaOption() }
           </Select>
           <Input onChange={this.onTextChange} style={{ width: '120px', marginRight: '20px' }} prefix={<Icon type="calendar" style={{ fontSize: 13 }} />} placeholder="请输入档期" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.promotionresult}>
-          {this.getProductDom()}
+          {this.getProductDom() }
         </div>
         <div className={styles.promotiontable}>
           <div className={styles.signList}>
-            <Table size="small" pagination={false} scroll={{ y: scrolly }} columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            <Table size="small" pagination={false} scroll={{ y: scrolly }} columns={this.getTableColumn() } dataSource={this.getTableData() } />
           </div>
         </div>
       </div>
