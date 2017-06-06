@@ -71,7 +71,7 @@ var sqlmap = {
   getroutecost: 'select a.* from visitor_route a where cdate in (select max(cdate) from visitor_route where path_id = a.path_id and routetype = a.routetype and store_id = a.store_id and cdate <= ?) and path_id in ',
   updateroutecost: 'insert into visitor_route set cdate = ?, routetype = ?, routemark = ?,path_id = ?, store_id = ?,',
   getpromotionsum: 'select b.user_id,b.store_name,c.product_name,d.realname,a.* from promotion a left join store b on (a.store_id = b.store_id) left join product c on (a.product_id = c.product_id) left join user d on (b.user_id = d.username) where b.Region_id = ? AND pro_name like ?',
-  getpromotionimage: 'select a.* from product_image a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND type = 3',
+  getpromotionimage: 'select a.* from product_image a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND submitdate BETWEEN ? and ? AND type = 3',
 };
 
 module.exports = sqlmap;

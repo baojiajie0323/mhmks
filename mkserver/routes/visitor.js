@@ -107,6 +107,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getpromotionsum") {
     console.log('getpromotionsum');
     visitorDao.getPromotionSum(req, res, next);
+  } else if (req.body.command == "getpromotionimage") {
+    console.log('getpromotionimage');
+    visitorDao.getPromotionImage(req, res, next);
   } 
 });
 

@@ -716,7 +716,10 @@ AppDispatcher.register((action) => {
       Store.setPromotionSum(action.value);
     }
       break;
-
+    case ActionEvent.AE_PROMOTIONIMAGE: {
+      Store.emit(StoreEvent.SE_PROMOTIONIMAGE,action.value);
+    }
+      break;
     default:
       break;
   }

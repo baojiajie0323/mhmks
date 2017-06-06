@@ -256,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -476,7 +476,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
             var submitdate = param.year + "-" + param.month + "-" + param.day;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day,submitdate, productImage.filename, productImage.type, productImage.category || 0],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -552,7 +552,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
             var submitdate = param.year + "-" + param.month + "-" + param.day;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day,submitdate, productImage.filename, productImage.type, productImage.category || 0],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id, productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -752,7 +752,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitproductimage;
             var submitdate = param.year + "-" + param.month + "-" + param.day;
-            connection.query(sqlstring, [param.store_id, productImage.brand_id || "", productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate,productImage.filename, productImage.type, productImage.category || 0],
+            connection.query(sqlstring, [param.store_id, productImage.brand_id || "", productImage.display_id, productImage.product_id || "", param.userid, param.year, param.month, param.day, submitdate, productImage.filename, productImage.type, productImage.category || 0],
               function (err, result) {
                 callback(err);
               });
@@ -1134,7 +1134,28 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getpromotionsum;
-        connection.query(sqlstring, [param.areaid,"%" + param.schedule + "%"], function (err, result) {
+        connection.query(sqlstring, [param.areaid, "%" + param.schedule + "%"], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotionImage: function (req, res, next) {
+    console.log('visitorDao getPromotionImage');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotionimage;
+        connection.query(sqlstring, [param.areaid,param.begindate,param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

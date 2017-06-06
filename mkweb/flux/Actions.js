@@ -1046,6 +1046,26 @@ var Action = {
         console.log('getPromotionSum fail');
       })
   },
+  getPromotionImage: function (data) {
+    var context = this;
+    data.command = 'getpromotionimage';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotionImage:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONIMAGE, response.data);
+        } else {
+          message.error('获取促销图片失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotionImage fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,
