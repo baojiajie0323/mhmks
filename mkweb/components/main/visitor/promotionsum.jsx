@@ -25,6 +25,7 @@ class PromotionSum extends React.Component {
     this.onPromotionImageChange = this.onPromotionImageChange.bind(this);
     this.onAreaChange = this.onAreaChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
+    this.onModalvalueChange = this.onModalvalueChange.bind(this);
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
@@ -77,6 +78,10 @@ class PromotionSum extends React.Component {
         }
       }
     }
+    
+    this.schedule = pro_name;
+    this.refs.schedule.refs.input.value = pro_name; 
+    
     return true;
   }
 
@@ -110,7 +115,7 @@ class PromotionSum extends React.Component {
       <span style={{ width: '80px', display: 'inline-block' }}>{"海报产品(" + product.product_hb.length + ")"}</span>
       {product.product_hb.map((pro) => {
         return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
-      })}
+      }) }
     </div>
 
 
@@ -118,7 +123,7 @@ class PromotionSum extends React.Component {
       <span style={{ width: '80px', display: 'inline-block' }}>{"IP产品(" + product.product_ip.length + ")"}</span>
       {product.product_ip.map((pro) => {
         return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
-      })}
+      }) }
     </div>
     return [
       product_hb_dom,
@@ -156,6 +161,11 @@ class PromotionSum extends React.Component {
   }
   onAreaChange(e) {
     this.areaid = e;
+  }
+  onModalvalueChange(e) {
+    this.setState({
+      modalvalue: e.target.value
+    })
   }
 
   onClickQuery() {
@@ -222,6 +232,26 @@ class PromotionSum extends React.Component {
     return productCount;
   }
 
+  getImageDom(store_id) {
+    var promotionImage = this.state.promotionImage;
+    var imageDom = [];
+    for (var i = 0; i < promotionImage.length; i++) {
+      if (promotionImage[i].store_id == store_id) {
+        var productInfo = this.getProduct(store_id, promotionImage[i].product_id);
+        if (productInfo) {
+          let imagepath = 'url("' + '../upload/' + promotionImage[i].filename + '.jpg")';
+          imageDom.push(<div style={{ backgroundImage: imagepath }} className={styles.photocontent}>
+            <div title={productInfo.product_name}>{productInfo.product_name}</div>
+          </div>)
+        }
+      }
+    }
+
+    return <div className={styles.photocontainer}>
+      {imageDom}
+    </div>
+  }
+
   onClickText(text, record, cate) {
     this._curRecord = record;
     this._cate = cate;
@@ -253,91 +283,90 @@ class PromotionSum extends React.Component {
   getTableColumn() {
     var context = this;
     return [{
-      title: '促销名称',
-      dataIndex: 'Pro_name',
-      key: 'Pro_name',
-      width: 150,
-    }, {
-      title: '销售代表',
+      title: <p style={{ textAlign: 'center' }}>业务员</p>,
       dataIndex: 'realname',
       key: 'realname',
       width: 80,
+      fixed: 'left'
     }, {
-      title: '门店名称',
-      dataIndex: 'store_name',
-      key: 'store_name',
-      width: 150,
-    }, {
-      title: '海报产品量',
-      dataIndex: 'hb_count',
-      key: 'hb_count',
-      width: 80,
-    }, {
-      title: 'IP产品量',
-      dataIndex: 'ip_count',
-      key: 'ip_count',
-      width: 80
-    }, {
-      title: '照片',
-      dataIndex: 'photo',
-      key: 'photo',
-      width: 500,
-    }, {
-      title: '海报陈列量',
-      dataIndex: 'hb_image',
-      key: 'hb_image',
-      width: 80
-    }, {
-      title: 'IP陈列量',
-      dataIndex: 'ip_image',
-      key: 'ip_image',
-      width: 80
-    }, {
-      title: '海报调整量',
-      dataIndex: 'hb_adjust',
-      key: 'hb_adjust',
-      width: 80,
-      render: function (text, record) {
-        if (!text) {
-          text = context.noValue;
+        title: <p style={{ textAlign: 'center' }}>门店名称</p>,
+        dataIndex: 'store_name',
+        key: 'store_name',
+        width: 150,
+      }, {
+        title: <p style={{ textAlign: 'center' }}>海报产品</p>,
+        dataIndex: 'hb_count',
+        key: 'hb_count',
+        width: 50,
+      }, {
+        title: <p style={{ textAlign: 'center' }}>IP产品</p>,
+        dataIndex: 'ip_count',
+        key: 'ip_count',
+        width: 50
+      }, {
+        title: <p style={{ textAlign: 'center' }}>照片</p>,
+        dataIndex: 'photo',
+        key: 'photo',
+        width: 600,
+        render: function (text, record, index) {
+          return context.getImageDom(record.Store_id);
         }
-        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-          onClick={function () { context.onClickText(text, record, 'hb_adjust') } } >{text}</p>
-      }
-    }, {
-      title: 'IP调整量',
-      dataIndex: 'ip_adjust',
-      key: 'ip_adjust',
-      width: 80,
-      render: function (text, record) {
-        if (!text) {
-          text = context.noValue;
+      }, {
+        title: <p style={{ textAlign: 'center' }}>海报陈列</p>,
+        dataIndex: 'hb_image',
+        key: 'hb_image',
+        width: 50
+      }, {
+        title: <p style={{ textAlign: 'center' }}>IP陈列</p>,
+        dataIndex: 'ip_image',
+        key: 'ip_image',
+        width: 50
+      }, {
+        title: <p style={{ textAlign: 'center' }}>海报调整</p>,
+        dataIndex: 'hb_adjust',
+        key: 'hb_adjust',
+        width: 50,
+        render: function (text, record) {
+          if (!text) {
+            text = context.noValue;
+          }
+          return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+            onClick={function () { context.onClickText(text, record, 'hb_adjust') } } >{text}</p>
         }
-        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-          onClick={function () { context.onClickText(text, record, 'ip_adjust') } } >{text}</p>
-      }
-    }, {
-      title: '海报陈列率',
-      key: 'hb_percent',
-      width: 80,
-      render: function (text, record) {
-        return percentNum(record.hb_image, record.hb_count);
-      }
-    }, {
-      title: 'IP陈列率',
-      key: 'ip_percent',
-      width: 80,
-      render: function (text, record) {
-        return percentNum(record.ip_image, record.ip_count);
-      }
-    }, {
-      title: '合计陈列率',
-      key: 'all_percent',
-      width: 80,
-      render: function (text, record) {
-        return percentNum(record.ip_image + record.hb_image, record.ip_count + record.hb_count);
-      }
-    }];
+      }, {
+        title: <p style={{ textAlign: 'center' }}>IP调整</p>,
+        dataIndex: 'ip_adjust',
+        key: 'ip_adjust',
+        width: 50,
+        render: function (text, record) {
+          if (!text) {
+            text = context.noValue;
+          }
+          return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+            onClick={function () { context.onClickText(text, record, 'ip_adjust') } } >{text}</p>
+        }
+      }, {
+        title: <p style={{ textAlign: 'center' }}>海报陈列率</p>,
+        key: 'hb_percent',
+        width: 60,
+        render: function (text, record) {
+          return percentNum(record.hb_image, record.hb_count);
+        }
+      }, {
+        title: <p style={{ textAlign: 'center' }}>IP陈列率</p>,
+        key: 'ip_percent',
+        width: 60,
+        render: function (text, record) {
+          return percentNum(record.ip_image, record.ip_count);
+        }
+      }, {
+        title: <p style={{ textAlign: 'center' }}>合计陈列率</p>,
+        key: 'all_percent',
+        width: 60,
+        render: function (text, record) {
+          return percentNum(record.ip_image + record.hb_image, record.ip_count + record.hb_count);
+        }
+      }];
   }
   getTableData() {
     var context = this;
@@ -376,25 +405,26 @@ class PromotionSum extends React.Component {
     var scrolly = 350;
     var height = document.body.clientHeight;
     if (height > 0) {
-      scrolly = height - 360;
+      scrolly = height - 370;
     }
     return (
       <div className={styles.visitorcontent}>
         <p className={styles.visitortitle}>促销陈列统计</p>
         <div className={styles.queryContainer}>
-          <Select onChange={this.onAreaChange} placeholder="请选择系统区域" style={{ width: 120, marginRight: '10px' }}>
-            {this.getAreaOption()}
+          <Select onChange={this.onAreaChange} placeholder="请选择系统区域" style={{ width: 140, marginRight: '10px' }}>
+            {this.getAreaOption() }
           </Select>
-          <Input onChange={this.onTextChange} style={{ width: '120px', marginRight: '20px' }} prefix={<Icon type="calendar" style={{ fontSize: 13 }} />} placeholder="请输入档期" />
+          <Input ref="schedule" onChange={this.onTextChange} style={{ width: '140px', marginRight: '20px' }} prefix={<Icon type="calendar" style={{ fontSize: 13 }} />} placeholder="请输入档期" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.promotionresult}>
-          {this.getProductDom()}
+          {this.getProductDom() }
         </div>
         <div className={styles.promotiontable}>
           <div className={styles.signList}>
-            <Table size="small" pagination={false} scroll={{ y: scrolly, x: 1600 }}
-              columns={this.getTableColumn()} dataSource={this.getTableData()} />
+            <Table size="small" pagination={false} scroll={{ y: scrolly, x: 1350 }}
+              rowClassName={this.rowClassName}
+              columns={this.getTableColumn() } dataSource={this.getTableData() } />
           </div>
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}

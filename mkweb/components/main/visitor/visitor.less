@@ -188,6 +188,63 @@
     }
 }
 
+.formcontent{
+    display: flex;
+    align-items: center;
+    height: 30px; 
+    margin: 0 0 5px;
+
+    .formstar{
+        margin: 0 10px;
+        color: red;
+    }
+
+    .formtitle{
+        margin: 0 15px 0 5px;
+        text-align: right;
+        width: 60px;
+    }
+
+    .form{
+        width: 200px;
+        p{
+            font-weight: bold;
+        }
+    }
+}
+
 .table_row{
     text-align: center;
+}
+
+.photocontainer{
+    position: relative;
+    width: 600px;
+    display: flex;
+    overflow: auto;
+    .photocontent{
+        position: relative;
+        min-width: 120px;
+        height: 170px;
+        margin: 1px 2px;
+        cursor: pointer;
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #DADADA;
+        div{
+            position: absolute;
+            bottom: 0;
+            height: 18%;
+            width: 100%;
+            background-color: rgba(0,0,0,0.5);
+            text-align: center;
+            color: white;
+            padding: 5px;
+            
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
 }

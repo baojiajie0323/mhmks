@@ -44,7 +44,7 @@ var sqlmap = {
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
   getsignlist: 'select * from sign_check where userid=? and signtime like ?',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
-  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,submitdate,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?)',
+  submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,submitdate,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   delshelfmain: 'delete from visitor_shelfmain where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
