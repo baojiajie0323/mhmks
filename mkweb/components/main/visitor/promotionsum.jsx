@@ -2,6 +2,14 @@ import React from 'react';
 import { Table, Button, Icon, Modal, Input, Popconfirm, message, Tag, Select } from 'antd';
 import styles from './visitor.less';
 
+
+function percentNum(num, num2) {
+  if (num2 == 0) {
+    return '0%';
+  }
+  return (Math.round(num / num2 * 10000) / 100.00 + "%"); //小数点后两位百分比
+}
+
 class PromotionSum extends React.Component {
   constructor(props) {
     super(props);
@@ -10,17 +18,33 @@ class PromotionSum extends React.Component {
       promotionSum: Store.getPromotionSum(),
       promotionImage: []
     };
-
+    this.handleOk = this.handleOk.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
     this.onStoreAreaChange = this.onStoreAreaChange.bind(this);
     this.onPromotionSumChange = this.onPromotionSumChange.bind(this);
     this.onPromotionImageChange = this.onPromotionImageChange.bind(this);
     this.onAreaChange = this.onAreaChange.bind(this);
+    this.onClickText = this.onClickText.bind(this);
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
 
+    this.noValue = " ";
     this.areaid = "";
     this.schedule = "";
+
+    this._promotionSumTable = {
+      ip_adjust: {
+        name: 'IP调整量',
+        key: '调整量：',
+        selectmode: 'text',
+      },
+      hb_adjust: {
+        name: '海报调整量',
+        key: '调整量：',
+        selectmode: 'text',
+      }
+    }
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_STOREAREA, this.onStoreAreaChange);
@@ -85,16 +109,16 @@ class PromotionSum extends React.Component {
     var product_hb_dom = <div className={styles.productcontent} >
       <span style={{ width: '80px', display: 'inline-block' }}>{"海报产品(" + product.product_hb.length + ")"}</span>
       {product.product_hb.map((pro) => {
-        return <Tag color="rgb(98, 132, 108)">{pro||"未知产品"}</Tag>
-      }) }
+        return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
+      })}
     </div>
 
 
     var product_ip_dom = <div className={styles.productcontent} >
       <span style={{ width: '80px', display: 'inline-block' }}>{"IP产品(" + product.product_ip.length + ")"}</span>
       {product.product_ip.map((pro) => {
-        return <Tag color="rgb(98, 132, 108)">{pro||"未知产品"}</Tag>
-      }) }
+        return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
+      })}
     </div>
     return [
       product_hb_dom,
@@ -198,61 +222,122 @@ class PromotionSum extends React.Component {
     return productCount;
   }
 
+  onClickText(text, record, cate) {
+    this._curRecord = record;
+    this._cate = cate;
+    this._record = record;
+    this.setState({
+      visible: true,
+      modaltitle: this._promotionSumTable[cate].name,
+      modalkey: this._promotionSumTable[cate].key,
+      modalvalue: text.toString(),
+    })
+  }
+  handleOk() {
+    // var data = {
+    //   routedate: this.state.monthDate.format("YYYY-MM"),
+    //   routetype: this.routetype,
+    //   routemark: this._record.routemark,
+    //   path_id: this._record.Path_id,
+    //   store_id: this._record.Store_id,
+    //   key: this._cate,
+    //   value: this.state.modalvalue,
+    // }
+    // console.log("updateRouteCost", data);
+    // Action.updateRouteCost(data);
+  }
+  handleCancel() {
+    this.setState({ visible: false })
+  }
+
   getTableColumn() {
     var context = this;
     return [{
       title: '促销名称',
       dataIndex: 'Pro_name',
       key: 'Pro_name',
+      width: 150,
     }, {
-        title: '销售代表',
-        dataIndex: 'realname',
-        key: 'realname',
-      }, {
-        title: '门店名称',
-        dataIndex: 'store_name',
-        key: 'store_name',
-      }, {
-        title: '海报产品量',
-        dataIndex: 'hb_count',
-        key: 'hb_count'
-      }, {
-        title: 'IP产品量',
-        dataIndex: 'ip_count',
-        key: 'ip_count'
-      }, {
-        title: '照片',
-        dataIndex: 'username',
-        key: 'username',
-      }, {
-        title: '海报陈列量',
-        dataIndex: 'hb_image',
-        key: 'hb_image'
-      }, {
-        title: 'IP陈列量',
-        dataIndex: 'ip_image',
-        key: 'ip_image'
-      }, {
-        title: '海报调整量',
-        dataIndex: 'username',
-        key: 'username',
-      }, {
-        title: 'IP调整量',
-        dataIndex: 'username',
-        key: 'username',
-      }, {
-        title: '海报陈列率',
-        dataIndex: 'username',
-        key: 'username',
-      }, {
-        title: 'IP陈列率',
-        dataIndex: 'username',
-        key: 'username',
-      }, {
-        title: '合计陈列率',
-        dataIndex: 'username',
-        key: 'username',
-      }];
+      title: '销售代表',
+      dataIndex: 'realname',
+      key: 'realname',
+      width: 80,
+    }, {
+      title: '门店名称',
+      dataIndex: 'store_name',
+      key: 'store_name',
+      width: 150,
+    }, {
+      title: '海报产品量',
+      dataIndex: 'hb_count',
+      key: 'hb_count',
+      width: 80,
+    }, {
+      title: 'IP产品量',
+      dataIndex: 'ip_count',
+      key: 'ip_count',
+      width: 80
+    }, {
+      title: '照片',
+      dataIndex: 'photo',
+      key: 'photo',
+      width: 500,
+    }, {
+      title: '海报陈列量',
+      dataIndex: 'hb_image',
+      key: 'hb_image',
+      width: 80
+    }, {
+      title: 'IP陈列量',
+      dataIndex: 'ip_image',
+      key: 'ip_image',
+      width: 80
+    }, {
+      title: '海报调整量',
+      dataIndex: 'hb_adjust',
+      key: 'hb_adjust',
+      width: 80,
+      render: function (text, record) {
+        if (!text) {
+          text = context.noValue;
+        }
+        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          onClick={function () { context.onClickText(text, record, 'hb_adjust') } } >{text}</p>
+      }
+    }, {
+      title: 'IP调整量',
+      dataIndex: 'ip_adjust',
+      key: 'ip_adjust',
+      width: 80,
+      render: function (text, record) {
+        if (!text) {
+          text = context.noValue;
+        }
+        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          onClick={function () { context.onClickText(text, record, 'ip_adjust') } } >{text}</p>
+      }
+    }, {
+      title: '海报陈列率',
+      key: 'hb_percent',
+      width: 80,
+      render: function (text, record) {
+        return percentNum(record.hb_image, record.hb_count);
+      }
+    }, {
+      title: 'IP陈列率',
+      key: 'ip_percent',
+      width: 80,
+      render: function (text, record) {
+        return percentNum(record.ip_image, record.ip_count);
+      }
+    }, {
+      title: '合计陈列率',
+      key: 'all_percent',
+      width: 80,
+      render: function (text, record) {
+        return percentNum(record.ip_image + record.hb_image, record.ip_count + record.hb_count);
+      }
+    }];
   }
   getTableData() {
     var context = this;
@@ -283,30 +368,45 @@ class PromotionSum extends React.Component {
 
     return promotionSum_data;
   }
+  rowClassName(record, index) {
+    var style = [styles.table_row];
+    return style.join(' ');
+  }
   render() {
     var scrolly = 350;
     var height = document.body.clientHeight;
     if (height > 0) {
-      scrolly = height - 350;
+      scrolly = height - 360;
     }
     return (
       <div className={styles.visitorcontent}>
         <p className={styles.visitortitle}>促销陈列统计</p>
         <div className={styles.queryContainer}>
           <Select onChange={this.onAreaChange} placeholder="请选择系统区域" style={{ width: 120, marginRight: '10px' }}>
-            {this.getAreaOption() }
+            {this.getAreaOption()}
           </Select>
           <Input onChange={this.onTextChange} style={{ width: '120px', marginRight: '20px' }} prefix={<Icon type="calendar" style={{ fontSize: 13 }} />} placeholder="请输入档期" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.promotionresult}>
-          {this.getProductDom() }
+          {this.getProductDom()}
         </div>
         <div className={styles.promotiontable}>
           <div className={styles.signList}>
-            <Table size="small" pagination={false} scroll={{ y: scrolly }} columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            <Table size="small" pagination={false} scroll={{ y: scrolly, x: 1600 }}
+              columns={this.getTableColumn()} dataSource={this.getTableData()} />
           </div>
         </div>
+        <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
+          onOk={this.handleOk} onCancel={this.handleCancel}
+          >
+          <div className={styles.formcontent}>
+            <span className={styles.formtitle}>{this.state.modalkey}</span>
+            <div className={styles.form}>
+              <Input value={this.state.modalvalue} onChange={this.onModalvalueChange} placeholder="请输入" />
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }
