@@ -74,6 +74,8 @@ var sqlmap = {
   getpromotionimage: 'select a.* from product_image a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND submitdate BETWEEN ? and ? AND type = 3',
   getpromotionadjust: 'select * from promotion_adjust where pro_id = ?',
   updatepromotionadjust: 'insert into promotion_adjust set pro_id = ?,store_id = ?, ',
+  getstockconfig: 'select * from stock_config',
+  updatestockconfig: 'replace into stock_config (stock_key,stock_value) values (?,?)',
 };
 
 module.exports = sqlmap;

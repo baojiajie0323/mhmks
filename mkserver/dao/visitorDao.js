@@ -256,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -1168,7 +1168,7 @@ module.exports = {
     });
   },
   getPromotionAdjust: function (req, res, next) {
-    console.log('userDao getPromotionAdjust');    
+    console.log('userDao getPromotionAdjust');
     var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -1209,7 +1209,55 @@ module.exports = {
         sqlstring += param.key;
         sqlstring += " = ";
         sqlstring += param.value;
-        connection.query(sqlstring, [param.pro_id,param.store_id], function (err, result) {
+        connection.query(sqlstring, [param.pro_id, param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getStockConfig: function (req, res, next) {
+    console.log('userDao getStockConfig');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getstockconfig;
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  updateStockConfig: function (req, res, next) {
+    console.log('userDao updateStockConfig');
+    var param = req.body;
+    _dao.log("后台", "更新库存配置");
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.updatestockconfig;
+        connection.query(sqlstring, [param.key, param.value], function (err, result) {
           console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);

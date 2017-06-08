@@ -1068,7 +1068,7 @@ var Action = {
   },
   getPromotionAdjust: function (data) {
     var context = this;
-    data.command =  'getpromotionadjust';
+    data.command = 'getpromotionadjust';
     $.ajax({
       url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
       data: data
@@ -1105,6 +1105,49 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('updateSubsidy fail');
+      })
+  },
+  getStockConfig: function (data) {
+    var context = this;
+    data = {
+      command : 'getstockconfig'
+    }
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getStockConfig:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOCKCONFIG, response.data);
+        } else {
+          message.error('获取库存配置失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getStockConfig fail');
+      })
+  },
+  updateStockConfig: function (data) {
+    var context = this;
+    data.command = 'updatestockconfig';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('updateStockConfig:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_STOCKCONFIG_UPDATE, response.data);
+          message.success('更新库存配置成功！');
+        } else {
+          message.error('更新库存配置失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('updateStockConfig fail');
       })
   },
   dispatch: function (funname, value) {

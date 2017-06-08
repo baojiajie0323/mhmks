@@ -116,6 +116,12 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "updatepromotionadjust") {
     console.log('updatepromotionadjust');
     visitorDao.updatePromotionAdjust(req, res, next);
+  } else if (req.body.command == "getstockconfig") {
+    console.log('getstockconfig');
+    visitorDao.getStockConfig(req, res, next);
+  } else if (req.body.command == "updatestockconfig") {
+    console.log('updatestockconfig');
+    visitorDao.updateStockConfig(req, res, next);
   } 
 });
 

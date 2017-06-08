@@ -38,6 +38,7 @@ var _subsidy = [];
 var _routeCost = [];
 var _promotionsum = [];
 var _promotionadjust = [];
+var _stockconfig = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -541,6 +542,31 @@ var Store = assign({}, EventEmitter.prototype, {
     return _promotionadjust;
   },
 
+  setStockConfig(ss) {
+    _stockconfig = ss;
+    this.emitChange(StoreEvent.SE_STOCKCONFIG);
+  },
+
+  updateStockConfig(ss) {
+    // for (var i = 0; i < _stockconfig.length; i++) {
+    //   if (_stockconfig[i].store_id == ss.store_id) {
+    //     _stockconfig[i][ss.key] = ss.value;
+    //     this.emitChange(StoreEvent.SE_STOCKCONFIG);
+    //     return;
+    //   }
+    // }
+    // var data = {
+    //   pro_id: ss.pro_id,
+    //   store_id: ss.store_id,
+    // };
+    // data[ss.key] = ss.value;
+    // _promotionadjust.push(data);
+    // this.emitChange(StoreEvent.SE_PROMOTIONADJUST);
+  },
+
+  getStockConfig() {
+    return _stockconfig;
+  },
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },

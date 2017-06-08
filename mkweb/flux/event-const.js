@@ -54,6 +54,8 @@ var eventMap = {
     AE_PROMOTIONIMAGE: null,
     AE_PROMOTIONADJUST: null,
     AE_PROMOTIONADJUST_UPDATE: null,
+    AE_STOCKCONFIG: null,
+    AE_STOCKCONFIG_UPDATE: null,
   }),
 
   StoreEvent: keyMirror({
@@ -94,6 +96,7 @@ var eventMap = {
     SE_PROMOTIONSUM: null,
     SE_PROMOTIONIMAGE: null,
     SE_PROMOTIONADJUST: null,
+    SE_STOCKCONFIG: null,
   })
 };
 
