@@ -16,12 +16,14 @@ class PromotionSum extends React.Component {
     this.state = {
       storeArea: Store.getStoreArea(),
       promotionSum: Store.getPromotionSum(),
+      promotionAdjust: Store.getPromotionAdjust(),
       promotionImage: []
     };
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.onStoreAreaChange = this.onStoreAreaChange.bind(this);
     this.onPromotionSumChange = this.onPromotionSumChange.bind(this);
+    this.onPromotionAdjustChange = this.onPromotionAdjustChange.bind(this);
     this.onPromotionImageChange = this.onPromotionImageChange.bind(this);
     this.onAreaChange = this.onAreaChange.bind(this);
     this.onClickText = this.onClickText.bind(this);
@@ -50,6 +52,7 @@ class PromotionSum extends React.Component {
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_STOREAREA, this.onStoreAreaChange);
     Store.addChangeListener(StoreEvent.SE_PROMOTIONSUM, this.onPromotionSumChange);
+    Store.addChangeListener(StoreEvent.SE_PROMOTIONADJUST, this.onPromotionAdjustChange);
     Store.addChangeListener(StoreEvent.SE_PROMOTIONIMAGE, this.onPromotionImageChange);
 
     Action.getStoreArea();
@@ -57,12 +60,19 @@ class PromotionSum extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_STOREAREA, this.onStoreAreaChange);
     Store.removeChangeListener(StoreEvent.SE_PROMOTIONSUM, this.onPromotionSumChange);
+    Store.removeChangeListener(StoreEvent.SE_PROMOTIONADJUST, this.onPromotionAdjustChange);
     Store.removeChangeListener(StoreEvent.SE_PROMOTIONIMAGE, this.onPromotionImageChange);
   }
 
   onStoreAreaChange() {
     this.setState({
       storeArea: Store.getStoreArea()
+    })
+  }
+  onPromotionAdjustChange() {
+    this.setState({
+      promotionAdjust: Store.getPromotionAdjust(),
+      visible: false,
     })
   }
 
@@ -78,10 +88,12 @@ class PromotionSum extends React.Component {
         }
       }
     }
-    
-    this.schedule = pro_name;
-    this.refs.schedule.refs.input.value = pro_name; 
-    
+
+    if (pro_name != "") {
+      this.schedule = pro_name;
+      this.refs.schedule.refs.input.value = pro_name;
+    }
+
     return true;
   }
 
@@ -140,6 +152,9 @@ class PromotionSum extends React.Component {
     promotionSum.forEach((ps, index) => {
       ps.sortIndex = index;
     })
+    promotionSum.sort((a, b) => {
+      return a.user_id - b.user_id || a.sortIndex - b.sortIndex;
+    })
     this.setState({
       promotionSum
     })
@@ -152,6 +167,13 @@ class PromotionSum extends React.Component {
       };
       console.log(data);
       Action.getPromotionImage(data);
+
+      var adjustData = {
+        pro_id: promotionSum[0].Pro_id
+      }
+
+      console.log(adjustData);
+      Action.getPromotionAdjust(adjustData);
     }
   }
   onPromotionImageChange(promotionImage) {
@@ -205,6 +227,19 @@ class PromotionSum extends React.Component {
     return productCount;
   }
 
+  getproductCountAll(user_id, hb) {
+    var promotionSum = this.state.promotionSum;
+    var productCount = 0;
+    for (var i = 0; i < promotionSum.length; i++) {
+      if (promotionSum[i].user_id == user_id &&
+        ((hb && promotionSum[i].Promotion_type == "002") ||
+          (!hb && promotionSum[i].Promotion_type != "002"))) {
+        productCount++;
+      }
+    }
+    return productCount;
+  }
+
   getProduct(store_id, product_id) {
     var promotionSum = this.state.promotionSum;
     var productCount = 0;
@@ -216,12 +251,76 @@ class PromotionSum extends React.Component {
     }
   }
 
+  getStoreByUserId(user_id) {
+    var promotionSum = this.state.promotionSum;
+    var storelist = [];
+    for (var i = 0; i < promotionSum.length; i++) {
+      if (promotionSum[i].user_id == user_id) {
+        storelist.push(promotionSum[i].Store_id);
+      }
+    }
+    return storelist;
+  }
+
+  getAdjustCount(store_id, hb) {
+    var promotionAdjust = this.state.promotionAdjust;
+    for (var i = 0; i < promotionAdjust.length; i++) {
+      if (promotionAdjust[i].store_id == store_id) {
+        if (hb) {
+          return promotionAdjust[i].hb_adjust;
+        } else {
+          return promotionAdjust[i].ip_adjust;
+        }
+      }
+    }
+  }
+
+  getAdjustCountAll(user_id, hb) {
+    var promotionAdjust = this.state.promotionAdjust;
+    var storelist = this.getStoreByUserId(user_id);
+    var hb_adjust = 0;
+    var ip_adjust = 0;
+    for (var i = 0; i < promotionAdjust.length; i++) {
+      if (storelist.indexOf(promotionAdjust[i].store_id) >= 0) {
+        if (hb) {
+          hb_adjust += parseInt(promotionAdjust[i].hb_adjust);
+          //return promotionAdjust[i].hb_adjust;
+        } else {
+          ip_adjust += parseInt(promotionAdjust[i].ip_adjust);
+          //return promotionAdjust[i].ip_adjust;
+        }
+      }
+    }
+    if (hb) {
+      return hb_adjust;
+    } else {
+      return ip_adjust;
+    }
+  }
+
   getImageCount(store_id, hb) {
     var promotionImage = this.state.promotionImage;
     var productCount = 0;
     for (var i = 0; i < promotionImage.length; i++) {
       if (promotionImage[i].store_id == store_id) {
         var productInfo = this.getProduct(store_id, promotionImage[i].product_id);
+        if (productInfo &&
+          ((hb && productInfo.Promotion_type == "002") ||
+            (!hb && productInfo.Promotion_type != "002"))) {
+          productCount++;
+        }
+      }
+    }
+    return productCount;
+  }
+
+  getImageCountAll(user_id, hb) {
+    var promotionImage = this.state.promotionImage;
+    var storelist = this.getStoreByUserId(user_id);
+    var productCount = 0;
+    for (var i = 0; i < promotionImage.length; i++) {
+      if (storelist.indexOf(promotionImage[i].store_id) >= 0) {
+        var productInfo = this.getProduct(promotionImage[i].store_id, promotionImage[i].product_id);
         if (productInfo &&
           ((hb && productInfo.Promotion_type == "002") ||
             (!hb && productInfo.Promotion_type != "002"))) {
@@ -253,7 +352,6 @@ class PromotionSum extends React.Component {
   }
 
   onClickText(text, record, cate) {
-    this._curRecord = record;
     this._cate = cate;
     this._record = record;
     this.setState({
@@ -264,17 +362,14 @@ class PromotionSum extends React.Component {
     })
   }
   handleOk() {
-    // var data = {
-    //   routedate: this.state.monthDate.format("YYYY-MM"),
-    //   routetype: this.routetype,
-    //   routemark: this._record.routemark,
-    //   path_id: this._record.Path_id,
-    //   store_id: this._record.Store_id,
-    //   key: this._cate,
-    //   value: this.state.modalvalue,
-    // }
-    // console.log("updateRouteCost", data);
-    // Action.updateRouteCost(data);
+    var data = {
+      pro_id: this._record.Pro_id,
+      store_id: this._record.Store_id,
+      key: this._cate,
+      value: parseInt(this.state.modalvalue),
+    }
+    console.log("updatePromotionAdjust", data);
+    Action.updatePromotionAdjust(data);
   }
   handleCancel() {
     this.setState({ visible: false })
@@ -309,6 +404,9 @@ class PromotionSum extends React.Component {
         key: 'photo',
         width: 600,
         render: function (text, record, index) {
+          if (text) {
+            return text;
+          }
           return context.getImageDom(record.Store_id);
         }
       }, {
@@ -350,30 +448,44 @@ class PromotionSum extends React.Component {
         key: 'hb_percent',
         width: 60,
         render: function (text, record) {
-          return percentNum(record.hb_image, record.hb_count);
+          var hbcount = record.hb_adjust;
+          if (!hbcount) {
+            hbcount = record.hb_image;
+          }
+          return percentNum(hbcount, record.hb_count);
         }
       }, {
         title: <p style={{ textAlign: 'center' }}>IP陈列率</p>,
         key: 'ip_percent',
         width: 60,
         render: function (text, record) {
-          return percentNum(record.ip_image, record.ip_count);
+          var ipcount = record.ip_adjust;
+          if (!ipcount) {
+            ipcount = record.ip_image;
+          }
+          return percentNum(ipcount, record.ip_count);
         }
       }, {
         title: <p style={{ textAlign: 'center' }}>合计陈列率</p>,
         key: 'all_percent',
         width: 60,
         render: function (text, record) {
-          return percentNum(record.ip_image + record.hb_image, record.ip_count + record.hb_count);
+          var ipcount = record.ip_adjust;
+          if (!ipcount) {
+            ipcount = record.ip_image;
+          }
+          var hbcount = record.hb_adjust;
+          if (!hbcount) {
+            hbcount = record.hb_image;
+          }
+          return percentNum(parseInt(ipcount) + parseInt(hbcount), parseInt(record.ip_count) + parseInt(record.hb_count));
         }
       }];
   }
   getTableData() {
     var context = this;
+    
     var promotionSum = this.state.promotionSum;
-    promotionSum.sort((a, b) => {
-      return a.user_id - b.user_id || a.sortIndex - b.sortIndex;
-    })
     var promotionSum_data = [];
     var isExist = function (ps) {
       for (var i = 0; i < promotionSum_data.length; i++) {
@@ -384,14 +496,37 @@ class PromotionSum extends React.Component {
       }
       return false;
     }
+
+    var lastps = null;
     promotionSum.forEach((ps) => {
       if (!isExist(ps)) {
         ps.hb_image = context.getImageCount(ps.Store_id, true);
         ps.ip_image = context.getImageCount(ps.Store_id, false);
+        ps.hb_adjust = context.getAdjustCount(ps.Store_id, true);
+        ps.ip_adjust = context.getAdjustCount(ps.Store_id, false);
         ps.hb_count = context.getproductCount(ps.Store_id, true);
         ps.ip_count = context.getproductCount(ps.Store_id, false);
 
+        if (lastps && lastps.user_id != ps.user_id) {
+          //换了一个业务员，此时需要添加上一个业务员的统计数据
+          var data = {
+            mark: 1,
+            photo: "小计",
+            user_id: lastps.user_id,
+            realname: lastps.realname,
+            store_name: lastps.store_name,
+            Store_id: lastps.Store_id,
+            hb_count: context.getproductCountAll(lastps.user_id, true),
+            ip_count: context.getproductCountAll(lastps.user_id, false),
+            hb_adjust: context.getAdjustCountAll(lastps.user_id, true),
+            ip_adjust: context.getAdjustCountAll(lastps.user_id, false),
+            hb_image: context.getImageCountAll(lastps.user_id, true),
+            ip_image: context.getImageCountAll(lastps.user_id, false),
+          }
+          promotionSum_data.push(data);
+        }
         promotionSum_data.push(ps);
+        lastps = ps;
       }
     })
 
@@ -399,6 +534,9 @@ class PromotionSum extends React.Component {
   }
   rowClassName(record, index) {
     var style = [styles.table_row];
+    if (record.mark == 1) {
+      style.push(styles.path_cell);
+    }
     return style.join(' ');
   }
   render() {

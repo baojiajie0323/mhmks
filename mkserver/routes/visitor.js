@@ -110,6 +110,12 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getpromotionimage") {
     console.log('getpromotionimage');
     visitorDao.getPromotionImage(req, res, next);
+  } else if (req.body.command == "getpromotionadjust") {
+    console.log('getpromotionadjust');
+    visitorDao.getPromotionAdjust(req, res, next);
+  } else if (req.body.command == "updatepromotionadjust") {
+    console.log('updatepromotionadjust');
+    visitorDao.updatePromotionAdjust(req, res, next);
   } 
 });
 

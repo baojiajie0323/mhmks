@@ -1066,6 +1066,47 @@ var Action = {
         console.log('getPromotionImage fail');
       })
   },
+  getPromotionAdjust: function (data) {
+    var context = this;
+    data.command =  'getpromotionadjust';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPromotionAdjust:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONADJUST, response.data);
+        } else {
+          message.error('获取促销调整失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPromotionAdjust fail');
+      })
+  },
+  updatePromotionAdjust: function (data) {
+    var context = this;
+    data.command = 'updatepromotionadjust';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('updatePromotionAdjust:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PROMOTIONADJUST_UPDATE, response.data);
+          message.success('更新促销调整成功！');
+        } else {
+          message.error('更新促销调整失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('updateSubsidy fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

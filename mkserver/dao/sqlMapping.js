@@ -72,6 +72,8 @@ var sqlmap = {
   updateroutecost: 'insert into visitor_route set cdate = ?, routetype = ?, routemark = ?,path_id = ?, store_id = ?,',
   getpromotionsum: 'select b.user_id,b.store_name,c.product_name,d.realname,a.* from promotion a left join store b on (a.store_id = b.store_id) left join product c on (a.product_id = c.product_id) left join user d on (b.user_id = d.username) where b.Region_id = ? AND pro_name like ?',
   getpromotionimage: 'select a.* from product_image a left join store b on (a.store_id = b.store_id) where b.Region_id = ? AND submitdate BETWEEN ? and ? AND type = 3',
+  getpromotionadjust: 'select * from promotion_adjust where pro_id = ?',
+  updatepromotionadjust: 'insert into promotion_adjust set pro_id = ?,store_id = ?, ',
 };
 
 module.exports = sqlmap;

@@ -37,6 +37,7 @@ var _visitorimage = [];
 var _subsidy = [];
 var _routeCost = [];
 var _promotionsum = [];
+var _promotionadjust = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   setLoginSuccess(loginsuccess, userInfo) {
@@ -514,6 +515,32 @@ var Store = assign({}, EventEmitter.prototype, {
     return _promotionsum;
   },
 
+  setPromotionAdjust(ss) {
+    _promotionadjust = ss;
+    this.emitChange(StoreEvent.SE_PROMOTIONADJUST);
+  },
+
+  updatePromotionAdjust(ss) {
+    for (var i = 0; i < _promotionadjust.length; i++) {
+      if (_promotionadjust[i].store_id == ss.store_id) {
+        _promotionadjust[i][ss.key] = ss.value;
+        this.emitChange(StoreEvent.SE_PROMOTIONADJUST);
+        return;
+      }
+    }
+    var data = {
+      pro_id: ss.pro_id,
+      store_id: ss.store_id,
+    };
+    data[ss.key] = ss.value;
+    _promotionadjust.push(data);
+    this.emitChange(StoreEvent.SE_PROMOTIONADJUST);
+  },
+
+  getPromotionAdjust() {
+    return _promotionadjust;
+  },
+
   emitChange: function (eventtype) {
     this.emit(eventtype);
   },
@@ -717,7 +744,15 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_PROMOTIONIMAGE: {
-      Store.emit(StoreEvent.SE_PROMOTIONIMAGE,action.value);
+      Store.emit(StoreEvent.SE_PROMOTIONIMAGE, action.value);
+    }
+      break;
+    case ActionEvent.AE_PROMOTIONADJUST: {
+      Store.setPromotionAdjust(action.value);
+    }
+      break;
+    case ActionEvent.AE_PROMOTIONADJUST_UPDATE: {
+      Store.updatePromotionAdjust(action.value);
     }
       break;
     default:

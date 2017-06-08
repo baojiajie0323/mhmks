@@ -256,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -1155,12 +1155,71 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getpromotionimage;
-        connection.query(sqlstring, [param.areaid,param.begindate,param.enddate], function (err, result) {
+        connection.query(sqlstring, [param.areaid, param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getPromotionAdjust: function (req, res, next) {
+    console.log('userDao getPromotionAdjust');    
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpromotionadjust;
+        connection.query(sqlstring, [param.pro_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  updatePromotionAdjust: function (req, res, next) {
+    console.log('userDao updatePromotionAdjust');
+    var param = req.body;
+    if (param.pro_id == null) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    _dao.log("后台", "更新促销陈列调整");
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.updatepromotionadjust;
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += param.value;
+        sqlstring += " on DUPLICATE KEY UPDATE ";
+        sqlstring += param.key;
+        sqlstring += " = ";
+        sqlstring += param.value;
+        connection.query(sqlstring, [param.pro_id,param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
           }
           connection.release();
         });

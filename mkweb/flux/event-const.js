@@ -52,6 +52,8 @@ var eventMap = {
     AE_ROUTECOST_UPDATE: null,
     AE_PROMOTIONSUM: null,
     AE_PROMOTIONIMAGE: null,
+    AE_PROMOTIONADJUST: null,
+    AE_PROMOTIONADJUST_UPDATE: null,
   }),
 
   StoreEvent: keyMirror({
@@ -91,6 +93,7 @@ var eventMap = {
     SE_ROUTECOST: null,
     SE_PROMOTIONSUM: null,
     SE_PROMOTIONIMAGE: null,
+    SE_PROMOTIONADJUST: null,
   })
 };
 
