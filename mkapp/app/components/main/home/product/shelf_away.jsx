@@ -30,12 +30,12 @@ var displayInfo = [{
   display_id: 5,
   display_name: "挂条"
 }, {
-    display_id: 6,
-    display_name: "网片"
-  }, {
-    display_id: 7,
-    display_name: "陈列架"
-  }]
+  display_id: 6,
+  display_name: "网片"
+}, {
+  display_id: 7,
+  display_name: "陈列架"
+}]
 
 class Shelf_away extends React.Component {
   constructor(props) {
@@ -219,6 +219,7 @@ class Shelf_away extends React.Component {
     var context = this;
     var count = this.getPreSaveProductCount(display_id);
     productList.push(<ListItem
+      disableTouchRipple={true}
       rightIconButton={<TextField
         value={count}
         onChange={function (e, value) { context.onTextChange(display_id, value) } }
@@ -233,6 +234,7 @@ class Shelf_away extends React.Component {
       let product = this.state.product[i];
       var checked = this.getPreSaveProduct(product, display_id);
       productList.push(<ListItem
+        disableTouchRipple={true}
         leftCheckbox={<Checkbox
           checked={checked}
           onCheck={function (e, checked) { context.onCheckChange(product, display_id, checked) } }
@@ -428,19 +430,19 @@ class Shelf_away extends React.Component {
 
       const uploadButton = (
         <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(display.display_id) } }>
-          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={display.display_name} key={i.toString() }>
+      panelList.push(<Panel header={display.display_name} key={i.toString()}>
         <div className={styles.photocontent}>
-          {this.getPhotolist(fileList) }
+          {this.getPhotolist(fileList)}
           {fileList.length >= 5 ? null : uploadButton}
         </div>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
-        {this.getProductDom(display.display_id) }
+        {this.getProductDom(display.display_id)}
       </Panel>
       )
     }
@@ -477,7 +479,7 @@ class Shelf_away extends React.Component {
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion >
-            {this.getPanel() }
+            {this.getPanel()}
           </Collapse>
         </div>
         <Dialog

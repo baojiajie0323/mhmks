@@ -49,6 +49,7 @@ class StoreView extends React.Component {
     var context = this;
     this.state.storeBasic.forEach((sb) => {
       domlist.push(<ListItem
+        disableTouchRipple={true}
         id={sb.Store_id}
         primaryText={sb.Store_name}
         rightIcon={<RightIcon color={cyan600} />}
@@ -62,14 +63,14 @@ class StoreView extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:config.titlebarPadding }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='门店'
           iconElementLeft={<span></span>}
           />
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             <List>
-              {this.getStoreDom() }
+              {this.getStoreDom()}
             </List>
           </Spin>
         </div>

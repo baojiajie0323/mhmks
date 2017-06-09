@@ -102,6 +102,7 @@ class SelectStore extends React.Component {
       }
       if (sb.realname == userInfo.realname) {
         mystorelist.push(<ListItem
+          disableTouchRipple={true}
           id={sb.Store_id}
           primaryText={sb.Store_name}
           leftCheckbox={<Checkbox
@@ -114,6 +115,7 @@ class SelectStore extends React.Component {
           otherstorelist[sb.realname] = [];
         }
         otherstorelist[sb.realname].push(<ListItem
+          disableTouchRipple={true}
           id={sb.Store_id}
           primaryText={sb.Store_name}
           leftCheckbox={<Checkbox
@@ -125,15 +127,17 @@ class SelectStore extends React.Component {
     })
 
     var dom = [<ListItem
+      disableTouchRipple={true}
       primaryText="我的门店"
       initiallyOpen={true}
       primaryTogglesNestedList={true}
       nestedItems={mystorelist}
       />];
-    
-    console.log('otherstorelist',otherstorelist);
+
+    console.log('otherstorelist', otherstorelist);
     for (var realname in otherstorelist) {
       dom.push(<ListItem
+        disableTouchRipple={true}
         primaryText={realname + "的门店"}
         initiallyOpen={true}
         primaryTogglesNestedList={true}
@@ -150,7 +154,7 @@ class SelectStore extends React.Component {
       message.info('请选择门店');
       return;
     }
-    if(this.loading){
+    if (this.loading) {
       return;
     }
     this.loading = true;
@@ -195,7 +199,7 @@ class SelectStore extends React.Component {
               }
             </div>
             <List>
-              {this.getStorelist() }
+              {this.getStorelist()}
             </List>
           </Spin>
         </div>

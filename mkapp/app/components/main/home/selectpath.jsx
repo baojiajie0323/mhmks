@@ -60,8 +60,8 @@ class SelectPath extends React.Component {
       loading: false,
     })
   }
-  onPlanChange(){
-    Store.emit(StoreEvent.SE_VIEW,'');
+  onPlanChange() {
+    Store.emit(StoreEvent.SE_VIEW, '');
   }
   getPathlist() {
     var context = this;
@@ -71,10 +71,11 @@ class SelectPath extends React.Component {
       var pathDetail = Store.getPathDetail(sb.Path_id);
       var detailText = pathDetail.join('->');
       domlist.push(<ListItem
+        disableTouchRipple={true}
         id={sb.Path_id}
         primaryText={sb.Path_name}
         secondaryText={detailText}
-        secondaryTextLines = {2}
+        secondaryTextLines={2}
         leftCheckbox={<Checkbox
           onCheck={function (e, checked) { context.onCheckChange(sb.Path_id, checked) } }
           checked={context.state.checkedId == sb.Path_id} />}
@@ -109,17 +110,17 @@ class SelectPath extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:config.titlebarPadding }}
+          style={{ paddingTop: config.titlebarPadding }}
           title='选择路线'
           onLeftIconButtonTouchTap={this.onClickBack}
           onRightIconButtonTouchTap={this.onClickOk}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="确定" />}
           />
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <Spin size="large" tip={this.state.tipText} spinning={this.state.loading}>
             <List>
-              {this.getPathlist() }
+              {this.getPathlist()}
             </List>
           </Spin>
         </div>

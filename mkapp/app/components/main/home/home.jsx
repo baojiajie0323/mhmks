@@ -334,6 +334,7 @@ class Home extends React.Component {
           primaryText={pathTitle[pl.plan_type - 1] + pathName}
           secondaryText={storeName}
           secondaryTextLines={2}
+          disableTouchRipple={true}
           rightIconButton={<PlanOperate
             onClickDoPlan={function () {
               context.onClickDoPlan(pl.path_id, pl.store_id);

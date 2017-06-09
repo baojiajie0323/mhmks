@@ -27,11 +27,11 @@ class StoreDetail extends React.Component {
         storeInfo
       })
 
-    var map = new BMap.Map("localtionmap");
-    var point = new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y);
-    map.centerAndZoom(point, 14);
-    var marker = new BMap.Marker(new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y)); // 创建点
-    map.addOverlay(marker);
+      var map = new BMap.Map("localtionmap");
+      var point = new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y);
+      map.centerAndZoom(point, 14);
+      var marker = new BMap.Marker(new BMap.Point(storeInfo.Gps_x, storeInfo.Gps_y)); // 创建点
+      map.addOverlay(marker);
     }
   }
   componentWillUnmount() {
@@ -43,26 +43,29 @@ class StoreDetail extends React.Component {
     return (
       <div className={styles.container}>
         <AppBar
-          style={{  paddingTop:config.titlebarPadding }}
+          style={{ paddingTop: config.titlebarPadding }}
           title={this.state.storeInfo.Store_name}
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           />
-        <div style={{top:config.contentTop}} className={styles.content}>
+        <div style={{ top: config.contentTop }} className={styles.content}>
           <div id="localtionmap" className={styles.mapContainer}></div>
           <List>
             <ListItem
+              disableTouchRipple={true}
               primaryText={this.state.storeInfo.Address}
-              leftIcon={<PlaceIcon color={cyan600}/>}
+              leftIcon={<PlaceIcon color={cyan600} />}
               />
             <ListItem
+              disableTouchRipple={true}
               primaryText={<span style={{ fontWeight: 'bold' }}>{this.state.storeInfo.Level}</span>}
-              leftIcon={<StarIcon color={cyan600}/>}
+              leftIcon={<StarIcon color={cyan600} />}
               />
             <ListItem
+              disableTouchRipple={true}
               primaryText={this.state.storeInfo.Contacts_name}
               secondaryText={this.state.storeInfo.Tel}
-              leftIcon={<CommunicationCall color={cyan600}/>}
+              leftIcon={<CommunicationCall color={cyan600} />}
               />
           </List>
         </div>

@@ -219,6 +219,7 @@ class Stock extends React.Component {
             />}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
+          disableTouchRipple={true}
           />);
       }
     }

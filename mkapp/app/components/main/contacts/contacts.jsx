@@ -43,6 +43,7 @@ class Contacts extends React.Component {
       if (user.phone && user.phone != "") {
         domlist.push(<a href={'tel:' + user.phone}>
           <ListItem
+            disableTouchRipple={true}
             primaryText={user.realname}
             rightIcon={<PhoneIcon color={cyan600} />}
             />
