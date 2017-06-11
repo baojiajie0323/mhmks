@@ -7,8 +7,12 @@ class StockMgr extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible:false,
+      visible: false,
       stockconfig: Store.getStockConfig(),
+      stock_l: "",
+      stock_h: "",
+      caller: "",
+      signature: "",
     };
 
     this.onStockConfigChange = this.onStockConfigChange.bind(this);
@@ -18,6 +22,10 @@ class StockMgr extends React.Component {
     this.onTextChange = this.onTextChange.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleOk = this.handleOk.bind(this);
+    this.onStocklChange = this.onStocklChange.bind(this);
+    this.onStockhChange = this.onStockhChange.bind(this);
+    this.onCallerChange = this.onCallerChange.bind(this);
+    this.onSignatureChange = this.onSignatureChange.bind(this);
     this.queryData = "";
   }
   componentDidMount() {
@@ -29,32 +37,63 @@ class StockMgr extends React.Component {
 
   }
   onStockConfigChange() {
+    var context = this;
     this.setState({
-      stockconfig: Store.getStockConfig()
+      stockconfig: Store.getStockConfig(),
+      visible: false,
+    }, function () {
+      var stockConfig = this.state.stockconfig;
+      stockConfig.forEach((sC) => {
+        if (sC.stock_key == "stock_l") {
+          context.setState({
+            stock_l: sC.stock_value
+          })
+        }
+        else if (sC.stock_key == "stock_h") {
+          context.setState({
+            stock_h: sC.stock_value
+          })
+        }
+        else if (sC.stock_key == "caller") {
+          context.setState({
+            caller: sC.stock_value
+          })
+        }
+        else if (sC.stock_key == "signature") {
+          context.setState({
+            signature: sC.stock_value
+          })
+        }
+      })
     })
   }
 
-  handleCancel(){
-    this.setState({visible:false})
+  handleCancel() {
+    this.setState({ visible: false })
   }
 
-  onClickQuery(){
+  onClickQuery() {
     var data = {
-      signtime:this.queryData,
-      userid:this.userid
+      signtime: this.queryData,
+      userid: this.userid
     };
     console.log(data);
     Action.getSignList(data);
   }
 
-  onClickSetting(){
+  onClickSetting() {
     this.setState({
       visible: true
     })
   }
 
-  handleOk(){
-
+  handleOk() {
+    Action.updateStockConfig({
+      stock_l: this.state.stock_l,
+      stock_h: this.state.stock_h,
+      caller: this.state.caller,
+      signature: this.state.signature
+    })
   }
 
   onDateChange(date, dateString) {
@@ -62,7 +101,31 @@ class StockMgr extends React.Component {
     console.log("onDateChange", date, dateString);
   }
 
-  onTextChange(e){
+  onStocklChange(e) {
+    this.setState({
+      stock_l: e.target.value,
+    })
+  }
+
+  onStockhChange(e) {
+    this.setState({
+      stock_h: e.target.value,
+    })
+  }
+
+  onCallerChange(e) {
+    this.setState({
+      caller: e.target.value,
+    })
+  }
+
+  onSignatureChange(e) {
+    this.setState({
+      signature: e.target.value,
+    })
+  }
+
+  onTextChange(e) {
     this.userid = e.target.value;
   }
 

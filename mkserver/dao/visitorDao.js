@@ -256,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -1256,18 +1256,43 @@ module.exports = {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var sqlstring = _sql.updatestockconfig;
-        connection.query(sqlstring, [param.key, param.value], function (err, result) {
-          console.log('dbresult', err, result);
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        for (let key in param) {
+          if (key == "command") {
+            continue;
+          }
+          console.log("updateStockConfig",key,param[key]);
+          var sqlstring = _sql.updatestockconfig;
+          tasks.push(function (callback) {
+            connection.query(sqlstring, [key, param[key]],
+              function (err, result) {
+                if (!err) {
+                }
+                callback(err);
+              });
+          });
+        }
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
           if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
-            if (result.affectedRows > 0) {
-              var data = req.body;
-              jsonWrite(res, data, dbcode.SUCCESS);
-            } else {
-              jsonWrite(res, {}, dbcode.FAIL);
-            }
+            jsonWrite(res, req.body, dbcode.SUCCESS);
           }
           connection.release();
         });

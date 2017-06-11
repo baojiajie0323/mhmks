@@ -547,7 +547,23 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emitChange(StoreEvent.SE_STOCKCONFIG);
   },
 
+  setStockConfigByKey(key, value) {
+    console.log("setStockConfigByKey",key,value);
+    for (var i = 0; i < _stockconfig.length; i++) {
+      var stockInfo = _stockconfig[i];
+      if (stockInfo.stock_key == key) {
+        stockInfo.stock_value = value;
+        break;
+      }
+    }
+  },
+
   updateStockConfig(ss) {
+    for (let key in ss) {
+      this.setStockConfigByKey(key, ss[key]);
+    }
+
+    this.emitChange(StoreEvent.SE_STOCKCONFIG);
     // for (var i = 0; i < _stockconfig.length; i++) {
     //   if (_stockconfig[i].store_id == ss.store_id) {
     //     _stockconfig[i][ss.key] = ss.value;
@@ -779,6 +795,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PROMOTIONADJUST_UPDATE: {
       Store.updatePromotionAdjust(action.value);
+    }
+      break;
+    case ActionEvent.AE_STOCKCONFIG: {
+      Store.setStockConfig(action.value);
+    }
+      break;
+    case ActionEvent.AE_STOCKCONFIG_UPDATE: {
+      Store.updateStockConfig(action.value);
     }
       break;
     default:
