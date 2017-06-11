@@ -209,13 +209,15 @@ class Stock extends React.Component {
             >
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
+
           rightIconButton={<TextField
-            value={product_count}
+            value={product_count + "/" + product_count}
             onChange={function (e, value) { context.onTextChange(product, value) } }
             style={{ width: '80px' }}
             hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
             inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
             hintText="0"
+            disabled={true}
             />}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
@@ -429,7 +431,7 @@ class Stock extends React.Component {
         </Modal>
         <Paper zDepth={0} className={styles.headtitle}>
           <p>产品/货号</p>
-          <p>库存数</p>
+          <p>库存量/订货量</p>
         </Paper>
         {this.getProductDom(brand.Brand_id) }
       </Panel>
