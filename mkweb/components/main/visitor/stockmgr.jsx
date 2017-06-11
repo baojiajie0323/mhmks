@@ -73,12 +73,13 @@ class StockMgr extends React.Component {
   }
 
   onClickQuery() {
-    var data = {
-      signtime: this.queryData,
-      userid: this.userid
-    };
-    console.log(data);
-    Action.getSignList(data);
+    // var data = {
+    //   signtime: this.queryData,
+    //   userid: this.userid
+    // };
+    // console.log(data);
+    // Action.getSignList(data);
+    message.info("此功能待开发");
   }
 
   onClickSetting() {
