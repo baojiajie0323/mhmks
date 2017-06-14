@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import { message, Collapse, Upload, Icon, Modal } from 'antd';
+import { message, Collapse, Upload, Icon, Modal, Input } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import AddIcon from 'material-ui/svg-icons/content/add';
 import MinusIcon from 'material-ui/svg-icons/content/remove';
@@ -37,6 +37,7 @@ class Stock extends React.Component {
       previewImage: '',
       file: {},
       preSaveProduct: [],
+      visible: false,
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSubmit = this.onClickSubmit.bind(this);
@@ -49,6 +50,11 @@ class Stock extends React.Component {
     this.removePhoto = this.removePhoto.bind(this);
     this.onStockChange = this.onStockChange.bind(this);
     this.onVisitorImage = this.onVisitorImage.bind(this);
+    this.handleStockCancel = this.handleStockCancel.bind(this);
+    this.handleStockOk = this.handleStockOk.bind(this);
+    this.onClickStock = this.onClickStock.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+    this.onOnwayChange = this.onOnwayChange.bind(this);
   }
 
   handleCancel = () => this.setState({ previewVisible: false })
@@ -73,7 +79,7 @@ class Stock extends React.Component {
     var preSaveProduct = this.state.preSaveProduct;
     for (var i = 0; i < preSaveProduct.length; i++) {
       if (preSaveProduct[i].Product_id == product.Product_id) {
-        if (product.count == "") {
+        if (product.count == "" && product.onway == "") {
           preSaveProduct.splice(i, 1);
         } else {
           preSaveProduct[i] = product;
@@ -91,15 +97,28 @@ class Stock extends React.Component {
     var preSaveProduct = this.state.preSaveProduct;
     for (var i = 0; i < preSaveProduct.length; i++) {
       if (preSaveProduct[i].Product_id == product.Product_id) {
-        return preSaveProduct[i].count;
+        return preSaveProduct[i];
       }
     }
-    return "";
   }
 
   onTextChange(product, value) {
-    product.count = value;
-    this.addToPreSaveProduct(product);
+
+  }
+
+  onOnwayChange(e) {
+    this.setState({
+      stockOnway: e.target.value
+    })
+    this._product.onway = e.target.value;
+    this.addToPreSaveProduct(this._product);
+  }
+  onCountChange(e) {
+    this.setState({
+      stockCount: e.target.value
+    })
+    this._product.count = e.target.value;
+    this.addToPreSaveProduct(this._product);
   }
 
   componentDidMount() {
@@ -157,6 +176,28 @@ class Stock extends React.Component {
     })
   }
 
+  handleStockCancel() {
+    this.setState({
+      visible: false
+    })
+  }
+
+  handleStockOk() {
+    this.setState({
+      visible: false
+    })
+  }
+
+  onClickStock(product) {
+    this._product = product;
+    this.setState({
+      visible: true,
+      title: product.Product_name,
+      stockCount: product.count || "",
+      stockOnway: product.onway || "",
+    })
+  }
+
   onStockChange(preSaveProduct) {
     preSaveProduct.forEach((sp) => {
       sp.Product_id = sp.product_id;
@@ -199,7 +240,15 @@ class Stock extends React.Component {
     var context = this;
     for (let i = 0; i < this.state.product.length; i++) {
       let product = this.state.product[i];
-      var product_count = this.getPreSaveProduct(product);
+      var product_count = 0;
+      var product_onway = 0;
+      var product_presave = this.getPreSaveProduct(product);
+      var stockInfo = "";
+      if (product_presave) {
+        product_count = product_presave.count;
+        product_onway = product_presave.onway;
+        stockInfo = (product_count || 0) + " / " + (product_onway || 0);
+      }
       if (product.Brand_id == Brand_id) {
         productList.push(<ListItem
           leftAvatar={<Avatar
@@ -210,13 +259,13 @@ class Stock extends React.Component {
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
 
-          rightIconButton={<p style={{marginTop:'14px'}}>
-            asdfasdf
-            </p>}
+          rightIconButton={<p onClick={function () { context.onClickStock(product) } } style={{ marginTop: '14px' }}>
+            {stockInfo}
+          </p>}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
           disableTouchRipple={true}
-          onTouchTap={function(){alert(12345)}}
+          onTouchTap={function () { context.onClickStock(product) } }
           />);
       }
     }
@@ -255,7 +304,8 @@ class Stock extends React.Component {
     data.product = this.state.preSaveProduct.map((product) => {
       return {
         product_id: product.Product_id,
-        count: product.count
+        count: product.count,
+        onway: product.onway,
       }
     })
 
@@ -476,6 +526,21 @@ class Stock extends React.Component {
           >
           确定要提交数据吗？
         </Dialog>
+        <Modal
+          title={this.state.title}
+          visible={this.state.visible}
+          onOk={this.handleStockOk}
+          onCancel={this.handleStockCancel}
+          >
+          <div className={styles.stockModalcontent}>
+            <p>库存量：</p>
+            <Input value={this.state.stockCount} onChange={this.onCountChange} />
+          </div>
+          <div className={styles.stockModalcontent}>
+            <p>在途量：</p>
+            <Input value={this.state.stockOnway} onChange={this.onOnwayChange} />
+          </div>
+        </Modal>
       </div>
     );
   }

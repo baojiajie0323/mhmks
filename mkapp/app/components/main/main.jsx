@@ -17,6 +17,7 @@ import ShelfMain from './home/product/shelf_main';
 import ShelfAway from './home/product/shelf_away';
 import Stock from './home/product/stock';
 import Chat from './home/product/chat';
+import Order from './home/product/order';
 import Promotion from './home/product/promotion';
 import PromotionDetail from './home/product/promotionDetail';
 import StoreView from './store/store';
@@ -89,6 +90,8 @@ class Main extends React.Component {
       return <Promotion userdata={this.state.userdata} />
     } else if (this.state.subview == 'promotiondetailview') {
       return <PromotionDetail userdata={this.state.userdata} />
+    } else if (this.state.subview == 'orderview') {
+      return <Order userdata={this.state.userdata} />
     }
     else if (this.state.selectedIndex == 0) {
       return <Home userdata={this.state.userdata} />

@@ -47,7 +47,7 @@ var sqlmap = {
   submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,submitdate,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?,?)',
   submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
   delshelfmain: 'delete from visitor_shelfmain where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
-  submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
+  submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count,onway) values(?,?,?,?,?,?,?,?)',
   delstock: 'delete from visitor_stock where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',

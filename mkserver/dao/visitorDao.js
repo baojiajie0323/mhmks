@@ -540,7 +540,7 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitstock;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count)],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count),parseInt(productInfo.onway)],
               function (err, result) {
                 callback(err);
               });

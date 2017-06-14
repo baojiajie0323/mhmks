@@ -77,5 +77,6 @@ var copyfile = function(src,dst){
 
 copyfile( './index.html', './dist/main.html');
 copyfile( './index_start.html', './dist/index.html');
+copyfile( './html2canvas.js', './dist/html2canvas.js');
 exists( './dist', '../../mkserver/public/mkapp', copy );
-//exists( './dist', '../mkcordova/www', copy );
+exists( './dist', '../mkcordova/www', copy );
