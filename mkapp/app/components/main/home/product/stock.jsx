@@ -210,18 +210,13 @@ class Stock extends React.Component {
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
 
-          rightIconButton={<TextField
-            value={product_count + "/" + product_count}
-            onChange={function (e, value) { context.onTextChange(product, value) } }
-            style={{ width: '80px' }}
-            hintStyle={{ textAlign: 'right', width: '100%', paddingRight: '10px' }}
-            inputStyle={{ textAlign: 'right', paddingRight: '10px' }}
-            hintText="0"
-            disabled={true}
-            />}
+          rightIconButton={<p style={{marginTop:'14px'}}>
+            asdfasdf
+            </p>}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
           disableTouchRipple={true}
+          onTouchTap={function(){alert(12345)}}
           />);
       }
     }
@@ -431,7 +426,7 @@ class Stock extends React.Component {
         </Modal>
         <Paper zDepth={0} className={styles.headtitle}>
           <p>产品/货号</p>
-          <p>库存量/订货量</p>
+          <p>库存/在途</p>
         </Paper>
         {this.getProductDom(brand.Brand_id) }
       </Panel>

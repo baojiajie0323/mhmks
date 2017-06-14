@@ -78,4 +78,4 @@ var copyfile = function(src,dst){
 copyfile( './index.html', './dist/main.html');
 copyfile( './index_start.html', './dist/index.html');
 exists( './dist', '../../mkserver/public/mkapp', copy );
-exists( './dist', '../mkcordova/www', copy );
+//exists( './dist', '../mkcordova/www', copy );
