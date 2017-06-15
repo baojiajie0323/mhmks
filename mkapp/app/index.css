@@ -32,3 +32,15 @@ input :-webkit-autofill{
   margin-right: 0;
   margin-bottom: 0;
 }
+
+.ant-card-body{
+  padding: 0 5px;
+}
+
+.ant-card-head{
+  padding: 0 5px;
+}
+
+.ant-card-bordered {
+    border: 1px solid #A0A0A0;
+}

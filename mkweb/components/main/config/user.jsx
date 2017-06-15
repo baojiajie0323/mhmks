@@ -210,14 +210,14 @@ class User extends React.Component {
         return (<span>{role ? role.name : ''}</span>)
       }
     }, {
-      title: '电话',
-      dataIndex: 'phone',
-      key: 'phone',
-    }, {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-    }, {
+    //   title: '电话',
+    //   dataIndex: 'phone',
+    //   key: 'phone',
+    // }, {
+    //   title: '邮箱',
+    //   dataIndex: 'email',
+    //   key: 'email',
+    // }, {
       title: '后台',
       dataIndex: 'enableweb',
       key: 'enableweb',
