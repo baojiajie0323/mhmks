@@ -1110,7 +1110,7 @@ var Action = {
   getStockConfig: function (data) {
     var context = this;
     data = {
-      command : 'getstockconfig'
+      command: 'getstockconfig'
     }
     $.ajax({
       url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
@@ -1148,6 +1148,26 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('updateStockConfig fail');
+      })
+  },
+  getCheckPlan: function (data) {
+    var context = this;
+    data.command = 'getcheckplan';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getCheckPlan:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHECKPLAN, response.data);
+        } else {
+          message.error('获取稽核数据失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getCheckPlan fail');
       })
   },
   dispatch: function (funname, value) {

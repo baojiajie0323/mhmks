@@ -76,6 +76,7 @@ var sqlmap = {
   updatepromotionadjust: 'insert into promotion_adjust set pro_id = ?,store_id = ?, ',
   getstockconfig: 'select * from stock_config',
   updatestockconfig: 'replace into stock_config (stock_key,stock_value) values (?,?)',
+  getcheckplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where plan_date BETWEEN ? and ? and ',
 };
 
 module.exports = sqlmap;

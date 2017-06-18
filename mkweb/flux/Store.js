@@ -548,7 +548,7 @@ var Store = assign({}, EventEmitter.prototype, {
   },
 
   setStockConfigByKey(key, value) {
-    console.log("setStockConfigByKey",key,value);
+    console.log("setStockConfigByKey", key, value);
     for (var i = 0; i < _stockconfig.length; i++) {
       var stockInfo = _stockconfig[i];
       if (stockInfo.stock_key == key) {
@@ -803,6 +803,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_STOCKCONFIG_UPDATE: {
       Store.updateStockConfig(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHECKPLAN: {
+      Store.emit(StoreEvent.SE_CHECKPLAN,action.value);
     }
       break;
     default:

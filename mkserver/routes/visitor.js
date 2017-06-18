@@ -122,6 +122,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "updatestockconfig") {
     console.log('updatestockconfig');
     visitorDao.updateStockConfig(req, res, next);
+  } else if (req.body.command == "getcheckplan") {
+    console.log('getcheckplan');
+    visitorDao.getCheckPlan(req, res, next);
   } 
 });
 

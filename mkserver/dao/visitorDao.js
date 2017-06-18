@@ -540,7 +540,7 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitstock;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count),parseInt(productInfo.onway)],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count), parseInt(productInfo.onway)],
               function (err, result) {
                 callback(err);
               });
@@ -1267,7 +1267,7 @@ module.exports = {
           if (key == "command") {
             continue;
           }
-          console.log("updateStockConfig",key,param[key]);
+          console.log("updateStockConfig", key, param[key]);
           var sqlstring = _sql.updatestockconfig;
           tasks.push(function (callback) {
             connection.query(sqlstring, [key, param[key]],
@@ -1293,6 +1293,45 @@ module.exports = {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
             jsonWrite(res, req.body, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getCheckPlan: function (req, res, next) {
+    console.log('visitorDao getCheckPlan');
+    var param = req.body;
+    if (!param.userid && !param.depart) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getcheckplan;
+        if (param.userid) {
+          sqlstring += "(a.userid = ";
+          sqlstring += connection.escape(param.userid);
+          sqlstring += " or c.realname = ";
+          sqlstring += connection.escape(param.userid);
+          sqlstring += ") ";
+        } else if (param.depart) {
+          sqlstring += "a.userid in (select username from user where depart =  ";
+          sqlstring += connection.escape(param.depart);
+          sqlstring += ") ";
+        }
+        
+        sqlstring += "order by a.userid,a.plan_date,a.signin_time desc"
+
+        connection.query(sqlstring, [param.begindate,param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
           }
           connection.release();
         });

@@ -4,6 +4,7 @@ import Record from './record';
 import PromotionSum from './promotionsum';
 import StoreSum from './storesum';
 import StockMgr from './stockmgr';
+import PlanCheck from './plancheck';
 import styles from './visitor.less';
 
 class Visitor extends React.Component {
@@ -32,6 +33,8 @@ class Visitor extends React.Component {
       return <StoreSum />;
     } else if (this.state.contentkey == 'stockmgr') {
       return <StockMgr />;
+    } else if (this.state.contentkey == 'plancheck') {
+      return <PlanCheck />;
     }
     return <Record />;
   }
