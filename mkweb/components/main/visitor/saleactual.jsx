@@ -14,13 +14,13 @@ class SaleActual extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      checkPlan: [],
+      saleActual: [],
       department: Store.getDepartment(),
       user: Store.getUser(),
       monthDate: moment(),
     };
-    this.onCheckPlanChange = this.onCheckPlanChange.bind(this);
-    this.handleTablePlanChange = this.handleTablePlanChange.bind(this);
+    this.onSaleActualChange = this.onSaleActualChange.bind(this);
+    
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
 
@@ -34,10 +34,8 @@ class SaleActual extends React.Component {
 
   }
   componentDidMount() {
-    this.map = new BMap.Map("allmap");
-
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
-    Store.addChangeListener(StoreEvent.SE_CHECKPLAN, this.onCheckPlanChange);
+    Store.addChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Action.getUser();
     Action.getDepartment();
@@ -45,19 +43,13 @@ class SaleActual extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
-    Store.removeChangeListener(StoreEvent.SE_CHECKPLAN, this.onCheckPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
 
   }
-  handleTablePlanChange(pagination, filters, sorter) {
-    const pager = this.state.pagination_plan;
-    pager.current = pagination.current;
+  
+  onSaleActualChange(saleActual) {
     this.setState({
-      pagination_plan: pager,
-    });
-  }
-  onCheckPlanChange(checkPlan) {
-    this.setState({
-      checkPlan
+      saleActual
     })
   }
   onUserChange() {
@@ -137,8 +129,8 @@ class SaleActual extends React.Component {
     }
 
     var data = {
-      begindate: this.queryData[0],
-      enddate: this.queryData[1],
+      year: this.state.monthDate.year(),
+      month: this.state.monthDate.month()
     };
     if (this.userid != "") {
       data.userid = this.userid;

@@ -1338,4 +1338,43 @@ module.exports = {
       }
     });
   },
+  getSaleActual: function (req, res, next) {
+    console.log('visitorDao getSaleActual');
+    var param = req.body;
+    if (!param.userid && !param.depart) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getcheckplan;
+        if (param.userid) {
+          sqlstring += "(a.userid = ";
+          sqlstring += connection.escape(param.userid);
+          sqlstring += " or c.realname = ";
+          sqlstring += connection.escape(param.userid);
+          sqlstring += ") ";
+        } else if (param.depart) {
+          sqlstring += "a.userid in (select username from user where depart =  ";
+          sqlstring += connection.escape(param.depart);
+          sqlstring += ") ";
+        }
+        
+        sqlstring += "order by a.userid,a.plan_date,a.signin_time desc"
+
+        connection.query(sqlstring, [param.begindate,param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };

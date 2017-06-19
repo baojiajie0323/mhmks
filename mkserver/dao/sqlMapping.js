@@ -77,6 +77,7 @@ var sqlmap = {
   getstockconfig: 'select * from stock_config',
   updatestockconfig: 'replace into stock_config (stock_key,stock_value) values (?,?)',
   getcheckplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where plan_date BETWEEN ? and ? and ',
+  getsaleactual:' SELECT aa.area_name,aa.store_id,dd.store_name,bb.brand_name,bb.series_name,cc.serial_no,aa.Product_name,aa.sales_unit,sum(aa.sales_quantity) sum FROM sales_actual aa LEFT JOIN product bb on aa.product_id=bb.Product_id LEFT JOIN product_price cc on aa.store_id=cc.Store_id and aa.product_id=cc.Product_id LEFT JOIN store dd on aa.store_id = dd.store_id WHERE year(aa.sales_date)=? AND month(aa.sales_date)=? AND aa.user_id=? GROUP BY aa.store_id,cc.serial_no',
 };
 
 module.exports = sqlmap;

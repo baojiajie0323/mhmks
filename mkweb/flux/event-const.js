@@ -58,6 +58,7 @@ var eventMap = {
     AE_STOCKCONFIG_UPDATE: null,
 
     AE_CHECKPLAN: null,
+    AE_SALEACTUAL: null,
   }),
 
   StoreEvent: keyMirror({
@@ -101,6 +102,7 @@ var eventMap = {
     SE_STOCKCONFIG: null,
 
     SE_CHECKPLAN: null,
+    SE_SALEACTUAL: null,
   })
 };
 

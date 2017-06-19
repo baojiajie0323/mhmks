@@ -125,6 +125,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getcheckplan") {
     console.log('getcheckplan');
     visitorDao.getCheckPlan(req, res, next);
+  } else if (req.body.command == "getsaleactual") {
+    console.log('getsaleactual');
+    visitorDao.getSaleActual(req, res, next);
   } 
 });
 
