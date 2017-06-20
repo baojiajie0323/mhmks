@@ -806,7 +806,11 @@ AppDispatcher.register((action) => {
     }
       break;
     case ActionEvent.AE_CHECKPLAN: {
-      Store.emit(StoreEvent.SE_CHECKPLAN,action.value);
+      Store.emit(StoreEvent.SE_CHECKPLAN, action.value);
+    }
+      break;
+    case ActionEvent.AE_SALEACTUAL: {
+      Store.emit(StoreEvent.SE_SALEACTUAL, action.value);
     }
       break;
     default:

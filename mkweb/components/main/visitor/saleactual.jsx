@@ -18,6 +18,7 @@ class SaleActual extends React.Component {
       department: Store.getDepartment(),
       user: Store.getUser(),
       monthDate: moment(),
+      loading:false,
     };
     this.onSaleActualChange = this.onSaleActualChange.bind(this);
     
@@ -49,7 +50,8 @@ class SaleActual extends React.Component {
   
   onSaleActualChange(saleActual) {
     this.setState({
-      saleActual
+      saleActual,
+      loading:false
     })
   }
   onUserChange() {
@@ -139,6 +141,9 @@ class SaleActual extends React.Component {
     }
     console.log(data);
     Action.getSaleActual(data);
+    this.setState({
+      loading: true
+    })
   }
 
   onMonthChange(date, dateString) {
@@ -170,182 +175,48 @@ class SaleActual extends React.Component {
   getTableColumn() {
     var context = this;
     return [{
-      title: '大区',
-      dataIndex: 'departname',
-      key: 'departname',
-      width: 80
-    }, {
-      title: '销售代表',
-      dataIndex: 'realname',
-      key: 'realname',
-      width: 80
-    }, {
-      title: '日期',
-      dataIndex: 'plan_date',
-      key: 'plan_date',
+      title: '系统',
+      dataIndex: 'area_name',
+      key: 'area_name',
       width: 100
     }, {
-      title: '计划访店名称',
-      dataIndex: 'Store_name_plan',
-      key: 'Store_name_plan',
+      title: '门店名称',
+      dataIndex: 'store_name',
+      key: 'store_name',
       width: 150
     }, {
-      title: '实际访店名称',
-      dataIndex: 'Store_name_real',
-      key: 'Store_name_real',
-      width: 150
-    }, {
-      title: '签到时间',
-      dataIndex: 'signin_time',
-      key: 'signin_time',
+      title: '品牌',
+      dataIndex: 'brand_name',
+      key: 'brand_name',
       width: 80
     }, {
-      title: '签退时间',
-      dataIndex: 'signout_time',
-      key: 'signout_time',
+      title: '产品系列',
+      dataIndex: 'series_name',
+      key: 'series_name',
       width: 80
     }, {
-      title: '逗留时间',
-      dataIndex: 'stay_time',
-      key: 'stay_time',
+      title: '产品号',
+      dataIndex: 'serial_no',
+      key: 'serial_no',
       width: 100
     }, {
-      title: '签到偏差',
-      dataIndex: 'signin_distance',
-      key: 'signin_distance',
-      width: 80
+      title: '产品名称',
+      dataIndex: 'Product_name',
+      key: 'Product_name',
+      width: 200
     }, {
-      title: '签退偏差',
-      dataIndex: 'signout_distance',
-      key: 'signout_distance',
-      width: 80
-    }, {
-      title: '计划拜访率',
-      dataIndex: 'percent',
-      key: 'percent',
+      title: '月实销量',
+      dataIndex: 'sum',
+      key: 'sum',
       width: 80
     }];
   }
   getTableData() {
     var context = this;
-    var tableData = [];
-
-    var plan_count = 0;
-    var real_count = 0;
-    var finish_count = 0;
-    var lastuserid = "";
-    var lastrealname = "";
-    for (var i = 0; i < context.state.saleActual.length; i++) {
-      var plan = context.state.saleActual[i];
-      if (i == 0) {
-        lastuserid = plan.userid;
-      }
-      if (lastuserid != plan.userid) {
-        tableData.push({
-          mark: 1,
-          Store_name_plan: plan_count,
-          Store_name_real: real_count,
-          percent: percentNum(finish_count, plan_count),
-          realname: lastrealname,
-          departname: "小计"
-        })
-        plan_count = 0;
-        real_count = 0;
-        finish_count = 0;
-        lastuserid = plan.userid;
-      }
-
-      lastrealname = plan.realname;
-      var gps_x = plan.Gps_x;
-      var gps_y = plan.Gps_y;
-      var pointStore = new BMap.Point(gps_x, gps_y);
-      var signin_distance = -1;
-      var signout_distance = -1;
-      if (plan.signin_gps_x && plan.signin_gps_y && context.map) {
-        var pointSignin = new BMap.Point(plan.signin_gps_x, plan.signin_gps_y);
-        signin_distance = parseInt(context.map.getDistance(pointStore, pointSignin));
-      }
-      if (plan.signout_gps_x && plan.signout_gps_y && context.map) {
-        var pointSignout = new BMap.Point(plan.signout_gps_x, plan.signout_gps_y);
-        signout_distance = parseInt(context.map.getDistance(pointStore, pointSignout));
-      }
-
-      var stay_time = "";
-      if (plan.signin_time && plan.signout_time) {
-        var date1 = new Date(plan.signin_time);
-        var date2 = new Date(plan.signout_time);
-        var date3 = date2.getTime() - date1.getTime()  //时间差的毫秒数
-        var leave1 = date3 % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
-        var hours = Math.floor(leave1 / (3600 * 1000))
-        var leave2 = leave1 % (3600 * 1000)        //计算小时数后剩余的毫秒数
-        var minutes = Math.floor(leave2 / (60 * 1000))
-        if (hours == 0) {
-          stay_time = minutes + '分钟';
-        } else {
-          stay_time = hours + '小时' + minutes + '分钟';
-        }
-      }
-
-      var Store_name_plan = "";
-      var Store_name_real = "";
-      if (plan.plan_type == 1) {
-        plan_count++;
-        Store_name_plan = plan.Store_name;
-        if (plan.signin_gps_x) {
-          finish_count++;
-          real_count++;
-          Store_name_real = plan.Store_name;
-        }
-      } else {
-        Store_name_real = plan.Store_name;
-        real_count++;
-      }
-
-      tableData.push({
-        plan_date: new Date(plan.plan_date).Format("yyyy-MM-dd"),
-        departname: context.getDepartName(plan.userid),
-        Store_name_plan: Store_name_plan,
-        Store_name_real: Store_name_real,
-        plan_type: plan.plan_type,
-        Path_name: plan.path_name == null ? "临时拜访" : plan.path_name,
-        signin_time: plan.signin_time == null ? "未签到" : plan.signin_time.substr(11),
-        signin_distance: signin_distance < 0 ? "" : (signin_distance + "米"),
-        signout_time: plan.signout_time == null ? "未签退" : plan.signout_time.substr(11),
-        signout_distance: signout_distance < 0 ? "" : (signout_distance + "米"),
-        stay_time: stay_time,
-        gps_x: gps_x,
-        gps_y: gps_y,
-        signin_gps_x: plan.signin_gps_x,
-        signin_gps_y: plan.signin_gps_y,
-        signout_gps_x: plan.signout_gps_x,
-        signout_gps_y: plan.signout_gps_y,
-        userid: plan.userid,
-        year: plan.year,
-        month: plan.month,
-        day: plan.day,
-        store_id: plan.store_id,
-        realname: plan.realname
-      })
-    }
-
-    tableData.push({
-      mark: 1,
-      Store_name_plan: plan_count,
-      Store_name_real: real_count,
-      percent: percentNum(finish_count, plan_count),
-      realname: lastrealname,
-      departname: "小计"
-    })
-
+    var tableData = this.state.saleActual;
     return tableData;
   }
-  rowClassName(record, index) {
-    var style = [styles.table_row];
-    if (record.mark == 1) {
-      style.push(styles.path_cell);
-    }
-    return style.join(' ');
-  }
+
   render() {
     var context = this;
     var scrolly = 350;
@@ -365,8 +236,8 @@ class SaleActual extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
-          <Table pagination={false} scroll={{ y: scrolly }}
-            rowClassName={this.rowClassName} size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
+          <Table loading={this.state.loading} pagination={false} scroll={{ y: scrolly }}
+            size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <div id="allmap" style={{ visibility: 'hidden' }} className={styles.allmap}></div>
       </div>

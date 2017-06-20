@@ -1354,10 +1354,10 @@ module.exports = {
 
         sqlstring += "aa.user_id = ";
         sqlstring += connection.escape(param.userid);
-        sqlstring += " GROUP BY aa.store_id,cc.serial_no"
+        sqlstring += " GROUP BY aa.store_id,cc.serial_no order by aa.area_name,aa.store_name,bb.brand_name,bb.series_name"
         console.log(sqlstring);
         connection.query(sqlstring, [param.year, param.month], function (err, result) {
-          console.log('dbresult', err, result);
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
