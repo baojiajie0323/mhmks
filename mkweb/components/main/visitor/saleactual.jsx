@@ -235,8 +235,8 @@ class SaleActual extends React.Component {
     var finish_count = 0;
     var lastuserid = "";
     var lastrealname = "";
-    for (var i = 0; i < context.state.checkPlan.length; i++) {
-      var plan = context.state.checkPlan[i];
+    for (var i = 0; i < context.state.saleActual.length; i++) {
+      var plan = context.state.saleActual[i];
       if (i == 0) {
         lastuserid = plan.userid;
       }
