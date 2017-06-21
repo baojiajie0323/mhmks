@@ -18,10 +18,10 @@ class SaleActual extends React.Component {
       department: Store.getDepartment(),
       user: Store.getUser(),
       monthDate: moment(),
-      loading:false,
+      loading: false,
     };
     this.onSaleActualChange = this.onSaleActualChange.bind(this);
-    
+
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
 
@@ -47,11 +47,11 @@ class SaleActual extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
 
   }
-  
+
   onSaleActualChange(saleActual) {
     this.setState({
       saleActual,
-      loading:false
+      loading: false
     })
   }
   onUserChange() {
@@ -59,9 +59,13 @@ class SaleActual extends React.Component {
   }
   onDepartChange(value) {
     this.depart = value;
+    this.setState({
+      user:Store.getUser()
+    })
+
   }
   onUserTextChange(e) {
-    this.userid = e.target.value;
+    this.userid = e;
   }
   onDepartnameChange() {
     this.setState({
@@ -86,6 +90,19 @@ class SaleActual extends React.Component {
     }
     return departDom;
   }
+  getUserOption() {
+    var userlist = this.state.user;
+    var userDom = [];
+    for (var i = 0; i < userlist.length; i++) {
+      if (this.depart == 0 || userlist[i].depart == this.depart) {
+        if(userlist[i].enableapp == 1){
+          userDom.push(<Option value={userlist[i].username}>{userlist[i].realname}</Option>)
+        }        
+      }
+    }
+    return userDom;
+  }
+
   getDepartName(userid) {
     var userlist = this.state.user;
     for (var i = 0; i < userlist.length; i++) {
@@ -119,26 +136,23 @@ class SaleActual extends React.Component {
   }
 
   onClickQuery() {
-    var userInfo = this.checkUserId();
-    if (this.userid != "" && !userInfo) {
-      message.info("工号或姓名错误，请重新输入");
-      return;
-    }
+    // var userInfo = this.checkUserId();
+    // if (this.userid != "" && !userInfo) {
+    //   message.info("工号或姓名错误，请重新输入");
+    //   return;
+    // }
 
-    if (this.userid == "" && this.depart == 0) {
-      message.info("请选择条件进行查询");
+    if (this.userid == "") {
+      message.info("请选择销售代表");
       return;
     }
 
     var data = {
       year: this.state.monthDate.year(),
-      month: this.state.monthDate.month()
+      month: this.state.monthDate.month() + 1,
+      userid: this.userid
     };
-    if (this.userid != "") {
-      data.userid = this.userid;
-    } else {
-      data.depart = this.depart;
-    }
+
     console.log(data);
     Action.getSaleActual(data);
     this.setState({
@@ -228,11 +242,13 @@ class SaleActual extends React.Component {
       <div className={styles.visitorcontent}>
         <p className={styles.visitortitle}>销售代表月SKU上架动销</p>
         <div className={styles.queryContainer}>
-          <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} style={{ width: 120, marginRight: '10px' }}placeholder="Select month" />
+          <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} style={{ width: 120, marginRight: '10px' }} placeholder="Select month" />
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
             {this.getDepartOption()}
           </Select>
-          <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
+          <Select onChange={this.onUserTextChange} placeholder="请选择销售代表" style={{ width: 120, marginRight: '10px' }}>
+            {this.getUserOption()}
+          </Select>
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
