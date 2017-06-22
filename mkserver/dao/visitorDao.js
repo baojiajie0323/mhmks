@@ -1368,4 +1368,25 @@ module.exports = {
       }
     });
   },
+  getMainshelfImage: function (req, res, next) {
+    console.log('visitorDao getMainshelfImage');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getmainshelfimage;
+        connection.query(sqlstring, [param.userid, param.begindate, param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };

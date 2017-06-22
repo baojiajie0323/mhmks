@@ -18,6 +18,7 @@ class SaleActual extends React.Component {
       department: Store.getDepartment(),
       user: Store.getUser(),
       monthDate: moment(),
+      mainshelfImage: [],
       loading: false,
     };
     this.onSaleActualChange = this.onSaleActualChange.bind(this);
@@ -29,6 +30,7 @@ class SaleActual extends React.Component {
     this.onUserChange = this.onUserChange.bind(this);
     this.onDepartnameChange = this.onDepartnameChange.bind(this);
     this.onUserTextChange = this.onUserTextChange.bind(this);
+    this.onMainshelfImageChange = this.onMainshelfImageChange.bind(this);
 
     this.userid = "";
     this.depart = 0;
@@ -38,6 +40,7 @@ class SaleActual extends React.Component {
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.addChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.addChangeListener(StoreEvent.SE_MAINSHELFIMAGE, this.onMainshelfImageChange);
     Action.getUser();
     Action.getDepartment();
   }
@@ -45,7 +48,7 @@ class SaleActual extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.removeChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
-
+    Store.removeChangeListener(StoreEvent.SE_MAINSHELFIMAGE, this.onMainshelfImageChange);
   }
 
   onSaleActualChange(saleActual) {
@@ -53,14 +56,30 @@ class SaleActual extends React.Component {
       saleActual,
       loading: false
     })
+
+    if (saleActual.length > 0) {
+      var data = {
+        userid: this.userid,
+        begindate: new Date(this.state.monthDate.startOf('month').format("YYYY-MM-DD")),
+        enddate: new Date(this.state.monthDate.endOf('month').format("YYYY-MM-DD")),
+      };
+      console.log(data);
+      Action.getMainshelfImage(data);
+    }
   }
+  onMainshelfImageChange(mainshelfImage) {
+    this.setState({
+      mainshelfImage
+    })
+  }
+
   onUserChange() {
     this.setState({ user: Store.getUser() })
   }
   onDepartChange(value) {
     this.depart = value;
     this.setState({
-      user:Store.getUser()
+      user: Store.getUser()
     })
 
   }
@@ -95,9 +114,9 @@ class SaleActual extends React.Component {
     var userDom = [];
     for (var i = 0; i < userlist.length; i++) {
       if (this.depart == 0 || userlist[i].depart == this.depart) {
-        if(userlist[i].enableapp == 1){
+        if (userlist[i].enableapp == 1) {
           userDom.push(<Option value={userlist[i].username}>{userlist[i].realname}</Option>)
-        }        
+        }
       }
     }
     return userDom;
@@ -255,7 +274,6 @@ class SaleActual extends React.Component {
           <Table loading={this.state.loading} pagination={false} scroll={{ y: scrolly }}
             size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
-        <div id="allmap" style={{ visibility: 'hidden' }} className={styles.allmap}></div>
       </div>
     );
   }
