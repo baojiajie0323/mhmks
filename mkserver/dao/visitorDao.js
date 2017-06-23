@@ -1378,7 +1378,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getmainshelfimage;
         connection.query(sqlstring, [param.userid, param.begindate, param.enddate], function (err, result) {
-          //console.log('dbresult', err, result);
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
