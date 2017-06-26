@@ -844,6 +844,26 @@ var Action = {
         console.log('getVisitorChat fail');
       })
   },
+  getVisitorMainshelf: function (data) {
+    var context = this;
+    data.command = 'getvisitormainshelf';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorMainshelf:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_MAINSHELFLIST, response.data);
+        } else {
+          message.error('获取主货架列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorMainshelf fail');
+      })
+  },
   getVisitorImage: function (data) {
     var context = this;
     data.command = 'getvisitorimage';

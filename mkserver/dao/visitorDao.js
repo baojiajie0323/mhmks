@@ -464,7 +464,8 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitshelfmain;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count)],
+            var plandate = param.year + '-' + param.month + '-' + param.day;
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day,plandate, parseInt(productInfo.count)],
               function (err, result) {
                 callback(err);
               });
@@ -817,6 +818,31 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorchat;
+        connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getVisitorMainshelf: function (req, res, next) {
+    console.log('visitorDao getVisitorMainshelf');
+    var param = req.body;
+    if (!param.userid || !param.begindate || !param.enddate) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getvisitormainshelf;
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -1341,20 +1367,21 @@ module.exports = {
   getSaleActual: function (req, res, next) {
     console.log('visitorDao getSaleActual');
     var param = req.body;
-    if (!param.userid && !param.depart) {
-      jsonWrite(res, {}, dbcode.PARAM_ERROR);
-      return;
-    }
+    // if (!param.userid && !param.depart) {
+    //   jsonWrite(res, {}, dbcode.PARAM_ERROR);
+    //   return;
+    // }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.getsaleactual;
-
-        sqlstring += "aa.user_id = ";
-        sqlstring += connection.escape(param.userid);
-        sqlstring += " GROUP BY aa.store_id,cc.serial_no order by aa.area_name,aa.store_name,bb.brand_name,bb.series_name"
+        if (param.userid) {
+          sqlstring += "AND a.user_id = ";
+          sqlstring += connection.escape(param.userid);
+        }
+        sqlstring += " GROUP BY a.store_id,c.serial_no order by a.area_name,a.store_name,b.brand_name,b.series_name"
         console.log(sqlstring);
         connection.query(sqlstring, [param.year, param.month], function (err, result) {
           //console.log('dbresult', err, result);

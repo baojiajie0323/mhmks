@@ -38,6 +38,7 @@ class VisitorMenu extends React.Component {
             <Menu.Item key="record">拜访</Menu.Item>
             <Menu.Item key="plancheck">路线稽核</Menu.Item>
             <Menu.Item key="saleactual">SKU上架动销</Menu.Item>
+            <Menu.Item key="saleactualsum">动销汇总</Menu.Item>
             <Menu.Item key="promotionsum">促销陈列统计</Menu.Item>
             {/*<Menu.Item key="stockmgr">库存管理</Menu.Item>*/}
           </SubMenu>

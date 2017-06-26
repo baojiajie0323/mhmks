@@ -6,6 +6,7 @@ import StoreSum from './storesum';
 import StockMgr from './stockmgr';
 import PlanCheck from './plancheck';
 import SaleActual from './saleactual';
+import SaleActualSum from './saleactualsum';
 import styles from './visitor.less';
 
 class Visitor extends React.Component {
@@ -38,6 +39,8 @@ class Visitor extends React.Component {
       return <PlanCheck />;
     } else if (this.state.contentkey == 'saleactual') {
       return <SaleActual />;
+    } else if (this.state.contentkey == 'saleactualsum') {
+      return <SaleActualSum />;
     }
     return <Record />;
   }
@@ -45,7 +48,7 @@ class Visitor extends React.Component {
     return (
       <div className={styles.container}>
         <VisitorMenu clickcb={this.onMenuClick} />
-        {this.getContent()}
+        {this.getContent() }
       </div>
     );
   }

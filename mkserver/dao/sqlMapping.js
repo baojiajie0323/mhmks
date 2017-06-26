@@ -45,7 +45,7 @@ var sqlmap = {
   getsignlist: 'select * from sign_check where userid=? and signtime like ?',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
   submitproductimage: 'replace into product_image (store_id,brand_id,display_id,product_id,user_id,year,month,day,submitdate,filename,type,category) values(?,?,?,?,?,?,?,?,?,?,?,?)',
-  submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,count) values(?,?,?,?,?,?,?)',
+  submitshelfmain: 'replace into visitor_shelfmain (store_id,product_id,user_id,year,month,day,plan_date,count) values(?,?,?,?,?,?,?,?)',
   delshelfmain: 'delete from visitor_shelfmain where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,count,onway) values(?,?,?,?,?,?,?,?)',
   delstock: 'delete from visitor_stock where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
@@ -58,6 +58,7 @@ var sqlmap = {
   delpromotion: 'delete from visitor_promotion where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getvisitorplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where (userid like ? or realname like ?) and plan_date BETWEEN ? and ? order by a.signin_time desc',
   getvisitorchat: 'select b.Store_name,c.realname,a.* from visitor_chat a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? order by a.plan_date desc',
+  getvisitormainshelf: 'select b.Store_name,c.realname,a.* from visitor_shelfmain a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? order by a.plan_date desc,a.store_id',
   getvisitorimage: 'select * from product_image where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getshelfmain: 'select * from visitor_shelfmain where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getstock: 'select * from visitor_stock where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
@@ -77,7 +78,7 @@ var sqlmap = {
   getstockconfig: 'select * from stock_config',
   updatestockconfig: 'replace into stock_config (stock_key,stock_value) values (?,?)',
   getcheckplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where plan_date BETWEEN ? and ? and ',
-  getsaleactual:' SELECT aa.area_name,aa.store_id,dd.store_name,bb.brand_name,bb.series_name,cc.serial_no,aa.Product_name,aa.sales_unit,sum(aa.sales_quantity) sum FROM sales_actual aa LEFT JOIN product bb on aa.product_id=bb.Product_id LEFT JOIN product_price cc on aa.store_id=cc.Store_id and aa.product_id=cc.Product_id LEFT JOIN store dd on aa.store_id = dd.store_id WHERE year(aa.sales_date)=? AND month(aa.sales_date)=? AND ',
+  getsaleactual:'SELECT a.user_id,e.realname,f.name departname,a.area_name,a.store_id,d.store_name,b.brand_name,b.series_name,c.serial_no,a.Product_name,a.sales_unit,sum(a.sales_quantity) sum FROM sales_actual a LEFT JOIN product b on a.product_id=b.Product_id LEFT JOIN product_price c on a.store_id=c.Store_id and a.product_id=c.Product_id LEFT JOIN store d on a.store_id = d.store_id LEFT JOIN user e on e.username = a.user_id LEFT JOIN department f on e.depart = f.id WHERE year(a.sales_date)=? AND month(a.sales_date)=? ',
   getmainshelfimage: 'select * from product_image where user_id = ? AND submitdate BETWEEN ? and ? AND type = 0',
 };
 

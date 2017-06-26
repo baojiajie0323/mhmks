@@ -16,12 +16,15 @@ class Record extends React.Component {
       visitorPlan: Store.getVisitorPlan(),
       visitorChat: Store.getVisitorChat(),
       visitorImage: Store.getVisitorImage(),
+      visitorMainshelf: Store.getVisitorMainshelf(),
       pagination_plan: {},
-      pagination_chat: {}
+      pagination_chat: {},
+      pagination_mainshelf: {},
     };
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onVisitorChatChange = this.onVisitorChatChange.bind(this);
+    this.onVisitorMainshelfChange = this.onVisitorMainshelfChange.bind(this);
     this.onVisitorImageChange = this.onVisitorImageChange.bind(this);
 
     this.onDateChange = this.onDateChange.bind(this);
@@ -44,6 +47,7 @@ class Record extends React.Component {
     this.onClickSignout = this.onClickSignout.bind(this);
     this.handleTablePlanChange = this.handleTablePlanChange.bind(this);
     this.handleTableChatChange = this.handleTableChatChange.bind(this);
+    this.handleTableMainshelfChange = this.handleTableMainshelfChange.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -56,11 +60,13 @@ class Record extends React.Component {
 
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
   }
@@ -78,6 +84,13 @@ class Record extends React.Component {
       pagination_chat: pager,
     });
   }
+  handleTableMainshelfChange(pagination, filters, sorter) {
+    const pager = this.state.pagination_mainshelf;
+    pager.current = pagination.current;
+    this.setState({
+      pagination_mainshelf: pager,
+    });
+  }
   onVisitorPlanChange() {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
@@ -86,6 +99,11 @@ class Record extends React.Component {
   onVisitorChatChange() {
     this.setState({
       visitorChat: Store.getVisitorChat(),
+    })
+  }
+  onVisitorMainshelfChange() {
+    this.setState({
+      visitorMainshelf: Store.getVisitorMainshelf(),
     })
   }
   onVisitorImageChange() {
@@ -103,6 +121,7 @@ class Record extends React.Component {
     console.log(data);
     Action.getVisitorPlan(data);
     Action.getVisitorChat(data);
+    Action.getVisitorMainshelf(data);
   }
 
   onDateChange(date, dateString) {
@@ -347,6 +366,60 @@ class Record extends React.Component {
     }
     return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_plan} dataSource={getTableData() } />
   }
+  getMainshelfPanel() {
+    var context = this;
+    var getTableColumn = function () {
+      return [{
+        title: '拜访时间',
+        dataIndex: 'plan_date',
+        key: 'plan_date',
+        width: 100,
+      }, {
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+        }, {
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+          width: 80,
+        }, {
+          title: '主货架信息',
+          dataIndex: 'mainshelfinfo',
+          key: 'mainshelfinfo',
+          width: 100,
+        }, {
+          title: '操作',
+          key: 'picture',
+          render: function (text, record) {
+            var operateDom = [
+              <a onClick={function () {
+                context.onClickShowPicture(record);
+              } }>照片</a>]
+            return operateDom;
+          }
+        }];
+    }
+    var getTableData = function () {
+      var tableData = [];
+      var lastDate = "", lastStore_name = "";
+      for (var i = 0; i < context.state.visitorMainshelf.length; i++) {
+        var plan = context.state.visitorMainshelf[i];
+        var plan_date = new Date(plan.plan_date).Format("yyyy-MM-dd");
+        if (plan_date != lastDate || plan.Store_name != lastStore_name) {
+          tableData.push({
+            plan_date: plan_date,
+            Store_name: plan.Store_name,
+            realname: plan.realname,
+          })
+          lastDate = plan_date;
+          lastStore_name = plan.Store_name;
+        }
+      }
+      return tableData;
+    }
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_mainshelf} dataSource={getTableData() } />
+  }
   getChatPanel() {
     var context = this;
     var getTableColumn = function () {
@@ -410,10 +483,9 @@ class Record extends React.Component {
           <Tabs tabPosition="left" size="small" onChange={this.onTabChange} >
             <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
             <TabPane tab="洽谈记录" key="2">{this.getChatPanel() }</TabPane>
-            <TabPane tab="主货架陈列" key="3">主货架陈列</TabPane>
+            <TabPane tab="主货架陈列" key="3">{this.getMainshelfPanel() }</TabPane>
             <TabPane tab="离架陈列" key="4">离架陈列</TabPane>
             <TabPane tab="库存采集" key="5">库存采集</TabPane>
-            <TabPane tab="促销陈列" key="6">促销陈列</TabPane>
           </Tabs>
         </div>
         <Modal title="查看照片" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}

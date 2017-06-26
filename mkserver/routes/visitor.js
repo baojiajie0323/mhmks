@@ -77,7 +77,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getvisitorchat") {
     console.log('getvisitorchat');
     visitorDao.getVisitorChat(req, res, next);
-  } else if (req.body.command == "getvisitorimage") {
+  } else if (req.body.command == "getvisitormainshelf") {
+    console.log('getvisitormainshelf');
+    visitorDao.getVisitorMainshelf(req, res, next);
+  }else if (req.body.command == "getvisitorimage") {
     console.log('getvisitorimage');
     visitorDao.getVisitorImage(req, res, next);
   } else if (req.body.command == "getshelfmain") {
