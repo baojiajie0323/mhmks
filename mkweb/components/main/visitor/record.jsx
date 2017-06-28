@@ -17,14 +17,17 @@ class Record extends React.Component {
       visitorChat: Store.getVisitorChat(),
       visitorImage: Store.getVisitorImage(),
       visitorMainshelf: Store.getVisitorMainshelf(),
+      visitorStock: Store.getVisitorStock(),
       pagination_plan: {},
       pagination_chat: {},
       pagination_mainshelf: {},
+      pagination_stock: {},
     };
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onVisitorChatChange = this.onVisitorChatChange.bind(this);
     this.onVisitorMainshelfChange = this.onVisitorMainshelfChange.bind(this);
+    this.onVisitorStockChange = this.onVisitorStockChange.bind(this);
     this.onVisitorImageChange = this.onVisitorImageChange.bind(this);
 
     this.onDateChange = this.onDateChange.bind(this);
@@ -48,6 +51,7 @@ class Record extends React.Component {
     this.handleTablePlanChange = this.handleTablePlanChange.bind(this);
     this.handleTableChatChange = this.handleTableChatChange.bind(this);
     this.handleTableMainshelfChange = this.handleTableMainshelfChange.bind(this);
+    this.handleTableStockChange = this.handleTableStockChange.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -61,12 +65,14 @@ class Record extends React.Component {
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_STOCKLIST, this.onVisitorStockChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_STOCKLIST, this.onVisitorStockChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
   }
@@ -91,6 +97,13 @@ class Record extends React.Component {
       pagination_mainshelf: pager,
     });
   }
+  handleTableStockChange(pagination, filters, sorter) {
+    const pager = this.state.pagination_stock;
+    pager.current = pagination.current;
+    this.setState({
+      pagination_stock: pager,
+    });
+  }
   onVisitorPlanChange() {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
@@ -104,6 +117,11 @@ class Record extends React.Component {
   onVisitorMainshelfChange() {
     this.setState({
       visitorMainshelf: Store.getVisitorMainshelf(),
+    })
+  }
+  onVisitorStockChange() {
+    this.setState({
+      visitorStock: Store.getVisitorStock(),
     })
   }
   onVisitorImageChange() {
@@ -122,6 +140,7 @@ class Record extends React.Component {
     Action.getVisitorPlan(data);
     Action.getVisitorChat(data);
     Action.getVisitorMainshelf(data);
+    Action.getVisitorStock(data);
   }
 
   onDateChange(date, dateString) {
@@ -440,6 +459,80 @@ class Record extends React.Component {
     }
     return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_mainshelf} dataSource={getTableData() } />
   }
+  getStockPanel() {
+    var context = this;
+    var getTableColumn = function () {
+      return [{
+        title: '拜访时间',
+        dataIndex: 'plan_date',
+        key: 'plan_date',
+        width: 100,
+      }, {
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+          width: 150,
+        }, {
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+          width: 80,
+        }, {
+          title: '库存信息（库存量/在途量）',
+          dataIndex: 'stockinfo',
+          key: 'stockinfo',
+          render: function (text, record) {
+            return text.map((ms) => {
+              return <Tag>{ms.product_name} ({ms.count}/{ms.onway})</Tag>
+            });
+          }
+        }, {
+          title: '操作',
+          key: 'picture',
+          width: 80,
+          render: function (text, record) {
+            var operateDom = [
+              <a onClick={function () {
+                context.onClickShowPicture(record, 2);
+              } }>照片</a>]
+            return operateDom;
+          }
+        }];
+    }
+    var getTableData = function () {
+      var tableData = [];
+      var lastDate = "", lastStore_name = "";
+      var stock = [];
+      for (var i = 0; i < context.state.visitorStock.length; i++) {
+        var plan = context.state.visitorStock[i];
+        var plan_date = new Date(plan.plan_date).Format("yyyy-MM-dd");
+
+        if (plan_date != lastDate || plan.Store_name != lastStore_name) {
+          stock = [];
+          tableData.push({
+            plan_date: plan_date,
+            Store_name: plan.Store_name,
+            realname: plan.realname,
+            userid: plan.user_id,
+            year: plan.year,
+            month: plan.month,
+            day: plan.day,
+            store_id: plan.store_id,
+            stockinfo: stock
+          })
+          lastDate = plan_date;
+          lastStore_name = plan.Store_name;
+        }
+        stock.push({
+          product_name: plan.product_name,
+          count: plan.count,
+          onway: plan.onway,
+        })
+      }
+      return tableData;
+    }
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_stock} dataSource={getTableData() } />
+  }
   getChatPanel() {
     var context = this;
     var getTableColumn = function () {
@@ -505,7 +598,7 @@ class Record extends React.Component {
             <TabPane tab="洽谈记录" key="2">{this.getChatPanel() }</TabPane>
             <TabPane tab="主货架陈列" key="3">{this.getMainshelfPanel() }</TabPane>
             <TabPane tab="离架陈列" key="4">离架陈列</TabPane>
-            <TabPane tab="库存采集" key="5">库存采集</TabPane>
+            <TabPane tab="库存采集" key="5">{this.getStockPanel() }</TabPane>
           </Tabs>
         </div>
         <Modal title="查看照片" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}

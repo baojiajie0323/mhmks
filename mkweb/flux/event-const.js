@@ -44,6 +44,7 @@ var eventMap = {
     AE_VISITOR_PLANLIST: null,
     AE_VISITOR_CHATLIST: null,
     AE_VISITOR_MAINSHELFLIST: null,
+    AE_VISITOR_STOCKLIST: null,
     AE_VISITOR_IMAGE: null,
 
     AE_SUBSIDY: null,
@@ -94,6 +95,7 @@ var eventMap = {
     SE_VISITOR_PLANLIST: null,
     SE_VISITOR_CHATLIST: null,
     SE_VISITOR_MAINSHELFLIST: null,
+    SE_VISITOR_STOCKLIST: null,
     SE_VISITOR_IMAGE: null,
 
     SE_SUBSIDY: null,

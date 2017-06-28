@@ -80,7 +80,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getvisitormainshelf") {
     console.log('getvisitormainshelf');
     visitorDao.getVisitorMainshelf(req, res, next);
-  }else if (req.body.command == "getvisitorimage") {
+  } else if (req.body.command == "getvisitorstock") {
+    console.log('getvisitorstock');
+    visitorDao.getVisitorStock(req, res, next);
+  } else if (req.body.command == "getvisitorimage") {
     console.log('getvisitorimage');
     visitorDao.getVisitorImage(req, res, next);
   } else if (req.body.command == "getshelfmain") {
@@ -134,7 +137,7 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getmainshelfimage") {
     console.log('getmainshelfimage');
     visitorDao.getMainshelfImage(req, res, next);
-  } 
+  }
 });
 
 router.post('/upload/', upload.single('file'), function (req, res, next) {

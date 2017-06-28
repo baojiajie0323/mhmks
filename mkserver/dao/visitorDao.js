@@ -541,7 +541,8 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitstock;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, parseInt(productInfo.count), parseInt(productInfo.onway || 0)],
+            var plandate = param.year + '-' + param.month + '-' + param.day;
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate,parseInt(productInfo.count), parseInt(productInfo.onway || 0)],
               function (err, result) {
                 callback(err);
               });
@@ -843,6 +844,31 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitormainshelf;
+        connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getVisitorStock: function (req, res, next) {
+    console.log('visitorDao getVisitorStock');
+    var param = req.body;
+    if (!param.userid || !param.begindate || !param.enddate) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getvisitorstock;
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {

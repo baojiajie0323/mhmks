@@ -864,6 +864,26 @@ var Action = {
         console.log('getVisitorMainshelf fail');
       })
   },
+  getVisitorStock: function (data) {
+    var context = this;
+    data.command = 'getvisitorstock';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getVisitorStock:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_VISITOR_STOCKLIST, response.data);
+        } else {
+          message.error('获取库存列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorStock fail');
+      })
+  },
   getVisitorImage: function (data) {
     var context = this;
     data.command = 'getvisitorimage';
