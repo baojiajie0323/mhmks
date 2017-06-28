@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Tabs, Button, Icon, Modal, Input, Tree, Popconfirm, message, DatePicker, Breadcrumb } from 'antd';
+import { Table, Tabs, Button, Icon, Modal, Tag, Input, Tree, Popconfirm, message, DatePicker, Breadcrumb } from 'antd';
 import styles from './visitor.less';
 const TreeNode = Tree.TreeNode;
 const { MonthPicker, RangePicker } = DatePicker;
@@ -141,9 +141,10 @@ class Record extends React.Component {
     // }
   }
 
-  onClickShowPicture(record) {
+  onClickShowPicture(record, pictype) {
     this.setState({
       showPicure: true,
+      pictype: pictype,
       visitorImage: []
     })
     Action.getVisitorImage({
@@ -299,7 +300,7 @@ class Record extends React.Component {
           render: function (text, record) {
             var operateDom = [
               <a onClick={function () {
-                context.onClickShowPicture(record);
+                context.onClickShowPicture(record, -1);
               } }>照片</a>,
               <span className="ant-divider" />,
               <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
@@ -378,6 +379,7 @@ class Record extends React.Component {
           title: '门店名称',
           dataIndex: 'Store_name',
           key: 'Store_name',
+          width: 150,
         }, {
           title: '拜访人',
           dataIndex: 'realname',
@@ -387,14 +389,19 @@ class Record extends React.Component {
           title: '主货架信息',
           dataIndex: 'mainshelfinfo',
           key: 'mainshelfinfo',
-          width: 100,
+          render: function (text, record) {
+            return text.map((ms) => {
+              return <Tag>{ms.product_name} * {ms.count}</Tag>
+            });
+          }
         }, {
           title: '操作',
           key: 'picture',
+          width: 80,
           render: function (text, record) {
             var operateDom = [
               <a onClick={function () {
-                context.onClickShowPicture(record);
+                context.onClickShowPicture(record, 0);
               } }>照片</a>]
             return operateDom;
           }
@@ -403,18 +410,31 @@ class Record extends React.Component {
     var getTableData = function () {
       var tableData = [];
       var lastDate = "", lastStore_name = "";
+      var mainshelf = [];
       for (var i = 0; i < context.state.visitorMainshelf.length; i++) {
         var plan = context.state.visitorMainshelf[i];
         var plan_date = new Date(plan.plan_date).Format("yyyy-MM-dd");
+
         if (plan_date != lastDate || plan.Store_name != lastStore_name) {
+          mainshelf = [];
           tableData.push({
             plan_date: plan_date,
             Store_name: plan.Store_name,
             realname: plan.realname,
+            userid: plan.user_id,
+            year: plan.year,
+            month: plan.month,
+            day: plan.day,
+            store_id: plan.store_id,
+            mainshelfinfo: mainshelf
           })
           lastDate = plan_date;
           lastStore_name = plan.Store_name;
         }
+        mainshelf.push({
+          product_name: plan.product_name,
+          count: plan.count
+        })
       }
       return tableData;
     }
@@ -491,14 +511,16 @@ class Record extends React.Component {
         <Modal title="查看照片" width={800} wrapClassName={styles.pictureModal} footer={null} visible={this.state.showPicure}
           onCancel={this.handlePictureCancel} >
           <div className={styles.modalcontent}>
-            <p className={styles.pictureTitle}>主货架陈列</p>
-            {this.getPhotoDom(0) }
-            <p className={styles.pictureTitle}>离架陈列</p>
-            {this.getPhotoDom(1) }
-            <p className={styles.pictureTitle}>库存采集</p>
-            {this.getPhotoDom(2) }
-            <p className={styles.pictureTitle}>促销陈列</p>
-            {this.getPhotoDom(3) }
+            {this.state.pictype < 0 || this.state.pictype == 0 ? <p className={styles.pictureTitle}>主货架陈列</p> : null}
+            {this.state.pictype < 0 || this.state.pictype == 0 ? this.getPhotoDom(0) : null}
+
+            {this.state.pictype < 0 || this.state.pictype == 1 ? <p className={styles.pictureTitle}>离架陈列</p> : null}
+            {this.state.pictype < 0 || this.state.pictype == 1 ? this.getPhotoDom(1) : null }
+
+            {this.state.pictype < 0 || this.state.pictype == 2 ? <p className={styles.pictureTitle}>库存采集</p> : null}
+            {this.state.pictype < 0 || this.state.pictype == 2 ? this.getPhotoDom(2) : null}
+            {this.state.pictype < 0 || this.state.pictype == 3 ? <p className={styles.pictureTitle}>促销陈列</p> : null}
+            {this.state.pictype < 0 || this.state.pictype == 4 ? this.getPhotoDom(3) : null}
             {this.state.bigPicture == "" ? null :
               <div style={{ backgroundImage: this.state.bigPicture }} className={styles.bigphoto}>
                 <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
