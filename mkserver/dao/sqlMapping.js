@@ -49,7 +49,7 @@ var sqlmap = {
   delshelfmain: 'delete from visitor_shelfmain where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitstock: 'replace into visitor_stock (store_id,product_id,user_id,year,month,day,plan_date,count,onway) values(?,?,?,?,?,?,?,?,?)',
   delstock: 'delete from visitor_stock where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
-  submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,display_id) values(?,?,?,?,?,?,?)',
+  submitshelfaway: 'replace into visitor_shelfaway (store_id,product_id,user_id,year,month,day,plan_date,display_id) values(?,?,?,?,?,?,?,?)',
   submitshelfawaycount: 'replace into visitor_shelfaway_count (store_id,user_id,year,month,day,display_id,count) values(?,?,?,?,?,?,?)',
   delshelfaway: 'delete from visitor_shelfaway where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   submitchat: 'replace into visitor_chat (store_id,user_id,year,month,day,plan_date,storeuser,chatcontent,chatresult) values(?,?,?,?,?,?,?,?,?)',
