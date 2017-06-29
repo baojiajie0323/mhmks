@@ -34,6 +34,7 @@ var _visitorplan = [];
 var _visitorchat = [];
 var _visitormainshelf = [];
 var _visitorstock = [];
+var _visitorshelfaway = [];
 var _visitorimage = [];
 
 var _subsidy = [];
@@ -465,6 +466,13 @@ var Store = assign({}, EventEmitter.prototype, {
   getVisitorStock() {
     return _visitorstock;
   },
+  setVisitorShelfaway(vp) {
+    _visitorshelfaway = vp;
+    this.emitChange(StoreEvent.SE_VISITOR_SHELFAWAYLIST);
+  },
+  getVisitorShelfaway() {
+    return _visitorshelfaway;
+  },
 
   setVisitorImage(vi) {
     _visitorimage = vi;
@@ -772,6 +780,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_VISITOR_STOCKLIST: {
       Store.setVisitorStock(action.value);
+    }
+      break;
+    case ActionEvent.AE_VISITOR_SHELFAWAYLIST: {
+      Store.setVisitorShelfaway(action.value);
     }
       break;
     case ActionEvent.AE_VISITOR_IMAGE: {

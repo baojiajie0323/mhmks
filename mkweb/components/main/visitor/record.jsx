@@ -18,16 +18,25 @@ class Record extends React.Component {
       visitorImage: Store.getVisitorImage(),
       visitorMainshelf: Store.getVisitorMainshelf(),
       visitorStock: Store.getVisitorStock(),
+      visitorShelfaway: Store.getVisitorShelfaway(),
       pagination_plan: {},
       pagination_chat: {},
       pagination_mainshelf: {},
       pagination_stock: {},
+      pagination_shelfaway: {},
     };
+
+    this.display = {
+      "5":"挂条",
+      "6":"网片",
+      "7":"陈列架",
+    }
 
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onVisitorChatChange = this.onVisitorChatChange.bind(this);
     this.onVisitorMainshelfChange = this.onVisitorMainshelfChange.bind(this);
     this.onVisitorStockChange = this.onVisitorStockChange.bind(this);
+    this.onVisitorShelfawayChange = this.onVisitorShelfawayChange.bind(this);
     this.onVisitorImageChange = this.onVisitorImageChange.bind(this);
 
     this.onDateChange = this.onDateChange.bind(this);
@@ -52,6 +61,7 @@ class Record extends React.Component {
     this.handleTableChatChange = this.handleTableChatChange.bind(this);
     this.handleTableMainshelfChange = this.handleTableMainshelfChange.bind(this);
     this.handleTableStockChange = this.handleTableStockChange.bind(this);
+    this.handleTableShelfawayChange = this.handleTableShelfawayChange.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -66,6 +76,7 @@ class Record extends React.Component {
     Store.addChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_STOCKLIST, this.onVisitorStockChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_SHELFAWAYLIST, this.onVisitorShelfawayChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
   }
   componentWillUnmount() {
@@ -73,6 +84,7 @@ class Record extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_CHATLIST, this.onVisitorChatChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_MAINSHELFLIST, this.onVisitorMainshelfChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_STOCKLIST, this.onVisitorStockChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_SHELFAWAYLIST, this.onVisitorShelfawayChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
 
   }
@@ -104,6 +116,13 @@ class Record extends React.Component {
       pagination_stock: pager,
     });
   }
+  handleTableShelfawayChange(pagination, filters, sorter) {
+    const pager = this.state.pagination_shelfaway;
+    pager.current = pagination.current;
+    this.setState({
+      pagination_shelfaway: pager,
+    });
+  }
   onVisitorPlanChange() {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
@@ -124,6 +143,11 @@ class Record extends React.Component {
       visitorStock: Store.getVisitorStock(),
     })
   }
+  onVisitorShelfawayChange() {
+    this.setState({
+      visitorShelfaway: Store.getVisitorShelfaway(),
+    })
+  }
   onVisitorImageChange() {
     this.setState({
       visitorImage: Store.getVisitorImage(),
@@ -141,6 +165,7 @@ class Record extends React.Component {
     Action.getVisitorChat(data);
     Action.getVisitorMainshelf(data);
     Action.getVisitorStock(data);
+    Action.getVisitorShelfaway(data);
   }
 
   onDateChange(date, dateString) {
@@ -483,7 +508,7 @@ class Record extends React.Component {
           key: 'stockinfo',
           render: function (text, record) {
             return text.map((ms) => {
-              return <Tag>{ms.product_name} ({ms.count}/{ms.onway})</Tag>
+              return <Tag>{ms.product_name} ({ms.count}/{ms.onway}) </Tag>
             });
           }
         }, {
@@ -532,6 +557,79 @@ class Record extends React.Component {
       return tableData;
     }
     return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_stock} dataSource={getTableData() } />
+  }
+  getShelfawayPanel() {
+    var context = this;
+    var getTableColumn = function () {
+      return [{
+        title: '拜访时间',
+        dataIndex: 'plan_date',
+        key: 'plan_date',
+        width: 100,
+      }, {
+          title: '门店名称',
+          dataIndex: 'Store_name',
+          key: 'Store_name',
+          width: 150,
+        }, {
+          title: '拜访人',
+          dataIndex: 'realname',
+          key: 'realname',
+          width: 80,
+        }, {
+          title: '离架信息',
+          dataIndex: 'shelfawayinfo',
+          key: 'shelfawayinfo',
+          render: function (text, record) {
+            return text.map((ms) => {
+              return <Tag>{ms.product_name} ({context.display[ms.display_id]}) </Tag>
+            });
+          }
+        }, {
+          title: '操作',
+          key: 'picture',
+          width: 80,
+          render: function (text, record) {
+            var operateDom = [
+              <a onClick={function () {
+                context.onClickShowPicture(record, 2);
+              } }>照片</a>]
+            return operateDom;
+          }
+        }];
+    }
+    var getTableData = function () {
+      var tableData = [];
+      var lastDate = "", lastStore_name = "";
+      var shelfaway = [];
+      for (var i = 0; i < context.state.visitorShelfaway.length; i++) {
+        var plan = context.state.visitorShelfaway[i];
+        var plan_date = new Date(plan.plan_date).Format("yyyy-MM-dd");
+
+        if (plan_date != lastDate || plan.Store_name != lastStore_name) {
+          shelfaway = [];
+          tableData.push({
+            plan_date: plan_date,
+            Store_name: plan.Store_name,
+            realname: plan.realname,
+            userid: plan.user_id,
+            year: plan.year,
+            month: plan.month,
+            day: plan.day,
+            store_id: plan.store_id,
+            shelfawayinfo: shelfaway
+          })
+          lastDate = plan_date;
+          lastStore_name = plan.Store_name;
+        }
+        shelfaway.push({
+          product_name: plan.product_name,
+          display_id: plan.display_id
+        })
+      }
+      return tableData;
+    }
+    return <Table size="small" columns={getTableColumn() } pagination={this.state.pagination_shelfaway} dataSource={getTableData() } />
   }
   getChatPanel() {
     var context = this;
@@ -597,7 +695,7 @@ class Record extends React.Component {
             <TabPane tab="门店总览" key="1">{this.getBasicPanel() }</TabPane>
             <TabPane tab="洽谈记录" key="2">{this.getChatPanel() }</TabPane>
             <TabPane tab="主货架陈列" key="3">{this.getMainshelfPanel() }</TabPane>
-            <TabPane tab="离架陈列" key="4">离架陈列</TabPane>
+            <TabPane tab="离架陈列" key="4">{this.getShelfawayPanel() }</TabPane>
             <TabPane tab="库存采集" key="5">{this.getStockPanel() }</TabPane>
           </Tabs>
         </div>

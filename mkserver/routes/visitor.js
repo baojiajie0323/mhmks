@@ -83,6 +83,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getvisitorstock") {
     console.log('getvisitorstock');
     visitorDao.getVisitorStock(req, res, next);
+  } else if (req.body.command == "getvisitorshelfaway") {
+    console.log('getvisitorshelfaway');
+    visitorDao.getVisitorShelfaway(req, res, next);
   } else if (req.body.command == "getvisitorimage") {
     console.log('getvisitorimage');
     visitorDao.getVisitorImage(req, res, next);
