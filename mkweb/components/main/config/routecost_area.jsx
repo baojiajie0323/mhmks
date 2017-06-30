@@ -7,7 +7,7 @@ const RadioGroup = Radio.Group;
 const Option = Select.Option;
 const { MonthPicker } = DatePicker;
 
-class Routecost extends React.Component {
+class RoutecostArea extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -907,7 +907,7 @@ class Routecost extends React.Component {
     }
     return (
       <div className={styles.configcontent}>
-        <p className={styles.configtitle}>销售访店费用标准</p>
+        <p className={styles.configtitle}>大区巡查费用标准</p>
         <div className={styles.editcontent}>
           <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} placeholder="Select month" />
           {/*<Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
@@ -917,9 +917,6 @@ class Routecost extends React.Component {
           </Select>*/}
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, margin: '0 10px' }}>
             {this.getDepartOption()}
-          </Select>
-          <Select onChange={this.onUserTextChange} placeholder="请选择销售代表" style={{ width: 120, marginRight: '10px' }}>
-            {this.getUserOption()}
           </Select>
           
           {/*<Input onChange={this.onPathTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="share-alt" style={{ fontSize: 13 }} />} placeholder="路线编号/名称" />*/}
@@ -953,4 +950,4 @@ class Routecost extends React.Component {
   }
 }
 
-export default Routecost;
+export default RoutecostArea;

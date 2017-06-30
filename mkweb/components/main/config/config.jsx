@@ -6,6 +6,7 @@ import Role from './role';
 import Path from './path';
 import Subsidy from './subsidy';
 import Routecost from './routecost';
+import RoutecostArea from './routecost_area';
 import styles from './config.less';
 
 class Config extends React.Component {
@@ -38,6 +39,8 @@ class Config extends React.Component {
       return <Subsidy />
     } else if(this.state.contentkey == 'routecost') {
       return <Routecost />
+    } else if(this.state.contentkey == 'routecostarea') {
+      return <RoutecostArea />
     } 
     return <User />;
   }

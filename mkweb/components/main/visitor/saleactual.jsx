@@ -112,6 +112,7 @@ class SaleActual extends React.Component {
   getUserOption() {
     var userlist = this.state.user;
     var userDom = [];
+    userDom.push(<Option value={"0"}>不限人员</Option>)
     for (var i = 0; i < userlist.length; i++) {
       if (this.depart == 0 || userlist[i].depart == this.depart) {
         if (userlist[i].enableapp == 1) {
@@ -219,48 +220,48 @@ class SaleActual extends React.Component {
       key: 'area_name',
       width: 100
     }, {
-        title: '门店名称',
-        dataIndex: 'store_name',
-        key: 'store_name',
-        width: 150
-      }, {
-        title: '品牌',
-        dataIndex: 'brand_name',
-        key: 'brand_name',
-        width: 80
-      }, {
-        title: '产品系列',
-        dataIndex: 'series_name',
-        key: 'series_name',
-        width: 80
-      }, {
-        title: '产品号',
-        dataIndex: 'serial_no',
-        key: 'serial_no',
-        width: 100
-      }, {
-        title: '产品名称',
-        dataIndex: 'Product_name',
-        key: 'Product_name',
-        width: 200
-      }, {
-        title: '月实销量',
-        dataIndex: 'sum',
-        key: 'sum',
-        width: 80
-      }, {
-        title: '照片',
-        dataIndex: 'photo',
-        key: 'photo',
-        width: 600,
-        render: function (text, record, index) {
-          if (record.showphoto) {
-            return context.getImageDom(record.store_id, record.brand_name);
-          } else {
-            return " "
-          }
+      title: '门店名称',
+      dataIndex: 'store_name',
+      key: 'store_name',
+      width: 150
+    }, {
+      title: '品牌',
+      dataIndex: 'brand_name',
+      key: 'brand_name',
+      width: 80
+    }, {
+      title: '产品系列',
+      dataIndex: 'series_name',
+      key: 'series_name',
+      width: 80
+    }, {
+      title: '产品号',
+      dataIndex: 'serial_no',
+      key: 'serial_no',
+      width: 100
+    }, {
+      title: '产品名称',
+      dataIndex: 'Product_name',
+      key: 'Product_name',
+      width: 200
+    }, {
+      title: '月实销量',
+      dataIndex: 'sum',
+      key: 'sum',
+      width: 80
+    }, {
+      title: '照片',
+      dataIndex: 'photo',
+      key: 'photo',
+      width: 600,
+      render: function (text, record, index) {
+        if (record.showphoto) {
+          return context.getImageDom(record.store_id, record.brand_name);
+        } else {
+          return " "
         }
-      }];
+      }
+    }];
   }
   getTableData() {
     var context = this;
@@ -283,11 +284,11 @@ class SaleActual extends React.Component {
     var tableData = this.state.saleActual;
     for (var i = 0; i < tableData.length; i++) {
       if (tableData[i].sum > 0) {
-        num1 ++;
+        num1++;
       }
     }
     num2 = tableData.length;
-    return percentNum(num1,num2)
+    return percentNum(num1, num2)
   }
 
   render() {
@@ -303,10 +304,10 @@ class SaleActual extends React.Component {
         <div className={styles.queryContainer}>
           <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} style={{ width: 120, marginRight: '10px' }} placeholder="Select month" />
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption() }
+            {this.getDepartOption()}
           </Select>
           <Select onChange={this.onUserTextChange} placeholder="请选择销售代表" style={{ width: 120, marginRight: '10px' }}>
-            {this.getUserOption() }
+            {this.getUserOption()}
           </Select>
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
 
@@ -318,11 +319,11 @@ class SaleActual extends React.Component {
             color: '#108EE9',
             fontWeight: 'bold',
             marginLeft: '8px'
-          }}>{this.getDXpercent() }</span></p>
+          }}>{this.getDXpercent()}</span></p>
         </div>
         <div className={styles.resultContent}>
           <Table loading={this.state.loading} pagination={false} scroll={{ y: scrolly, x: 1500 }}
-            size="small" columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
       </div >
     );
