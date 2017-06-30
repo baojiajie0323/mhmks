@@ -183,6 +183,10 @@ class DoPlan extends React.Component {
     } else {
       signin_distance = "未知";
     }
+    if(this.getPlanType() == 3){
+      // 电话拜访
+      signin_distance = "0";
+    }
     return (
       <div style={{ margin: '12px 0' }}>
         {bSign ?
@@ -232,12 +236,12 @@ class DoPlan extends React.Component {
                 rightIcon={<RightIcon color={cyan600} />}
                 onTouchTap={function () { context.onClickChat(store) } }
                 />
-              <ListItem
+              {/*<ListItem
                 disableTouchRipple={true}
                 primaryText="订货信息"
                 rightIcon={<RightIcon color={cyan600} />}
                 onTouchTap={function () { context.onClickOrder(store) } }
-                />
+                />*/}
             </List>,
             <RaisedButton
               label="签退"
@@ -313,9 +317,18 @@ class DoPlan extends React.Component {
       var planstore = this.state.storelist[i];
       if (planstore.plan_type == 2) {
         return '临时拜访： ' + planstore.Store_name;
+      } else if (planstore.plan_type == 3) {
+        return '电话拜访： ' + planstore.Store_name;
       } else if (planstore.plan_type == 1) {
         return '路线拜访： ' + planstore.Path_Name;
       }
+    }
+  }
+  getPlanType() {
+    console.log('getPlanType', this.state.storelist);
+    for (var i = 0; i < this.state.storelist.length; i++) {
+      var planstore = this.state.storelist[i];
+      return planstore.plan_type;
     }
   }
   getStep() {

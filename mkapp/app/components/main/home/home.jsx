@@ -57,8 +57,8 @@ const Logged = (props) => (
     >
     {/*<MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />*/}
     <MenuItem onTouchTap={props.onClickAddTmp} primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
-    {/*<MenuItem disabled={true} onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
-    <MenuItem disabled={true} onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />*/}
+    <MenuItem onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
+    {/*<MenuItem disabled={true} onTouchTap={props.onClickAddCheck} primaryText="稽核拜访" leftIcon={<DoneIcon color={red600} />} />*/}
   </IconMenu>
 );
 
@@ -181,14 +181,14 @@ class Home extends React.Component {
       message.info("只能增加今日的计划！");
       return;
     }
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview',2);
   }
   onClickAddCall() {
     if (!this.checkToday()) {
       message.info("只能增加今日的计划！");
       return;
     }
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview');
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview',3);
   }
   onClickAddCheck() {
     if (!this.checkToday()) {

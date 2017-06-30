@@ -346,7 +346,8 @@ class PromotionDetail extends React.Component {
   }
 
   onClickAddImage(product_id) {
-    var srcType = Camera.PictureSourceType.CAMERA;
+    var store = this.props.userdata;
+    var srcType = store.plan_type == 3 ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA;
     var options = this.setOptions(srcType);
     var context = this;
     navigator.camera.getPicture(function cameraSuccess(imageUri) {

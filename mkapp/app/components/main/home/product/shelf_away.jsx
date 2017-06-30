@@ -326,8 +326,9 @@ class Shelf_away extends React.Component {
     return options;
   }
 
-  onClickAddImage(display_id) {
-    var srcType = Camera.PictureSourceType.CAMERA;
+  onClickAddImage(display_id) {    
+    var store = this.props.userdata;
+    var srcType = store.plan_type == 3 ? Camera.PictureSourceType.PHOTOLIBRARY : Camera.PictureSourceType.CAMERA;
     var options = this.setOptions(srcType);
     var context = this;
     navigator.camera.getPicture(function cameraSuccess(imageUri) {

@@ -891,15 +891,15 @@ class Routecost extends React.Component {
     }
     return (
       <div className={styles.configcontent}>
-        <p className={styles.configtitle}>路线费用标准</p>
+        <p className={styles.configtitle}>销售访店费用标准</p>
         <div className={styles.editcontent}>
           <MonthPicker value={this.state.monthDate} onChange={this.onMonthChange} placeholder="Select month" />
-          <Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
+          {/*<Select onChange={this.onRouteTypeChange} defaultValue={this.routetype} style={{ width: 120, margin: '0 10px' }}>
             {this._routetype.map((rt) => {
               return <Option value={rt.type}>{rt.name}</Option>
             }) }
-          </Select>
-          <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
+          </Select>*/}
+          <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, margin: '0 10px' }}>
             {this.getDepartOption() }
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />

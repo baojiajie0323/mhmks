@@ -187,7 +187,7 @@ module.exports = {
         var sqlstring = _sql.delplan;
         sqlstring += " and store_id = ";
         sqlstring += connection.escape(param.store_id);
-        sqlstring += " and plan_type = 2";
+        sqlstring += " and plan_type != 1";
         connection.query(sqlstring, [param.userid, param.year, param.month, param.day], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {

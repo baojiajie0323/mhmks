@@ -165,7 +165,7 @@ class SelectStore extends React.Component {
     var storeInfo = Store.getStoreById(this.state.checkedId);
     var curDate = Store.getCurDate();
     Action.addPlan({
-      plan_type: 2,
+      plan_type: this.props.userdata,
       year: curDate.getFullYear(),
       month: curDate.getMonth() + 1,
       day: curDate.getDate(),

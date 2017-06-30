@@ -382,12 +382,20 @@ class Record extends React.Component {
           var pointSignout = new BMap.Point(plan.signout_gps_x, plan.signout_gps_y);
           signout_distance = parseInt(context.map.getDistance(pointStore, pointSignout));
         }
+        var pathname = plan.path_name;
+        if(plan.plan_type == 2){
+          pathname = "临时拜访";
+        }else if(plan.plan_type == 3){
+          pathname = "电话拜访";
+          signin_distance = 0;
+          signout_distance = 0;
+        }
 
         tableData.push({
           plan_date: new Date(plan.plan_date).Format("yyyy-MM-dd"),
           Store_name: plan.Store_name,
           plan_type: plan.plan_type,
-          Path_name: plan.path_name == null ? "临时拜访" : plan.path_name,
+          Path_name: pathname,
           signin_time: plan.signin_time == null ? "未签到" : plan.signin_time,
           signin_distance: signin_distance < 0 ? "" : (signin_distance + "米"),
           signout_time: plan.signout_time == null ? "未签退" : plan.signout_time,
