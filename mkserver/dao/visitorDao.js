@@ -256,8 +256,8 @@ module.exports = {
         }, function (callback) {
           var sqlstring = _sql.updateplansum;
           connection.query(sqlstring, [param.userid, param.year, param.month,
-            sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
-            sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
+          sumInfo.storeCount, sumInfo.storeACount, sumInfo.storeBCount, sumInfo.storeCCount,
+          sumInfo.storeA, sumInfo.storeB, sumInfo.storeC, sumInfo.cover],
             function (err, result) {
               callback(err);
             });
@@ -465,7 +465,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitshelfmain;
             var plandate = param.year + '-' + param.month + '-' + param.day;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day,plandate, parseInt(productInfo.count)],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate, parseInt(productInfo.count)],
               function (err, result) {
                 callback(err);
               });
@@ -542,7 +542,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitstock;
             var plandate = param.year + '-' + param.month + '-' + param.day;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate,parseInt(productInfo.count), parseInt(productInfo.onway || 0)],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate, parseInt(productInfo.count), parseInt(productInfo.onway || 0)],
               function (err, result) {
                 callback(err);
               });
@@ -619,9 +619,9 @@ module.exports = {
         for (var i = 0; i < product.length; i++) {
           let productInfo = product[i];
           tasks.push(function (callback) {
-            var sqlstring = _sql.submitshelfaway;            
+            var sqlstring = _sql.submitshelfaway;
             var submitdate = param.year + "-" + param.month + "-" + param.day;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, submitdate,productInfo.display_id],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, submitdate, productInfo.display_id],
               function (err, result) {
                 callback(err);
               });
@@ -1132,6 +1132,48 @@ module.exports = {
 
         connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getRouteBasicArea: function (req, res, next) {
+    console.log('visitorDao getRouteBasicArea');
+    var param = req.body;
+    if (!param.depart && !param.path) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getroutebasicarea;
+        if (param.path) {
+          sqlstring += "a.path_id like '%";
+          sqlstring += param.path;
+          sqlstring += "%'";
+          sqlstring += "or Path_name like '%";
+          sqlstring += param.path;
+          sqlstring += "%'";
+        } else {
+          if (param.depart) {
+            sqlstring += "c.store_id in (select store_id from store where user_id in (SELECT username from user where depart = ";
+            sqlstring += connection.escape(param.depart);
+            sqlstring += ")) ";
+            sqlstring += "order by a.Path_id,a.path_seq"
+          }
+        }
+
+
+        connection.query(sqlstring, [], function (err, result) {
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {

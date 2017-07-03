@@ -802,6 +802,10 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_ROUTEBASIC, action.value);
     }
       break;
+    case ActionEvent.AE_ROUTEBASICAREA: {
+      Store.emit(StoreEvent.SE_ROUTEBASICAREA, action.value);
+    }
+      break;
     case ActionEvent.AE_ROUTECOST: {
       Store.setRouteCost(action.value);
     }

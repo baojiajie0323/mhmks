@@ -998,6 +998,26 @@ var Action = {
         }
       })
   },
+  getRouteBasicArea: function (data) {
+    var context = this;
+    data.command = 'getroutebasicarea';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getRouteBasicArea:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROUTEBASICAREA, response.data);
+        } else {
+          message.error('获取大区路线基础失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getRouteBasicArea fail');
+      })
+  },
   getRouteCost: function (data) {
     var context = this;
     data.command = 'getroutecost';

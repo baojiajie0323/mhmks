@@ -168,7 +168,7 @@ class Routecost extends React.Component {
   }
 
   onUserTextChange(e) {
-    this.userid = e.target.value;
+    this.userid = e;
   }
   onPathTextChange(e) {
     this.path = e.target.value;

@@ -126,7 +126,7 @@ class RoutecostArea extends React.Component {
 
     this.userid = "";
     this.path = "";
-    this.routetype = 1;
+    this.routetype = 2;
     this.depart = 0;
     this.noValue = " ";
   }
@@ -134,7 +134,7 @@ class RoutecostArea extends React.Component {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
-    Store.addChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
+    Store.addChangeListener(StoreEvent.SE_ROUTEBASICAREA, this.onRouteBasicChange);
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
 
     Action.getUser();
@@ -145,7 +145,7 @@ class RoutecostArea extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
-    Store.removeChangeListener(StoreEvent.SE_ROUTEBASIC, this.onRouteBasicChange);
+    Store.removeChangeListener(StoreEvent.SE_ROUTEBASICAREA, this.onRouteBasicChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
   }
   onUserChange() {
@@ -172,19 +172,6 @@ class RoutecostArea extends React.Component {
   }
   onPathTextChange(e) {
     this.path = e.target.value;
-  }
-  getUserOption() {
-    var userlist = this.state.user;
-    var userDom = [];
-    userDom.push(<Option value={"0"}>不限人员</Option>)
-    for (var i = 0; i < userlist.length; i++) {
-      if (this.depart == 0 || userlist[i].depart == this.depart) {
-        if (userlist[i].enableapp == 1) {
-          userDom.push(<Option value={userlist[i].username}>{userlist[i].realname}</Option>)
-        }
-      }
-    }
-    return userDom;
   }
 
   onRouteBasicChange(routeBasic) {
@@ -237,22 +224,8 @@ class RoutecostArea extends React.Component {
   onClickQuery() {
     var userInfo = this.checkUserId();
     // 查询基础路线     
-    if (this.userid != "") {
-      if (!userInfo) {
-        message.info("工号或姓名错误，请重新输入");
-        return;
-      }
-      if (this.depart != 0 && userInfo.depart != this.depart) {
-        message.info("员工不在该区域下，请重新选择");
-        return;
-      }
-      if (this.routetype == 2 && userInfo.userid != userInfo.id) {
-        message.info("员工不是大区主管，没有稽核路线");
-        return;
-      }
-    }
-
-    if (this.userid == "" && this.depart == 0 && this.path == "") {
+    
+    if (this.depart == 0) {
       message.info("请选择条件进行查询");
       return;
     }
@@ -276,7 +249,7 @@ class RoutecostArea extends React.Component {
       }
     }
     console.log("onClickQuery", data);
-    Action.getRouteBasic(data);
+    Action.getRouteBasicArea(data);
   }
 
   onSubsidyChange() {
@@ -362,22 +335,17 @@ class RoutecostArea extends React.Component {
         width: 60,
         fixed: 'left'
       }, {
-        title: <p style={{ textAlign: 'center' }}>姓名</p>,
-        dataIndex: 'realname',
-        key: 'realname',
+        title: <p style={{ textAlign: 'center' }}>主管</p>,
+        dataIndex: 'arearealname',
+        key: 'arearealname',
         width: 60,
         fixed: 'left'
       }, {
-        title: <p style={{ textAlign: 'center' }}>岗位</p>,
-        dataIndex: 'rolename',
-        key: 'rolename',
+        title: <p style={{ textAlign: 'center' }}>销售代表</p>,
+        dataIndex: 'realname',
+        key: 'realname',
         width: 65,
         fixed: 'left',
-        render: function (text, record, index) {
-          if (record.routemark == 1) {
-            return text;
-          }
-        }
       }, {
         title: <p style={{ textAlign: 'center' }}>路线</p>,
         dataIndex: 'Path_name',
@@ -759,6 +727,15 @@ class RoutecostArea extends React.Component {
       }
     }
   }
+  getDepartUser(depart) {
+    var depart = this.getDepart(depart);
+    if(depart){
+      var userInfo = this.getUserInfoById(depart.userid);
+      if(userInfo){
+        return userInfo.realname;
+      }
+    }
+  }
   isCheckPath(userid) {
     var checkUser = this.getCheckPathUser(userid);
     if (checkUser) {
@@ -815,6 +792,7 @@ class RoutecostArea extends React.Component {
           role_id: rb.role_id,
           user_id: rb.user_id,
           realname: userInfo ? userInfo.realname : "",
+          arearealname: userInfo ? context.getDepartUser(userInfo.depart): "",
           departname: userInfo ? context.getDepartName(userInfo.depart) : "",
           nature: routeCostInfo ? routeCostInfo.nature : "",
           routedes: routeCostInfo && routeCostInfo.routedes ? routeCostInfo.routedes : "",

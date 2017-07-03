@@ -51,6 +51,7 @@ var eventMap = {
     AE_SUBSIDY: null,
     AE_SUBSIDY_UPDATE: null,
     AE_ROUTEBASIC: null,
+    AE_ROUTEBASICAREA: null,
     AE_ROUTECOST: null,
     AE_ROUTECOST_UPDATE: null,
     AE_PROMOTIONSUM: null,
@@ -102,6 +103,7 @@ var eventMap = {
 
     SE_SUBSIDY: null,
     SE_ROUTEBASIC: null,
+    SE_ROUTEBASICAREA: null,
     SE_ROUTECOST: null,
     SE_PROMOTIONSUM: null,
     SE_PROMOTIONIMAGE: null,
