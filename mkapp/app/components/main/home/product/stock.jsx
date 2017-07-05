@@ -177,8 +177,12 @@ class Stock extends React.Component {
   }
 
   handleStockCancel() {
+    this._product.count = this.oldstockCount;
+    this._product.onway = this.oldstockOnway;
+    this.addToPreSaveProduct(this._product);
     this.setState({
-      visible: false
+      visible: false,
+
     })
   }
 
@@ -189,13 +193,22 @@ class Stock extends React.Component {
   }
 
   onClickStock(product) {
+    console.log("onClickStock", product);
+    var preSave = this.getPreSaveProduct(product);
     this._product = product;
-    this.setState({
-      visible: true,
-      title: product.Product_name,
-      stockCount: product.count || "",
-      stockOnway: product.onway || "",
-    })
+    var context = this;
+    var count = preSave ? preSave.count : "";
+    var onway = preSave ? preSave.onway : "";
+    this.oldstockCount = count;
+    this.oldstockOnway = onway;
+    setTimeout(function () {
+      context.setState({
+        visible: true,
+        title: product.Product_name,
+        stockCount: count,
+        stockOnway: onway,
+      })
+    }, 200);
   }
 
   onStockChange(preSaveProduct) {
@@ -248,6 +261,9 @@ class Stock extends React.Component {
         product_count = product_presave.count;
         product_onway = product_presave.onway;
         stockInfo = (product_count || 0) + " / " + (product_onway || 0);
+        if(!product_count && !product_onway){
+          stockInfo = "";
+        }
       }
       if (product.Brand_id == Brand_id) {
         productList.push(<ListItem
@@ -255,18 +271,18 @@ class Stock extends React.Component {
             color={"white"}
             backgroundColor={product.status == 1 ? green600 : red600}
             style={{ fontSize: '12px' }}
-            >
+          >
             {product.status == 1 ? "正常" : "下架"}
           </Avatar>}
 
-          rightIconButton={<p onClick={function () { context.onClickStock(product) } } style={{ marginTop: '14px' }}>
+          rightIconButton={<p onClick={function () { context.onClickStock(product) }} style={{ marginTop: '14px' }}>
             {stockInfo}
           </p>}
           primaryText={product.Product_name}
           secondaryText={product.Serial_no}
           disableTouchRipple={true}
-          onTouchTap={function () { context.onClickStock(product) } }
-          />);
+          onTouchTap={function () { context.onClickStock(product) }}
+        />);
       }
     }
     return productList;
@@ -427,7 +443,7 @@ class Stock extends React.Component {
     photoDom = fileList.map((file) => {
       return <div className={styles.photoblock}>
         <img src={file.imageUri} />
-        <Icon onClick={function () { context.removePhoto(file.imageUri) } } style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
+        <Icon onClick={function () { context.removePhoto(file.imageUri) }} style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
       </div>
     })
     return photoDom;
@@ -448,12 +464,12 @@ class Stock extends React.Component {
       //console.log("getPanel", file, fileList, brand.Brand_id)
 
       const uploadButton = (
-        <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(brand.Brand_id) } }>
-          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }}/>
+        <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(brand.Brand_id) }}>
+          <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
           <div className="ant-upload-text">添加照片</div>
         </div>
       );
-      panelList.push(<Panel header={brand.Brand_name} key={i.toString() }>
+      panelList.push(<Panel header={brand.Brand_name} key={i.toString()}>
         {/*<Upload
           multiple
           action="/visitor/upload"
@@ -469,17 +485,17 @@ class Stock extends React.Component {
           {fileList.length >= 3 ? null : uploadButton}
         </Upload>*/}
         <div className={styles.photocontent}>
-          {this.getPhotolist(fileList) }
+          {this.getPhotolist(fileList)}
           {fileList.length >= 5 ? null : uploadButton}
         </div>
-        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+        <Modal maskClosable={false} visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
         <Paper zDepth={0} className={styles.headtitle}>
           <p>产品/货号</p>
           <p>库存/在途</p>
         </Paper>
-        {this.getProductDom(brand.Brand_id) }
+        {this.getProductDom(brand.Brand_id)}
       </Panel>
       )
     }
@@ -495,12 +511,12 @@ class Stock extends React.Component {
         label="取消"
         primary={true}
         onTouchTap={this.handleClose}
-        />,
+      />,
       <FlatButton
         label="确定"
         primary={true}
         onTouchTap={this.handleSubmit}
-        />,
+      />,
     ];
     return (
       <div className={styles.container}>
@@ -511,12 +527,12 @@ class Stock extends React.Component {
           onRightIconButtonTouchTap={this.onClickSubmit}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton label="提交" />}
-          />
+        />
 
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.props.userdata.Store_name}</Subheader>
           <Collapse accordion >
-            {this.getPanel() }
+            {this.getPanel()}
           </Collapse>
         </div>
         <Dialog
@@ -524,7 +540,7 @@ class Stock extends React.Component {
           modal={false}
           open={this.state.open}
           onRequestClose={this.handleClose}
-          >
+        >
           确定要提交数据吗？
         </Dialog>
         <Modal
@@ -532,7 +548,8 @@ class Stock extends React.Component {
           visible={this.state.visible}
           onOk={this.handleStockOk}
           onCancel={this.handleStockCancel}
-          >
+          maskClosable={false}
+        >
           <div className={styles.stockModalcontent}>
             <p>库存量：</p>
             <Input value={this.state.stockCount} onChange={this.onCountChange} />
