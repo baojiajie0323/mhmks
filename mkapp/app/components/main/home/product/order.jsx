@@ -22,28 +22,20 @@ class Order extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
-      storeUser: "",
-      chatContent: "",
-      chatResult: "",
+      preSaveProduct: [],
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onClickSave = this.onClickSave.bind(this);
-    this.onStoreUser = this.onStoreUser.bind(this);
-    this.onChatContent = this.onChatContent.bind(this);
-    this.onChatResult = this.onChatResult.bind(this);
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.onChatChange = this.onChatChange.bind(this);
+    this.onStockChange = this.onStockChange.bind(this);
   }
 
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
-    Store.addChangeListener(StoreEvent.SE_CHAT, this.onChatChange);
+    Store.addChangeListener(StoreEvent.SE_STOCK, this.onStockChange);
+
+    this.checkProductList();
 
     var curDate = Store.getCurDate();
-    Action.getChat({
+    Action.getStock({
       year: curDate.getFullYear(),
       month: curDate.getMonth() + 1,
       day: curDate.getDate(),
@@ -52,30 +44,32 @@ class Order extends React.Component {
     });
   }
   componentWillUnmount() {
-    Store.removeChangeListener(StoreEvent.SE_CHAT_SUBMIT, this.onSumitSuccess);
-    Store.removeChangeListener(StoreEvent.SE_CHAT, this.onChatChange);
+    Store.removeChangeListener(StoreEvent.SE_STOCK, this.onStockChange);
   }
+
   onClickBack() {
     Store.emit(StoreEvent.SE_VIEW, 'doplanview');
   }
-  onStoreUser(e, value) {
-    this.setState({
-      storeUser: value
+  checkProductList() {
+    if (this.state.product.length <= 0) {
+      var store = this.props.userdata;
+      Action.getProductbyStore({
+        store_id: store.store_id
+      });
+    }
+  }
+  onStockChange(preSaveProduct) {
+    preSaveProduct.forEach((sp) => {
+      sp.Product_id = sp.product_id;
     })
-  }
-  onChatContent(e, value) {
+
     this.setState({
-      chatContent: value
+      preSaveProduct
     })
+    
+    console.log('onStockChange', preSaveProduct);
   }
-  onChatResult(e, value) {
-    this.setState({
-      chatResult: value
-    })
-  }
-  onSumitSuccess() {
-    Store.emit(StoreEvent.SE_VIEW, 'doplanview');
-  }
+
   onClickSave() {
     // var node = document.getElementById('ordercontainer');
 
@@ -102,7 +96,7 @@ class Order extends React.Component {
 
     //要将 canvas 的宽高设置成容器宽高的 2 倍
     var canvas = document.createElement("canvas");
-    
+
     var scale = 2;
     canvas.width = w * scale;
     canvas.height = h * scale;
@@ -128,33 +122,6 @@ class Order extends React.Component {
         );
       }
     });
-  }
-  handleClose() {
-    this.setState({ open: false });
-  }
-  onChatChange(data) {
-    if (data.length > 0) {
-      this.setState({
-        storeUser: data[0].storeuser,
-        chatContent: data[0].chatcontent,
-        chatResult: data[0].chatresult,
-      })
-    }
-  }
-
-  handleSubmit() {
-    var curDate = Store.getCurDate();
-    var data = {
-      store_id: this.props.userdata.store_id,
-      userid: localStorage.username,
-      year: curDate.getFullYear(),
-      month: curDate.getMonth() + 1,
-      day: curDate.getDate(),
-      storeUser: this.state.storeUser,
-      chatContent: this.state.chatContent,
-      chatResult: this.state.chatResult
-    }
-    Action.submitChat(data);
   }
 
   getOrderDom() {
@@ -195,18 +162,6 @@ class Order extends React.Component {
     return orderDom;
   }
   render() {
-    const actions = [
-      <FlatButton
-        label="取消"
-        primary={true}
-        onTouchTap={this.handleClose}
-        />,
-      <FlatButton
-        label="确定"
-        primary={true}
-        onTouchTap={this.handleSubmit}
-        />,
-    ];
     return (
       <div className={styles.container}>
         <AppBar
@@ -216,23 +171,15 @@ class Order extends React.Component {
           //onRightIconButtonTouchTap={this.onClickSave}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton onTouchTap={this.onClickSave} label="保存到相册" />}
-          />
+        />
 
         <div style={{ top: config.contentTop, backgroundColor: 'white' }} className={styles.content}>
           <div id="ordercontainer" className={styles.ordercontainer}>
             <p className={styles.ordertitle}>{this.props.userdata.Store_name + " 建议订货单"}</p>
             <p className={styles.ordersubtitle}>上海满好日用品有限公司</p>
-            {this.getOrderDom() }
+            {this.getOrderDom()}
           </div>
         </div>
-        <Dialog
-          actions={actions}
-          modal={false}
-          open={this.state.open}
-          onRequestClose={this.handleClose}
-          >
-          确定要提交数据吗？
-        </Dialog>
       </div >
     );
   }
