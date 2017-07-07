@@ -135,11 +135,11 @@ var Store = assign({}, EventEmitter.prototype, {
   },
   delPlan: function (plan) {
     for (var i = 0; i < _plan.length; i++) {
-      if (_plan[i].store_id == plan.store_id && 
-      _plan[i].userid.toUpperCase() == plan.userid.toUpperCase() && 
-      _plan[i].year == plan.year &&
-      _plan[i].month == plan.month &&
-      _plan[i].day == plan.day ) {
+      if (_plan[i].store_id == plan.store_id &&
+        _plan[i].userid.toUpperCase() == plan.userid.toUpperCase() &&
+        _plan[i].year == plan.year &&
+        _plan[i].month == plan.month &&
+        _plan[i].day == plan.day) {
         _plan.splice(i, 1);
         break;
       }
@@ -332,6 +332,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_VISITOR_IMAGE: {
       Store.emit(StoreEvent.SE_VISITOR_IMAGE, action.value);
+    }
+      break;
+    case ActionEvent.AE_SAFESTOCK: {
+      Store.emit(StoreEvent.SE_SAFESTOCK, action.value);
+    }
+      break;
+    case ActionEvent.AE_SALEACTUAL: {
+      Store.emit(StoreEvent.SE_SALEACTUAL, action.value);
     }
       break;
     default:

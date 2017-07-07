@@ -143,7 +143,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getmainshelfimage") {
     console.log('getmainshelfimage');
     visitorDao.getMainshelfImage(req, res, next);
-  }
+  } else if (req.body.command == "getsafestock") {
+    console.log('getsafestock');
+    visitorDao.getSafeStock(req, res, next);
+  } 
 });
 
 router.post('/upload/', upload.single('file'), function (req, res, next) {

@@ -1474,11 +1474,14 @@ module.exports = {
         if (param.userid) {
           sqlstring += "AND a.user_id = ";
           sqlstring += connection.escape(param.userid);
+        } else if(param.store_id){
+          sqlstring += "AND a.store_id = ";
+          sqlstring += connection.escape(param.store_id);
         }
         sqlstring += " GROUP BY a.store_id,c.serial_no order by a.area_name,a.store_name,b.brand_name,b.series_name"
         console.log(sqlstring);
         connection.query(sqlstring, [param.year, param.month], function (err, result) {
-          //console.log('dbresult', err, result);
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
@@ -1500,6 +1503,31 @@ module.exports = {
         var sqlstring = _sql.getmainshelfimage;
         connection.query(sqlstring, [param.userid, param.begindate, param.enddate], function (err, result) {
           console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getSafeStock: function (req, res, next) {
+    console.log('visitorDao getSafeStock');
+    var param = req.body;
+    if (!param.store_id) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getsafestock;
+        connection.query(sqlstring, [param.date, param.store_id], function (err, result) {
+          //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {

@@ -183,7 +183,7 @@ class DoPlan extends React.Component {
     } else {
       signin_distance = "未知";
     }
-    if(this.getPlanType() == 3){
+    if (this.getPlanType() == 3) {
       // 电话拜访
       signin_distance = "0";
     }
@@ -195,32 +195,32 @@ class DoPlan extends React.Component {
             color: '#ef6b1e',
             fontSize: '20px'
           }}>{signin_distance}</span>米</p>,
-            <List>
-              <ListItem
-                disableTouchRipple={true}
-                primaryText="主货架陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickShelfMain(store) } }
-                />
-              <ListItem
-                disableTouchRipple={true}
-                primaryText="离架陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickShelfAway(store) } }
-                />
-              <ListItem
-                disableTouchRipple={true}
-                primaryText="促销陈列"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickPromotion(store) } }
-                />
-              <ListItem
-                disableTouchRipple={true}
-                primaryText="库存采集"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickStock(store) } }
-                />
-              {/*<ListItem
+          <List>
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="主货架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickShelfMain(store) }}
+            />
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="离架陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickShelfAway(store) }}
+            />
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="促销陈列"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickPromotion(store) }}
+            />
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="库存采集"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickStock(store) }}
+            />
+            {/*<ListItem
               primaryText="异常库存管理"
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
@@ -230,33 +230,33 @@ class DoPlan extends React.Component {
               rightIcon={<RightIcon color={cyan600} />}
               onTouchTap={this.onClickStore}
               />*/}
-              <ListItem
-                disableTouchRipple={true}
-                primaryText="洽谈记录"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickChat(store) } }
-                />
-              {/*<ListItem
-                disableTouchRipple={true}
-                primaryText="订货信息"
-                rightIcon={<RightIcon color={cyan600} />}
-                onTouchTap={function () { context.onClickOrder(store) } }
-                />*/}
-            </List>,
-            <RaisedButton
-              label="签退"
-              secondary={true}
-              onTouchTap={function () {
-                context.handleSign(store, 'signout');
-              } }
-              />] :
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="洽谈记录"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickChat(store) }}
+            />
+            <ListItem
+              disableTouchRipple={true}
+              primaryText="订货信息"
+              rightIcon={<RightIcon color={cyan600} />}
+              onTouchTap={function () { context.onClickOrder(store) }}
+            />
+          </List>,
+          <RaisedButton
+            label="签退"
+            secondary={true}
+            onTouchTap={function () {
+              context.handleSign(store, 'signout');
+            }}
+          />] :
           <RaisedButton
             label={'签到'}
             primary={true}
             onTouchTap={function () {
               context.handleSign(store, 'signin');
-            } }
-            />
+            }}
+          />
         }
       </div>
     );
@@ -345,9 +345,9 @@ class DoPlan extends React.Component {
         finishCount++;
       }
       return <Step completed={store.isfinish}>
-        <StepButton onTouchTap={() => this.setState({ stepIndex: index }) }>{store.Store_name}</StepButton>
+        <StepButton onTouchTap={() => this.setState({ stepIndex: index })}>{store.Store_name}</StepButton>
         <StepContent>
-          {this.renderStepActions(store, index) }
+          {this.renderStepActions(store, index)}
         </StepContent>
       </Step>
     });
@@ -363,8 +363,8 @@ class DoPlan extends React.Component {
           onClick={(event) => {
             event.preventDefault();
             this.onClickBack();
-          } }
-          >
+          }}
+        >
           查看其它计划
         </a>
       </p>)
@@ -372,7 +372,7 @@ class DoPlan extends React.Component {
     return stepper;
   }
   render() {
-    const {finished} = this.state;
+    const { finished } = this.state;
 
     var planname = this.getPlanName();
     return (
@@ -382,13 +382,13 @@ class DoPlan extends React.Component {
           title='执行计划'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
-          />
+        />
         <div style={{ top: config.contentTop }} className={styles.content}>
           <div style={{ maxWidth: 380, maxHeight: 400, margin: 'auto' }}>
 
             <Spin size="large" tip="正在定位，请稍后" spinning={this.state.loading}>
               <Subheader>{planname}</Subheader>
-              {this.getStep() }
+              {this.getStep()}
             </Spin>
           </div>
         </div>

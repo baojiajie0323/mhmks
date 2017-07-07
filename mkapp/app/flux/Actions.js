@@ -653,6 +653,48 @@ var Action = {
         }
       })
   },
+  getSafeStock: function (data) {
+    var context = this;
+    data.command = 'getsafestock';
+    console.log('send getSafeStock', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getSafeStock:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SAFESTOCK, response.data);
+        } else {
+          message.error('获取安全库存失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getSafeStock fail');
+      })
+  },
+  getSaleActual: function (data) {
+    var context = this;
+    data.command = 'getsaleactual';
+    console.log('send getSaleActual', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getSaleActual:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SALEACTUAL, response.data);
+        } else {
+          message.error('获取SKU数据失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getSaleActual fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,
