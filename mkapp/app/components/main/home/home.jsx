@@ -20,7 +20,6 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import config from '../../config';
 import AddIcon from 'material-ui/svg-icons/content/add-box';
 import LineIcon from 'material-ui/svg-icons/action/timeline';
-import DoneIcon from 'material-ui/svg-icons/action/done-all';
 import PhoneIcon from 'material-ui/svg-icons/action/settings-phone';
 import TmpIcon from 'material-ui/svg-icons/action/restore';
 import Note from 'material-ui/svg-icons/action/assignment';
@@ -32,7 +31,8 @@ import FinishIcon from 'material-ui/svg-icons/toggle/star';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/menu';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import PlayIcon from 'material-ui/svg-icons/av/play-arrow';
-import LocationIcon from 'material-ui/svg-icons/maps/near-me';
+import EditIcon from 'material-ui/svg-icons/image/edit';
+import DoneIcon from 'material-ui/svg-icons/action/done';
 
 
 import { cyan800, cyan100, cyan600, green600, indigo600, red600 } from 'material-ui/styles/colors';
@@ -54,7 +54,7 @@ const Logged = (props) => (
     }
     targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-    >
+  >
     {/*<MenuItem onTouchTap={props.onClickAddPath} primaryText="路线拜访" leftIcon={<LineIcon color={cyan600} />} />*/}
     <MenuItem onTouchTap={props.onClickAddTmp} primaryText="临时拜访" leftIcon={<TmpIcon color={green600} />} />
     <MenuItem onTouchTap={props.onClickAddCall} primaryText="电话拜访" leftIcon={<PhoneIcon color={indigo600} />} />
@@ -70,7 +70,7 @@ const PlanOperate = (props) => (
     }
     targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-    >
+  >
     <MenuItem primaryText="执行" onTouchTap={props.onClickDoPlan} leftIcon={<PlayIcon color={cyan600} />} />
     <MenuItem primaryText="删除" onTouchTap={props.onClickDelete} leftIcon={<DeleteIcon color={red600} />} />
   </IconMenu>
@@ -100,7 +100,7 @@ class Home extends React.Component {
     this.handleOk = this.handleOk.bind(this);
     this.onClickDelete = this.onClickDelete.bind(this);
     this.onClickDoPlan = this.onClickDoPlan.bind(this);
-    this.onClickLocation = this.onClickLocation.bind(this);
+    this.onClickExpense = this.onClickExpense.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
@@ -155,14 +155,14 @@ class Home extends React.Component {
     })
   }
   onClickPrev() {
-    var {curDate} = this.state;
+    var { curDate } = this.state;
     curDate.setDate(curDate.getDate() - 1);
     this.setState({
       curDate
     }, this.getcurPlan)
   }
   onClickNext() {
-    var {curDate} = this.state;
+    var { curDate } = this.state;
     curDate.setDate(curDate.getDate() + 1);
     this.setState({
       curDate
@@ -181,14 +181,14 @@ class Home extends React.Component {
       message.info("只能增加今日的计划！");
       return;
     }
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview',2);
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', 2);
   }
   onClickAddCall() {
     if (!this.checkToday()) {
       message.info("只能增加今日的计划！");
       return;
     }
-    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview',3);
+    Store.emit(StoreEvent.SE_VIEW, 'selectstoreview', 3);
   }
   onClickAddCheck() {
     if (!this.checkToday()) {
@@ -338,13 +338,13 @@ class Home extends React.Component {
           rightIconButton={<PlanOperate
             onClickDoPlan={function () {
               context.onClickDoPlan(pl.path_id, pl.store_id);
-            } }
+            }}
             onClickDelete={function () {
               context.onClickDelete(pl.path_id, pl.store_id);
-            } }
-            />}
-          leftIcon={this.getStateIcon(pl) }
-          />)
+            }}
+          />}
+          leftIcon={this.getStateIcon(pl)}
+        />)
         planDom.push(<Divider />);
       })
       return planDom;
@@ -375,48 +375,8 @@ class Home extends React.Component {
       day: this.state.curDate.getDate()
     });
   }
-  onClickLocation() {
-    // var geolocation = new BMap.Geolocation();
-    // geolocation.getCurrentPosition(function (r) {
-    //   if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-    //     Action.checkSign({
-    //       userid: localStorage.username,
-    //       lat: r.latitude,
-    //       lon: r.longitude
-    //     });
-    //   }
-    //   else {
-    //     message.error('定位失败' + this.getStatus());
-    //   }
-    // }, { enableHighAccuracy: true })
-
-
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        //onSuccees        
-        var point = new BMap.Point(position.coords.longitude, position.coords.latitude);
-
-        var translateCallback = function (data) {
-          if (data.status === 0) {
-            Action.checkSign({
-              userid: localStorage.username,
-              lat: data.points[0].lat,
-              lon: data.points[0].lon
-            });
-          }
-        }
-
-        var convertor = new BMap.Convertor();
-        var pointArr = [];
-        pointArr.push(point);
-        convertor.translate(pointArr, 1, 5, translateCallback);
-
-      }, function (error) {
-        //onError
-        message.error('定位失败' + error.message);
-      }, { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true });
-    } else { message.error("没有开启定位权限！") }
+  onClickExpense() {
+    Store.emit(StoreEvent.SE_VIEW, 'expenseview');
   }
   render() {
     const actions = [
@@ -424,20 +384,22 @@ class Home extends React.Component {
         label="取消"
         primary={true}
         onTouchTap={this.handleClose}
-        />,
+      />,
       <FlatButton
         label="确定"
         primary={true}
         onTouchTap={this.handleOk}
-        />,
+      />,
     ];
+
+    var isExpense = true;
     return (
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: config.titlebarPadding }}
           title='拜访'
           iconElementLeft={<span />}
-          />
+        />
         <Paper zDepth={1}>
           <Toolbar noGutter={true} style={{ backgroundColor: 'white' }}>
             <ToolbarGroup>
@@ -458,42 +420,43 @@ class Home extends React.Component {
                   month: 'long',
                   year: 'numeric',
                 }).format}
-                />
+              />
               <IconButton onTouchTap={this.onClickNext}><RightIcon color={cyan800} /></IconButton>
             </ToolbarGroup>
             <ToolbarGroup >
-              <IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>
+              {/*<IconButton onTouchTap={this.onClickNote} style={{ marginRight: '-10px' }}><Note color={cyan800} /></IconButton>*/}
               <Logged
-                onClickAddPath={this.onClickAddPath.bind(this) }
-                onClickAddTmp={this.onClickAddTmp.bind(this) }
-                onClickAddCall={this.onClickAddCall.bind(this) }
-                onClickAddCheck={this.onClickAddCheck.bind(this) }
-                />
+                onClickAddPath={this.onClickAddPath.bind(this)}
+                onClickAddTmp={this.onClickAddTmp.bind(this)}
+                onClickAddCall={this.onClickAddCall.bind(this)}
+                onClickAddCheck={this.onClickAddCheck.bind(this)}
+              />
             </ToolbarGroup>
           </Toolbar>
         </Paper>
 
         <div style={{ top: config.contentLargeTop }} className={styles.content}>
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
-            {this.getPlanlist() }
+            {this.getPlanlist()}
           </Spin>
         </div>
-        {/*<FloatingActionButton style={{
-          position:'absolute',
+        {<FloatingActionButton style={{
+          position: 'absolute',
           bottom: '15px',
-          right:'25px',
+          right: '25px',
         }}
-        onTouchTap={this.onClickLocation}  
+          onTouchTap={this.onClickExpense}
+          secondary={!isExpense}
         >
-          <LocationIcon />
-        </FloatingActionButton>*/}
+          {isExpense ? <DoneIcon /> : <EditIcon />}
+        </FloatingActionButton>}
         <Dialog
           title="确定要删除计划吗？"
           actions={actions}
           modal={false}
           open={this.state.open}
           onRequestClose={this.handleClose}
-          >
+        >
           该计划删除后，与该计划相关的数据将同时删除，后台无法查看到你本次计划的实际情况，请谨慎操作！
         </Dialog>
       </div>

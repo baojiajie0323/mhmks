@@ -1167,7 +1167,7 @@ module.exports = {
             sqlstring += "c.store_id in (select store_id from store where user_id in (SELECT username from user where depart = ";
             sqlstring += connection.escape(param.depart);
             sqlstring += ")) ";
-            sqlstring += "order by a.Path_id,a.path_seq"
+            sqlstring += "order by a.Path_id,a.path_seq";
           }
         }
 

@@ -12,7 +12,7 @@ import Home from './home/home';
 import SelectPath from './home/selectpath';
 import SelectStore from './home/selectstore';
 import DoPlan from './home/doplan';
-import Note from './home/note';
+import Expense from './home/expense';
 import ShelfMain from './home/product/shelf_main';
 import ShelfAway from './home/product/shelf_away';
 import Stock from './home/product/stock';
@@ -76,8 +76,8 @@ class Main extends React.Component {
       return <SelectStore userdata={this.state.userdata} />
     } else if (this.state.subview == 'doplanview') {
       return <DoPlan />
-    } else if (this.state.subview == 'noteview') {
-      return <Note userdata={this.state.userdata} />
+    } else if (this.state.subview == 'expenseview') {
+      return <Expense />
     } else if (this.state.subview == 'shelfmainview') {
       return <ShelfMain userdata={this.state.userdata} />
     } else if (this.state.subview == 'shelfawayview') {
