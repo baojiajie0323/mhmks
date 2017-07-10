@@ -7,6 +7,7 @@ import StockMgr from './stockmgr';
 import PlanCheck from './plancheck';
 import SaleActual from './saleactual';
 import SaleActualSum from './saleactualsum';
+import Expense from './expense';
 import styles from './visitor.less';
 
 class Visitor extends React.Component {
@@ -41,6 +42,8 @@ class Visitor extends React.Component {
       return <SaleActual />;
     } else if (this.state.contentkey == 'saleactualsum') {
       return <SaleActualSum />;
+    } else if (this.state.contentkey == 'expense') {
+      return <Expense />;
     }
     return <Record />;
   }
