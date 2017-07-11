@@ -8,12 +8,12 @@ class Expense extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      saleActual: [],
       user: Store.getUser(),
       monthDate: moment(),
       loading: false,
+      visitorPlan: Store.getVisitorPlan(),
     };
-    this.onSaleActualChange = this.onSaleActualChange.bind(this);
+    this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
@@ -22,20 +22,29 @@ class Expense extends React.Component {
     this.onUserTextChange = this.onUserTextChange.bind(this);
 
     this.userid = "";
+
+    this.expenseType = [
+      { type: 'wcbt', name: '误餐费' },
+      { type: 'snjt', name: '市内交通费' },
+      { type: 'ccdsnjt', name: '出差地市内交通费' },
+      { type: 'ctjt', name: '长途交通费' },
+      { type: 'ccbt', name: '出差补贴' },
+      { type: 'zsbt', name: '住宿补贴' },
+    ]
   }
   componentDidMount() {
-    Store.addChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
+    Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Action.getUser();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
-    Store.removeChangeListener(StoreEvent.SE_SALEACTUAL, this.onSaleActualChange);
+    Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
   }
 
-  onSaleActualChange(saleActual) {
+  onVisitorPlanChange(saleActual) {
     this.setState({
-      saleActual,
+      visitorPlan: Store.getVisitorPlan(),
       loading: false
     })
   }
@@ -60,14 +69,20 @@ class Expense extends React.Component {
   }
 
   onClickQuery() {
+    if (this.userid == "") {
+      message.info("请选择销售代表");
+      return;
+    }
+    var begindate = this.state.monthDate.startOf('month').format("YYYY-MM-DD");
+    var enddate = this.state.monthDate.endOf('month').format("YYYY-MM-DD");
     var data = {
-      year: this.state.monthDate.year(),
-      month: this.state.monthDate.month() + 1,
-      //userid: this.userid
+      userid: this.userid,
+      begindate,
+      enddate,
     };
 
     console.log(data);
-    Action.getSaleActual(data);
+    Action.getVisitorPlan(data);
     this.setState({
       loading: true
     })
@@ -84,91 +99,198 @@ class Expense extends React.Component {
   getTableColumn() {
     var context = this;
     return [{
-      title: '大区',
-      dataIndex: 'departname',
-      key: 'departname',
-      width: 80,
-    }, {
-      title: '销售负责',
+      title: '销售代表',
       dataIndex: 'realname',
       key: 'realname',
       width: 100,
+      render: function (text, record) {
+        const obj = {
+          children: text,
+          props: {},
+        };
+        if (record.btnr == context.expenseType[0].name) {
+          obj.props.rowSpan = 6;
+        } else {
+          obj.props.rowSpan = 0;
+        }
+        return obj;
+      }
     }, {
-      title: 'SKU上架动销率',
+      title: '日期',
+      dataIndex: 'plandate',
+      key: 'plandate',
+      width: 100,
+      render: function (text, record) {
+        const obj = {
+          children: text,
+          props: {},
+        };
+        if (record.btnr == context.expenseType[0].name) {
+          obj.props.rowSpan = 6;
+        } else {
+          obj.props.rowSpan = 0;
+        }
+        return obj;
+      }
+    }, {
+      title: '计划类型',
       dataIndex: 'sku_percent',
       key: 'sku_percent',
-      render: function (text, record) {
-        return text + '%';
-      },
       width: 80,
+      render: function (text, record) {
+        const obj = {
+          children: text,
+          props: {},
+        };
+        if (record.btnr == context.expenseType[0].name) {
+          obj.props.rowSpan = 6;
+        } else {
+          obj.props.rowSpan = 0;
+        }
+        return obj;
+      }
     }, {
-      title: '大区排名',
+      title: '实际类型',
       dataIndex: 'depart_rank',
       key: 'depart_rank',
       width: 80,
+      render: function (text, record) {
+        const obj = {
+          children: text,
+          props: {},
+        };
+        if (record.btnr == context.expenseType[0].name) {
+          obj.props.rowSpan = 6;
+        } else {
+          obj.props.rowSpan = 0;
+        }
+        return obj;
+      }
+    }, {
+      title: '补贴内容',
+      dataIndex: 'btnr',
+      key: 'btnr',
+      width: 80,
+    }, {
+      title: '补贴标准',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '实际上报',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '发票数量',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '备注说明',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '调整金额',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '调整说明',
+      dataIndex: 'depart_rank',
+      key: 'depart_rank',
+      width: 80,
+    }, {
+      title: '操作',
+      key: 'picture',
+      width: 100,
+      render: function (text, record) {
+        var operateDom = [
+          <a onClick={function () {
+            context.onClickShowPicture(record, -1);
+          }}>发票</a>,
+          <span className="ant-divider" />,
+          <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
+            context.onClickReSign(record);
+          }} >
+            <a>拜访情况</a>
+          </Popconfirm>
+        ];
+        return operateDom;
+      }
     }];
   }
   getTableData() {
     var context = this;
-    var saleActualSum = [];
-    var getsaleSum = function (user_id) {
-      for (var i = 0; i < saleActualSum.length; i++) {
-        if (saleActualSum[i].user_id == user_id) {
-          return saleActualSum[i];
+
+    var planData = [];
+    var visitorPlan = this.state.visitorPlan;
+
+    visitorPlan.sort((a, b) => {
+      return new Date(a.plan_date).getTime() - new Date(b.plan_date).getTime();
+    })
+    var lastPlandate = "";
+    for (var i = 0; i < visitorPlan.length; i++) {
+      var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
+      if (plandate != lastPlandate) {
+        for (var j = 0; j < this.expenseType.length; j++) {
+          planData.push({
+            plandate,
+            realname: visitorPlan[i].realname,
+            btnr: this.expenseType[j].name,
+          })
         }
+        lastPlandate = plandate;
       }
     }
 
-    var tableData = [];
+    // var saleActual = this.state.saleActual;
+    // for (var i = 0; i < saleActual.length; i++) {
+    //   var saleSum = getsaleSum(saleActual[i].user_id);
+    //   if (!saleSum) {
+    //     saleSum = {
+    //       user_id: saleActual[i].user_id,
+    //       realname: saleActual[i].realname,
+    //       departname: saleActual[i].departname,
+    //       allproduct: 0,
+    //       dxproduct: 0
+    //     }
+    //     if (saleSum.departname) {
+    //       saleActualSum.push(saleSum);
+    //     }
+    //   }
+    //   if (saleActual[i].sum > 0) {
+    //     saleSum.dxproduct++;
+    //   }
+    //   saleSum.allproduct++;
+    // }
 
-    var saleActual = this.state.saleActual;
-    for (var i = 0; i < saleActual.length; i++) {
-      var saleSum = getsaleSum(saleActual[i].user_id);
-      if (!saleSum) {
-        saleSum = {
-          user_id: saleActual[i].user_id,
-          realname: saleActual[i].realname,
-          departname: saleActual[i].departname,
-          allproduct: 0,
-          dxproduct: 0
-        }
-        if (saleSum.departname) {
-          saleActualSum.push(saleSum);
-        }
-      }
-      if (saleActual[i].sum > 0) {
-        saleSum.dxproduct++;
-      }
-      saleSum.allproduct++;
-    }
+    // saleActualSum.forEach((as, index) => {
+    //   as.sku_percent = percentNum(as.dxproduct, as.allproduct);
+    //   as.sortIndex = index;
+    // })
 
-    saleActualSum.forEach((as, index) => {
-      as.sku_percent = percentNum(as.dxproduct, as.allproduct);
-      as.sortIndex = index;
-    })
+    // saleActualSum.sort((a, b) => {
+    //   if (a.departname === b.departname) {
+    //     return b.sku_percent - a.sku_percent || a.sortIndex - b.sortIndex;
+    //   } else {
+    //     return (a.departname > b.departname ? 1 : -1) || a.sortIndex - b.sortIndex;
+    //   }
+    // })
 
-    saleActualSum.sort((a, b) => {
-      if (a.departname === b.departname) {
-        return b.sku_percent - a.sku_percent || a.sortIndex - b.sortIndex;
-      } else {
-        return (a.departname > b.departname ? 1 : -1) || a.sortIndex - b.sortIndex;
-      }
-    })
+    // var rank = 1;
+    // var lastdepartname = "";
+    // saleActualSum.forEach((as) => {
+    //   if (lastdepartname != as.departname) {
+    //     rank = 1;
+    //     lastdepartname = as.departname;
+    //   }
+    //   as.depart_rank = rank;
+    //   rank++;
+    // })
 
-    var rank = 1;
-    var lastdepartname = "";
-    saleActualSum.forEach((as) => {
-      if (lastdepartname != as.departname) {
-        rank = 1;
-        lastdepartname = as.departname;
-      }
-      as.depart_rank = rank;
-      rank++;
-    })
-
-    console.log("saleActualSum", saleActualSum);
-
-    return saleActualSum;
+    return planData;
   }
 
   getDXpercent() {
@@ -202,7 +324,7 @@ class Expense extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
-          <Table loading={this.state.loading} pagination={false} scroll={{ y: scrolly }}
+          <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly }}
             size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
       </div >
