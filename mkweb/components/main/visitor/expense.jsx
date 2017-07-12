@@ -14,6 +14,8 @@ class Expense extends React.Component {
       visitorPlan: Store.getVisitorPlan(),
       subsidy: Store.getSubsidy(),
       routeCost: Store.getRouteCost(),
+      showVisitor: false,
+      currecord: {},
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
 
@@ -23,13 +25,15 @@ class Expense extends React.Component {
     this.onUserChange = this.onUserChange.bind(this);
     this.onUserTextChange = this.onUserTextChange.bind(this);
     this.onRouteCostChange = this.onRouteCostChange.bind(this);
+    this.onSubsidyChange = this.onSubsidyChange.bind(this);
+    this.handleVisitorCancel = this.handleVisitorCancel.bind(this);
 
     this.userid = "";
 
     this.expenseType = [
       { type: 'wcbt', name: '误餐费' },
       { type: 'snjt', name: '市内交通费' },
-      { type: 'ccdsnjt', name: '出差地市内交通费' },
+      { type: 'ccdsnjt', name: '出差地交通费' },
       { type: 'ctjt', name: '长途交通费' },
       { type: 'ccbt', name: '出差补贴' },
       { type: 'zsbt', name: '住宿补贴' },
@@ -130,14 +134,15 @@ class Expense extends React.Component {
     }
   }
 
-  getNatureName(nature){
-    for(var i = 0; i < this._routeNature.length; i++){
-      if(_routeNature[i].nature == nature){
-        return _routeNature[i].name;
+  getNatureName(nature) {
+    for (var i = 0; i < this._routeNature.length; i++) {
+      if (this._routeNature[i].nature == nature) {
+        return this._routeNature[i].name;
       }
     }
     return `未知(${nature})`;
   }
+
   onClickQuery() {
     if (this.userid == "") {
       message.info("请选择销售代表");
@@ -165,6 +170,17 @@ class Expense extends React.Component {
     })
   }
 
+  onClickVisitor(record) {
+    this.setState({
+      showVisitor: true,
+      currecord: record
+    })
+  }
+
+  handleVisitorCancel() {
+    this.setState({ showVisitor: false })
+  }
+
   onMonthChange(date, dateString) {
     this.setState({
       monthDate: date
@@ -172,6 +188,94 @@ class Expense extends React.Component {
     console.log(date, dateString);
   }
 
+  getSubsidy(role_id, city_lev, nature, expenseType) {
+    console.log(role_id, city_lev, nature, expenseType);
+    for (var i = 0; i < this.state.subsidy.length; i++) {
+      if (this.state.subsidy[i].role_id == role_id) {
+        var subsidyInfo = this.state.subsidy[i];
+        if (expenseType == "wcbt") {
+          if (city_lev == 1) {
+            return subsidyInfo.gzdcf1;
+          } else if (city_lev == 2) {
+            return subsidyInfo.gzdcf2;
+          } else if (city_lev == 3) {
+            return subsidyInfo.gzdcf3;
+          }
+        } else if (expenseType == "snjt") {
+          if (nature == 2 || nature == 3) {
+            return 0;
+          }
+          if (city_lev == 1) {
+            return subsidyInfo.gzdjt1;
+          } else if (city_lev == 2) {
+            return subsidyInfo.gzdjt2;
+          } else if (city_lev == 3) {
+            return subsidyInfo.gzdjt3;
+          }
+        } else if (expenseType == "ccdsnjt") {
+          if (nature == 1 || nature == 4) {
+            return 0;
+          }
+          if (city_lev == 1) {
+            return subsidyInfo.ccjt1;
+          } else if (city_lev == 2) {
+            return subsidyInfo.ccjt2;
+          } else if (city_lev == 3) {
+            return subsidyInfo.ccjt3;
+          }
+        } else if (expenseType == "ccbt") {
+          if (nature == 1 || nature == 4) {
+            return 0;
+          }
+          if (city_lev == 1) {
+            return subsidyInfo.ccbt1;
+          } else if (city_lev == 2) {
+            return subsidyInfo.ccbt2;
+          } else if (city_lev == 3) {
+            return subsidyInfo.ccbt3;
+          }
+        }
+      }
+    }
+    return 0;
+  }
+  getRecordTableColumn() {
+    return [{
+      title: '计划拜访门店',
+      dataIndex: 'planstore',
+      key: 'planstore',
+    }, {
+      title: '实际拜访门店',
+      dataIndex: 'realstore',
+      key: 'realstore',
+    }];
+  }
+  getRecordTableData() {
+    var tableData = []
+    for (var i = 0; i < this.state.visitorPlan.length; i++) {
+      var planInfo = this.state.visitorPlan[i];
+      if (new Date(planInfo.plan_date).Format("yyyy-MM-dd") == this.state.currecord.plandate) {
+        var planstore = "";
+        var realstore = "";
+        if (planInfo.plan_type == 1) {
+          planstore = planInfo.Store_name;
+          if (planInfo.isfinish == 1) {
+            realstore = planInfo.Store_name;
+          }
+        } else {
+          realstore = planInfo.Store_name;
+        }
+        tableData.push({
+          planstore,
+          realstore
+        })
+      }
+    }
+    tableData.sort((a, b) => {
+      return a.planstore - b.planstore;
+    })
+    return tableData;
+  }
 
   getTableColumn() {
     var context = this;
@@ -179,7 +283,7 @@ class Expense extends React.Component {
       title: '销售代表',
       dataIndex: 'realname',
       key: 'realname',
-      width: 100,
+      width: 70,
       render: function (text, record) {
         const obj = {
           children: text,
@@ -196,7 +300,7 @@ class Expense extends React.Component {
       title: '日期',
       dataIndex: 'plandate',
       key: 'plandate',
-      width: 100,
+      width: 90,
       render: function (text, record) {
         const obj = {
           children: text,
@@ -244,24 +348,45 @@ class Expense extends React.Component {
         return obj;
       }
     }, {
+      title: '拜访情况',
+      key: 'planinfo',
+      width: 100,
+      render: function (text, record) {
+        var operateDom = [
+          <a onClick={function () {
+            context.onClickVisitor(record);
+          }}>拜访情况</a>
+        ];
+        const obj = {
+          children: operateDom,
+          props: {},
+        };
+        if (record.btnr == context.expenseType[0].name) {
+          obj.props.rowSpan = 6;
+        } else {
+          obj.props.rowSpan = 0;
+        }
+        return obj;
+      }
+    }, {
       title: '补贴内容',
       dataIndex: 'btnr',
       key: 'btnr',
-      width: 80,
+      width: 110,
     }, {
       title: '补贴标准',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
+      dataIndex: 'btbz',
+      key: 'btbz',
       width: 80,
     }, {
       title: '实际上报',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
+      dataIndex: 'report',
+      key: 'report',
       width: 80,
     }, {
       title: '发票数量',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
+      dataIndex: 'fpcount',
+      key: 'fpcount',
       width: 80,
     }, {
       title: '发票照片',
@@ -271,37 +396,15 @@ class Expense extends React.Component {
         var operateDom = [
           <a onClick={function () {
             context.onClickShowPicture(record, -1);
-          }}>查看</a>
+          }}>发票照片</a>
         ];
         return operateDom;
       }
-    }, {
-      title: '备注说明',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
-      width: 80,
     }, {
       title: '调整金额',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
+      dataIndex: 'adjustmoney',
+      key: 'adjustmoney',
       width: 80,
-    }, {
-      title: '调整说明',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
-      width: 80,
-    }, {
-      title: '拜访情况',
-      key: 'planinfo',
-      width: 100,
-      render: function (text, record) {
-        var operateDom = [
-          <a onClick={function () {
-            context.onClickShowPicture(record, -1);
-          }}>查看详情</a>
-        ];
-        return operateDom;
-      }
     }];
   }
   getTableData() {
@@ -318,17 +421,23 @@ class Expense extends React.Component {
       var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
       if (plandate != lastPlandate) {
         var routeInfo = this.getRouteInfo(plandate);
+        var userInfo = this.getUserInfo(this.userid);
+        if (!userInfo) {
+          continue;
+        }
         var plannature = "无计划";
-        if(routeInfo){
+        if (routeInfo) {
           plannature = this.getNatureName(routeInfo.nature);
         }
+
         for (var j = 0; j < this.expenseType.length; j++) {
+          var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, 1, this.expenseType[j].type);
           planData.push({
             plandate,
             plannature,
             realname: visitorPlan[i].realname,
             btnr: this.expenseType[j].name,
-            
+            btbz,
           })
         }
         lastPlandate = plandate;
@@ -388,7 +497,7 @@ class Expense extends React.Component {
     var scrolly = 350;
     var height = document.body.clientHeight;
     if (height > 0) {
-      scrolly = height - 290;
+      scrolly = height - 300;
     };
     return (
       <div className={styles.visitorcontent}>
@@ -404,7 +513,12 @@ class Expense extends React.Component {
           <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly }}
             size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
-      </div >
+        <Modal title="拜访信息" width={500} footer={null} visible={this.state.showVisitor}
+          onCancel={this.handleVisitorCancel} >
+          <Table pagination={false}
+            size="small" columns={this.getRecordTableColumn()} dataSource={this.getRecordTableData()} />
+        </Modal>
+      </div>
     );
   }
 }
