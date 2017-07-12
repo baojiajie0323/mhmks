@@ -12,6 +12,8 @@ class Expense extends React.Component {
       monthDate: moment(),
       loading: false,
       visitorPlan: Store.getVisitorPlan(),
+      subsidy: Store.getSubsidy(),
+      routeCost: Store.getRouteCost(),
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
 
@@ -20,6 +22,7 @@ class Expense extends React.Component {
 
     this.onUserChange = this.onUserChange.bind(this);
     this.onUserTextChange = this.onUserTextChange.bind(this);
+    this.onRouteCostChange = this.onRouteCostChange.bind(this);
 
     this.userid = "";
 
@@ -31,21 +34,51 @@ class Expense extends React.Component {
       { type: 'ccbt', name: '出差补贴' },
       { type: 'zsbt', name: '住宿补贴' },
     ]
+    this._routeNature = [{
+      nature: "1",
+      name: "市内拜访"
+    }, {
+      nature: "2",
+      name: "出差住宿"
+    }, {
+      nature: "3",
+      name: "出差不住宿"
+    }, {
+      nature: "4",
+      name: "电话拜访"
+    }]
   }
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
     Action.getUser();
+    Action.getSubsidy();
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_USER, this.onUserChange);
+    Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
   }
 
   onVisitorPlanChange(saleActual) {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
       loading: false
+    })
+  }
+
+  onSubsidyChange() {
+    this.setState({
+      subsidy: Store.getSubsidy()
+    })
+  }
+
+  onRouteCostChange() {
+    this.setState({
+      routeCost: Store.getRouteCost()
     })
   }
 
@@ -68,6 +101,43 @@ class Expense extends React.Component {
     return userDom;
   }
 
+  getUserInfo(userid) {
+    for (var i = 0; i < this.state.user.length; i++) {
+      if (this.state.user[i].username == userid) {
+        return this.state.user[i];
+      }
+    }
+  }
+
+  getRouteInfo(plan_date) {
+    var pathid = this.getPlanPath(plan_date);
+    if (pathid) {
+      for (var i = 0; i < this.state.routeCost.length; i++) {
+        var routeInfo = this.state.routeCost[i];
+        if (routeInfo.path_id == pathid) {
+          return routeInfo;
+        }
+      }
+    }
+  }
+
+  getPlanPath(plan_date) {
+    for (var i = 0; i < this.state.visitorPlan.length; i++) {
+      var planInfo = this.state.visitorPlan[i];
+      if (new Date(planInfo.plan_date).Format("yyyy-MM-dd") == plan_date && planInfo.plan_type == 1) {
+        return planInfo.path_id;
+      }
+    }
+  }
+
+  getNatureName(nature){
+    for(var i = 0; i < this._routeNature.length; i++){
+      if(_routeNature[i].nature == nature){
+        return _routeNature[i].name;
+      }
+    }
+    return `未知(${nature})`;
+  }
   onClickQuery() {
     if (this.userid == "") {
       message.info("请选择销售代表");
@@ -83,6 +153,13 @@ class Expense extends React.Component {
 
     console.log(data);
     Action.getVisitorPlan(data);
+    var routedata = {
+      routedate: this.state.monthDate.format("YYYY-MM"),
+    }
+
+    console.log("getRouteCost", routedata);
+    Action.getRouteCost(routedata);
+
     this.setState({
       loading: true
     })
@@ -134,8 +211,8 @@ class Expense extends React.Component {
       }
     }, {
       title: '计划类型',
-      dataIndex: 'sku_percent',
-      key: 'sku_percent',
+      dataIndex: 'plannature',
+      key: 'plannature',
       width: 80,
       render: function (text, record) {
         const obj = {
@@ -151,8 +228,8 @@ class Expense extends React.Component {
       }
     }, {
       title: '实际类型',
-      dataIndex: 'depart_rank',
-      key: 'depart_rank',
+      dataIndex: 'realnature',
+      key: 'realnature',
       width: 80,
       render: function (text, record) {
         const obj = {
@@ -187,6 +264,18 @@ class Expense extends React.Component {
       key: 'depart_rank',
       width: 80,
     }, {
+      title: '发票照片',
+      key: 'fpphoto',
+      width: 80,
+      render: function (text, record) {
+        var operateDom = [
+          <a onClick={function () {
+            context.onClickShowPicture(record, -1);
+          }}>查看</a>
+        ];
+        return operateDom;
+      }
+    }, {
       title: '备注说明',
       dataIndex: 'depart_rank',
       key: 'depart_rank',
@@ -202,20 +291,14 @@ class Expense extends React.Component {
       key: 'depart_rank',
       width: 80,
     }, {
-      title: '操作',
-      key: 'picture',
+      title: '拜访情况',
+      key: 'planinfo',
       width: 100,
       render: function (text, record) {
         var operateDom = [
           <a onClick={function () {
             context.onClickShowPicture(record, -1);
-          }}>发票</a>,
-          <span className="ant-divider" />,
-          <Popconfirm title="确定要重签这条记录吗?" onConfirm={function () {
-            context.onClickReSign(record);
-          }} >
-            <a>拜访情况</a>
-          </Popconfirm>
+          }}>查看详情</a>
         ];
         return operateDom;
       }
@@ -234,11 +317,18 @@ class Expense extends React.Component {
     for (var i = 0; i < visitorPlan.length; i++) {
       var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
       if (plandate != lastPlandate) {
+        var routeInfo = this.getRouteInfo(plandate);
+        var plannature = "无计划";
+        if(routeInfo){
+          plannature = this.getNatureName(routeInfo.nature);
+        }
         for (var j = 0; j < this.expenseType.length; j++) {
           planData.push({
             plandate,
+            plannature,
             realname: visitorPlan[i].realname,
             btnr: this.expenseType[j].name,
+            
           })
         }
         lastPlandate = plandate;
@@ -291,19 +381,6 @@ class Expense extends React.Component {
     // })
 
     return planData;
-  }
-
-  getDXpercent() {
-    var num1 = 0;
-    var num2 = 0;
-    var tableData = this.state.saleActual;
-    for (var i = 0; i < tableData.length; i++) {
-      if (tableData[i].sum > 0) {
-        num1++;
-      }
-    }
-    num2 = tableData.length;
-    return percentNum(num1, num2)
   }
 
   render() {

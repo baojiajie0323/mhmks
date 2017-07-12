@@ -1192,12 +1192,14 @@ module.exports = {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
-        var pathlist = param.pathlist;
-        pathlist = pathlist.substr(1, pathlist.length - 2);
         var sqlstring = _sql.getroutecost;
-        sqlstring += "(";
-        sqlstring += pathlist;
-        sqlstring += ")";
+        if (param.pathlist) {
+          var pathlist = param.pathlist;
+          pathlist = pathlist.substr(1, pathlist.length - 2);
+          sqlstring += "and path_id in (";
+          sqlstring += pathlist;
+          sqlstring += ")";
+        }
         connection.query(sqlstring, [param.routedate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -1474,7 +1476,7 @@ module.exports = {
         if (param.userid) {
           sqlstring += "AND a.user_id = ";
           sqlstring += connection.escape(param.userid);
-        } else if(param.store_id){
+        } else if (param.store_id) {
           sqlstring += "AND a.store_id = ";
           sqlstring += connection.escape(param.store_id);
         }
