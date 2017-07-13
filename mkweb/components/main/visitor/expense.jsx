@@ -14,10 +14,12 @@ class Expense extends React.Component {
       visitorPlan: Store.getVisitorPlan(),
       subsidy: Store.getSubsidy(),
       routeCost: Store.getRouteCost(),
+      expense: [],
       showVisitor: false,
       currecord: {},
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
+    this.onExpenseChange = this.onExpenseChange.bind(this); 
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
@@ -57,6 +59,7 @@ class Expense extends React.Component {
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
+    Store.addChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
     Action.getUser();
     Action.getSubsidy();
   }
@@ -65,6 +68,7 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
+    Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
 
   onVisitorPlanChange(saleActual) {
@@ -83,6 +87,12 @@ class Expense extends React.Component {
   onRouteCostChange() {
     this.setState({
       routeCost: Store.getRouteCost()
+    })
+  }
+
+  onExpenseChange(expense) {
+    this.setState({
+      expense
     })
   }
 
@@ -158,6 +168,7 @@ class Expense extends React.Component {
 
     console.log(data);
     Action.getVisitorPlan(data);
+    Action.getExpense(data);
     var routedata = {
       routedate: this.state.monthDate.format("YYYY-MM"),
     }
@@ -238,6 +249,15 @@ class Expense extends React.Component {
       }
     }
     return 0;
+  }
+
+  getExpense(plandate){
+    for(var i = 0; i < this.state.expense.length; i++){
+      var expenseInfo = this.state.expense[i];
+      if(new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == plandate){
+        return expenseInfo;
+      }
+    }
   }
   getRecordTableColumn() {
     return [{
@@ -425,16 +445,25 @@ class Expense extends React.Component {
         if (!userInfo) {
           continue;
         }
+        
+        var expenseInfo = this.getExpense(plandate);
+
         var plannature = "无计划";
+        var realnature = "未提交";
         if (routeInfo) {
           plannature = this.getNatureName(routeInfo.nature);
+          if(expenseInfo){
+            realnature = this.getNatureName(routeInfo.natre);
+          }
         }
 
         for (var j = 0; j < this.expenseType.length; j++) {
           var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, 1, this.expenseType[j].type);
+          var report
           planData.push({
             plandate,
             plannature,
+            realnatre,
             realname: visitorPlan[i].realname,
             btnr: this.expenseType[j].name,
             btbz,

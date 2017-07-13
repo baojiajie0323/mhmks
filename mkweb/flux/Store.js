@@ -858,6 +858,10 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_MAINSHELFIMAGE, action.value);
     }
       break;
+    case ActionEvent.AE_EXPENSE: {
+      Store.emit(StoreEvent.SE_EXPENSE, action.value);
+    }
+      break;
     default:
       break;
   }
