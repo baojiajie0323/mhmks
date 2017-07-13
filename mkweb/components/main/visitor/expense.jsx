@@ -19,7 +19,7 @@ class Expense extends React.Component {
       currecord: {},
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
-    this.onExpenseChange = this.onExpenseChange.bind(this); 
+    this.onExpenseChange = this.onExpenseChange.bind(this);
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
@@ -33,12 +33,12 @@ class Expense extends React.Component {
     this.userid = "";
 
     this.expenseType = [
-      { type: 'wcbt', name: '误餐费' },
-      { type: 'snjt', name: '市内交通费' },
-      { type: 'ccdsnjt', name: '出差地交通费' },
-      { type: 'ctjt', name: '长途交通费' },
-      { type: 'ccbt', name: '出差补贴' },
-      { type: 'zsbt', name: '住宿补贴' },
+      { type: 'wcbt', name: '误餐费', enableChange: false },
+      { type: 'snjt', name: '市内交通费', enableChange: false },
+      { type: 'ccdsnjt', name: '出差地交通费', enableChange: true },
+      { type: 'ctjt', name: '长途交通费', enableChange: true },
+      { type: 'ccbt', name: '出差补贴', enableChange: true },
+      { type: 'zsbt', name: '住宿补贴', enableChange: true },
     ]
     this._routeNature = [{
       nature: "1",
@@ -128,11 +128,25 @@ class Expense extends React.Component {
     if (pathid) {
       for (var i = 0; i < this.state.routeCost.length; i++) {
         var routeInfo = this.state.routeCost[i];
-        if (routeInfo.path_id == pathid) {
+        if (routeInfo.path_id == pathid && routeInfo.routemark == 1) {
           return routeInfo;
         }
       }
     }
+  }
+
+  getRouteCtjt(plan_date) {
+    var ctjt = 0;
+    var pathid = this.getPlanPath(plan_date);
+    if (pathid) {
+      for (var i = 0; i < this.state.routeCost.length; i++) {
+        var routeInfo = this.state.routeCost[i];
+        if (routeInfo.path_id == pathid && routeInfo.routemark == 2) {
+          ctjt += routeInfo.ctjtf || 0;
+        }
+      }
+    }
+    return ctjt;
   }
 
   getPlanPath(plan_date) {
@@ -199,8 +213,16 @@ class Expense extends React.Component {
     console.log(date, dateString);
   }
 
-  getSubsidy(role_id, city_lev, nature, expenseType) {
+  getSubsidy(role_id, city_lev, nature, expenseType, plan_date) {
     console.log(role_id, city_lev, nature, expenseType);
+    if (expenseType == 'ctjt') {
+      return this.getRouteCtjt(plan_date);
+    } else if (expenseType == 'zsbt') {
+      var routeInfo = this.getRouteInfo(plan_date);
+      if (routeInfo) {
+        return routeInfo.cczs;
+      }
+    }
     for (var i = 0; i < this.state.subsidy.length; i++) {
       if (this.state.subsidy[i].role_id == role_id) {
         var subsidyInfo = this.state.subsidy[i];
@@ -251,10 +273,10 @@ class Expense extends React.Component {
     return 0;
   }
 
-  getExpense(plandate){
-    for(var i = 0; i < this.state.expense.length; i++){
+  getExpense(plandate) {
+    for (var i = 0; i < this.state.expense.length; i++) {
       var expenseInfo = this.state.expense[i];
-      if(new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == plandate){
+      if (new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == plandate) {
         return expenseInfo;
       }
     }
@@ -445,21 +467,30 @@ class Expense extends React.Component {
         if (!userInfo) {
           continue;
         }
-        
-        var expenseInfo = this.getExpense(plandate);
 
         var plannature = "无计划";
         var realnature = "未提交";
         if (routeInfo) {
           plannature = this.getNatureName(routeInfo.nature);
-          if(expenseInfo){
+          if (expenseInfo) {
             realnature = this.getNatureName(routeInfo.natre);
           }
         }
 
         for (var j = 0; j < this.expenseType.length; j++) {
-          var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, 1, this.expenseType[j].type);
-          var report
+          var expenseType = this.expenseType[j].type;
+          var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, 1, expenseType, plandate);
+          
+          var report = 0;
+          var fpcount = 0;
+          if (expenseType == "wcbt" || expenseType == "snjt" || expenseType == "ccbt") {
+            report = btbz;
+          } else {
+            var expenseInfo = this.getExpense(plandate,expenseType);
+            if (expenseInfo) {
+              report = expenseInfo[this.expenseType[j]].money;
+            }
+          }
           planData.push({
             plandate,
             plannature,
@@ -467,6 +498,8 @@ class Expense extends React.Component {
             realname: visitorPlan[i].realname,
             btnr: this.expenseType[j].name,
             btbz,
+            report,
+            fpcount,
           })
         }
         lastPlandate = plandate;
