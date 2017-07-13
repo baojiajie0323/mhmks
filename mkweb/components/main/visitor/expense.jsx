@@ -17,6 +17,8 @@ class Expense extends React.Component {
       expense: [],
       showVisitor: false,
       currecord: {},
+      modalvalue: '',
+      adjustvisible: false,
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onExpenseChange = this.onExpenseChange.bind(this);
@@ -29,7 +31,9 @@ class Expense extends React.Component {
     this.onRouteCostChange = this.onRouteCostChange.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
     this.handleVisitorCancel = this.handleVisitorCancel.bind(this);
-
+    this.onModalvalueChange = this.onModalvalueChange.bind(this);
+    this.handleAdjustOk = this.handleAdjustOk.bind(this);
+    this.handleAdjustCancel = this.handleAdjustCancel.bind(this);
     this.userid = "";
 
     this.expenseType = [
@@ -71,6 +75,34 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
 
+  onModalvalueChange(e) {
+    this.setState({
+      modalvalue: e.target.value
+    })
+  }
+  handleAdjustOk() {
+    var data = {
+      plandate: this._curRecord.plandate,
+      userid: this.userid,
+      expensetype: this._curRecord.expensetype,
+      adjustmoney: this.state.modalvalue,
+    }
+    console.log("updateExpense", data);
+    Action.adjustExpense(data);
+  }
+  handleAdjustCancel() {
+    this.setState({ adjustvisible: false })
+  }
+  onClickText(text, record) {
+    this._curRecord = record;
+    if (text == "调整") {
+      text = "";
+    }
+    this.setState({
+      adjustvisible: true,
+      modalvalue: text,
+    })
+  }
   onVisitorPlanChange(saleActual) {
     this.setState({
       visitorPlan: Store.getVisitorPlan(),
@@ -92,7 +124,8 @@ class Expense extends React.Component {
 
   onExpenseChange(expense) {
     this.setState({
-      expense
+      expense,
+      adjustvisible: false,
     })
   }
 
@@ -142,7 +175,7 @@ class Expense extends React.Component {
       for (var i = 0; i < this.state.routeCost.length; i++) {
         var routeInfo = this.state.routeCost[i];
         if (routeInfo.path_id == pathid && routeInfo.routemark == 2) {
-          ctjt += routeInfo.ctjtf || 0;
+          ctjt += routeInfo.ctjtf ? parseInt(routeInfo.ctjtf) : 0;
         }
       }
     }
@@ -184,7 +217,7 @@ class Expense extends React.Component {
     Action.getVisitorPlan(data);
     Action.getExpense(data);
     var routedata = {
-      routedate: this.state.monthDate.format("YYYY-MM"),
+      routedate: moment().format("YYYY-MM"),
     }
 
     console.log("getRouteCost", routedata);
@@ -214,13 +247,17 @@ class Expense extends React.Component {
   }
 
   getSubsidy(role_id, city_lev, nature, expenseType, plan_date) {
-    console.log(role_id, city_lev, nature, expenseType);
+    console.log(plan_date, nature, city_lev, expenseType);
     if (expenseType == 'ctjt') {
-      return this.getRouteCtjt(plan_date);
+      if (nature == 2 || nature == 3) {
+        return this.getRouteCtjt(plan_date);
+      }
     } else if (expenseType == 'zsbt') {
-      var routeInfo = this.getRouteInfo(plan_date);
-      if (routeInfo) {
-        return routeInfo.cczs;
+      if (nature == 2) {
+        var routeInfo = this.getRouteInfo(plan_date);
+        if (routeInfo) {
+          return routeInfo.cczs;
+        }
       }
     }
     for (var i = 0; i < this.state.subsidy.length; i++) {
@@ -273,10 +310,11 @@ class Expense extends React.Component {
     return 0;
   }
 
-  getExpense(plandate) {
+  getExpense(plandate, expenseType) {
     for (var i = 0; i < this.state.expense.length; i++) {
       var expenseInfo = this.state.expense[i];
-      if (new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == plandate) {
+      if (new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == plandate &&
+        (!expenseType || expenseInfo.expensetype == expenseType)) {
         return expenseInfo;
       }
     }
@@ -447,6 +485,13 @@ class Expense extends React.Component {
       dataIndex: 'adjustmoney',
       key: 'adjustmoney',
       width: 80,
+      render: function (text, record) {
+        if (!text) {
+          text = "调整";
+        }
+        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          onClick={function () { context.onClickText(text, record) }} >{text}</p>
+      }
     }];
   }
   getTableData() {
@@ -467,39 +512,45 @@ class Expense extends React.Component {
         if (!userInfo) {
           continue;
         }
+        console.log("tabledata", plandate, routeInfo);
 
         var plannature = "无计划";
         var realnature = "未提交";
+        var plannatureid = 1;
+        var expenseInfoMain = this.getExpense(plandate);
         if (routeInfo) {
           plannature = this.getNatureName(routeInfo.nature);
-          if (expenseInfo) {
-            realnature = this.getNatureName(routeInfo.natre);
+          plannatureid = routeInfo.nature;
+          if (expenseInfoMain) {
+            realnature = this.getNatureName(expenseInfoMain.nature);
           }
         }
 
         for (var j = 0; j < this.expenseType.length; j++) {
           var expenseType = this.expenseType[j].type;
-          var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, 1, expenseType, plandate);
-          
+          var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, plannatureid, expenseType, plandate);
+
           var report = 0;
           var fpcount = 0;
           if (expenseType == "wcbt" || expenseType == "snjt" || expenseType == "ccbt") {
             report = btbz;
           } else {
-            var expenseInfo = this.getExpense(plandate,expenseType);
+            var expenseInfo = this.getExpense(plandate, expenseType);
             if (expenseInfo) {
-              report = expenseInfo[this.expenseType[j]].money;
+              report = expenseInfo.money;
             }
           }
           planData.push({
             plandate,
             plannature,
-            realnatre,
+            realnature,
             realname: visitorPlan[i].realname,
             btnr: this.expenseType[j].name,
             btbz,
             report,
             fpcount,
+            userid: this.userid,
+            expensetype:expenseType,
           })
         }
         lastPlandate = plandate;
@@ -579,6 +630,16 @@ class Expense extends React.Component {
           onCancel={this.handleVisitorCancel} >
           <Table pagination={false}
             size="small" columns={this.getRecordTableColumn()} dataSource={this.getRecordTableData()} />
+        </Modal>
+        <Modal width={350} title="调整" visible={this.state.adjustvisible}
+          onOk={this.handleAdjustOk} onCancel={this.handleAdjustCancel}
+        >
+          <div className={styles.formcontent}>
+            <span className={styles.formtitle}>调整金额</span>
+            <div className={styles.form}>
+              <Input value={this.state.modalvalue} autoFocus="autoFocus" onChange={this.onModalvalueChange} placeholder="请输入金额" />
+            </div>
+          </div>
         </Modal>
       </div>
     );
