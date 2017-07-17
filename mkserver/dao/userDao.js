@@ -43,12 +43,17 @@ module.exports = {
   },
   getUser: function (req, res, next) {
     console.log('userDao getUser');
+    var param = req.body;
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
         return;
       } else {
         var sqlstring = _sql.getuser;
+        if(param.depart){
+          sqlstring += ' where a.depart = ';
+          sqlstring += connection.escape(param.depart);
+        }
         connection.query(sqlstring, [], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {

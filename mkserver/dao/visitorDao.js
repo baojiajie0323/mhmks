@@ -795,6 +795,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorplan;
+        if (param.depart) {
+          sqlstring += "and c.depart = ";
+          sqlstring += connection.escape(param.depart);
+        }
+        sqlstring += " order by a.signin_time desc";
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -820,6 +825,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorchat;
+        if (param.depart) {
+          sqlstring += "and c.depart = ";
+          sqlstring += connection.escape(param.depart);
+        }
+        sqlstring += " order by a.plan_date desc";
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -845,6 +855,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitormainshelf;
+        if (param.depart) {
+          sqlstring += "and c.depart = ";
+          sqlstring += connection.escape(param.depart);
+        }
+        sqlstring += " order by a.plan_date desc,a.store_id";
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -870,6 +885,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorstock;
+        if (param.depart) {
+          sqlstring += "and c.depart = ";
+          sqlstring += connection.escape(param.depart);
+        }
+        sqlstring += "order by a.plan_date desc,a.store_id";
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -895,6 +915,11 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getvisitorshelfaway;
+        if (param.depart) {
+          sqlstring += "and c.depart = ";
+          sqlstring += connection.escape(param.depart);
+        }
+        sqlstring += " order by a.plan_date desc,a.store_id,a.display_id"
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
@@ -1435,13 +1460,13 @@ module.exports = {
       } else {
         var sqlstring = _sql.getcheckplan;
         if (param.userid) {
-          sqlstring += "(a.userid = ";
+          sqlstring += "and (a.userid = ";
           sqlstring += connection.escape(param.userid);
           sqlstring += " or c.realname = ";
           sqlstring += connection.escape(param.userid);
           sqlstring += ") ";
-        } else if (param.depart) {
-          sqlstring += "a.userid in (select username from user where depart =  ";
+        } else if (param.depart != 0) {
+          sqlstring += "and a.userid in (select username from user where depart =  ";
           sqlstring += connection.escape(param.depart);
           sqlstring += ") ";
         }
@@ -1578,12 +1603,12 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.adjustexpense;
-        connection.query(sqlstring, [param.adjustmoney, param.plandate, param.userid, param.expensetype,param.adjustmoney], function (err, result) {
+        connection.query(sqlstring, [param.adjustmoney, param.plandate, param.userid, param.expensetype, param.adjustmoney], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
-            jsonWrite(res, param, dbcode.FAIL);
+            jsonWrite(res, {}, dbcode.FAIL);
           } else {
-            jsonWrite(res, result, dbcode.SUCCESS);
+            jsonWrite(res, param, dbcode.SUCCESS);
           }
           connection.release();
         });

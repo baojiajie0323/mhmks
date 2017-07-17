@@ -82,7 +82,9 @@ class Record extends React.Component {
     Store.addChangeListener(StoreEvent.SE_VISITOR_IMAGE, this.onVisitorImageChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
 
-    Action.getUser();
+    var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    Action.getUser(isLeader ? userInfo.depart : '');
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
@@ -174,8 +176,15 @@ class Record extends React.Component {
     return userDom;
   }
   onClickQuery() {
+    var depart = "";
+    var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    if (isLeader) {
+      depart = userInfo.depart;
+    }
     var data = {
       userid: this.userid == "" ? "0" : this.userid,
+      depart,
       begindate: this.queryData[0],
       enddate: this.queryData[1],
     };

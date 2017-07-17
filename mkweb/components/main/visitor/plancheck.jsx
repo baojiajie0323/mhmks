@@ -39,7 +39,10 @@ class PlanCheck extends React.Component {
     Store.addChangeListener(StoreEvent.SE_DEPARTMENT, this.onDepartnameChange);
     Store.addChangeListener(StoreEvent.SE_CHECKPLAN, this.onCheckPlanChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
-    Action.getUser();
+
+    var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    Action.getUser(isLeader ? userInfo.depart : '');
     Action.getDepartment();
   }
   componentWillUnmount() {
@@ -131,10 +134,10 @@ class PlanCheck extends React.Component {
       return;
     }
 
-    if (this.userid == "" && this.depart == 0) {
-      message.info("请选择条件进行查询");
-      return;
-    }
+    // if (this.userid == "" && this.depart == 0) {
+    //   message.info("请选择条件进行查询");
+    //   return;
+    // }
 
     var data = {
       begindate: this.queryData[0],
@@ -144,6 +147,12 @@ class PlanCheck extends React.Component {
       data.userid = this.userid;
     } else {
       data.depart = this.depart;
+    }
+
+    var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    if (isLeader) {
+      data.depart = userInfo.depart;
     }
     console.log(data);
     Action.getCheckPlan(data);
@@ -168,7 +177,7 @@ class PlanCheck extends React.Component {
     for (var i = 0; i < photoList.length; i++) {
       let imageInfo = photoList[i];
       let imagepath = 'url("' + '../upload/' + imageInfo.filename + '.jpg")';
-      photoDom.push(<div style={{ backgroundImage: imagepath }} onClick={function () { context.onClickPhoto(imagepath) } } className={styles.photo}></div>);
+      photoDom.push(<div style={{ backgroundImage: imagepath }} onClick={function () { context.onClickPhoto(imagepath) }} className={styles.photo}></div>);
     }
     return photoDom;
   }
@@ -181,56 +190,56 @@ class PlanCheck extends React.Component {
       key: 'departname',
       width: 80
     }, {
-        title: '销售代表',
-        dataIndex: 'realname',
-        key: 'realname',
-        width: 80
-      }, {
-        title: '日期',
-        dataIndex: 'plan_date',
-        key: 'plan_date',
-        width: 100
-      }, {
-        title: '计划访店名称',
-        dataIndex: 'Store_name_plan',
-        key: 'Store_name_plan',
-        width: 150
-      }, {
-        title: '实际访店名称',
-        dataIndex: 'Store_name_real',
-        key: 'Store_name_real',
-        width: 150
-      }, {
-        title: '签到时间',
-        dataIndex: 'signin_time',
-        key: 'signin_time',
-        width: 80
-      }, {
-        title: '签退时间',
-        dataIndex: 'signout_time',
-        key: 'signout_time',
-        width: 80
-      }, {
-        title: '逗留时间',
-        dataIndex: 'stay_time',
-        key: 'stay_time',
-        width: 100
-      }, {
-        title: '签到偏差',
-        dataIndex: 'signin_distance',
-        key: 'signin_distance',
-        width: 80
-      }, {
-        title: '签退偏差',
-        dataIndex: 'signout_distance',
-        key: 'signout_distance',
-        width: 80
-      }, {
-        title: '计划拜访率',
-        dataIndex: 'percent',
-        key: 'percent',
-        width: 80
-      }];
+      title: '销售代表',
+      dataIndex: 'realname',
+      key: 'realname',
+      width: 80
+    }, {
+      title: '日期',
+      dataIndex: 'plan_date',
+      key: 'plan_date',
+      width: 100
+    }, {
+      title: '计划访店名称',
+      dataIndex: 'Store_name_plan',
+      key: 'Store_name_plan',
+      width: 150
+    }, {
+      title: '实际访店名称',
+      dataIndex: 'Store_name_real',
+      key: 'Store_name_real',
+      width: 150
+    }, {
+      title: '签到时间',
+      dataIndex: 'signin_time',
+      key: 'signin_time',
+      width: 80
+    }, {
+      title: '签退时间',
+      dataIndex: 'signout_time',
+      key: 'signout_time',
+      width: 80
+    }, {
+      title: '逗留时间',
+      dataIndex: 'stay_time',
+      key: 'stay_time',
+      width: 100
+    }, {
+      title: '签到偏差',
+      dataIndex: 'signin_distance',
+      key: 'signin_distance',
+      width: 80
+    }, {
+      title: '签退偏差',
+      dataIndex: 'signout_distance',
+      key: 'signout_distance',
+      width: 80
+    }, {
+      title: '计划拜访率',
+      dataIndex: 'percent',
+      key: 'percent',
+      width: 80
+    }];
   }
   getTableData() {
     var context = this;
@@ -364,7 +373,7 @@ class PlanCheck extends React.Component {
         <p className={styles.visitortitle}>销售代表路线稽核</p>
         <div className={styles.queryContainer}>
           <Select onChange={this.onDepartChange} defaultValue={this.depart} style={{ width: 120, marginRight: '10px' }}>
-            {this.getDepartOption() }
+            {this.getDepartOption()}
           </Select>
           <Input onChange={this.onUserTextChange} style={{ width: '120px', marginRight: '10px' }} prefix={<Icon type="user" style={{ fontSize: 13 }} />} placeholder="工号/姓名" />
           <RangePicker defaultValue={[moment(), moment()]} style={{ marginRight: '20px' }} onChange={this.onDateChange} />
@@ -372,7 +381,7 @@ class PlanCheck extends React.Component {
         </div>
         <div className={styles.resultContent}>
           <Table pagination={false} scroll={{ y: scrolly }}
-            rowClassName={this.rowClassName} size="small" columns={this.getTableColumn() } dataSource={this.getTableData() } />
+            rowClassName={this.rowClassName} size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <div id="allmap" style={{ visibility: 'hidden' }} className={styles.allmap}></div>
       </div>

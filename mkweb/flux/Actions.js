@@ -333,10 +333,11 @@ var Action = {
       })
   },
 
-  getUser: function () {
+  getUser: function (depart) {
     var context = this;
     var data = {
-      command: 'getuser'
+      command: 'getuser',
+      depart: depart
     }
     $.ajax({
       url: '/users', type: 'POST', timeout: AJAXTIMEOUT,

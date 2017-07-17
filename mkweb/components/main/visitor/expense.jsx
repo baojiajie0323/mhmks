@@ -78,17 +78,27 @@ class Expense extends React.Component {
   }
 
   onExpenseAdjustChange(expenseAdjust) {
+    console.log("expenseAdjust", expenseAdjust);
     var expense = this.state.expense;
-    for (var i = 0; i < expense; i++) {
+    for (var i = 0; i < expense.length; i++) {
       var expenseInfo = expense[i];
-      if (expenseInfo.plandate == expenseAdjust.plandate &&
+      console.log("expenseAdjust for", expenseInfo);
+      if (new Date(expenseInfo.plandate).Format("yyyy-MM-dd") == expenseAdjust.plandate &&
         expenseInfo.userid == expenseAdjust.userid &&
         expenseInfo.expensetype == expenseAdjust.expensetype) {
-        expenseInfo.adjustmoney = expenseAdjust.adjustmoney
-        break;
+        console.log("expense find!!");
+        expenseInfo.adjustmoney = expenseAdjust.adjustmoney;
+        this.setState({ expense, adjustvisible: false });
+        return;
       }
     }
-    this.setState({expense});
+    expense.push({
+      plandate: new Date(expenseAdjust.plandate),
+      userid: expenseAdjust.userid,
+      expensetype: expenseAdjust.expensetype,
+      adjustmoney: expenseAdjust.adjustmoney
+    })
+    this.setState({ expense, adjustvisible: false });
   }
   onModalvalueChange(e) {
     this.setState({
@@ -228,7 +238,7 @@ class Expense extends React.Component {
       enddate,
     };
 
-    console.log(data);
+    //console.log(data);
     Action.getVisitorPlan(data);
     Action.getExpense(data);
     var routedata = {
@@ -262,7 +272,7 @@ class Expense extends React.Component {
   }
 
   getSubsidy(role_id, city_lev, nature, expenseType, plan_date) {
-    console.log(plan_date, nature, city_lev, expenseType);
+    //console.log(plan_date, nature, city_lev, expenseType);
     if (expenseType == 'ctjt') {
       if (nature == 2 || nature == 3) {
         return this.getRouteCtjt(plan_date);
@@ -384,7 +394,7 @@ class Expense extends React.Component {
           children: text,
           props: {},
         };
-        if (record.btnr == context.expenseType[0].name) {
+        if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
           obj.props.rowSpan = 0;
@@ -401,7 +411,7 @@ class Expense extends React.Component {
           children: text,
           props: {},
         };
-        if (record.btnr == context.expenseType[0].name) {
+        if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
           obj.props.rowSpan = 0;
@@ -418,7 +428,7 @@ class Expense extends React.Component {
           children: text,
           props: {},
         };
-        if (record.btnr == context.expenseType[0].name) {
+        if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
           obj.props.rowSpan = 0;
@@ -435,7 +445,7 @@ class Expense extends React.Component {
           children: text,
           props: {},
         };
-        if (record.btnr == context.expenseType[0].name) {
+        if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
           obj.props.rowSpan = 0;
@@ -452,6 +462,9 @@ class Expense extends React.Component {
             context.onClickVisitor(record);
           }}>拜访情况</a>
         ];
+        if (!record.btnr) {
+          return null;
+        }
         const obj = {
           children: operateDom,
           props: {},
@@ -493,6 +506,9 @@ class Expense extends React.Component {
             context.onClickShowPicture(record, -1);
           }}>发票照片</a>
         ];
+        if (!record.btnr) {
+          return null;
+        }
         return operateDom;
       }
     }, {
@@ -518,6 +534,8 @@ class Expense extends React.Component {
     visitorPlan.sort((a, b) => {
       return new Date(a.plan_date).getTime() - new Date(b.plan_date).getTime();
     })
+    var btsum = 0;
+    var expensesum = 0;
     var lastPlandate = "";
     for (var i = 0; i < visitorPlan.length; i++) {
       var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
@@ -527,7 +545,7 @@ class Expense extends React.Component {
         if (!userInfo) {
           continue;
         }
-        console.log("tabledata", plandate, routeInfo);
+        //console.log("tabledata", plandate, routeInfo);
 
         var plannature = "无计划";
         var realnature = "未提交";
@@ -544,17 +562,21 @@ class Expense extends React.Component {
         for (var j = 0; j < this.expenseType.length; j++) {
           var expenseType = this.expenseType[j].type;
           var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, plannatureid, expenseType, plandate);
-
+          btsum += parseFloat(btbz);
           var report = 0;
           var fpcount = 0;
+          var adjustmoney = "";
           if (expenseType == "wcbt" || expenseType == "snjt" || expenseType == "ccbt") {
             report = btbz;
+            adjustmoney = " "
           } else {
             var expenseInfo = this.getExpense(plandate, expenseType);
             if (expenseInfo) {
               report = expenseInfo.money;
+              adjustmoney = expenseInfo.adjustmoney;
             }
           }
+          expensesum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
           planData.push({
             plandate,
             plannature,
@@ -566,57 +588,20 @@ class Expense extends React.Component {
             fpcount,
             userid: this.userid,
             expensetype: expenseType,
+            adjustmoney,
           })
         }
         lastPlandate = plandate;
       }
     }
-
-    // var saleActual = this.state.saleActual;
-    // for (var i = 0; i < saleActual.length; i++) {
-    //   var saleSum = getsaleSum(saleActual[i].user_id);
-    //   if (!saleSum) {
-    //     saleSum = {
-    //       user_id: saleActual[i].user_id,
-    //       realname: saleActual[i].realname,
-    //       departname: saleActual[i].departname,
-    //       allproduct: 0,
-    //       dxproduct: 0
-    //     }
-    //     if (saleSum.departname) {
-    //       saleActualSum.push(saleSum);
-    //     }
-    //   }
-    //   if (saleActual[i].sum > 0) {
-    //     saleSum.dxproduct++;
-    //   }
-    //   saleSum.allproduct++;
-    // }
-
-    // saleActualSum.forEach((as, index) => {
-    //   as.sku_percent = percentNum(as.dxproduct, as.allproduct);
-    //   as.sortIndex = index;
-    // })
-
-    // saleActualSum.sort((a, b) => {
-    //   if (a.departname === b.departname) {
-    //     return b.sku_percent - a.sku_percent || a.sortIndex - b.sortIndex;
-    //   } else {
-    //     return (a.departname > b.departname ? 1 : -1) || a.sortIndex - b.sortIndex;
-    //   }
-    // })
-
-    // var rank = 1;
-    // var lastdepartname = "";
-    // saleActualSum.forEach((as) => {
-    //   if (lastdepartname != as.departname) {
-    //     rank = 1;
-    //     lastdepartname = as.departname;
-    //   }
-    //   as.depart_rank = rank;
-    //   rank++;
-    // })
-
+    if (planData.length > 0) {
+      planData.push({
+        btbz: "补贴：" + btsum,
+        report: "发放：" + expensesum,
+        adjustmoney: ' ',
+        realname: '总计'
+      })
+    }
     return planData;
   }
 
@@ -638,7 +623,7 @@ class Expense extends React.Component {
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.resultContent}>
-          <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly }}
+          <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly, x: 1000 }}
             size="small" columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal title="拜访信息" width={500} footer={null} visible={this.state.showVisitor}

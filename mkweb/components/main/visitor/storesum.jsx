@@ -48,8 +48,9 @@ class StoreSum extends React.Component {
     Store.addChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.addChangeListener(StoreEvent.SE_STOREBASIC, this.onStorebasicChange);
-
-    Action.getUser();
+    var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    Action.getUser(isLeader ? userInfo.depart : '');
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);

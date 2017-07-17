@@ -27,15 +27,22 @@ class HeaderNav extends React.Component {
   }
   render() {
     var userInfo = Store.getUserInfo();
+    var isLeader = userInfo.id == userInfo.userid;
+    var isManager = userInfo.username == "000001";
     return (
       <div className={styles.headernav}>
         {userInfo.enableapp ?
           <div data-view="schdule" className={this.getnavcontentStyle('schdule')} onClick={this.onClickNav}>计划</div>
           : null
         }
-        {userInfo.enableweb ?
+        {isLeader || isManager ?
           [
-            <div data-view="visitor" className={this.getnavcontentStyle('visitor')} onClick={this.onClickNav}>拜访</div>,
+            <div data-view="visitor" className={this.getnavcontentStyle('visitor')} onClick={this.onClickNav}>拜访</div>
+          ]
+          : null
+        }
+        {isManager ?
+          [
             <div data-view="info" className={this.getnavcontentStyle('info')} onClick={this.onClickNav}>信息</div>,
             <div data-view="config" className={this.getnavcontentStyle('config')} onClick={this.onClickNav}>配置</div>
           ]
