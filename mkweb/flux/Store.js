@@ -862,6 +862,10 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_EXPENSE, action.value);
     }
       break;
+    case ActionEvent.AE_EXPENSE_ADJUST: {
+      Store.emit(StoreEvent.SE_EXPENSE_ADJUST, action.value);
+    }
+      break;
     default:
       break;
   }

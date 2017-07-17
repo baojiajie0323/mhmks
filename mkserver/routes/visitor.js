@@ -149,6 +149,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getexpense") {
     console.log('getexpense');
     visitorDao.getExpense(req, res, next);
+  } else if (req.body.command == "adjustexpense") {
+    console.log('adjustexpense');
+    visitorDao.adjustExpense(req, res, next);
   } 
 });
 

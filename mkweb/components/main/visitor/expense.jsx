@@ -22,6 +22,7 @@ class Expense extends React.Component {
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onExpenseChange = this.onExpenseChange.bind(this);
+    this.onExpenseAdjustChange = this.onExpenseAdjustChange.bind(this);
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onMonthChange = this.onMonthChange.bind(this);
@@ -64,6 +65,7 @@ class Expense extends React.Component {
     Store.addChangeListener(StoreEvent.SE_USER, this.onUserChange);
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
     Store.addChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
+    Store.addChangeListener(StoreEvent.SE_EXPENSE_ADJUST, this.onExpenseAdjustChange);
     Action.getUser();
     Action.getSubsidy();
   }
@@ -75,6 +77,19 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
 
+  onExpenseAdjustChange(expenseAdjust) {
+    var expense = this.state.expense;
+    for (var i = 0; i < expense; i++) {
+      var expenseInfo = expense[i];
+      if (expenseInfo.plandate == expenseAdjust.plandate &&
+        expenseInfo.userid == expenseAdjust.userid &&
+        expenseInfo.expensetype == expenseAdjust.expensetype) {
+        expenseInfo.adjustmoney = expenseAdjust.adjustmoney
+        break;
+      }
+    }
+    this.setState({expense});
+  }
   onModalvalueChange(e) {
     this.setState({
       modalvalue: e.target.value
@@ -87,7 +102,7 @@ class Expense extends React.Component {
       expensetype: this._curRecord.expensetype,
       adjustmoney: this.state.modalvalue,
     }
-    console.log("updateExpense", data);
+    console.log("adjustExpense", data);
     Action.adjustExpense(data);
   }
   handleAdjustCancel() {
@@ -550,7 +565,7 @@ class Expense extends React.Component {
             report,
             fpcount,
             userid: this.userid,
-            expensetype:expenseType,
+            expensetype: expenseType,
           })
         }
         lastPlandate = plandate;
