@@ -87,8 +87,8 @@ class Home extends React.Component {
       plan: Store.getPlan(),
       curDate: Store.getCurDate(),
       loading: true,
-      showAlert: true,
       open: false,
+      expense: Store.getExpense(),
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickPrev = this.onClickPrev.bind(this);
@@ -101,29 +101,14 @@ class Home extends React.Component {
     this.onClickDelete = this.onClickDelete.bind(this);
     this.onClickDoPlan = this.onClickDoPlan.bind(this);
     this.onClickExpense = this.onClickExpense.bind(this);
+    this.onExpenseChange = this.onExpenseChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
-
-    //console.log('home userdata', this.props.userdata);
-
+    Store.addChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
     var context = this;
-    // if (this.props.userdata) {
-    //   this.setState({
-    //     curDate: this.props.userdata
-    //   }, function () {
-    //     context.getcurPlan();
-    //   })
-    // } else {
     this.getcurPlan();
-    //}
-
-    setTimeout(function () {
-      context.setState({
-        showAlert: false
-      })
-    }, 3000);
-
+    this.getExpense();
   }
   getcurPlan() {
     this.setState({
@@ -137,8 +122,21 @@ class Home extends React.Component {
       day: this.state.curDate.getDate()
     });
   }
+  getExpense() {
+    Action.getExpense({
+      begindate: this.state.curDate.Format('yyyy-MM-dd'),
+      enddate: this.state.curDate.Format('yyyy-MM-dd'),
+      userid: localStorage.username,
+    });
+  }
+  onExpenseChange() {
+    this.setState({
+      expense: Store.getExpense()
+    })
+  }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+    Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
   onPlanChange() {
     this.setState({
@@ -310,9 +308,6 @@ class Home extends React.Component {
       return <Noplan />
     } else {
       var planDom = [];
-      // if (this.state.showAlert || 1) {
-      //   planDom.push(<Alert closable={true} message="未提交日报" type="warning" showIcon />);
-      // }
       var headerTitle = '共' + allPlanInfo.planCount + '个计划，已完成' + allPlanInfo.finishCount + '个，未完成' + allPlanInfo.nofinishCount + '个';
       planDom.push(<Subheader>{headerTitle}</Subheader>)
       var pathTitle = ['路线拜访', '临时拜访', '电话拜访', '稽核拜访'];
@@ -391,8 +386,11 @@ class Home extends React.Component {
         onTouchTap={this.handleOk}
       />,
     ];
-
-    var isExpense = true;
+    var isToday = false;
+    if (this.state.curDate.Format("yyyy-MM-dd") == new Date().Format("yyyy-MM-dd")) {
+      isToday = true;
+    }
+    var isExpense = this.state.expense.length > 0;
     return (
       <div className={styles.container}>
         <AppBar
@@ -440,7 +438,8 @@ class Home extends React.Component {
             {this.getPlanlist()}
           </Spin>
         </div>
-        {<FloatingActionButton style={{
+
+        {isToday ? <FloatingActionButton style={{
           position: 'absolute',
           bottom: '15px',
           right: '25px',
@@ -449,7 +448,7 @@ class Home extends React.Component {
           secondary={!isExpense}
         >
           {isExpense ? <DoneIcon /> : <EditIcon />}
-        </FloatingActionButton>}
+        </FloatingActionButton> : null}
         <Dialog
           title="确定要删除计划吗？"
           actions={actions}

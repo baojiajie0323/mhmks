@@ -31,7 +31,7 @@ var sqlmap = {
   getpath: 'select * from path',
   getpathdetail: 'select a.*,b.Store_name from path_detail a INNER JOIN store b on(a.Store_id = b.Store_id)',
   getpath_app: 'select a.*,Path_name,Store_name from path_detail a INNER JOIN path b on (a.path_id = b.path_id) INNER JOIN store c on (a.store_id = c.store_id) where c.store_id in ',
-  getplan: 'select a.*,b.Path_Name,c.Store_name,c.Gps_x,c.Gps_y from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id)',
+  getplan: 'select a.*,b.Path_Name,c.Store_name,c.Gps_x,c.Gps_y,d.city_lev from plan a LEFT JOIN path b ON (a.Path_Id = b.Path_id) LEFT JOIN store c on (c.Store_id = a.store_id) LEFT JOIN city d on (c.city_id = d.city_id)',
   addplan: 'insert into plan (Plan_Type,Plan_Date,Path_Id,Store_Id,Store_Name,User_Id) values (?,?,?,?,?,?)',
   delplan: 'delete from plan where userid = ? and year = ? and month = ? and day = ?',
   resign: 'update plan set isfinish = 0, signin_time = null, signin_gps_x = null,signin_gps_y = NULL, signout_time = NULL,signout_gps_x = null,signout_gps_y = NULL where userid = ? and year = ? and month = ? and day = ? and store_id = ?',

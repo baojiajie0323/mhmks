@@ -506,14 +506,14 @@ var Action = {
     })
       .done(function (response) {
         console.log('getVisitorImage:', response);
-        
+
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_VISITOR_IMAGE, response.data);
         } else {
           message.error('获取照片列表失败！' + response.msg);
         }
       })
-      .fail(function (xhr, textStatus, thrownError) {        
+      .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败' + xhr.status);
         console.log('getVisitorImage fail');
       })
@@ -693,6 +693,71 @@ var Action = {
       .fail(function (xhr, textStatus, thrownError) {
         message.error('与服务器建立连接失败');
         console.log('getSaleActual fail');
+      })
+  },
+  getExpense: function (data) {
+    var context = this;
+    data.command = 'getexpense';
+    console.log('send getExpense', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getExpense:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_EXPENSE, response.data);
+        } else {
+          message.error('获取报销数据失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getExpense fail');
+      })
+  },
+  getSubsidy: function () {
+    var context = this;
+    var data = {
+      command: 'getsubsidy'
+    }
+    console.log('send getSubsidy', data);
+    $.ajax({
+      url: _domain_name + '/users', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getSubsidy:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SUBSIDY, response.data);
+        } else {
+          message.error('获取补贴标准失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getSubsidy fail');
+      })
+  },
+  getRouteCost: function (data) {
+    var context = this;
+    data.command = 'getroutecost';
+    console.log('send getRouteCost', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getRouteCost:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_ROUTECOST, response.data);
+        } else {
+          message.error('获取路线费用失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getRouteCost fail');
       })
   },
   dispatch: function (funname, value) {

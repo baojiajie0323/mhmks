@@ -21,6 +21,7 @@ var _plan = [];
 var _brand = [];
 var _product = {};
 var _promotion = [];
+var _expense = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -146,6 +147,13 @@ var Store = assign({}, EventEmitter.prototype, {
     }
 
     this.emit(StoreEvent.SE_PLAN);
+  },
+  getExpense: function () {
+    return _expense;
+  },
+  setExpense: function (pl) {
+    _expense = pl;
+    this.emit(StoreEvent.SE_EXPENSE);
   },
   signInStore: function (signStore) {
     for (var i = 0; i < _plan.length; i++) {
@@ -340,6 +348,18 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_SALEACTUAL: {
       Store.emit(StoreEvent.SE_SALEACTUAL, action.value);
+    }
+      break;
+    case ActionEvent.AE_EXPENSE: {
+      Store.setExpense(action.value);
+    }
+      break;
+    case ActionEvent.AE_SUBSIDY: {
+      Store.emit(StoreEvent.SE_SUBSIDY, action.value);
+    }
+      break;
+    case ActionEvent.AE_ROUTECOST: {
+      Store.emit(StoreEvent.SE_ROUTECOST, action.value);
     }
       break;
     default:
