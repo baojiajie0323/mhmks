@@ -30,11 +30,13 @@ class Expense extends React.Component {
     this.onClickSave = this.onClickSave.bind(this);
     this.onFpCountChange = this.onFpCountChange.bind(this);
     this.onExpenseValueChange = this.onExpenseValueChange.bind(this);
+    this.onExpneseSubmit = this.onExpneseSubmit.bind(this);
   }
 
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
+    Store.addChangeListener(StoreEvent.SE_EXPENSE_SUBMIT, this.onExpneseSubmit);
     var curDate = Store.getCurDate();
 
     var nature = 0;
@@ -72,6 +74,7 @@ class Expense extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
+    Store.removeChangeListener(StoreEvent.SE_EXPENSE_SUBMIT, this.onExpneseSubmit);
   }
   getNature() {
     var nature = 0;
@@ -125,14 +128,17 @@ class Expense extends React.Component {
     })
     this.setState({ expense });
   }
+  onExpneseSubmit() {
+    Store.emit(StoreEvent.SE_VIEW, '');
+  }
   onClickSave() {
     var context = this;
     confirm({
       title: '确定要提交数据吗？',
       onOk() {
-        console.log(context.state.expense);
+        //console.log(context.state.expense);
         var expenseData = {
-
+          expense: JSON.stringify(context.state.expense)
         }
         Action.submitExpense(expenseData);
       },
@@ -519,20 +525,20 @@ class Expense extends React.Component {
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>标准</p>
-                  <p>{this.getSubsidy("zsbz")}</p>
+                  <p>{this.getSubsidy("zsbt")}</p>
                 </div>
               </div>
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>发票数</p>
-                  <Input value={this.getFpCount("zsbz")} onChange={function (e) { context.onFpCountChange("zsbz", e.target.value) }} placeholder="请填写"
+                  <Input value={this.getFpCount("zsbt")} onChange={function (e) { context.onFpCountChange("zsbt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
                 <div className={styles.line}></div>
                 <div className={styles.expenseCell}>
                   <p>报销数</p>
-                  <Input value={this.getExpenseValue("zsbz")} onChange={function (e) { context.onExpenseValueChange("zsbz", e.target.value) }} placeholder="请填写"
+                  <Input value={this.getExpenseValue("zsbt")} onChange={function (e) { context.onExpenseValueChange("zsbt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>

@@ -362,6 +362,12 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_ROUTECOST, action.value);
     }
       break;
+    case ActionEvent.AE_EXPENSE_SUBMIT: {
+      Store.emit(StoreEvent.SE_EXPENSE_SUBMIT, action.value);
+    }
+      break;
+
+
     default:
       break;
   }

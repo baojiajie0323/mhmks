@@ -86,6 +86,7 @@ var sqlmap = {
   getsafestock:'select c.serial_no,b.product_box,b.product_name,a.* from safe_stock a left join product b on b.Product_id = a.product_id left join product_price c on (c.Store_id = a.store_id and c.Product_id = a.product_id) where a.date_id = ? and a.store_id = ?',
   getexpense: 'select * from expense where userid = ? and plandate BETWEEN ? AND ?',
   adjustexpense: 'insert into expense set adjustmoney = ? , plandate = ? ,userid = ? , expensetype = ? on DUPLICATE KEY UPDATE adjustmoney = ?',
+  submitexpense: 'insert into expense set plandate = ? ,expensetype = ?, userid = ?, nature = ? ,fpcount = ?, money = ? on DUPLICATE KEY UPDATE nature = ?,fpcount = ?, money = ?',
 };
 
 module.exports = sqlmap;

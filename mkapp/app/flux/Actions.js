@@ -760,6 +760,27 @@ var Action = {
         console.log('getRouteCost fail');
       })
   },
+  submitExpense: function (data) {
+    var context = this;
+    data.command = 'submitexpense';
+    console.log('send submitExpense', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('submitExpense:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_EXPENSE_SUBMIT, response.data);
+        } else {
+          message.error('提交报销费用失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('submitExpense fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,
