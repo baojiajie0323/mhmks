@@ -7,18 +7,18 @@ import Paper from 'material-ui/Paper';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-import { message, Table, Icon, Input } from 'antd';
+import { message, Table, Icon, Input, Modal } from 'antd';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import TextField from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
 import config from '../../config';
+const confirm = Modal.confirm;
 
 class Expense extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       plan: Store.getPlan(),
-      nature: 0,
       expense: Store.getExpense(),
       subsidy: [],
       routeCost: [],
@@ -37,7 +37,7 @@ class Expense extends React.Component {
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
     var curDate = Store.getCurDate();
 
-    var nature = 1;
+    var nature = 0;
     var expense = this.state.expense;
     for (var i = 0; i < expense.length; i++) {
       if (expense[i].expensetype == 'no') {
@@ -45,7 +45,16 @@ class Expense extends React.Component {
         break;
       }
     }
-    this.setState({ nature })
+    if (nature == 0) {
+      nature = 1;
+      expense.push({
+        plandate: curDate,
+        userid: localStorage.username,
+        expensetype: "no",
+        nature
+      })
+    }
+    this.setState({ expense })
 
     Action.getSubsidy();
 
@@ -63,6 +72,17 @@ class Expense extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
+  }
+  getNature() {
+    var nature = 0;
+    var expense = this.state.expense;
+    for (var i = 0; i < expense.length; i++) {
+      if (expense[i].expensetype == 'no') {
+        nature = expense[i].nature;
+        break;
+      }
+    }
+    return nature
   }
   getCityLev() {
     var city_lev = 3;
@@ -88,16 +108,38 @@ class Expense extends React.Component {
     Store.emit(StoreEvent.SE_VIEW, '');
   }
   onNatureChange(e, value) {
-    this.setState({
+    var expense = this.state.expense;
+    for (var i = 0; i < expense.length; i++) {
+      if (expense[i].expensetype == "no") {
+        expense[i].nature = value;
+        this.setState({ expense });
+        return;
+      }
+    }
+    var curDate = Store.getCurDate();
+    expense.push({
+      plandate: curDate,
+      userid: localStorage.username,
+      expensetype: "no",
       nature: value
     })
+    this.setState({ expense });
   }
   onClickSave() {
-    console.log(this.state.expense);
-    var expenseData = {
+    var context = this;
+    confirm({
+      title: '确定要提交数据吗？',
+      onOk() {
+        console.log(context.state.expense);
+        var expenseData = {
 
-    }
-    Action.submitExpense(expenseData);
+        }
+        Action.submitExpense(expenseData);
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   }
   getRouteCtjt() {
     var ctjt = 0;
@@ -126,7 +168,7 @@ class Expense extends React.Component {
   getSubsidy(expenseType) {
     var role_id = Store.getUserInfo().role;
     var city_lev = this.getCityLev();
-    var nature = this.state.nature;
+    var nature = this.getNature();
     //console.log(plan_date, nature, city_lev, expenseType);
     if (expenseType == 'ctjt') {
       if (nature == 2 || nature == 3) {
@@ -190,7 +232,7 @@ class Expense extends React.Component {
     return 0;
   }
   getFpCount(expensetype) {
-    console.log("getFpCount",expensetype);
+    console.log("getFpCount", expensetype);
     for (var i = 0; i < this.state.expense.length; i++) {
       if (this.state.expense[i].expensetype == expensetype) {
 
@@ -359,7 +401,7 @@ class Expense extends React.Component {
         />
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>今日拜访类型</Subheader>
-          <RadioButtonGroup onChange={this.onNatureChange} style={{ padding: '0 15px' }} name="shipSpeed" valueSelected={this.state.nature}>
+          <RadioButtonGroup onChange={this.onNatureChange} style={{ padding: '0 15px' }} name="shipSpeed" valueSelected={this.getNature()}>
             <RadioButton
               value={1}
               label="室内拜访"
@@ -386,7 +428,7 @@ class Expense extends React.Component {
               </div>
             </div>
           </Paper>
-          {this.state.nature == 1 ?
+          {this.getNature() == 1 ?
             <Paper style={expenseStyle.paperStyle_nophoto} zDepth={1}>
               <p style={expenseStyle.titleStyle}>市内交通费</p>
               <div className={styles.expenseContent}>
@@ -398,7 +440,7 @@ class Expense extends React.Component {
             </Paper>
             : null}
 
-          {this.state.nature == 2 || this.state.nature == 3 ? [
+          {this.getNature() == 2 || this.getNature() == 3 ? [
             <Paper style={expenseStyle.paperStyle_nophoto} zDepth={1}>
               <p style={expenseStyle.titleStyle}>出差补贴</p>
               <div className={styles.expenseContent}>
@@ -471,7 +513,7 @@ class Expense extends React.Component {
               </div>
             </Paper>
           ] : null}
-          {this.state.nature == 2 ?
+          {this.getNature() == 2 ?
             <Paper style={expenseStyle.paperStyle} zDepth={1}>
               <p style={expenseStyle.titleStyle}>住宿补贴</p>
               <div className={styles.expenseContent}>
