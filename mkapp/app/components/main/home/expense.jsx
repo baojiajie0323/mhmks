@@ -27,6 +27,9 @@ class Expense extends React.Component {
     this.onNatureChange = this.onNatureChange.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
     this.onRoutecostChange = this.onRoutecostChange.bind(this);
+    this.onClickSave = this.onClickSave.bind(this);
+    this.onFpCountChange = this.onFpCountChange.bind(this);
+    this.onExpenseValueChange = this.onExpenseValueChange.bind(this);
   }
 
   componentDidMount() {
@@ -88,6 +91,13 @@ class Expense extends React.Component {
     this.setState({
       nature: value
     })
+  }
+  onClickSave() {
+    console.log(this.state.expense);
+    var expenseData = {
+
+    }
+    Action.submitExpense(expenseData);
   }
   getRouteCtjt() {
     var ctjt = 0;
@@ -178,6 +188,61 @@ class Expense extends React.Component {
       }
     }
     return 0;
+  }
+  getFpCount(expensetype) {
+    console.log("getFpCount",expensetype);
+    for (var i = 0; i < this.state.expense.length; i++) {
+      if (this.state.expense[i].expensetype == expensetype) {
+
+        console.log(this.state.expense[i]);
+        return this.state.expense[i].fpcount || "";
+      }
+    }
+    return "";
+  }
+  getExpenseValue(expensetype) {
+    for (var i = 0; i < this.state.expense.length; i++) {
+      if (this.state.expense[i].expensetype == expensetype) {
+        return this.state.expense[i].money || "";
+      }
+    }
+    return "";
+  }
+  onFpCountChange(expensetype, value) {
+    var expense = this.state.expense;
+    for (var i = 0; i < expense.length; i++) {
+      if (expense[i].expensetype == expensetype) {
+        expense[i].fpcount = parseInt(value);
+        this.setState({ expense });
+        return;
+      }
+    }
+    var curDate = Store.getCurDate();
+    expense.push({
+      plandate: curDate,
+      userid: localStorage.username,
+      expensetype: expensetype,
+      fpcount: parseInt(value)
+    })
+    this.setState({ expense });
+  }
+  onExpenseValueChange(expensetype, value) {
+    var expense = this.state.expense;
+    for (var i = 0; i < expense.length; i++) {
+      if (expense[i].expensetype == expensetype) {
+        expense[i].money = parseFloat(value);
+        this.setState({ expense });
+        return;
+      }
+    }
+    var curDate = Store.getCurDate();
+    expense.push({
+      plandate: curDate,
+      userid: localStorage.username,
+      expensetype: expensetype,
+      money: parseFloat(value)
+    })
+    this.setState({ expense });
   }
   onClickAddImage(product_id) {
     var store = this.props.userdata;
@@ -282,6 +347,7 @@ class Expense extends React.Component {
     }
 
     var ccdjtfile = null;
+    var context = this;
     return (
       <div className={styles.container}>
         <AppBar
@@ -289,7 +355,7 @@ class Expense extends React.Component {
           title='费用报销'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
-          iconElementRight={<FlatButton label="提交" />}
+          iconElementRight={<FlatButton onTouchTap={this.onClickSave} label="提交" />}
         />
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>今日拜访类型</Subheader>
@@ -353,14 +419,14 @@ class Expense extends React.Component {
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>发票数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getFpCount("ccdsnjt")} onChange={function (e) { context.onFpCountChange("ccdsnjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
                 <div className={styles.line}></div>
                 <div className={styles.expenseCell}>
                   <p>报销数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getExpenseValue("ccdsnjt")} onChange={function (e) { context.onExpenseValueChange("ccdsnjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
@@ -384,14 +450,14 @@ class Expense extends React.Component {
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>发票数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getFpCount("ctjt")} onChange={function (e) { context.onFpCountChange("ctjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
                 <div className={styles.line}></div>
                 <div className={styles.expenseCell}>
                   <p>报销数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getExpenseValue("ctjt")} onChange={function (e) { context.onExpenseValueChange("ctjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
@@ -417,14 +483,14 @@ class Expense extends React.Component {
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>发票数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getFpCount("zsbz")} onChange={function (e) { context.onFpCountChange("zsbz", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
                 <div className={styles.line}></div>
                 <div className={styles.expenseCell}>
                   <p>报销数</p>
-                  <Input value={12} onChagne={function (e) { context.onPosChange(product.Product_id, e.target.value) }} placeholder="请填写"
+                  <Input value={this.getExpenseValue("zsbz")} onChange={function (e) { context.onExpenseValueChange("zsbz", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
