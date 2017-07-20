@@ -1632,9 +1632,10 @@ module.exports = {
 
         var expenseList = JSON.parse(param.expense);
         for (var i = 0; i < expenseList.length; i++) {
-          var sqlstring = _sql.submitexpense;
-          var expense = expenseList[i];
-          var plandate = new Date(expense.plandate).Format("yyyy-MM-dd")
+          let sqlstring = _sql.submitexpense;
+          let expense = expenseList[i];
+          let plandate = new Date(expense.plandate).Format("yyyy-MM-dd");
+          console.log("submitExpense sql",plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.money || "")
           tasks.push(function (callback) {
             connection.query(sqlstring, [plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.money || "", expense.nature, expense.fpcount || 0, expense.money || ""], function (err, result) {
               if (!err) {
