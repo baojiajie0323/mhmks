@@ -772,6 +772,7 @@ var Action = {
         console.log('submitExpense:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_EXPENSE_SUBMIT, response.data);
+          message.success('提交报销费用成功');
         } else {
           message.error('提交报销费用失败！' + response.msg);
         }

@@ -19,6 +19,8 @@ class Expense extends React.Component {
       currecord: {},
       modalvalue: '',
       adjustvisible: false,
+      showPicture: false,
+      bigPicture: ""
     };
     this.onVisitorPlanChange = this.onVisitorPlanChange.bind(this);
     this.onExpenseChange = this.onExpenseChange.bind(this);
@@ -35,6 +37,8 @@ class Expense extends React.Component {
     this.onModalvalueChange = this.onModalvalueChange.bind(this);
     this.handleAdjustOk = this.handleAdjustOk.bind(this);
     this.handleAdjustCancel = this.handleAdjustCancel.bind(this);
+    this.handlePictureCancel = this.handlePictureCancel.bind(this);
+    this.onClickShowPicture = this.onClickShowPicture.bind(this);
     this.userid = "";
 
     this.expenseType = [
@@ -76,7 +80,12 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
-
+  handlePictureCancel() {
+    this.setState({
+      showPicure: false,
+      bigPicture: ""
+    })
+  }
   onExpenseAdjustChange(expenseAdjust) {
     console.log("expenseAdjust", expenseAdjust);
     var expense = this.state.expense;
@@ -382,6 +391,18 @@ class Expense extends React.Component {
     return tableData;
   }
 
+  onClickShowPicture(record) {
+    if(record.fpname){
+    this.setState({
+      showPicture: true,
+      bigPicture: 'url("' + '../upload/' + record.fpname + '.jpg")'
+    })
+    }else{
+      message.info("没有照片")
+    }
+
+  }
+
   getTableColumn() {
     var context = this;
     return [{
@@ -503,7 +524,7 @@ class Expense extends React.Component {
       render: function (text, record) {
         var operateDom = [
           <a onClick={function () {
-            context.onClickShowPicture(record, -1);
+            context.onClickShowPicture(record);
           }}>发票照片</a>
         ];
         if (!record.btnr) {
@@ -550,13 +571,15 @@ class Expense extends React.Component {
         var plannature = "无计划";
         var realnature = "未提交";
         var plannatureid = 1;
-        var expenseInfoMain = this.getExpense(plandate);
+        var expenseInfoMain = this.getExpense(plandate, "no");
+        console.log("render expenseInfoMain", plandate, expenseInfoMain, routeInfo);
         if (routeInfo) {
           plannature = this.getNatureName(routeInfo.nature);
           plannatureid = routeInfo.nature;
-          if (expenseInfoMain) {
-            realnature = this.getNatureName(expenseInfoMain.nature);
-          }
+        }
+        if (expenseInfoMain) {
+          realnature = this.getNatureName(expenseInfoMain.nature);
+          console.log("render realnature", realnature);
         }
 
         for (var j = 0; j < this.expenseType.length; j++) {
@@ -566,6 +589,7 @@ class Expense extends React.Component {
           var report = 0;
           var fpcount = 0;
           var adjustmoney = "";
+          var fpname = "";
           if (expenseType == "wcbt" || expenseType == "snjt" || expenseType == "ccbt") {
             report = btbz;
             adjustmoney = " "
@@ -574,6 +598,8 @@ class Expense extends React.Component {
             if (expenseInfo) {
               report = expenseInfo.money;
               adjustmoney = expenseInfo.adjustmoney;
+              fpcount = expenseInfo.fpcount;
+              fpname = expenseInfo.fpname;
             }
           }
           expensesum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
@@ -586,6 +612,7 @@ class Expense extends React.Component {
             btbz,
             report,
             fpcount,
+            fpname,
             userid: this.userid,
             expensetype: expenseType,
             adjustmoney,
@@ -641,6 +668,12 @@ class Expense extends React.Component {
             </div>
           </div>
         </Modal>
+
+        <div style={{ backgroundImage: this.state.bigPicture, visibility: this.state.showPicture ? "visible" : "hidden" }} className={styles.bigphoto}>
+          <Icon onClick={this.handlePictureCancel} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
+        </div>
+
+
       </div>
     );
   }

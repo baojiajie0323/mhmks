@@ -1635,9 +1635,9 @@ module.exports = {
           let sqlstring = _sql.submitexpense;
           let expense = expenseList[i];
           let plandate = new Date(expense.plandate).Format("yyyy-MM-dd");
-          console.log("submitExpense sql",plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.money || "")
+          console.log("submitExpense sql",plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.fpname, expense.money || "")
           tasks.push(function (callback) {
-            connection.query(sqlstring, [plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.money || "", expense.nature, expense.fpcount || 0, expense.money || ""], function (err, result) {
+            connection.query(sqlstring, [plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.fpname, expense.money || "", expense.nature, expense.fpcount || 0, expense.fpname, expense.money || ""], function (err, result) {
               if (!err) {
               }
               callback(err);

@@ -1,5 +1,5 @@
 var sqlmap = {
-  log:'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
+  log: 'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
   login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
   login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
@@ -81,12 +81,12 @@ var sqlmap = {
   getstockconfig: 'select * from stock_config',
   updatestockconfig: 'replace into stock_config (stock_key,stock_value) values (?,?)',
   getcheckplan: 'select b.Store_name,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) where plan_date BETWEEN ? and ? ',
-  getsaleactual:'SELECT a.user_id,e.realname,f.name departname,a.area_name,a.store_id,d.store_name,b.brand_name,b.series_name,c.serial_no,a.Product_name,a.sales_unit,sum(a.sales_quantity) sum FROM sales_actual a LEFT JOIN product b on a.product_id=b.Product_id LEFT JOIN product_price c on a.store_id=c.Store_id and a.product_id=c.Product_id LEFT JOIN store d on a.store_id = d.store_id LEFT JOIN user e on e.username = a.user_id LEFT JOIN department f on e.depart = f.id WHERE year(a.sales_date)=? AND month(a.sales_date)=? AND product_status="1" ',
+  getsaleactual: 'SELECT a.user_id,e.realname,f.name departname,a.area_name,a.store_id,d.store_name,b.brand_name,b.series_name,c.serial_no,a.Product_name,a.sales_unit,sum(a.sales_quantity) sum FROM sales_actual a LEFT JOIN product b on a.product_id=b.Product_id LEFT JOIN product_price c on a.store_id=c.Store_id and a.product_id=c.Product_id LEFT JOIN store d on a.store_id = d.store_id LEFT JOIN user e on e.username = a.user_id LEFT JOIN department f on e.depart = f.id WHERE year(a.sales_date)=? AND month(a.sales_date)=? AND product_status="1" ',
   getmainshelfimage: 'select * from product_image where user_id = ? AND submitdate BETWEEN ? and ? AND type = 0',
-  getsafestock:'select c.serial_no,b.product_box,b.product_name,a.* from safe_stock a left join product b on b.Product_id = a.product_id left join product_price c on (c.Store_id = a.store_id and c.Product_id = a.product_id) where a.date_id = ? and a.store_id = ?',
+  getsafestock: 'select c.serial_no,b.product_box,b.product_name,a.* from safe_stock a left join product b on b.Product_id = a.product_id left join product_price c on (c.Store_id = a.store_id and c.Product_id = a.product_id) where a.date_id = ? and a.store_id = ?',
   getexpense: 'select * from expense where userid = ? and plandate BETWEEN ? AND ?',
   adjustexpense: 'insert into expense set adjustmoney = ? , plandate = ? ,userid = ? , expensetype = ? on DUPLICATE KEY UPDATE adjustmoney = ?',
-  submitexpense: 'insert into expense set plandate = ? ,expensetype = ?, userid = ?, nature = ? ,fpcount = ?, money = ? on DUPLICATE KEY UPDATE nature = ?,fpcount = ?, money = ?',
+  submitexpense: 'insert into expense set plandate = ? ,expensetype = ?, userid = ?, nature = ? ,fpcount = ?, fpname=?, money = ? on DUPLICATE KEY UPDATE nature = ?,fpcount = ?,  fpname=?,money = ?',
 };
 
 module.exports = sqlmap;

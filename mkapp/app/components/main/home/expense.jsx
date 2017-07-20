@@ -22,6 +22,7 @@ class Expense extends React.Component {
       expense: Store.getExpense(),
       subsidy: [],
       routeCost: [],
+      file: {},
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onNatureChange = this.onNatureChange.bind(this);
@@ -31,6 +32,8 @@ class Expense extends React.Component {
     this.onFpCountChange = this.onFpCountChange.bind(this);
     this.onExpenseValueChange = this.onExpenseValueChange.bind(this);
     this.onExpneseSubmit = this.onExpneseSubmit.bind(this);
+    this.onClickAddImage = this.onClickAddImage.bind(this);
+    this.removePhoto = this.removePhoto.bind(this);
   }
 
   componentDidMount() {
@@ -56,7 +59,20 @@ class Expense extends React.Component {
         nature
       })
     }
-    this.setState({ expense })
+
+    var file = {};
+    for (var i = 0; i < expense.length; i++) {
+      if (expense[i].fpname) {
+        file[expense[i].expensetype] = [];
+        var response = { data: { uuid: expense[i].fpname } };
+        file[expense[i].expensetype].push({
+          response,
+          imageUri: config.domain_name + "/upload/" + expense[i].fpname + ".jpg",
+        });
+      }
+    }
+
+    this.setState({ expense, file })
 
     Action.getSubsidy();
 
@@ -137,8 +153,20 @@ class Expense extends React.Component {
       title: '确定要提交数据吗？',
       onOk() {
         //console.log(context.state.expense);
+        var expense = [];
+        var file = context.state.file;
+        expense = context.state.expense;
+        expense.forEach((es) => {
+          var expensetype = es.expensetype;
+          if (file.hasOwnProperty(expensetype)) {
+            if (file[expensetype] && file[expensetype].length > 0) {
+              es.fpname = file[expensetype][0].response.data.uuid;
+            }
+          }
+        })
+
         var expenseData = {
-          expense: JSON.stringify(context.state.expense)
+          expense: JSON.stringify(context.state.expense),
         }
         Action.submitExpense(expenseData);
       },
@@ -292,7 +320,22 @@ class Expense extends React.Component {
     })
     this.setState({ expense });
   }
-  onClickAddImage(product_id) {
+  setOptions(srcType) {
+    var options = {
+      // Some common settings are 20, 50, and 100
+      quality: 20,
+      destinationType: Camera.DestinationType.FILE_URI,
+      // In this app, dynamically set the picture source, Camera or photo gallery
+      sourceType: srcType,
+      encodingType: Camera.EncodingType.JPEG,
+      mediaType: Camera.MediaType.PICTURE,
+      allowEdit: false,
+      correctOrientation: true  //Corrects Android orientation quirks
+    }
+    return options;
+  }
+
+  onClickAddImage(expensetype) {
     var store = this.props.userdata;
     var srcType = Camera.PictureSourceType.CAMERA;
     var options = this.setOptions(srcType);
@@ -312,10 +355,10 @@ class Expense extends React.Component {
           var response = JSON.parse(r.response);
 
           var files = context.state.file;
-          if (files[product_id] == undefined) {
-            files[product_id] = [];
+          if (files[expensetype] == undefined) {
+            files[expensetype] = [];
           }
-          files[product_id].push({
+          files[expensetype].push({
             response: response,
             imageUri: imageUri
           });
@@ -357,8 +400,8 @@ class Expense extends React.Component {
   }
   removePhoto(imageUri) {
     var files = this.state.file;
-    for (var product in files) {
-      var filelist = files[product];
+    for (var expensetype in files) {
+      var filelist = files[expensetype];
       for (var i = 0; i < filelist.length; i++) {
         if (filelist[i].imageUri == imageUri) {
           filelist.splice(i, 1);
@@ -368,14 +411,19 @@ class Expense extends React.Component {
     }
     this.setState({ file: files })
   }
-  getPhotolist(file) {
-    return <div className={styles.photoblock}>
-      <img src={file.imageUri} />
-      <Icon onClick={function () { context.removePhoto(file.imageUri) }} style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
-    </div>
+  getPhotolist(fileList) {
+    var photoDom = [];
+    var context = this;
+    photoDom = fileList.map((file) => {
+      return <div className={styles.photoblock}>
+        <img src={file.imageUri} />
+        <Icon onClick={function () { context.removePhoto(file.imageUri) }} style={{ position: 'absolute', right: '0', fontSize: '20px', color: 'white' }} type="close" />
+      </div>
+    })
+    return photoDom;
   }
   render() {
-    const { finished, stepIndex } = this.state;
+    const { file } = this.state;
     var expenseStyle = {
       paperStyle_nophoto: {
         positon: 'relative',
@@ -394,7 +442,11 @@ class Expense extends React.Component {
       }
     }
 
-    var ccdjtfile = null;
+    var ccdjtfile = file.ccdsnjt;
+    var zsbtfile = file.zsbt;
+    var ctjtfile = file.ctjt;
+
+
     var context = this;
     return (
       <div className={styles.container}>
@@ -480,8 +532,8 @@ class Expense extends React.Component {
                 </div>
               </div>
               <div className={styles.photocontent}>
-                {ccdjtfile ? this.getPhotolist(ccdjtfile) :
-                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(product.Product_id) }}>
+                {ccdjtfile  && ccdjtfile.length > 0 ? this.getPhotolist(ccdjtfile) :
+                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage("ccdsnjt") }}>
                     <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
                     <div className="ant-upload-text">添加照片</div>
                   </div>}
@@ -511,8 +563,8 @@ class Expense extends React.Component {
                 </div>
               </div>
               <div className={styles.photocontent}>
-                {ccdjtfile ? this.getPhotolist(ccdjtfile) :
-                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(product.Product_id) }}>
+                {ctjtfile && ctjtfile.length > 0 ? this.getPhotolist(ctjtfile) :
+                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage("ctjt") }}>
                     <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
                     <div className="ant-upload-text">添加照片</div>
                   </div>}
@@ -544,8 +596,8 @@ class Expense extends React.Component {
                 </div>
               </div>
               <div className={styles.photocontent}>
-                {ccdjtfile ? this.getPhotolist(ccdjtfile) :
-                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage(product.Product_id) }}>
+                {zsbtfile   && zsbtfile.length > 0 ? this.getPhotolist(zsbtfile) :
+                  <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage("zsbt") }}>
                     <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
                     <div className="ant-upload-text">添加照片</div>
                   </div>}

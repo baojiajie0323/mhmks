@@ -391,6 +391,7 @@ class Home extends React.Component {
       isToday = true;
     }
     var isExpense = this.state.expense.length > 0;
+    var hasPlan = this.state.plan.length > 0;
     return (
       <div className={styles.container}>
         <AppBar
@@ -439,7 +440,7 @@ class Home extends React.Component {
           </Spin>
         </div>
 
-        {isToday ? <FloatingActionButton style={{
+        {isToday && hasPlan ? <FloatingActionButton style={{
           position: 'absolute',
           bottom: '15px',
           right: '25px',
