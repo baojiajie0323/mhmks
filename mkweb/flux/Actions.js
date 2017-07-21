@@ -1331,6 +1331,26 @@ var Action = {
         console.log('adjustExpense fail');
       })
   },
+  getParttime: function (data) {
+    var context = this;
+    data.command = 'getparttime';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getParttime:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PARTTIME, response.data);
+        } else {
+          message.error('获取兼促信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getParttime fail');
+      })
+  },
 
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({

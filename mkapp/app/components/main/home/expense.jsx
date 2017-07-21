@@ -518,14 +518,14 @@ class Expense extends React.Component {
               </div>
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
-                  <p>发票数</p>
+                  <p>发票张数</p>
                   <Input value={this.getFpCount("ccdsnjt")} onChange={function (e) { context.onFpCountChange("ccdsnjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
                 </div>
                 <div className={styles.line}></div>
                 <div className={styles.expenseCell}>
-                  <p>报销数</p>
+                  <p>报销金额</p>
                   <Input value={this.getExpenseValue("ccdsnjt")} onChange={function (e) { context.onExpenseValueChange("ccdsnjt", e.target.value) }} placeholder="请填写"
                     style={{ width: '80px' }}
                   />
