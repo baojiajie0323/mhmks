@@ -4,6 +4,7 @@ import FontIcon from 'material-ui/FontIcon';
 import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
 import Paper from 'material-ui/Paper';
 import ContactsIcon from 'material-ui/svg-icons/communication/contact-phone';
+import ChartsIcon from 'material-ui/svg-icons/editor/insert-chart';
 import MyIcon from 'material-ui/svg-icons/action/account-circle';
 import StoreIcon from 'material-ui/svg-icons/action/store';
 import HomeIcon from 'material-ui/svg-icons/action/assignment';
@@ -24,6 +25,7 @@ import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
 import Parttime from './store/parttime';
 import Contacts from './contacts/contacts';
+import Charts from './charts/charts';
 import Aboutme from './aboutme/aboutme';
 import Location from './aboutme/location';
 import Help from './aboutme/help';
@@ -33,6 +35,7 @@ const contactsIcon = <ContactsIcon />;
 const myIcon = <MyIcon />;
 const storeIcon = <StoreIcon />;
 const homeIcon = <HomeIcon />;
+const chartsIcon = <ChartsIcon />;
 
 
 class Main extends React.Component {
@@ -101,7 +104,7 @@ class Main extends React.Component {
     } else if (this.state.selectedIndex == 1) {
       return <StoreView />
     } else if (this.state.selectedIndex == 2) {
-      return <Contacts />
+      return <Charts />
     } else if (this.state.selectedIndex == 3) {
       return <Aboutme />
     }
@@ -131,8 +134,8 @@ class Main extends React.Component {
               />
             <BottomNavigationItem
               disableTouchRipple={true}
-              label="通讯录"
-              icon={contactsIcon}
+              label="排名"
+              icon={chartsIcon}
               onTouchTap={() => this.select(2) }
               />
             <BottomNavigationItem

@@ -89,7 +89,27 @@ var sqlmap = {
   submitexpense: 'insert into expense set plandate = ? ,expensetype = ?, userid = ?, nature = ? ,fpcount = ?, fpname=?, money = ? on DUPLICATE KEY UPDATE nature = ?,fpcount = ?,  fpname=?,money = ?',
   getparttime: 'select a.*,b.store_name,c.realname from parttime a left join store b on a.storeid = b.Store_id left join user c on b.user_id = c.username where ((entrytime BETWEEN ? and ?) or ((quittime BETWEEN ? and ?) or isfinish = 0)) ',
   addparttime: 'insert into parttime(storeid,username,sex,cardid,phone,work,bankcard,entrytime,isfinish,cardidfile,bankcardfile) values(?,?,?,?,?,?,?,?,0,?,?)',
-  updateparttime: 'update parttime set username = ?,sex = ?,cardid = ?,phone = ?,work = ?,bankcard = ?,entrytime = ?, isfinish = ?, quittime = ?, cardidfile = ?, bankcardfile = ?  where id = ?'
+  updateparttime: 'update parttime set username = ?,sex = ?,cardid = ?,phone = ?,work = ?,bankcard = ?,entrytime = ?, isfinish = ?, quittime = ?, cardidfile = ?, bankcardfile = ?  where id = ?',
+
+
+
+
+  // 排名相关查询
+  getsaletarget_c: '',
+  //   select c.realname,sum(a.sales_normal) sum , a.* from sales_target a 
+  // INNER JOIN store b on b.Store_id = a.store_id 
+  // INNER JOIN user c on b.user_id = c.username
+  // LEFT JOIN department d on d.id = c.depart
+  // where sales_year = 2017 and sales_month = 6 and d.id = 12
+  // GROUP BY c.realname
+
+  getsaleactual_c: '',
+  // select c.realname,sum(a.sales_quantity) sum , a.* from sales_actual a 
+  // INNER JOIN store b on b.Store_id = a.store_id 
+  // INNER JOIN user c on b.user_id = c.username
+  // LEFT JOIN department d on d.id = c.depart
+  // where sales_date BETWEEN '2017-05-01' and '2017-05-31' and d.id = 12
+  // GROUP BY c.realname
 };
 
 module.exports = sqlmap;
