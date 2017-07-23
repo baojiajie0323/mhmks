@@ -782,6 +782,49 @@ var Action = {
         console.log('submitExpense fail');
       })
   },
+  getParttime: function (data) {
+    var context = this;
+    data.command = 'getparttime';
+    console.log('send getParttime', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getParttime:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PARTTIME, response.data);
+        } else {
+          message.error('获取兼促信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getParttime fail');
+      })
+  },
+  submitParttime: function (data) {
+    var context = this;
+    data.command = 'submitparttime';
+    console.log('send submitParttime', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('submitParttime:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PARTTIME_SUBMIT, response.data);
+          message.success('提交成功');
+        } else {
+          message.error('提交兼促信息失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getParttime fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

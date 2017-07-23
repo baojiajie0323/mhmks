@@ -81,8 +81,9 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
   }
   handlePictureCancel() {
+    console.log('handlePictureCancel');
     this.setState({
-      showPicure: false,
+      showPicture: false,
       bigPicture: ""
     })
   }
@@ -392,12 +393,12 @@ class Expense extends React.Component {
   }
 
   onClickShowPicture(record) {
-    if(record.fpname){
-    this.setState({
-      showPicture: true,
-      bigPicture: 'url("' + '../upload/' + record.fpname + '.jpg")'
-    })
-    }else{
+    if (record.fpname) {
+      this.setState({
+        showPicture: true,
+        bigPicture: 'url("' + '../upload/' + record.fpname + '.jpg")'
+      })
+    } else {
       message.info("没有照片")
     }
 
@@ -669,7 +670,18 @@ class Expense extends React.Component {
           </div>
         </Modal>
 
-        <div style={{ backgroundImage: this.state.bigPicture, visibility: this.state.showPicture ? "visible" : "hidden" }} className={styles.bigphoto}>
+        <div style={{
+          backgroundImage: this.state.bigPicture,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          visibility: this.state.showPicture ? "visible" : "hidden",
+          position: 'absolute',
+          backgroundColor: '#ccc',
+          top: 0,
+          height: '100%',
+          width: '100%',
+        }}>
           <Icon onClick={this.handlePictureCancel} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
         </div>
 

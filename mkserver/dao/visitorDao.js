@@ -1635,7 +1635,7 @@ module.exports = {
           let sqlstring = _sql.submitexpense;
           let expense = expenseList[i];
           let plandate = new Date(expense.plandate).Format("yyyy-MM-dd");
-          console.log("submitExpense sql",plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.fpname, expense.money || "")
+          console.log("submitExpense sql", plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.fpname, expense.money || "")
           tasks.push(function (callback) {
             connection.query(sqlstring, [plandate, expense.expensetype, expense.userid, expense.nature, expense.fpcount || 0, expense.fpname, expense.money || "", expense.nature, expense.fpcount || 0, expense.fpname, expense.money || ""], function (err, result) {
               if (!err) {
@@ -1662,6 +1662,80 @@ module.exports = {
           }
           connection.release();
         });
+      }
+    });
+  },
+  getParttime: function (req, res, next) {
+    console.log('visitorDao getParttime');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getparttime;
+        if (param.storeid) {
+          sqlstring += "and a.storeid = ";
+          sqlstring += connection.escape(param.storeid);
+        } else if (param.userid) {
+          sqlstring += "and b.user_id = ";
+          sqlstring += connection.escape(param.userid);
+        }
+        if (param.isfinish) {
+          sqlstring += "and a.isfinish = 0";
+        }
+        sqlstring += " order by a.entrytime desc";
+        connection.query(sqlstring, [param.begindate, param.enddate, param.begindate, param.enddate], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  submitParttime: function (req, res, next) {
+    console.log('visitorDao submitParttime');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring;
+        if (param.addmode == "true") {
+          sqlstring = _sql.addparttime;
+          var entrytime = new Date(param.entrytime).Format('yyyy-MM-dd');
+          connection.query(sqlstring, [param.storeid, param.username, param.sex, param.cardid, param.phone, param.work, param.bankcard, entrytime, param.cardidfile,param.bankcardfile], function (err, result) {
+            console.log('dbresult', err, result);
+            if (err) {
+              jsonWrite(res, {}, dbcode.FAIL);
+            } else {
+              param.id = result.insertId;
+              jsonWrite(res, param, dbcode.SUCCESS);
+            }
+            connection.release();
+          });
+        } else {
+          sqlstring = _sql.updateparttime;
+          var entrytime = new Date(param.entrytime).Format('yyyy-MM-dd');
+          var quittime = null;
+          if(param.quittime){
+            quittime = new Date(param.quittime).Format('yyyy-MM-dd');
+          }          
+          connection.query(sqlstring, [param.username, param.sex, param.cardid, param.phone, param.work, param.bankcard, entrytime, param.isfinish, quittime, param.cardidfile, param.bankcardfile, param.id], function (err, result) {
+            console.log('dbresult', err, result);
+            if (err) {
+              jsonWrite(res, {}, dbcode.FAIL);
+            } else {
+              jsonWrite(res, param, dbcode.SUCCESS);
+            }
+            connection.release();
+          });
+        }
       }
     });
   },

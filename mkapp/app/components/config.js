@@ -1,5 +1,5 @@
 var config = {
-    version: "1.1.6",
+    version: "1.2.0",
 
     // ios
     // platform:"ios",
@@ -18,6 +18,7 @@ var config = {
     //release
     release: true,
     domain_name: "http://116.246.2.202:6115",
+    //domain_name: "http://192.168.1.3:3000",
 
     //debug
     // debug:true,

@@ -8,10 +8,6 @@ import './components/config';
 import './flux/Store';
 import './flux/Actions';
 import './flux/event-const';
-
-injectTapEventPlugin();
-ReactDOM.render(<App />, document.getElementById('root'));
-
 Date.prototype.Format = function (fmt) { //author: meizz
     var o = {
         "M+": this.getMonth() + 1,                 //月份
@@ -29,3 +25,13 @@ Date.prototype.Format = function (fmt) { //author: meizz
             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+
+window.isEmptyObject = function (e) {
+    var t;
+    for (t in e)
+        return !1;
+    return !0
+}
+injectTapEventPlugin();
+ReactDOM.render(<App />, document.getElementById('root'));
+

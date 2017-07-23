@@ -22,6 +22,7 @@ import Promotion from './home/product/promotion';
 import PromotionDetail from './home/product/promotionDetail';
 import StoreView from './store/store';
 import StoreDetail from './store/storedetail';
+import Parttime from './store/parttime';
 import Contacts from './contacts/contacts';
 import Aboutme from './aboutme/aboutme';
 import Location from './aboutme/location';
@@ -70,6 +71,8 @@ class Main extends React.Component {
       return <Help />
     } else if (this.state.subview == 'storedetailview') {
       return <StoreDetail userdata={this.state.userdata} />
+    } else if (this.state.subview == 'parttimeview') {
+      return <Parttime userdata={this.state.userdata} />
     } else if (this.state.subview == 'selectpathview') {
       return <SelectPath userdata={this.state.userdata} />
     } else if (this.state.subview == 'selectstoreview') {

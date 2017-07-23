@@ -366,6 +366,14 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_EXPENSE_SUBMIT, action.value);
     }
       break;
+    case ActionEvent.AE_PARTTIME: {
+      Store.emit(StoreEvent.SE_PARTTIME, action.value);
+    }
+      break;
+    case ActionEvent.AE_PARTTIME_SUBMIT: {
+      Store.emit(StoreEvent.SE_PARTTIME_SUBMIT, action.value);
+    }
+      break;
 
 
     default:

@@ -387,6 +387,7 @@ class Home extends React.Component {
       />,
     ];
     var isToday = false;
+    console.log(this.state.curDate);
     if (this.state.curDate.Format("yyyy-MM-dd") == new Date().Format("yyyy-MM-dd")) {
       isToday = true;
     }

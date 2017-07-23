@@ -87,6 +87,9 @@ var sqlmap = {
   getexpense: 'select * from expense where userid = ? and plandate BETWEEN ? AND ?',
   adjustexpense: 'insert into expense set adjustmoney = ? , plandate = ? ,userid = ? , expensetype = ? on DUPLICATE KEY UPDATE adjustmoney = ?',
   submitexpense: 'insert into expense set plandate = ? ,expensetype = ?, userid = ?, nature = ? ,fpcount = ?, fpname=?, money = ? on DUPLICATE KEY UPDATE nature = ?,fpcount = ?,  fpname=?,money = ?',
+  getparttime: 'select a.*,b.store_name,c.realname from parttime a left join store b on a.storeid = b.Store_id left join user c on b.user_id = c.username where ((entrytime BETWEEN ? and ?) or ((quittime BETWEEN ? and ?) or isfinish = 0)) ',
+  addparttime: 'insert into parttime(storeid,username,sex,cardid,phone,work,bankcard,entrytime,isfinish,cardidfile,bankcardfile) values(?,?,?,?,?,?,?,?,0,?,?)',
+  updateparttime: 'update parttime set username = ?,sex = ?,cardid = ?,phone = ?,work = ?,bankcard = ?,entrytime = ?, isfinish = ?, quittime = ?, cardidfile = ?, bankcardfile = ?  where id = ?'
 };
 
 module.exports = sqlmap;

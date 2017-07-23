@@ -40,9 +40,10 @@ class StoreView extends React.Component {
       loading: false,
     })
   }
-  onClickStore(id) {
-    console.log(id);
-    Store.emit(StoreEvent.SE_VIEW, 'storedetailview', id);
+  onClickStore(storeid) {
+    console.log(storeid);
+    //Store.emit(StoreEvent.SE_VIEW, 'storedetailview', storeid);
+    Store.emit(StoreEvent.SE_VIEW, 'parttimeview', storeid);
   }
   getStoreDom() {
     var domlist = [];

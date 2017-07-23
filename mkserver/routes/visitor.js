@@ -155,6 +155,12 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitexpense") {
     console.log('submitexpense');
     visitorDao.submitExpense(req, res, next);
+  } else if (req.body.command == "getparttime") {
+    console.log('getparttime');
+    visitorDao.getParttime(req, res, next);
+  } else if (req.body.command == "submitparttime") {
+    console.log('submitparttime');
+    visitorDao.submitParttime(req, res, next);
   } 
 });
 

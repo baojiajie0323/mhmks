@@ -532,7 +532,7 @@ class Expense extends React.Component {
                 </div>
               </div>
               <div className={styles.photocontent}>
-                {ccdjtfile  && ccdjtfile.length > 0 ? this.getPhotolist(ccdjtfile) :
+                {ccdjtfile && ccdjtfile.length > 0 ? this.getPhotolist(ccdjtfile) :
                   <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage("ccdsnjt") }}>
                     <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
                     <div className="ant-upload-text">添加照片</div>
@@ -596,7 +596,7 @@ class Expense extends React.Component {
                 </div>
               </div>
               <div className={styles.photocontent}>
-                {zsbtfile   && zsbtfile.length > 0 ? this.getPhotolist(zsbtfile) :
+                {zsbtfile && zsbtfile.length > 0 ? this.getPhotolist(zsbtfile) :
                   <div className={styles.addPhotoButton} onClick={function () { context.onClickAddImage("zsbt") }}>
                     <Icon type="plus" style={{ fontSize: '18px', marginBottom: '5px' }} />
                     <div className="ant-upload-text">添加照片</div>
