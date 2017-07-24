@@ -1709,7 +1709,7 @@ module.exports = {
         if (param.addmode == "true") {
           sqlstring = _sql.addparttime;
           var entrytime = new Date(param.entrytime).Format('yyyy-MM-dd');
-          connection.query(sqlstring, [param.storeid, param.username, param.sex, param.cardid, param.phone, param.work, param.bankcard, entrytime, param.cardidfile,param.bankcardfile], function (err, result) {
+          connection.query(sqlstring, [param.storeid, param.username, param.sex, param.cardid, param.phone, param.work, param.bankcard, entrytime, param.cardidfile, param.bankcardfile], function (err, result) {
             console.log('dbresult', err, result);
             if (err) {
               jsonWrite(res, {}, dbcode.FAIL);
@@ -1723,9 +1723,9 @@ module.exports = {
           sqlstring = _sql.updateparttime;
           var entrytime = new Date(param.entrytime).Format('yyyy-MM-dd');
           var quittime = null;
-          if(param.quittime){
+          if (param.quittime) {
             quittime = new Date(param.quittime).Format('yyyy-MM-dd');
-          }          
+          }
           connection.query(sqlstring, [param.username, param.sex, param.cardid, param.phone, param.work, param.bankcard, entrytime, param.isfinish, quittime, param.cardidfile, param.bankcardfile, param.id], function (err, result) {
             console.log('dbresult', err, result);
             if (err) {
@@ -1736,6 +1736,90 @@ module.exports = {
             connection.release();
           });
         }
+      }
+    });
+  },
+  getChartMonthUser: function (req, res, next) {
+    console.log('visitorDao getChartMonthUser');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        var sqlstring = _sql.getsaletarget_all;
+        sqlstring += "group by c.realname"
+        var year = parseInt(param.begindate.substr(0, 4));
+        var month = parseInt(param.begindate.substr(5, 2));
+        var saletarget = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring, [year, month, param.depart], function (err, result) {
+            if (!err) {
+              console.log('saletarget',result);
+              saletarget = result;
+            }
+            callback(err);
+          });
+        });
+
+        var sqlstring2 = _sql.getsaleactual_all;
+        sqlstring2 += "group by c.realname"
+        var saleactual = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring2, [param.begindate, param.enddate, param.depart], function (err, result) {
+            if (!err) {
+              //console.log(result);
+              saleactual = result;
+            }
+            callback(err);
+          });
+        });
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            console.log('saleactual',saleactual,"saletarget",saletarget);
+            var chartdata = [];
+            var getActual = function(realname){
+              for(var i = 0; i < saleactual.length; i ++){
+                if(saleactual[i].realname == realname){
+                  return saleactual[i];
+                }
+              }
+            }
+            for (var i = 0; i < saletarget.length; i++) {
+                var actual = getActual(saletarget[i].realname);
+                if(actual){
+                  chartdata.push({
+                    key: actual.realname,
+                    value: parseInt(actual.sum * 100 / saletarget[i].sum)
+                  })
+                }
+            }
+            chartdata.sort((a,b)=>{
+              return b.value - a.value;
+            })
+            jsonWrite(res, chartdata, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
       }
     });
   },

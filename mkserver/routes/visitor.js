@@ -161,6 +161,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "submitparttime") {
     console.log('submitparttime');
     visitorDao.submitParttime(req, res, next);
+  } else if (req.body.command == "getchart_month_user") {
+    console.log('getchart_month_user');
+    visitorDao.getChartMonthUser(req, res, next);
   } 
 });
 

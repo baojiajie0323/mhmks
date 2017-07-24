@@ -17,7 +17,7 @@ var eventMap = {
     AE_BRAND: null,
     AE_PRODUCT: null,
     AE_SHELFMAIN: null,
-    AE_SHELFMAIN_SUBMIT:null,
+    AE_SHELFMAIN_SUBMIT: null,
     AE_STOCK_SUBMIT: null,
     AE_SHELFAWAY: null,
     AE_SHELFAWAY_SUBMIT: null,
@@ -35,6 +35,9 @@ var eventMap = {
     AE_EXPENSE_SUBMIT: null,
     AE_PARTTIME: null,
     AE_PARTTIME_SUBMIT: null,
+
+    AE_CHARTMONTH_USER: null,
+    AE_CHARTMONTH_SYSTEM: null,
   }),
 
   StoreEvent: keyMirror({
@@ -48,7 +51,7 @@ var eventMap = {
     SE_BRAND: null,
     SE_PRODUCT: null,
     SE_SHELFMAIN: null,
-    SE_SHELFMAIN_SUBMIT:null,
+    SE_SHELFMAIN_SUBMIT: null,
     SE_STOCK_SUBMIT: null,
     SE_SHELFAWAY: null,
     SE_SHELFAWAY_SUBMIT: null,
@@ -56,7 +59,7 @@ var eventMap = {
     SE_CHAT_SUBMIT: null,
     SE_PROMOTION: null,
     SE_STORE_PROMOTION: null,
-    SE_PROMOTION_SUBMIT:null,
+    SE_PROMOTION_SUBMIT: null,
     SE_VISITOR_IMAGE: null,
     SE_SAFESTOCK: null,
     SE_SALEACTUAL: null,
@@ -66,6 +69,8 @@ var eventMap = {
     SE_EXPENSE_SUBMIT: null,
     SE_PARTTIME: null,
     SE_PARTTIME_SUBMIT: null,
+    SE_CHARTMONTH_USER: null,
+    SE_CHARTMONTH_SYSTEM: null,
   })
 };
 

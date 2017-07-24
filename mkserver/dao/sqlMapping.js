@@ -95,21 +95,9 @@ var sqlmap = {
 
 
   // 排名相关查询
-  getsaletarget_c: '',
-  //   select c.realname,sum(a.sales_normal) sum , a.* from sales_target a 
-  // INNER JOIN store b on b.Store_id = a.store_id 
-  // INNER JOIN user c on b.user_id = c.username
-  // LEFT JOIN department d on d.id = c.depart
-  // where sales_year = 2017 and sales_month = 6 and d.id = 12
-  // GROUP BY c.realname
+  getsaletarget_all: 'select c.realname,sum(a.sales_normal)+sum(a.sales_promotion) sum , a.* from sales_target a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart where sales_year = ? and sales_month = ? and d.id = ?',
+  getsaleactual_all: 'select c.realname,sum(a.sales_sum) sum , a.* from sales_actual a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart where sales_date BETWEEN ? and ? and d.id = ?',
 
-  getsaleactual_c: '',
-  // select c.realname,sum(a.sales_quantity) sum , a.* from sales_actual a 
-  // INNER JOIN store b on b.Store_id = a.store_id 
-  // INNER JOIN user c on b.user_id = c.username
-  // LEFT JOIN department d on d.id = c.depart
-  // where sales_date BETWEEN '2017-05-01' and '2017-05-31' and d.id = 12
-  // GROUP BY c.realname
 };
 
 module.exports = sqlmap;

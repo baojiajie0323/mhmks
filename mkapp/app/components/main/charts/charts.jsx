@@ -14,11 +14,35 @@ class Charts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      navtitleIndex: 0,
     };
+    this.navTitle = ["销售月报", "实销日报", "促销日报"];
+    this.onClickLeft = this.onClickLeft.bind(this);
+    this.onClickRight = this.onClickRight.bind(this);
   }
   componentDidMount() {
   }
   componentWillUnmount() {
+  }
+  onClickLeft() {
+    var { navtitleIndex } = this.state;
+    navtitleIndex--;
+    if (navtitleIndex < 0) {
+      navtitleIndex = this.navTitle.length - 1;
+    }
+    this.setState({
+      navtitleIndex
+    })
+  }
+  onClickRight() {
+    var { navtitleIndex } = this.state;
+    navtitleIndex++;
+    if (navtitleIndex >= this.navTitle.length) {
+      navtitleIndex = 0;
+    }
+    this.setState({
+      navtitleIndex
+    })
   }
   render() {
     return (
@@ -40,25 +64,19 @@ class Charts extends React.Component {
                 height: 50,
                 padding: 7,
               }}
+              onTouchTap={this.onClickLeft}
             >
               <LeftIcon />
             </IconButton>
-            <DropDownMenu
-              value={1}
-              onChange={this.handleChange}
-              style={{
-                flexGrow: 1,
-                textAlign: 'center',
-                fontSize: '18px',
-                fontWeight: 'bold'
-              }}
+            <p style={{
+              flexGrow: 1,
+              textAlign: 'center',
+              fontSize: '18px',
+              fontWeight: 'bold'
+            }}
             >
-              <MenuItem value={1} primaryText="销售月报" />
-              <MenuItem value={2} primaryText="Every Night" />
-              <MenuItem value={3} primaryText="Weeknights" />
-              <MenuItem value={4} primaryText="Weekends" />
-              <MenuItem value={5} primaryText="Weekly" />
-            </DropDownMenu>
+              {this.navTitle[this.state.navtitleIndex]}
+            </p>
             <IconButton
               iconStyle={{
                 width: 36,
@@ -69,13 +87,14 @@ class Charts extends React.Component {
                 height: 50,
                 padding: 7,
               }}
+              onTouchTap={this.onClickRight}
             >
               <RightIcon />
             </IconButton>
           </div>
           <div className={styles.chartcontent}>
             <Chart_month />
-          </div>  
+          </div>
         </div>
       </div >
     );

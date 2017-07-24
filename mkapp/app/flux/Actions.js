@@ -825,6 +825,48 @@ var Action = {
         console.log('getParttime fail');
       })
   },
+  getChartsMonth_user: function (data) {
+    var context = this;
+    data.command = 'getchart_month_user';
+    console.log('send getChartsMonth_user', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsMonth_user:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTMONTH_USER, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsMonth_user fail');
+      })
+  },
+  getChartsMonth_system: function (data) {
+    var context = this;
+    data.command = 'getchart_month_system';
+    console.log('send getChartsMonth_system', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsMonth_system:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTMONTH_SYSTEM, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsMonth_system fail');
+      })
+  },
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

@@ -22,6 +22,8 @@ var _brand = [];
 var _product = {};
 var _promotion = [];
 var _expense = [];
+var _chartmonth_user = [];
+var _chartmonth_system = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -196,6 +198,23 @@ var Store = assign({}, EventEmitter.prototype, {
     _brand = brand;
     this.emitChange(StoreEvent.SE_BRAND);
   },
+
+  getChartmonth_user: function () {
+    return _chartmonth_user;
+  },
+  setChartmonth_user: function (c) {
+    _chartmonth_user = c;
+    this.emitChange(StoreEvent.SE_CHARTMONTH_USER);
+  },
+  getChartmonth_system: function () {
+    return _chartmonth_system;
+  },
+  setChartmonth_system: function (c) {
+    _chartmonth_system = c;
+    this.emitChange(StoreEvent.SE_CHARTMONTH_SYSTEM);
+  },
+
+
 
   getProduct: function (store_id) {
     if (_product.hasOwnProperty(store_id)) {
@@ -372,6 +391,14 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_PARTTIME_SUBMIT: {
       Store.emit(StoreEvent.SE_PARTTIME_SUBMIT, action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTMONTH_USER: {
+      Store.setChartmonth_user(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTMONTH_SYSTEM: {
+      Store.setChartmonth_system(action.value);
     }
       break;
 
