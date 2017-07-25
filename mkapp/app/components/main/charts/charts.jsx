@@ -9,6 +9,8 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 
 import Chart_month from './chart_month';
+import Chart_actual from './chart_actual';
+import Chart_promotion from './chart_promotion';
 
 class Charts extends React.Component {
   constructor(props) {
@@ -45,6 +47,14 @@ class Charts extends React.Component {
     })
   }
   render() {
+    var chartdom = [];
+    if (this.state.navtitleIndex == 0) {
+      chartdom = <Chart_month />
+    } else if (this.state.navtitleIndex == 1) {
+      chartdom = <Chart_actual />
+    } else if (this.state.navtitleIndex == 2) {
+      chartdom = <Chart_promotion />
+    }
     return (
       <div className={styles.container}>
         <AppBar
@@ -93,7 +103,7 @@ class Charts extends React.Component {
             </IconButton>
           </div>
           <div className={styles.chartcontent}>
-            <Chart_month />
+            {chartdom}
           </div>
         </div>
       </div >

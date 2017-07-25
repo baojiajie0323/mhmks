@@ -16,13 +16,13 @@ var config = {
     contentUserTop: '265px',
 
     //release
-    // release: true,
-    // domain_name: "http://116.246.2.202:6115",
+    release: true,
+    domain_name: "http://116.246.2.202:6115",
     //domain_name: "http://192.168.1.3:3000",
 
     //debug
-    debug:true,
-    domain_name:"http://localhost:3000",
+    // debug:true,
+    // domain_name:"http://localhost:3000",
 }
 window.config = config;
 export default config;

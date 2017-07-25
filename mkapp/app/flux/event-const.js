@@ -38,6 +38,10 @@ var eventMap = {
 
     AE_CHARTMONTH_USER: null,
     AE_CHARTMONTH_SYSTEM: null,
+    AE_CHARTACTUAL_RTM: null,
+    AE_CHARTACTUAL_LOT: null,
+    AE_CHARTACTUAL_WAL: null,
+    AE_CHARTPROMOTION_USER: null,
   }),
 
   StoreEvent: keyMirror({
@@ -71,6 +75,10 @@ var eventMap = {
     SE_PARTTIME_SUBMIT: null,
     SE_CHARTMONTH_USER: null,
     SE_CHARTMONTH_SYSTEM: null,
+    SE_CHARTACTUAL_RTM: null,
+    SE_CHARTACTUAL_LOT: null,
+    SE_CHARTACTUAL_WAL: null,
+    SE_CHARTPROMOTION_USER: null,
   })
 };
 

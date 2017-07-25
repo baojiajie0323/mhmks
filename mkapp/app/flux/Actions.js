@@ -830,7 +830,7 @@ var Action = {
     data.command = 'getchart_month_user';
     console.log('send getChartsMonth_user', data);
     $.ajax({
-      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT * 3,
       data: data
     })
       .done(function (response) {
@@ -851,7 +851,7 @@ var Action = {
     data.command = 'getchart_month_system';
     console.log('send getChartsMonth_system', data);
     $.ajax({
-      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT * 3,
       data: data
     })
       .done(function (response) {
@@ -867,6 +867,91 @@ var Action = {
         console.log('getChartsMonth_system fail');
       })
   },
+  getChartsActual_rtm: function (data) {
+    var context = this;
+    data.command = 'getchart_actual';
+    console.log('send getChartsActual_rtm', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsActual_rtm:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTACTUAL_RTM, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsActual_rtm fail');
+      })
+  },
+  getChartsActual_lot: function (data) {
+    var context = this;
+    data.command = 'getchart_actual';
+    console.log('send getChartsActual_lot', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsActual_lot:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTACTUAL_LOT, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsActual_lot fail');
+      })
+  },
+  getChartsActual_wal: function (data) {
+    var context = this;
+    data.command = 'getchart_actual';
+    console.log('send getChartsActual_wal', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsActual_wal:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTACTUAL_WAL, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsActual_wal fail');
+      })
+  },
+  getChartsPromotion_user: function (data) {
+    var context = this;
+    data.command = 'getchart_promotion';
+    console.log('send getChartsPromotion_user', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getChartsPromotion_user:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_CHARTPROMOTION_USER, response.data);
+        } else {
+          message.error('获取排名失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getChartsPromotion_user fail');
+      })
+  },
+
   dispatch: function (funname, value) {
     AppDispatcher.dispatch({
       eventName: funname,

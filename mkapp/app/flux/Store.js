@@ -24,6 +24,10 @@ var _promotion = [];
 var _expense = [];
 var _chartmonth_user = [];
 var _chartmonth_system = [];
+var _chartactual_rtm = [];
+var _chartactual_lot = [];
+var _chartactual_wal = [];
+var _chartpromotion_user = [];
 
 var Store = assign({}, EventEmitter.prototype, {
   back: function () {
@@ -213,7 +217,34 @@ var Store = assign({}, EventEmitter.prototype, {
     _chartmonth_system = c;
     this.emitChange(StoreEvent.SE_CHARTMONTH_SYSTEM);
   },
-
+  getChartactual_rtm: function () {
+    return _chartactual_rtm;
+  },
+  setChartactual_rtm: function (c) {
+    _chartactual_rtm = c;
+    this.emitChange(StoreEvent.SE_CHARTACTUAL_RTM);
+  },
+  getChartactual_lot: function () {
+    return _chartactual_lot;
+  },
+  setChartactual_lot: function (c) {
+    _chartactual_lot = c;
+    this.emitChange(StoreEvent.SE_CHARTACTUAL_LOT);
+  },
+  getChartactual_wal: function () {
+    return _chartactual_wal;
+  },
+  setChartactual_wal: function (c) {
+    _chartactual_wal = c;
+    this.emitChange(StoreEvent.SE_CHARTACTUAL_WAL);
+  },
+  getChartpromotion_user: function () {
+    return _chartpromotion_user;
+  },
+  setChartpromotion_user: function (c) {
+    _chartpromotion_user = c;
+    this.emitChange(StoreEvent.SE_CHARTPROMOTION_USER);
+  },
 
 
   getProduct: function (store_id) {
@@ -399,6 +430,22 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_CHARTMONTH_SYSTEM: {
       Store.setChartmonth_system(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTACTUAL_RTM: {
+      Store.setChartactual_rtm(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTACTUAL_LOT: {
+      Store.setChartactual_lot(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTACTUAL_WAL: {
+      Store.setChartactual_wal(action.value);
+    }
+      break;
+    case ActionEvent.AE_CHARTPROMOTION_USER: {
+      Store.setChartpromotion_user(action.value);
     }
       break;
 

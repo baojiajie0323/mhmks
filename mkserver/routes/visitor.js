@@ -164,6 +164,15 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getchart_month_user") {
     console.log('getchart_month_user');
     visitorDao.getChartMonthUser(req, res, next);
+  } else if (req.body.command == "getchart_month_system") {
+    console.log('getchart_month_system');
+    visitorDao.getChartMonthSystem(req, res, next);
+  } else if (req.body.command == "getchart_actual") {
+    console.log('getchart_actual');
+    visitorDao.getChartActual(req, res, next);
+  } else if (req.body.command == "getchart_promotion") {
+    console.log('getchart_promotion');
+    visitorDao.getChartPromotion(req, res, next);
   } 
 });
 

@@ -95,9 +95,10 @@ var sqlmap = {
 
 
   // 排名相关查询
-  getsaletarget_all: 'select c.realname,sum(a.sales_normal)+sum(a.sales_promotion) sum , a.* from sales_target a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart where sales_year = ? and sales_month = ? and d.id = ?',
-  getsaleactual_all: 'select c.realname,sum(a.sales_sum) sum , a.* from sales_actual a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart where sales_date BETWEEN ? and ? and d.id = ?',
-
+  getsaletarget_all: 'select c.realname,e.system_name,sum(a.sales_normal)+sum(a.sales_promotion) sum , a.* from sales_target a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart left join store_area e on (a.system_id = e.system_id) where sales_year = ? and sales_month = ? and d.id = ?',
+  getsaleactual_all: 'select c.realname,e.system_name,sum(a.sales_sum) sum , a.* from sales_actual a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart left join store_area e on (a.system_id = e.system_id) where sales_date BETWEEN ? and ? and d.id = ?',
+  getsaletarget_pro: 'select c.realname,e.system_name,sum(a.sales_promotion) sum , a.* from sales_target a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart left join store_area e on (a.system_id = e.system_id) where sales_year = ? and sales_month = ? and d.id = ?',
+  getsaleactual_pro: 'select c.realname,e.system_name,sum(a.sales_sum) sum , a.* from sales_actual a INNER JOIN store b on b.Store_id = a.store_id INNER JOIN user c on b.user_id = c.username LEFT JOIN department d on d.id = c.depart left join store_area e on (a.system_id = e.system_id) where sales_promotionid <> "null" and sales_date BETWEEN ? and ? and d.id = ?',
 };
 
 module.exports = sqlmap;

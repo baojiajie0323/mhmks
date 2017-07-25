@@ -1762,7 +1762,7 @@ module.exports = {
         tasks.push(function (callback) {
           connection.query(sqlstring, [year, month, param.depart], function (err, result) {
             if (!err) {
-              console.log('saletarget',result);
+              //console.log('saletarget',result);
               saletarget = result;
             }
             callback(err);
@@ -1795,25 +1795,285 @@ module.exports = {
             connection.rollback(); // 发生错误事务回滚
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
-            console.log('saleactual',saleactual,"saletarget",saletarget);
+            console.log('getChartMonthUser','saleactual', saleactual, "saletarget", saletarget);
             var chartdata = [];
-            var getActual = function(realname){
-              for(var i = 0; i < saleactual.length; i ++){
-                if(saleactual[i].realname == realname){
+            var getActual = function (realname) {
+              for (var i = 0; i < saleactual.length; i++) {
+                if (saleactual[i].realname == realname) {
                   return saleactual[i];
                 }
               }
             }
             for (var i = 0; i < saletarget.length; i++) {
-                var actual = getActual(saletarget[i].realname);
-                if(actual){
-                  chartdata.push({
-                    key: actual.realname,
-                    value: parseInt(actual.sum * 100 / saletarget[i].sum)
-                  })
-                }
+              var actual = getActual(saletarget[i].realname);
+              if (actual) {
+                chartdata.push({
+                  key: actual.realname,
+                  value: parseInt(actual.sum * 100 / saletarget[i].sum)
+                })
+              }
             }
-            chartdata.sort((a,b)=>{
+            chartdata.sort((a, b) => {
+              return b.value - a.value;
+            })
+            jsonWrite(res, chartdata, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getChartMonthSystem: function (req, res, next) {
+    console.log('visitorDao getChartMonthSystem');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        var sqlstring = _sql.getsaletarget_all;
+        sqlstring += "group by e.system_name"
+        var year = parseInt(param.begindate.substr(0, 4));
+        var month = parseInt(param.begindate.substr(5, 2));
+        var saletarget = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring, [year, month, param.depart], function (err, result) {
+            if (!err) {
+              //console.log('saletarget',result);
+              saletarget = result;
+            }
+            callback(err);
+          });
+        });
+
+        var sqlstring2 = _sql.getsaleactual_all;
+        sqlstring2 += "group by e.system_name"
+        var saleactual = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring2, [param.begindate, param.enddate, param.depart], function (err, result) {
+            if (!err) {
+              //console.log(result);
+              saleactual = result;
+            }
+            callback(err);
+          });
+        });
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            //console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            console.log('getChartMonthUser','saleactual', saleactual, "saletarget", saletarget);
+            var chartdata = [];
+            var getActual = function (system_name) {
+              for (var i = 0; i < saleactual.length; i++) {
+                if (saleactual[i].system_name == system_name) {
+                  return saleactual[i];
+                }
+              }
+            }
+            for (var i = 0; i < saletarget.length; i++) {
+              var actual = getActual(saletarget[i].system_name);
+              if (actual) {
+                chartdata.push({
+                  key: actual.system_name,
+                  value: parseInt(actual.sum * 100 / saletarget[i].sum)
+                })
+              }
+            }
+            chartdata.sort((a, b) => {
+              return b.value - a.value;
+            })
+            jsonWrite(res, chartdata, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getChartActual: function (req, res, next) {
+    console.log('visitorDao getChartActual');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        var sqlstring = _sql.getsaletarget_all;
+        sqlstring += " and a.system_id = ";
+        sqlstring += connection.escape(param.system_id);
+        sqlstring += " group by c.realname"
+        var year = parseInt(param.begindate.substr(0, 4));
+        var month = parseInt(param.begindate.substr(5, 2));
+        var saletarget = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring, [year, month, param.depart], function (err, result) {
+            if (!err) {
+              console.log('saletarget', param.system_id, result);
+              saletarget = result;
+            }
+            callback(err);
+          });
+        });
+
+        var sqlstring2 = _sql.getsaleactual_all;
+        sqlstring2 += " and a.system_id = ";
+        sqlstring2 += connection.escape(param.system_id);
+        sqlstring2 += " group by c.realname"
+        var saleactual = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring2, [param.querydate, param.querydate, param.depart], function (err, result) {
+            if (!err) {
+              console.log('saleactual', param.system_id, result);
+              saleactual = result;
+            }
+            callback(err);
+          });
+        });
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            console.log('saleactual', saleactual, "saletarget", saletarget);
+            var chartdata = [];
+            var getActual = function (realname) {
+              for (var i = 0; i < saleactual.length; i++) {
+                if (saleactual[i].realname == realname) {
+                  return saleactual[i];
+                }
+              }
+            }
+            for (var i = 0; i < saletarget.length; i++) {
+              var actual = getActual(saletarget[i].realname);
+              if (actual) {
+                chartdata.push({
+                  key: actual.realname,
+                  value: actual.sum * 100 / saletarget[i].sum
+                })
+              }
+            }
+            chartdata.sort((a, b) => {
+              return b.value - a.value;
+            })
+            jsonWrite(res, chartdata, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
+  getChartPromotion: function (req, res, next) {
+    console.log('visitorDao getChartPromotion');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        var sqlstring = _sql.getsaletarget_pro;
+        sqlstring += " and a.system_id = ";
+        sqlstring += connection.escape(param.system_id);
+        sqlstring += " group by c.realname"
+        var year = parseInt(param.begindate.substr(0, 4));
+        var month = parseInt(param.begindate.substr(5, 2));
+        var saletarget = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring, [year, month, param.depart], function (err, result) {
+            if (!err) {
+              console.log('saletarget', param.system_id, result);
+              saletarget = result;
+            }
+            callback(err);
+          });
+        });
+
+        var sqlstring2 = _sql.getsaleactual_pro;
+        sqlstring2 += " and a.system_id = ";
+        sqlstring2 += connection.escape(param.system_id);
+        sqlstring2 += " group by c.realname"
+        var saleactual = [];
+        tasks.push(function (callback) {
+          connection.query(sqlstring2, [param.querydate, param.querydate, param.depart], function (err, result) {
+            if (!err) {
+              console.log('saleactual', param.system_id, result);
+              saleactual = result;
+            }
+            callback(err);
+          });
+        });
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            console.log('saleactual', saleactual, "saletarget", saletarget);
+            var chartdata = [];
+            var getActual = function (realname) {
+              for (var i = 0; i < saleactual.length; i++) {
+                if (saleactual[i].realname == realname) {
+                  return saleactual[i];
+                }
+              }
+            }
+            for (var i = 0; i < saletarget.length; i++) {
+              var actual = getActual(saletarget[i].realname);
+              if (actual) {
+                chartdata.push({
+                  key: actual.realname,
+                  value: actual.sum * 100 / saletarget[i].sum
+                })
+              }
+            }
+            chartdata.sort((a, b) => {
               return b.value - a.value;
             })
             jsonWrite(res, chartdata, dbcode.SUCCESS);
