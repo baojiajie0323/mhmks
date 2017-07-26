@@ -2,18 +2,18 @@ var config = {
     version: "1.2.0",
 
     // ios
-    // platform:"ios",
-    // titlebarPadding: "10px",
-    // contentTop:'74px',
-    // contentLargeTop:'131px',
-    // contentUserTop:'275px',
+    platform:"ios",
+    titlebarPadding: "10px",
+    contentTop:'74px',
+    contentLargeTop:'131px',
+    contentUserTop:'275px',
 
     //android
-    platform: "android",
-    titlebarPadding: "0px",
-    contentTop: '64px',
-    contentLargeTop: '121px',
-    contentUserTop: '265px',
+    // platform: "android",
+    // titlebarPadding: "0px",
+    // contentTop: '64px',
+    // contentLargeTop: '121px',
+    // contentUserTop: '265px',
 
     //release
     release: true,
