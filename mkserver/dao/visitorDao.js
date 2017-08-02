@@ -1221,12 +1221,17 @@ module.exports = {
         if (param.pathlist) {
           var pathlist = param.pathlist;
           pathlist = pathlist.substr(1, pathlist.length - 2);
-          sqlstring += "and path_id in (";
-          sqlstring += pathlist;
-          sqlstring += ")";
+          if (pathlist.indexOf(",") >= 0) {
+            sqlstring += "and path_id in (";
+            sqlstring += pathlist;
+            sqlstring += ")";
+          } else {
+            sqlstring += "and path_id =";
+            sqlstring += connection.escape(pathlist);
+          }
         }
         connection.query(sqlstring, [param.routedate], function (err, result) {
-          //console.log('dbresult', err, result);
+          console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
@@ -1795,7 +1800,7 @@ module.exports = {
             connection.rollback(); // 发生错误事务回滚
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
-            console.log('getChartMonthUser','saleactual', saleactual, "saletarget", saletarget);
+            console.log('getChartMonthUser', 'saleactual', saleactual, "saletarget", saletarget);
             var chartdata = [];
             var getActual = function (realname) {
               for (var i = 0; i < saleactual.length; i++) {
@@ -1879,7 +1884,7 @@ module.exports = {
             connection.rollback(); // 发生错误事务回滚
             jsonWrite(res, {}, dbcode.FAIL);
           } else {
-            console.log('getChartMonthUser','saleactual', saleactual, "saletarget", saletarget);
+            console.log('getChartMonthUser', 'saleactual', saleactual, "saletarget", saletarget);
             var chartdata = [];
             var getActual = function (system_name) {
               for (var i = 0; i < saleactual.length; i++) {
