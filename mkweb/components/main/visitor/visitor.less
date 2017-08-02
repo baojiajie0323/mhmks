@@ -143,7 +143,10 @@
         }
     }
 
-    .bigphoto{
+    
+}
+
+.bigphoto{
         position: fixed;
         width:100%;
         left: 0;
@@ -155,8 +158,46 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        transition: all 0.3s ease;
+
+        .bigphoto_left{
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            
+            font-size: 50px;
+
+            &:hover{
+                //transform: scale(1.5);
+                font-size: 80px;
+                background-color:white;
+            }
+        }
+        .bigphoto_right{
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            
+            font-size: 50px;
+
+            &:hover{
+                //transform: scale(1.5);
+                font-size: 80px;
+                background-color:white;
+            }
+        }
     }
-}
 
 .mapModal{
     position: fixed;

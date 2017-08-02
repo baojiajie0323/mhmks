@@ -11,7 +11,7 @@ class Record extends React.Component {
     super(props);
     this.state = {
       showPicture: false,
-      bigPicture: "",
+      bigPicture: [],
       showMap: false,
       user: Store.getUser(),
       visitorPlan: Store.getVisitorPlan(),
@@ -52,9 +52,6 @@ class Record extends React.Component {
     this.onClickShowPicture = this.onClickShowPicture.bind(this);
     this.onClickReSign = this.onClickReSign.bind(this);
     this.onClickDelPlan = this.onClickDelPlan.bind(this);
-    this.handlePictureCancel = this.handlePictureCancel.bind(this);
-    this.onClickPhoto = this.onClickPhoto.bind(this);
-    this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
     this.handleCloseMap = this.handleCloseMap.bind(this);
     this.onClickSignin = this.onClickSignin.bind(this);
     this.onClickSignout = this.onClickSignout.bind(this);
@@ -64,6 +61,13 @@ class Record extends React.Component {
     this.handleTableStockChange = this.handleTableStockChange.bind(this);
     this.handleTableShelfawayChange = this.handleTableShelfawayChange.bind(this);
     this.onUserChange = this.onUserChange.bind(this);
+
+    
+    this.handlePictureCancel = this.handlePictureCancel.bind(this);
+    this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
+    this.onClickPhoto = this.onClickPhoto.bind(this);
+    this.onClickPhotoLeft = this.onClickPhotoLeft.bind(this);
+    this.onClickPhotoRight = this.onClickPhotoRight.bind(this);
   }
   componentDidMount() {
     this.map = new BMap.Map("allmap");
@@ -250,18 +254,26 @@ class Record extends React.Component {
   handlePictureCancel() {
     this.setState({
       showPicure: false,
-      bigPicture: ""
+      bigPicture: []
     })
   }
 
-  onClickPhoto(src) {
+  onClickPhoto(image_type, index) {
+    var photoList = [];
+    for (var i = 0; i < this.state.visitorImage.length; i++) {
+      var imageInfo = this.state.visitorImage[i];
+      if (imageInfo.type == image_type) {
+        photoList.push(imageInfo);
+      }
+    }
     this.setState({
-      bigPicture: src
+      bigPicture: photoList,
+      bigIndex: index
     })
   }
   handleCloseBigphoto() {
     this.setState({
-      bigPicture: ""
+      bigPicture: []
     })
   }
   handleCloseMap() {
@@ -311,12 +323,33 @@ class Record extends React.Component {
     }
 
     var photoDom = [];
-    for (var i = 0; i < photoList.length; i++) {
+    for (let i = 0; i < photoList.length; i++) {
       let imageInfo = photoList[i];
       let imagepath = 'url("' + '../upload/' + imageInfo.filename + '.jpg")';
-      photoDom.push(<div style={{ backgroundImage: imagepath }} onClick={function () { context.onClickPhoto(imagepath) }} className={styles.photo}></div>);
+      photoDom.push(<div style={{ backgroundImage: imagepath }} onClick={function () { context.onClickPhoto(image_type, i) }} className={styles.photo}></div>);
     }
     return photoDom;
+  }
+
+  onClickPhotoLeft() {
+    var bigphotoSize = this.state.bigPicture.length;
+    var bigIndex = this.state.bigIndex;
+    if (bigIndex == 0) {
+      message.info("已经是第一张了");
+      return;
+    }
+    bigIndex--;
+    this.setState({bigIndex});
+  }
+  onClickPhotoRight() {
+    var bigphotoSize = this.state.bigPicture.length;
+    var bigIndex = this.state.bigIndex;
+    if (bigIndex == bigphotoSize - 1) {
+      message.info("已经是最后一张了");
+      return;
+    }
+    bigIndex++;
+    this.setState({bigIndex});
   }
 
   getBasicPanel() {
@@ -750,9 +783,15 @@ class Record extends React.Component {
             {this.state.pictype < 0 || this.state.pictype == 2 ? this.getPhotoDom(2) : null}
             {this.state.pictype < 0 || this.state.pictype == 3 ? <p className={styles.pictureTitle}>促销陈列</p> : null}
             {this.state.pictype < 0 || this.state.pictype == 4 ? this.getPhotoDom(3) : null}
-            {this.state.bigPicture == "" ? null :
-              <div style={{ backgroundImage: this.state.bigPicture }} className={styles.bigphoto}>
-                <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "20px" }} type="close-square" />
+            {this.state.bigPicture.length <= 0 ? null :
+              <div style={{ backgroundImage: `url("../upload/${this.state.bigPicture[this.state.bigIndex].filename}.jpg")`}} className={styles.bigphoto}>
+                <div onClick={this.onClickPhotoLeft} className={styles.bigphoto_left}>
+                  <Icon type="left" />
+                </div>
+                <div onClick={this.onClickPhotoRight} className={styles.bigphoto_right}>
+                  <Icon type="right" />
+                </div>
+                <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "50px" }} type="close-square" />
               </div>
             }
           </div>

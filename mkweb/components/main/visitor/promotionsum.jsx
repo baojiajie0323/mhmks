@@ -14,6 +14,7 @@ class PromotionSum extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      bigPicture: [],
       storeArea: Store.getStoreArea(),
       promotionSum: Store.getPromotionSum(),
       promotionAdjust: Store.getPromotionAdjust(),
@@ -31,6 +32,12 @@ class PromotionSum extends React.Component {
 
     this.onClickQuery = this.onClickQuery.bind(this);
     this.onTextChange = this.onTextChange.bind(this);
+
+
+    this.handleCloseBigphoto = this.handleCloseBigphoto.bind(this);
+    this.onClickPhoto = this.onClickPhoto.bind(this);
+    this.onClickPhotoLeft = this.onClickPhotoLeft.bind(this);
+    this.onClickPhotoRight = this.onClickPhotoRight.bind(this);
 
     this.noValue = " ";
     this.areaid = "";
@@ -127,7 +134,7 @@ class PromotionSum extends React.Component {
       <span style={{ width: '80px', display: 'inline-block' }}>{"海报产品(" + product.product_hb.length + ")"}</span>
       {product.product_hb.map((pro) => {
         return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
-      }) }
+      })}
     </div>
 
 
@@ -135,7 +142,7 @@ class PromotionSum extends React.Component {
       <span style={{ width: '80px', display: 'inline-block' }}>{"IP产品(" + product.product_ip.length + ")"}</span>
       {product.product_ip.map((pro) => {
         return <Tag color="rgb(98, 132, 108)">{pro || "未知产品"}</Tag>
-      }) }
+      })}
     </div>
     return [
       product_hb_dom,
@@ -332,23 +339,31 @@ class PromotionSum extends React.Component {
   }
 
   getImageDom(store_id) {
+    var context = this;
     var promotionImage = this.state.promotionImage;
-    var imageDom = [];
-    for (var i = 0; i < promotionImage.length; i++) {
+    var imageList = [];
+    for (let i = 0; i < promotionImage.length; i++) {
       if (promotionImage[i].store_id == store_id) {
         var productInfo = this.getProduct(store_id, promotionImage[i].product_id);
         if (productInfo) {
-          let imagepath = 'url("' + '../upload/' + promotionImage[i].filename + '.jpg")';
-          imageDom.push(<div style={{ backgroundImage: imagepath }} className={styles.photocontent}>
-            <div title={productInfo.product_name}>{productInfo.product_name}</div>
-          </div>)
+          imageList.push(promotionImage[i]);
         }
       }
     }
+    var imageDom = imageList.map(function (imageInfo, index) {
+      let imagepath = 'url("' + '../upload/' + imageInfo.filename + '.jpg")';
+      return (
+        <div onClick={function () { context.onClickPhoto(store_id, index) }}
+          style={{ backgroundImage: imagepath }}
+          className={styles.photocontent} >
+          <div title={productInfo.product_name}>{productInfo.product_name}</div>
+        </div>
+      )
+    });
 
     return <div className={styles.photocontainer}>
       {imageDom}
-    </div>
+    </div >
   }
 
   onClickText(text, record, cate) {
@@ -374,7 +389,44 @@ class PromotionSum extends React.Component {
   handleCancel() {
     this.setState({ visible: false })
   }
-
+  handleCloseBigphoto() {
+    this.setState({
+      bigPicture: []
+    })
+  }
+  onClickPhoto(store_id, index) {
+    var promotionImage = this.state.promotionImage;
+    var imageDom = [];
+    for (let i = 0; i < promotionImage.length; i++) {
+      if (promotionImage[i].store_id == store_id) {
+        imageDom.push(promotionImage[i]);
+      }
+    }
+    this.setState({
+      bigPicture: imageDom,
+      bigIndex: index
+    })
+  }
+  onClickPhotoLeft() {
+    var bigphotoSize = this.state.bigPicture.length;
+    var bigIndex = this.state.bigIndex;
+    if (bigIndex == 0) {
+      message.info("已经是第一张了");
+      return;
+    }
+    bigIndex--;
+    this.setState({ bigIndex });
+  }
+  onClickPhotoRight() {
+    var bigphotoSize = this.state.bigPicture.length;
+    var bigIndex = this.state.bigIndex;
+    if (bigIndex == bigphotoSize - 1) {
+      message.info("已经是最后一张了");
+      return;
+    }
+    bigIndex++;
+    this.setState({ bigIndex });
+  }
   getTableColumn() {
     var context = this;
     return [{
@@ -384,107 +436,107 @@ class PromotionSum extends React.Component {
       width: 80,
       fixed: 'left'
     }, {
-        title: <p style={{ textAlign: 'center' }}>门店名称</p>,
-        dataIndex: 'store_name',
-        key: 'store_name',
-        width: 150,
-      }, {
-        title: <p style={{ textAlign: 'center' }}>海报产品</p>,
-        dataIndex: 'hb_count',
-        key: 'hb_count',
-        width: 50,
-      }, {
-        title: <p style={{ textAlign: 'center' }}>IP产品</p>,
-        dataIndex: 'ip_count',
-        key: 'ip_count',
-        width: 50
-      }, {
-        title: <p style={{ textAlign: 'center' }}>照片</p>,
-        dataIndex: 'photo',
-        key: 'photo',
-        width: 600,
-        render: function (text, record, index) {
-          if (text) {
-            return text;
-          }
-          return context.getImageDom(record.Store_id);
+      title: <p style={{ textAlign: 'center' }}>门店名称</p>,
+      dataIndex: 'store_name',
+      key: 'store_name',
+      width: 150,
+    }, {
+      title: <p style={{ textAlign: 'center' }}>海报产品</p>,
+      dataIndex: 'hb_count',
+      key: 'hb_count',
+      width: 50,
+    }, {
+      title: <p style={{ textAlign: 'center' }}>IP产品</p>,
+      dataIndex: 'ip_count',
+      key: 'ip_count',
+      width: 50
+    }, {
+      title: <p style={{ textAlign: 'center' }}>照片</p>,
+      dataIndex: 'photo',
+      key: 'photo',
+      width: 600,
+      render: function (text, record, index) {
+        if (text) {
+          return text;
         }
-      }, {
-        title: <p style={{ textAlign: 'center' }}>海报陈列</p>,
-        dataIndex: 'hb_image',
-        key: 'hb_image',
-        width: 50
-      }, {
-        title: <p style={{ textAlign: 'center' }}>IP陈列</p>,
-        dataIndex: 'ip_image',
-        key: 'ip_image',
-        width: 50
-      }, {
-        title: <p style={{ textAlign: 'center' }}>海报调整</p>,
-        dataIndex: 'hb_adjust',
-        key: 'hb_adjust',
-        width: 50,
-        render: function (text, record) {
-          if (!text) {
-            text = context.noValue;
-          }
-          return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-            onClick={function () { context.onClickText(text, record, 'hb_adjust') } } >{text}</p>
+        return context.getImageDom(record.Store_id);
+      }
+    }, {
+      title: <p style={{ textAlign: 'center' }}>海报陈列</p>,
+      dataIndex: 'hb_image',
+      key: 'hb_image',
+      width: 50
+    }, {
+      title: <p style={{ textAlign: 'center' }}>IP陈列</p>,
+      dataIndex: 'ip_image',
+      key: 'ip_image',
+      width: 50
+    }, {
+      title: <p style={{ textAlign: 'center' }}>海报调整</p>,
+      dataIndex: 'hb_adjust',
+      key: 'hb_adjust',
+      width: 50,
+      render: function (text, record) {
+        if (!text) {
+          text = context.noValue;
         }
-      }, {
-        title: <p style={{ textAlign: 'center' }}>IP调整</p>,
-        dataIndex: 'ip_adjust',
-        key: 'ip_adjust',
-        width: 50,
-        render: function (text, record) {
-          if (!text) {
-            text = context.noValue;
-          }
-          return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
-            onClick={function () { context.onClickText(text, record, 'ip_adjust') } } >{text}</p>
+        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          onClick={function () { context.onClickText(text, record, 'hb_adjust') }} >{text}</p>
+      }
+    }, {
+      title: <p style={{ textAlign: 'center' }}>IP调整</p>,
+      dataIndex: 'ip_adjust',
+      key: 'ip_adjust',
+      width: 50,
+      render: function (text, record) {
+        if (!text) {
+          text = context.noValue;
         }
-      }, {
-        title: <p style={{ textAlign: 'center' }}>海报陈列率</p>,
-        key: 'hb_percent',
-        width: 60,
-        render: function (text, record) {
-          var hbcount = record.hb_adjust;
-          if (!hbcount) {
-            hbcount = record.hb_image;
-          }
-          return percentNum(hbcount, record.hb_count);
+        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+          onClick={function () { context.onClickText(text, record, 'ip_adjust') }} >{text}</p>
+      }
+    }, {
+      title: <p style={{ textAlign: 'center' }}>海报陈列率</p>,
+      key: 'hb_percent',
+      width: 60,
+      render: function (text, record) {
+        var hbcount = record.hb_adjust;
+        if (!hbcount) {
+          hbcount = record.hb_image;
         }
-      }, {
-        title: <p style={{ textAlign: 'center' }}>IP陈列率</p>,
-        key: 'ip_percent',
-        width: 60,
-        render: function (text, record) {
-          var ipcount = record.ip_adjust;
-          if (!ipcount) {
-            ipcount = record.ip_image;
-          }
-          return percentNum(ipcount, record.ip_count);
+        return percentNum(hbcount, record.hb_count);
+      }
+    }, {
+      title: <p style={{ textAlign: 'center' }}>IP陈列率</p>,
+      key: 'ip_percent',
+      width: 60,
+      render: function (text, record) {
+        var ipcount = record.ip_adjust;
+        if (!ipcount) {
+          ipcount = record.ip_image;
         }
-      }, {
-        title: <p style={{ textAlign: 'center' }}>合计陈列率</p>,
-        key: 'all_percent',
-        width: 60,
-        render: function (text, record) {
-          var ipcount = record.ip_adjust;
-          if (!ipcount) {
-            ipcount = record.ip_image;
-          }
-          var hbcount = record.hb_adjust;
-          if (!hbcount) {
-            hbcount = record.hb_image;
-          }
-          return percentNum(parseInt(ipcount) + parseInt(hbcount), parseInt(record.ip_count) + parseInt(record.hb_count));
+        return percentNum(ipcount, record.ip_count);
+      }
+    }, {
+      title: <p style={{ textAlign: 'center' }}>合计陈列率</p>,
+      key: 'all_percent',
+      width: 60,
+      render: function (text, record) {
+        var ipcount = record.ip_adjust;
+        if (!ipcount) {
+          ipcount = record.ip_image;
         }
-      }];
+        var hbcount = record.hb_adjust;
+        if (!hbcount) {
+          hbcount = record.hb_image;
+        }
+        return percentNum(parseInt(ipcount) + parseInt(hbcount), parseInt(record.ip_count) + parseInt(record.hb_count));
+      }
+    }];
   }
   getTableData() {
     var context = this;
-    
+
     var promotionSum = this.state.promotionSum;
     var promotionSum_data = [];
     var isExist = function (ps) {
@@ -550,24 +602,35 @@ class PromotionSum extends React.Component {
         <p className={styles.visitortitle}>促销陈列统计</p>
         <div className={styles.queryContainer}>
           <Select onChange={this.onAreaChange} placeholder="请选择系统区域" style={{ width: 140, marginRight: '10px' }}>
-            {this.getAreaOption() }
+            {this.getAreaOption()}
           </Select>
           <Input ref="schedule" onChange={this.onTextChange} style={{ width: '140px', marginRight: '20px' }} prefix={<Icon type="calendar" style={{ fontSize: 13 }} />} placeholder="请输入档期" />
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
         </div>
         <div className={styles.promotionresult}>
-          {this.getProductDom() }
+          {this.getProductDom()}
         </div>
         <div className={styles.promotiontable}>
           <div className={styles.signList}>
             <Table size="small" pagination={false} scroll={{ y: scrolly, x: 1350 }}
               rowClassName={this.rowClassName}
-              columns={this.getTableColumn() } dataSource={this.getTableData() } />
+              columns={this.getTableColumn()} dataSource={this.getTableData()} />
           </div>
         </div>
+        {this.state.bigPicture.length <= 0 ? null :
+          <div style={{ backgroundImage: `url("../upload/${this.state.bigPicture[this.state.bigIndex].filename}.jpg")` }} className={styles.bigphoto}>
+            <div onClick={this.onClickPhotoLeft} className={styles.bigphoto_left}>
+              <Icon type="left" />
+            </div>
+            <div onClick={this.onClickPhotoRight} className={styles.bigphoto_right}>
+              <Icon type="right" />
+            </div>
+            <Icon onClick={this.handleCloseBigphoto} style={{ position: 'absolute', right: '5px', top: '5px', fontSize: "50px" }} type="close-square" />
+          </div>
+        }
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}
           onOk={this.handleOk} onCancel={this.handleCancel}
-          >
+        >
           <div className={styles.formcontent}>
             <span className={styles.formtitle}>{this.state.modalkey}</span>
             <div className={styles.form}>

@@ -542,7 +542,7 @@ module.exports = {
           tasks.push(function (callback) {
             var sqlstring = _sql.submitstock;
             var plandate = param.year + '-' + param.month + '-' + param.day;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate, parseInt(productInfo.count), parseInt(productInfo.onway || 0)],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, plandate, parseInt(productInfo.count || 0), parseInt(productInfo.onway || 0)],
               function (err, result) {
                 callback(err);
               });
