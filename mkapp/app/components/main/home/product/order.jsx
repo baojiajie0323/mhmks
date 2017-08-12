@@ -189,15 +189,15 @@ class Order extends React.Component {
   }
 
   getsaleCount(product_id, serial_no) {
-    console.log(product_id,serial_no);
+    console.log(product_id, serial_no);
     var promotionInfo = this.getpromotionInfo(product_id);
     if (promotionInfo) {
-      console.log("promotion",promotionInfo.Qty1);
+      console.log("promotion", promotionInfo.Qty1);
       return promotionInfo.Qty1;
     } else {
       var saleActualInfo = this.getsaleActualInfo(serial_no);
       if (saleActualInfo) {
-        console.log("saleActualInfo",saleActualInfo.sum);
+        console.log("saleActualInfo", saleActualInfo.sum);
         return saleActualInfo.sum;
       }
     }
@@ -216,8 +216,11 @@ class Order extends React.Component {
       var stockinfo = this.state.preSaveProduct[i];
       var safeInfo = this.getsafeInfo(stockinfo.product_id);
       var promotionInfo = this.getpromotionInfo(stockinfo.product_id);
+      if (!promotionInfo) {
+        continue;
+      }
       if (safeInfo) {
-        var saleCount = this.getsaleCount(stockinfo.product_id,safeInfo.serial_no);
+        var saleCount = this.getsaleCount(stockinfo.product_id, safeInfo.serial_no);
         var curstock = stockinfo.count + stockinfo.onway;
         if (curstock < safeInfo.amt) {
           var orderCount = 0;
@@ -235,13 +238,68 @@ class Order extends React.Component {
             backgroundColor: promotionInfo ? 'rgb(222, 80, 25)' : '#0DCC6C',
             margin: '0 3px 0 0',
             padding: '1px 3px'
-          }}>{promotionInfo ? "促" : "正"}</span>{safeInfo.product_name}</span>} extra={safeInfo.serial_no} style={{ width: "100%" }}>
+          }}>{promotionInfo ? "促" : "正"}</span>{safeInfo.product_name}</span>} extra={`货号：${safeInfo.serial_no}`} style={{ width: "100%" }}>
             <div style={{ justifyContent: 'space-between' }} className={styles.ordercontent}>
               <p>{"库存：" + stockinfo.count}</p>
               <div style={{ backgroundColor: '#F3F3F3' }} className={styles.line}></div>
               <p>{"在途：" + stockinfo.onway}</p>
               <div style={{ backgroundColor: '#F3F3F3' }} className={styles.line}></div>
-              <p>{"销售量：" + saleCount}</p>
+              <p>{promotionInfo ? "预估促销量：" : "月实销量：" + saleCount}</p>
+            </div>
+            <div className={styles.orderline}></div>
+            <div className={styles.ordercontent}>
+              <p>单位：PK</p>
+              <div className={styles.line}></div>
+              <p>{"箱规：" + safeInfo.product_box}</p>
+              <div className={styles.line}></div>
+              <p style={{
+                flexGrow: 1,
+                textAlign: 'center'
+              }}>建议订货量：<span style={{
+                color: '#0e77ca',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                margin: '0 8px'
+              }}>{orderCount}</span></p>
+            </div>
+          </Card>)
+          orderDom.push(<div style={{ height: '15px' }}></div>)
+        }
+      }
+    }
+    for (var i = 0; i < this.state.preSaveProduct.length; i++) {
+      var stockinfo = this.state.preSaveProduct[i];
+      var safeInfo = this.getsafeInfo(stockinfo.product_id);
+      var promotionInfo = this.getpromotionInfo(stockinfo.product_id);
+      if (promotionInfo) {
+        continue;
+      }
+      if (safeInfo) {
+        var saleCount = this.getsaleCount(stockinfo.product_id, safeInfo.serial_no);
+        var curstock = stockinfo.count + stockinfo.onway;
+        if (curstock < safeInfo.amt) {
+          var orderCount = 0;
+          var diff = curstock - safeInfo.amt;
+          if (parseInt(safeInfo.product_box) <= 0) {
+            message.info(safeInfo.product_name + "箱规信息异常");
+            continue;
+          }
+          while (diff < 0) {
+            diff += parseInt(safeInfo.product_box);
+            orderCount += parseInt(safeInfo.product_box);
+          }
+          orderDom.push(<Card title={<span><span style={{
+            color: '#ecf6fd',
+            backgroundColor: promotionInfo ? 'rgb(222, 80, 25)' : '#0DCC6C',
+            margin: '0 3px 0 0',
+            padding: '1px 3px'
+          }}>{promotionInfo ? "促" : "正"}</span>{safeInfo.product_name}</span>} extra={`货号：${safeInfo.serial_no}`} style={{ width: "100%" }}>
+            <div style={{ justifyContent: 'space-between' }} className={styles.ordercontent}>
+              <p>{"库存：" + stockinfo.count}</p>
+              <div style={{ backgroundColor: '#F3F3F3' }} className={styles.line}></div>
+              <p>{"在途：" + stockinfo.onway}</p>
+              <div style={{ backgroundColor: '#F3F3F3' }} className={styles.line}></div>
+              <p>{promotionInfo ? "预估促销量：" : "月实销量：" + saleCount}</p>
             </div>
             <div className={styles.orderline}></div>
             <div className={styles.ordercontent}>

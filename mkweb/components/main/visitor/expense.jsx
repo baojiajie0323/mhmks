@@ -47,7 +47,9 @@ class Expense extends React.Component {
       { type: 'ccdsnjt', name: '出差地交通费', enableChange: true },
       { type: 'ctjt', name: '长途交通费', enableChange: true },
       { type: 'ccbt', name: '出差补贴', enableChange: true },
-      { type: 'zsbt', name: '住宿补贴', enableChange: true },
+      { type: 'zsbt', name: '住宿费', enableChange: true },
+      { type: 'txf', name: '通讯费', enableChange: true },
+      { type: 'kdf', name: '快递费', enableChange: true },
     ]
     this._routeNature = [{
       nature: "1",
@@ -339,6 +341,10 @@ class Expense extends React.Component {
           } else if (city_lev == 3) {
             return subsidyInfo.ccbt3;
           }
+        } else if (expenseType == "txf") {
+          return subsidyInfo.txf;
+        } else if (expenseType == "kdf") {
+          return subsidyInfo.kdf;
         }
       }
     }
@@ -419,7 +425,11 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          obj.props.rowSpan = 0;
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+            obj.props.rowSpan = 1;
+          } else {
+            obj.props.rowSpan = 0;
+          }
         }
         return obj;
       }
@@ -436,7 +446,11 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          obj.props.rowSpan = 0;
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+            obj.props.rowSpan = 1;
+          } else {
+            obj.props.rowSpan = 0;
+          }
         }
         return obj;
       }
@@ -453,7 +467,11 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          obj.props.rowSpan = 0;
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+            obj.props.rowSpan = 1;
+          } else {
+            obj.props.rowSpan = 0;
+          }
         }
         return obj;
       }
@@ -470,7 +488,11 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          obj.props.rowSpan = 0;
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+            obj.props.rowSpan = 1;
+          } else {
+            obj.props.rowSpan = 0;
+          }
         }
         return obj;
       }
@@ -494,7 +516,11 @@ class Expense extends React.Component {
         if (record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          obj.props.rowSpan = 0;
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+            obj.props.rowSpan = 1;
+          } else {
+            obj.props.rowSpan = 0;
+          }
         }
         return obj;
       }
@@ -542,7 +568,7 @@ class Expense extends React.Component {
         if (!text) {
           text = "调整";
         }
-        return <p style={{ whiteSpace: 'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+        return <p style={{ whiteSpace: 'pre-wrap', color: "rgb(16,142,233)", cursor: 'pointer' }}
           onClick={function () { context.onClickText(text, record) }} >{text}</p>
       }
     }];
@@ -556,6 +582,10 @@ class Expense extends React.Component {
     visitorPlan.sort((a, b) => {
       return new Date(a.plan_date).getTime() - new Date(b.plan_date).getTime();
     })
+    var userInfo = this.getUserInfo(this.userid);
+    if (!userInfo) {
+      return;
+    }
     var btsum = 0;
     var expensesum = 0;
     var lastPlandate = "";
@@ -563,12 +593,7 @@ class Expense extends React.Component {
       var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
       if (plandate != lastPlandate) {
         var routeInfo = this.getRouteInfo(plandate);
-        var userInfo = this.getUserInfo(this.userid);
-        if (!userInfo) {
-          continue;
-        }
         //console.log("tabledata", plandate, routeInfo);
-
         var plannature = "无计划";
         var realnature = "未提交";
         var plannatureid = 1;
@@ -583,7 +608,7 @@ class Expense extends React.Component {
           console.log("render realnature", realnature);
         }
 
-        for (var j = 0; j < this.expenseType.length; j++) {
+        for (var j = 0; j < this.expenseType.length - 2; j++) {
           var expenseType = this.expenseType[j].type;
           var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, plannatureid, expenseType, plandate);
           btsum += parseFloat(btbz);
@@ -622,6 +647,72 @@ class Expense extends React.Component {
         lastPlandate = plandate;
       }
     }
+
+    if (visitorPlan.length > 0) {
+      var btbz = this.getSubsidy(userInfo.role, 0, 0, 'txf', '');
+      btsum += parseFloat(btbz);
+      var adjustmoney = "";
+      var expenseInfo = this.getExpense(this.state.monthDate.startOf('month').format("YYYY-MM-DD"), 'txf');
+      if (expenseInfo) {
+        //report = expenseInfo.money;
+        adjustmoney = expenseInfo.adjustmoney;
+      }
+      expensesum += adjustmoney ? parseFloat(adjustmoney) : parseFloat(btbz);
+      planData.push({
+        plandate: this.state.monthDate.format("YYYY-MM-DD"),
+        plannature: ' ',
+        realnature: ' ',
+        realname: visitorPlan[visitorPlan.length - 1].realname,
+        btnr: '通讯费',
+        btbz,
+        report: btbz,
+        fpcount: ' ',
+        fpname: ' ',
+        userid: this.userid,
+        expensetype: "txf",
+        adjustmoney,
+      })
+
+      btbz = this.getSubsidy(userInfo.role, 0, 0, 'kdf', '');
+      btsum += parseFloat(btbz);
+      var adjustmoney = "";
+      var expenseInfo = this.getExpense(this.state.monthDate.startOf('month').format("YYYY-MM-DD"), 'kdf');
+      if (expenseInfo) {
+        //report = expenseInfo.money;
+        adjustmoney = expenseInfo.adjustmoney;
+      }
+      expensesum += adjustmoney ? parseFloat(adjustmoney) : parseFloat(btbz);
+      planData.push({
+        plandate: this.state.monthDate.format("YYYY-MM-DD"),
+        plannature: ' ',
+        realnature: ' ',
+        realname: visitorPlan[visitorPlan.length - 1].realname,
+        btnr: '快递费',
+        btbz,
+        report: btbz,
+        fpcount: ' ',
+        fpname: ' ',
+        userid: this.userid,
+        expensetype: "kdf",
+        adjustmoney,
+      })
+      console.log("planData", planData);
+    }
+
+    // planData.push({
+    //   plandate,
+    //   plannature,
+    //   realnature,
+    //   realname: visitorPlan[i].realname,
+    //   btnr: this.expenseType[j].name,
+    //   btbz,
+    //   report,
+    //   fpcount,
+    //   fpname,
+    //   userid: this.userid,
+    //   expensetype: expenseType,
+    //   adjustmoney,
+    // })
     if (planData.length > 0) {
       planData.push({
         btbz: "补贴：" + btsum,

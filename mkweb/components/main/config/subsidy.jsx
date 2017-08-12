@@ -28,7 +28,8 @@ class Subsidy extends React.Component {
       ccbt1: { name: '出差补贴 一线城市' },
       ccbt2: { name: '出差补贴 二线城市' },
       ccbt3: { name: '出差补贴 三线城市' },
-      txf: { name: '通讯费补贴' }
+      txf: { name: '通讯费补贴' },
+      kdf: { name: '快递费补贴' }
     }
     this.handleOk = this.handleOk.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -293,7 +294,7 @@ class Subsidy extends React.Component {
           }
         ]
       }, {
-        title: <p>通讯费 (元/日)</p>,
+        title: <p>通讯费 (元/月)</p>,
         dataIndex: 'txf',
         key: 'txf',
         width: 60,
@@ -303,6 +304,18 @@ class Subsidy extends React.Component {
           }
           return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
             onClick={function () { context.onClickText(text, record, 'txf') } } >{text}</p>
+        }
+      }, {
+        title: <p>快递费 (元/月)</p>,
+        dataIndex: 'kdf',
+        key: 'kdf',
+        width: 60,
+        render: function (text, record) {
+          if (!text) {
+            text = context.noValue;
+          }
+          return <p style={{ whiteSpace:'pre-wrap', textAlign: "center", color: "rgb(16,142,233)", cursor: 'pointer' }}
+            onClick={function () { context.onClickText(text, record, 'kdf') } } >{text}</p>
         }
       }];
   }
@@ -317,7 +330,7 @@ class Subsidy extends React.Component {
       <div className={styles.configcontent}>
         <p className={styles.configtitle}>补贴报销标准</p>
         <div className={styles.configtable}>
-          <Table size="small" loading={this.state.loading} bordered scroll={{ x: 1285 }}
+          <Table size="small" loading={this.state.loading} bordered scroll={{ x: 1345 }}
             columns={this.getTableColumn()} dataSource={this.getTableData()} />
         </div>
         <Modal width={350} title={this.state.modaltitle} visible={this.state.visible}

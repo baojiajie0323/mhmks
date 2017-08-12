@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './store.less';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import { Spin, Modal, Icon,message } from 'antd';
+import { Spin, Modal, Icon, message } from 'antd';
 import { List, ListItem } from 'material-ui/List';
 import Toggle from 'material-ui/Toggle';
 import LeftIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -283,6 +283,12 @@ class Parttime extends React.Component {
         />
         <div style={{ top: config.contentTop }} className={styles.content}>
           <Subheader>{this.state.storeInfo.Store_name}</Subheader>
+          <ListItem
+            disableTouchRipple={true}
+            primaryText={this.state.storeInfo.Contacts_name}
+            secondaryText={this.state.storeInfo.Tel}
+            leftIcon={<CommunicationCall color={cyan600} />}
+          />
           <Divider />
           <Spin size="large" tip="正在加载，请稍后" spinning={this.state.loading}>
             {hasParttime ? (

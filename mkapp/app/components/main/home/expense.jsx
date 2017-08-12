@@ -452,7 +452,7 @@ class Expense extends React.Component {
       <div className={styles.container}>
         <AppBar
           style={{ paddingTop: config.titlebarPadding }}
-          title='费用报销'
+          title='每日费用报销'
           onLeftIconButtonTouchTap={this.onClickBack}
           iconElementLeft={<IconButton><LeftIcon /></IconButton>}
           iconElementRight={<FlatButton onTouchTap={this.onClickSave} label="提交" />}
@@ -462,7 +462,7 @@ class Expense extends React.Component {
           <RadioButtonGroup onChange={this.onNatureChange} style={{ padding: '0 15px' }} name="shipSpeed" valueSelected={this.getNature()}>
             <RadioButton
               value={1}
-              label="室内拜访"
+              label="市内拜访"
               style={{ marginBottom: "16px" }}
             />
             <RadioButton
@@ -509,7 +509,7 @@ class Expense extends React.Component {
               </div>
             </Paper>,
             <Paper style={expenseStyle.paperStyle} zDepth={1}>
-              <p style={expenseStyle.titleStyle}>出差地交通费</p>
+              <p style={expenseStyle.titleStyle}>出差地交通费（标准内凭发票实报实销）</p>
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>标准</p>
@@ -540,7 +540,7 @@ class Expense extends React.Component {
               </div>
             </Paper>,
             <Paper style={expenseStyle.paperStyle} zDepth={1}>
-              <p style={expenseStyle.titleStyle}>长途交通费</p>
+              <p style={expenseStyle.titleStyle}>长途交通费（标准内凭发票实报实销）</p>
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>标准</p>
@@ -573,7 +573,7 @@ class Expense extends React.Component {
           ] : null}
           {this.getNature() == 2 ?
             <Paper style={expenseStyle.paperStyle} zDepth={1}>
-              <p style={expenseStyle.titleStyle}>住宿补贴</p>
+              <p style={expenseStyle.titleStyle}>住宿费（标准内凭发票实报实销）</p>
               <div className={styles.expenseContent}>
                 <div className={styles.expenseCell}>
                   <p>标准</p>

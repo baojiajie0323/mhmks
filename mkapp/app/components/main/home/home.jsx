@@ -89,6 +89,7 @@ class Home extends React.Component {
       loading: true,
       open: false,
       expense: Store.getExpense(),
+      routeCost: [],
     };
     this.onDateChange = this.onDateChange.bind(this);
     this.onClickPrev = this.onClickPrev.bind(this);
@@ -102,10 +103,12 @@ class Home extends React.Component {
     this.onClickDoPlan = this.onClickDoPlan.bind(this);
     this.onClickExpense = this.onClickExpense.bind(this);
     this.onExpenseChange = this.onExpenseChange.bind(this);
+    this.onRoutecostChange = this.onRoutecostChange.bind(this);
   }
   componentDidMount() {
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     Store.addChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
+    Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
     var context = this;
     this.getcurPlan();
     this.getExpense();
@@ -137,13 +140,35 @@ class Home extends React.Component {
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
+    Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
+  }
+  getPlanPath() {
+    for (var i = 0; i < this.state.plan.length; i++) {
+      var planInfo = this.state.plan[i];
+      if (planInfo.plan_type == 1) {
+        return planInfo.path_id;
+      }
+    }
   }
   onPlanChange() {
+    var context = this;
     this.setState({
       plan: Store.getPlan(),
       loading: false,
       open: false,
+    }, function () {
+      var planpath = context.getPlanPath();
+      if (planpath) {
+        var routeData = {
+          routedate: curDate.Format("yyyy-MM"),
+          pathlist: '[' + planpath + ']'
+        }
+        Action.getRouteCost(routeData);
+      }
     })
+  }
+  onRoutecostChange(routeCost) {
+    this.setState({ routeCost })
   }
   onDateChange(e, curDate) {
     var context = this;
@@ -257,6 +282,20 @@ class Home extends React.Component {
     }
     return storeNameList.join(' ， ');
   }
+  getNatureName(path_id) {
+    var nature = 1;
+    for (var i = 0; i < this.state.routeCost.length; i++) {
+      if (this.state.routeCost[i].routemark == 1 &&
+        path_id == this.state.routeCost[i]) {
+        nature = parseInt(this.state.routeCost[i].nature);
+        break;
+      }
+    }
+    if (nature >= 1 && nature <= 3) {
+      return ["(市内拜访)","(出差住宿)","(出差不住宿)"][nature - 1];
+    }
+    return "";
+  }
   getPlanState(pl) {
     if (pl.plan_type == 1) {
       var allFinish = true;
@@ -314,10 +353,11 @@ class Home extends React.Component {
       var linepath = false;
       this.state.plan.forEach((pl) => {
         var pathName = '';
+        var natureName = '';
         var storeName = pl.Store_name;
-        var planstate = this.getPlanState(pl);
         if (pl.plan_type == 1) {
           if (!linepath) {
+            natureName = context.getNatureName(pl.path_id);
             pathName = ' ' + pl.Path_Name;
             linepath = true;
             storeName = context.getStoreListName(pl.path_id);
@@ -326,7 +366,7 @@ class Home extends React.Component {
           }
         }
         planDom.push(<ListItem
-          primaryText={pathTitle[pl.plan_type - 1] + pathName}
+          primaryText={pathTitle[pl.plan_type - 1] + pathName + natureName}
           secondaryText={storeName}
           secondaryTextLines={2}
           disableTouchRipple={true}
