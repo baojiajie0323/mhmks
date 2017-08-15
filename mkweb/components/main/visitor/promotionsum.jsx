@@ -344,7 +344,7 @@ class PromotionSum extends React.Component {
     var imageList = [];
     for (let i = 0; i < promotionImage.length; i++) {
       if (promotionImage[i].store_id == store_id) {
-        var productInfo = this.getProduct(store_id, promotionImage[i].product_id);
+        let productInfo = this.getProduct(store_id, promotionImage[i].product_id);
         if (productInfo) {
           imageList.push(promotionImage[i]);
         }
@@ -356,7 +356,7 @@ class PromotionSum extends React.Component {
         <div onClick={function () { context.onClickPhoto(store_id, index) }}
           style={{ backgroundImage: imagepath }}
           className={styles.photocontent} >
-          <div title={productInfo.product_name}>{productInfo.product_name}</div>
+          <div title={imageInfo.product_name}>{imageInfo.product_name}</div>
         </div>
       )
     });
