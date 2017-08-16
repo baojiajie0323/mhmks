@@ -345,9 +345,9 @@ class PromotionSum extends React.Component {
     for (let i = 0; i < promotionImage.length; i++) {
       if (promotionImage[i].store_id == store_id) {
         let productInfo = this.getProduct(store_id, promotionImage[i].product_id);
-        if (productInfo) {
+        //if (productInfo) {
           imageList.push(promotionImage[i]);
-        }
+        //}
       }
     }
     var imageDom = imageList.map(function (imageInfo, index) {
@@ -402,6 +402,7 @@ class PromotionSum extends React.Component {
         imageDom.push(promotionImage[i]);
       }
     }
+    
     this.setState({
       bigPicture: imageDom,
       bigIndex: index
