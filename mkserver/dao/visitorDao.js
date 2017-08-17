@@ -1558,7 +1558,7 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.getsafestock;
-        connection.query(sqlstring, [param.date, param.store_id], function (err, result) {
+        connection.query(sqlstring, [param.store_id, param.store_id], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
             jsonWrite(res, {}, dbcode.FAIL);
