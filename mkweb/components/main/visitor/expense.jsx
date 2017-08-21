@@ -740,6 +740,8 @@ class Expense extends React.Component {
             {this.getUserOption()}
           </Select>
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
+          <div style={{flexGrow:1}}></div>
+          <Button icon="save" onClick={this.onClickQuery} type="primary">保存ERP数据</Button>
         </div>
         <div className={styles.resultContent}>
           <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly, x: 1000 }}

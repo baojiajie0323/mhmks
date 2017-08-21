@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './header/header';
-import Homepage from './homepage/homepage';
+//import Homepage from './homepage/homepage';
 import Info from './info/info';
 import Visitor from './visitor/visitor';
 import Config from './config/config';
@@ -27,9 +27,10 @@ class Main extends React.Component {
     })
   }
   getContent(){
-    if(this.state.curview == 'homepage'){
-      return <Homepage />
-    }else if(this.state.curview == 'info'){
+    // if(this.state.curview == 'homepage'){
+    //   return <Homepage />
+    // }else 
+    if(this.state.curview == 'info'){
       return <Info />
     }else if(this.state.curview == 'visitor'){
       return <Visitor />
@@ -38,7 +39,7 @@ class Main extends React.Component {
     }else if(this.state.curview == 'schdule'){
       return <Schdule />
     }
-    return <Homepage />
+    return <Visitor />
   }
   render() {
     return (

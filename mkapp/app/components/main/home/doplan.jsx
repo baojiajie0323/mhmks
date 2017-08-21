@@ -54,7 +54,7 @@ class DoPlan extends React.Component {
     })
     this.getStorelist();
   }
-  handleSign(store, signType) {
+  handleSign(store, signType, bResign) {
     var context = this;
     confirm({
       title: '确定要' + (signType == 'signin' ? '签到' : '签退') + '吗？',
@@ -63,16 +63,30 @@ class DoPlan extends React.Component {
           loading: true
         })
         if (config.debug) {
-          Action.sign({
-            userid: localStorage.username,
-            year: store.year,
-            month: store.month,
-            day: store.day,
-            store_id: store.store_id,
-            sign_type: signType,
-            lat: 1,
-            lon: 2
-          });
+          if (bResign) {
+            Action.sign2({
+              userid: localStorage.username,
+              year: store.year,
+              month: store.month,
+              day: store.day,
+              store_id: store.store_id,
+              sign_type: signType,
+              lat: 1,
+              lon: 2
+            });
+          } else {
+            Action.sign({
+              userid: localStorage.username,
+              year: store.year,
+              month: store.month,
+              day: store.day,
+              store_id: store.store_id,
+              sign_type: signType,
+              lat: 1,
+              lon: 2
+            });
+          }
+
           return;
         }
 
@@ -81,16 +95,30 @@ class DoPlan extends React.Component {
           baidu_location.getCurrentPosition(function (data) {
             if (data.locType == 61 || data.locType == 161) {
               //定位成功
-              Action.sign({
-                userid: localStorage.username,
-                year: store.year,
-                month: store.month,
-                day: store.day,
-                store_id: store.store_id,
-                sign_type: signType,
-                lat: data.latitude,
-                lon: data.lontitude
-              });
+              if (bResign) {
+                Action.sign2({
+                  userid: localStorage.username,
+                  year: store.year,
+                  month: store.month,
+                  day: store.day,
+                  store_id: store.store_id,
+                  sign_type: signType,
+                  lat: data.latitude,
+                  lon: data.lontitude
+                });
+              } else {
+                Action.sign({
+                  userid: localStorage.username,
+                  year: store.year,
+                  month: store.month,
+                  day: store.day,
+                  store_id: store.store_id,
+                  sign_type: signType,
+                  lat: data.latitude,
+                  lon: data.lontitude
+                });
+              }
+
             } else {
               message.error(data.describe);
               context.setState({
@@ -113,16 +141,30 @@ class DoPlan extends React.Component {
 
               var translateCallback = function (data) {
                 if (data.status === 0) {
-                  Action.sign({
-                    userid: localStorage.username,
-                    year: store.year,
-                    month: store.month,
-                    day: store.day,
-                    store_id: store.store_id,
-                    sign_type: signType,
-                    lat: data.points[0].lat,
-                    lon: data.points[0].lng
-                  });
+                  if (bResign) {
+                    Action.sign2({
+                      userid: localStorage.username,
+                      year: store.year,
+                      month: store.month,
+                      day: store.day,
+                      store_id: store.store_id,
+                      sign_type: signType,
+                      lat: data.points[0].lat,
+                      lon: data.points[0].lng
+                    });
+                  } else {
+                    Action.sign({
+                      userid: localStorage.username,
+                      year: store.year,
+                      month: store.month,
+                      day: store.day,
+                      store_id: store.store_id,
+                      sign_type: signType,
+                      lat: data.points[0].lat,
+                      lon: data.points[0].lng
+                    });
+                  }
+
                 }
               }
 
@@ -174,15 +216,26 @@ class DoPlan extends React.Component {
     //bSign = true;
     console.log('renderStepActions', store, bSign);
     var signin_distance = 0;
+    var showResign = false;
     if (this.map) {
       var pointStore = new BMap.Point(store.Gps_x, store.Gps_y);
       if (store.signin_gps_x && store.signin_gps_y) {
         var pointSignin = new BMap.Point(store.signin_gps_x, store.signin_gps_y);
         signin_distance = parseInt(this.map.getDistance(pointStore, pointSignin));
+        if (signin_distance > 500) {
+          showResign = true;
+        }
       }
     } else {
       signin_distance = "未知";
+      showResign = false;
     }
+    var diff = new Date().getTime() - new Date(store.signin_time).getTime();
+    if (showResign && diff > 1000 * 60 * 3) {
+      showResign = false;
+    }
+    console.log("difftime", diff);
+
     if (this.getPlanType() == 3) {
       // 电话拜访
       signin_distance = "0";
@@ -194,7 +247,7 @@ class DoPlan extends React.Component {
             margin: '0px 10px',
             color: '#ef6b1e',
             fontSize: '20px'
-          }}>{signin_distance}</span>米</p>,
+          }}>{signin_distance}</span>米<a onClick={function () { context.handleSign(store, 'signin', true) }} style={{ marginLeft: '15px' }}>{showResign ? "重签" : ""}</a></p>,
           <List>
             <ListItem
               disableTouchRipple={true}
@@ -304,6 +357,12 @@ class DoPlan extends React.Component {
     }
     this.getStorelist();
     Store.addChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);
+
+    setInterval(() => {
+      this.setState({
+        loading: false,
+      })
+    }, 10 * 1000);
   }
   componentWillUnmount() {
     Store.removeChangeListener(StoreEvent.SE_PLAN, this.onPlanChange);

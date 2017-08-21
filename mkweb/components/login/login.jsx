@@ -45,11 +45,11 @@ class Login extends React.Component {
           blurMin: 10,
           blurMax: sizeBase * 0.04,
           hueMin: hue,
-          hueMax: hue + 100,
+          hueMax: hue,
           saturationMin: 10,
-          saturationMax: 70,
+          saturationMax: 50,
           lightnessMin: 20,
-          lightnessMax: 50,
+          lightnessMax: 40,
           alphaMin: 0.1,
           alphaMax: 0.5
         }
@@ -130,7 +130,7 @@ class Login extends React.Component {
         ch = c1.height = c2.height = window.innerHeight;
     }
 
-    init(84);
+    init(205);
   }
   componentDidMount() {
     this.initCanvas();
@@ -202,7 +202,7 @@ class Login extends React.Component {
           <div className={styles.appdownload} onClick={this.onClickApp} title="app下载">
            <Icon type="qrcode" />
           </div>
-          <p className={styles.title}>满好访客通后台管理平台</p>
+          <p className={styles.title}>铛铛巡店业务管理平台</p>
           <div className={styles.formcontent}>
             <Icon className={styles.formIcon} type="user" />
             <input id="username" className={styles.formInput} placeholder="请输入用户名" />

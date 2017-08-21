@@ -13,6 +13,7 @@ var eventMap = {
     AE_PLAN_ADD: null,
     AE_PLAN_DEL: null,
     AE_SIGN_IN: null,
+    AE_SIGN_IN2 : null,
     AE_SIGN_OUT: null,
     AE_BRAND: null,
     AE_PRODUCT: null,

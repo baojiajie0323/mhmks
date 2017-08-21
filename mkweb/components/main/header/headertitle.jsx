@@ -15,7 +15,7 @@ class HeaderTitle extends React.Component {
     return (
       <div className={styles.headertitle}>
         <div className={styles.headerlogo}></div>
-        满好访客通后台管理平台
+        铛铛巡店业务管理平台
       </div>
     );
   }

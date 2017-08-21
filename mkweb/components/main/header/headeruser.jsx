@@ -26,7 +26,7 @@ class HeaderUser extends React.Component {
       <div className={styles.headeruser}>
         <Icon style={{marginRight:'15px'}} type="user" />
         <span style={{marginRight:'10px'}} >{username}</span>
-        <span style={{  fontSize: '12px', color: 'rgb(215, 215, 215)'}} > 系统管理员</span>
+        {/*<span style={{  fontSize: '12px', color: 'rgb(215, 215, 215)'}} > 系统管理员</span>*/}
         <Popconfirm placement="bottomRight" title="  确定要注销吗？  " onConfirm={this.onClickLogout} >
         <div className={styles.headerlogout}>
           <Icon style={{marginRight:'5px'}} type="poweroff" />

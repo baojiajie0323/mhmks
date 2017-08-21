@@ -1,37 +1,38 @@
-.header{
+.header {
     position: absolute;
     width: 100%;
     height: 60px;
-    background-color: #3E8655;
-
-    .headertitle{
+    background-color: white;
+    box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.4);
+    .headertitle {
         position: absolute;
         height: 100%;
         width: 350px;
         line-height: 60px;
-        color: white;
+        color: black;
         padding-left: 100px;
-        font-size: 16px;
-
-        .headerlogo{
+        font-size: 20px;
+        font-weight: bold;
+        .headerlogo {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            left: 32px;
+            width: 32px;
+            height: 32px;
+            top: 14px;
+            left: 48px;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
             background-size: 32px;
             background-position: center;
             background-repeat: no-repeat;
             background-image: url('../../resource/logo.png');
         }
     }
-    
-    .headernav{
+    .headernav {
         position: absolute;
         height: 60px;
         line-height: 60px;
-        right: 300px;
-
-        .navcontent{
+        right: 250px;
+        .navcontent {
             position: relative;
             float: left;
             width: 75px;
@@ -40,9 +41,8 @@
             cursor: pointer;
             color: #ADADAD;
             font-size: 15px;
-
             transition: all 0.3s ease;
-            &:after{
+            &:after {
                 transition: all 0.3s ease;
                 content: ' ';
                 position: absolute;
@@ -50,38 +50,35 @@
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                background: white;
+                background: #108ee9;
                 opacity: 0;
             }
-
-            &:hover{
+            &:hover {
                 color: white;
-                background-color: rgb(90, 169, 115);
-                &:after{
+                background-color: rgb(14, 108, 177);
+                &:after {
                     opacity: 1;
                 }
             }
         }
-        .navcontent_sel{
-            color: white;
+        .navcontent_sel {
+            color: black;
             font-weight: bold;
-            &:after{
+            &:after {
                 opacity: 1;
             }
         }
     }
-    
-    .headeruser{
+    .headeruser {
         position: absolute;
         height: 60px;
         line-height: 60px;
         right: 0;
         padding: 0 20px;
-        width: 280px;
-        color: white;
+        width: 230px;
+        color: black;
         font-size: 14px;
-
-        &:before{
+        &:before {
             content: ' ';
             position: absolute;
             width: 1px;
@@ -90,21 +87,18 @@
             height: 30px;
             background-color: rgb(100, 168, 122);
         }
-
-        .headerlogout{
+        .headerlogout {
             position: absolute;
             height: 30px;
             top: 15px;
             line-height: 30px;
             right: 15px;
-            color: #ececec;
+            color: black;
             font-size: 12px;
             cursor: pointer;
-
-            &:hover{
+            &:hover {
                 text-decoration: underline;
             }
-            
         }
     }
 }

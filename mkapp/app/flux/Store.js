@@ -177,6 +177,21 @@ var Store = assign({}, EventEmitter.prototype, {
       }
     }
   },
+  signInStore2: function (signStore) {
+    for (var i = 0; i < _plan.length; i++) {
+      var plan = _plan[i];
+      if (plan.userid == signStore.userid &&
+        plan.year == signStore.year &&
+        plan.month == signStore.month &&
+        plan.day == signStore.day &&
+        plan.store_id == signStore.store_id) {
+        _plan[i].signin_gps_x = signStore.lon;
+        _plan[i].signin_gps_y = signStore.lat;
+        this.emit(StoreEvent.SE_PLAN);
+        break;
+      }
+    }
+  },
   signOutStore: function (signStore) {
     for (var i = 0; i < _plan.length; i++) {
       var plan = _plan[i];
@@ -330,6 +345,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_SIGN_IN: {
       Store.signInStore(action.value);
+    }
+      break;
+    case ActionEvent.AE_SIGN_IN2: {
+      Store.signInStore2(action.value);
     }
       break;
     case ActionEvent.AE_SIGN_OUT: {

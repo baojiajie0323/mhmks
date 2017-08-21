@@ -40,6 +40,7 @@ var sqlmap = {
   insertplan: 'insert into plan(userid,year,month,day,plan_date,plan_type,path_id,store_id) values(?,?,?,?,?,?,?,?) ',
   getstoreproduct: 'select a.*,b.Product_name,b.Brand_id from product_price a INNER JOIN product b on(a.Product_id = b.product_id) where Store_id = ?',
   signin: 'update plan set signin_time=?,signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? ',
+  signin2: 'update plan set signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? ',
   signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? ',
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
   getsignlist: 'select * from sign_check where userid=? and signtime like ?',

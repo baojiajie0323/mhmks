@@ -370,6 +370,47 @@ module.exports = {
       }
     });
   },
+  sign2: function (req, res, next) {
+    console.log('visitorDao sign2');
+    var param = req.body;
+    if (!param.lat || !param.lon || !param.store_id || !param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    if (param.sign_type == 'signin') {
+      _dao.log(param.userid, "签到");
+    } else {
+      _dao.log(param.userid, "签退");
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = '';
+        if (param.sign_type == 'signin') {
+          sqlstring = _sql.signin2;
+        } else {
+          sqlstring = _sql.signout2;
+        }
+
+        connection.query(sqlstring, [param.lon, param.lat, param.userid, param.year, param.month, param.day, param.store_id], function (err, result) {
+          console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            if (result.affectedRows > 0) {
+              var data = req.body;
+              jsonWrite(res, data, dbcode.SUCCESS);
+            } else {
+              jsonWrite(res, {}, dbcode.FAIL);
+            }
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   checkSign: function (req, res, next) {
     console.log('visitorDao checkSign');
     var param = req.body;
