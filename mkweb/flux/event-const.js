@@ -67,6 +67,7 @@ var eventMap = {
     AE_EXPENSE: null,
     AE_EXPENSE_ADJUST: null,
     AE_PARTTIME: null,
+    AE_SAVEEXPENSEERP: null,
   }),
 
   StoreEvent: keyMirror({
@@ -119,6 +120,7 @@ var eventMap = {
     SE_EXPENSE: null,
     SE_EXPENSE_ADJUST: null,
     SE_PARTTIME: null,
+    SE_SAVEEXPENSEERP: null,
   })
 };
 

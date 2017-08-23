@@ -39,6 +39,8 @@ class Expense extends React.Component {
     this.handleAdjustCancel = this.handleAdjustCancel.bind(this);
     this.handlePictureCancel = this.handlePictureCancel.bind(this);
     this.onClickShowPicture = this.onClickShowPicture.bind(this);
+    this.onSaveErpChange = this.onSaveErpChange.bind(this);
+    this.onClickSaveErp  = this.onClickSaveErp.bind(this);
     this.userid = "";
 
     this.expenseType = [
@@ -72,6 +74,7 @@ class Expense extends React.Component {
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
     Store.addChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
     Store.addChangeListener(StoreEvent.SE_EXPENSE_ADJUST, this.onExpenseAdjustChange);
+    Store.addChangeListener(StoreEvent.SE_SAVEEXPENSEERP, this.onSaveErpChange);
     Action.getUser();
     Action.getSubsidy();
   }
@@ -81,6 +84,8 @@ class Expense extends React.Component {
     Store.removeChangeListener(StoreEvent.SE_VISITOR_PLANLIST, this.onVisitorPlanChange);
     Store.removeChangeListener(StoreEvent.SE_ROUTECOST, this.onRouteCostChange);
     Store.removeChangeListener(StoreEvent.SE_EXPENSE, this.onExpenseChange);
+    Store.removeChangeListener(StoreEvent.SE_EXPENSE_ADJUST, this.onExpenseAdjustChange);
+    Store.removeChangeListener(StoreEvent.SE_SAVEEXPENSEERP, this.onSaveErpChange);
   }
   handlePictureCancel() {
     console.log('handlePictureCancel');
@@ -264,7 +269,25 @@ class Expense extends React.Component {
       loading: true
     })
   }
+  onClickSaveErp() {
+    if (!this.erpData) {
+      message.info("请先查询数据");
+      return;
+    }
 
+    Action.saveExpenseErp({
+      expense: JSON.stringify(this.erpData)
+    });
+
+    this.setState({
+      loading: true
+    })
+  }
+  onSaveErpChange() {
+    this.setState({
+      loading: false
+    })
+  }
   onClickVisitor(record) {
     this.setState({
       showVisitor: true,
@@ -713,6 +736,7 @@ class Expense extends React.Component {
     //   expensetype: expenseType,
     //   adjustmoney,
     // })
+    this.erpData = Object.assign([], planData);
     if (planData.length > 0) {
       planData.push({
         btbz: "补贴：" + btsum,
@@ -740,8 +764,8 @@ class Expense extends React.Component {
             {this.getUserOption()}
           </Select>
           <Button icon="search" onClick={this.onClickQuery} type="primary">查询</Button>
-          <div style={{flexGrow:1}}></div>
-          <Button icon="save" onClick={this.onClickQuery} type="primary">保存ERP数据</Button>
+          <div style={{ flexGrow: 1 }}></div>
+          <Button icon="save" onClick={this.onClickSaveErp} type="primary">保存ERP数据</Button>
         </div>
         <div className={styles.resultContent}>
           <Table loading={this.state.loading} bordered pagination={false} scroll={{ y: scrolly, x: 1000 }}

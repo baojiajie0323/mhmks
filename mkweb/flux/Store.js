@@ -870,6 +870,10 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_PARTTIME, action.value);
     }
       break;
+    case ActionEvent.AE_SAVEEXPENSEERP: {
+      Store.emit(StoreEvent.SE_SAVEEXPENSEERP, action.value);
+    }
+      break;
     default:
       break;
   }

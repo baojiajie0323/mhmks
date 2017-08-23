@@ -91,7 +91,7 @@ var sqlmap = {
   getparttime: 'select a.*,b.store_name,c.realname from parttime a left join store b on a.storeid = b.Store_id left join user c on b.user_id = c.username where ((entrytime BETWEEN ? and ?) or ((quittime BETWEEN ? and ?) or isfinish = 0)) ',
   addparttime: 'insert into parttime(storeid,username,sex,cardid,phone,work,bankcard,entrytime,isfinish,cardidfile,bankcardfile) values(?,?,?,?,?,?,?,?,0,?,?)',
   updateparttime: 'update parttime set username = ?,sex = ?,cardid = ?,phone = ?,work = ?,bankcard = ?,entrytime = ?, isfinish = ?, quittime = ?, cardidfile = ?, bankcardfile = ?  where id = ?',
-
+  saveexpenseerp: 'replace into expense_erp (plandate,userid,realname,plannature,realnature,btnr,btbz,report,fpcount,adjustmoney) values (?,?,?,?,?,?,?,?,?,?)',
 
 
 

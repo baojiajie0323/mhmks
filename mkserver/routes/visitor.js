@@ -176,6 +176,9 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getchart_promotion") {
     console.log('getchart_promotion');
     visitorDao.getChartPromotion(req, res, next);
+  } else if (req.body.command == "saveexpenseerp") {
+    console.log('saveexpenseerp');
+    visitorDao.saveExpenseErp(req, res, next);
   } 
 });
 

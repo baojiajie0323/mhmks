@@ -2129,4 +2129,54 @@ module.exports = {
       }
     });
   },
+  saveExpenseErp: function (req, res, next) {
+    console.log('visitorDao saveExpenseErp');
+    var param = req.body;
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var tasks = [function (callback) {
+          // 开启事务
+          connection.beginTransaction(function (err) {
+            callback(err);
+          });
+        }];
+
+        var expenseList = JSON.parse(param.expense);
+        for (var i = 0; i < expenseList.length; i++) {
+          let expense = expenseList[i];
+          var sqlstring = _sql.saveexpenseerp;
+          tasks.push(function (callback) {
+            connection.query(sqlstring, [expense.plandate,expense.userid,expense.realname,expense.plannature,expense.realnature,expense.btnr,expense.btbz,expense.report,expense.fpcount,expense.adjustmoney], function (err, result) {
+              if (!err) {
+                //console.log('saletarget', param.system_id, result);
+                //saletarget = result;
+              }
+              callback(err);
+            });
+          });
+        }
+
+        tasks.push(function (callback) {
+          // 提交事务
+          connection.commit(function (err) {
+            callback(err);
+          });
+        })
+
+        async.series(tasks, function (err, results) {
+          if (err) {
+            console.log('tasks error', err);
+            connection.rollback(); // 发生错误事务回滚
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, {}, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
 };

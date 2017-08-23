@@ -1044,6 +1044,27 @@ var Action = {
         }
       })
   },
+  saveExpenseErp: function (data) {
+    var context = this;
+    data.command = 'saveexpenseerp';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('saveExpenseErp:', response);
+        if (response.code == 0) {
+          message.success('保存ERP数据成功！');
+          context.dispatch(ActionEvent.AE_SAVEEXPENSEERP, response.data);
+        } else {
+          message.error('保存ERP费用失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('saveExpenseErp fail');
+      })
+  },
   updateRouteCost: function (data) {
     var context = this;
     data.command = 'updateroutecost';
