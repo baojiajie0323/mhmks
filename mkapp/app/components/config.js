@@ -1,5 +1,5 @@
 var config = {
-    version: "1.2.2",
+    version: "1.2.3",
 
     // ios
     platform:"ios",
@@ -21,8 +21,8 @@ var config = {
     //domain_name: "http://192.168.1.3:3000",
 
     //debug
-    // debug:true,
-    // domain_name:"http://localhost:3000",
+    //  debug:true,
+    //  domain_name:"http://localhost:3000",
 }
 window.config = config;
 export default config;

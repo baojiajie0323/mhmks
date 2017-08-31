@@ -784,7 +784,7 @@ module.exports = {
           let productInfo = product[i];
           tasks.push(function (callback) {
             var sqlstring = _sql.submitpromotion;
-            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, productInfo.display, productInfo.pos, productInfo.count, param.confirm_user],
+            connection.query(sqlstring, [param.store_id, productInfo.product_id, param.userid, param.year, param.month, param.day, productInfo.display, productInfo.pos, productInfo.count, productInfo.tbcount || 0, param.confirm_user],
               function (err, result) {
                 callback(err);
               });

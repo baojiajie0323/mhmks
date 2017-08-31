@@ -45,6 +45,7 @@ class PromotionDetail extends React.Component {
 
     this.onPosChange = this.onPosChange.bind(this);
     this.onCountChange = this.onCountChange.bind(this);
+    this.onTBChange = this.onTBChange.bind(this);
     this.onDisplayChange = this.onDisplayChange.bind(this);
 
     this.onClickAddImage = this.onClickAddImage.bind(this);
@@ -171,6 +172,15 @@ class PromotionDetail extends React.Component {
     }
     return "";
   }
+  getPreSaveTBcount(product) {
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      if (preSaveProduct[i].Product_id == product.Product_id) {
+        return preSaveProduct[i].tbcount;
+      }
+    }
+    return "";
+  }
 
   onPosChange(Product_id, value) {
     console.log("onPosChange", value, Product_id);
@@ -217,6 +227,31 @@ class PromotionDetail extends React.Component {
       preSaveProduct
     })
   }
+
+  onTBChange(Product_id, value) {
+    console.log("onTBChange", value, Product_id);
+    var preSaveProduct = this.state.preSaveProduct;
+    for (var i = 0; i < preSaveProduct.length; i++) {
+      var product = preSaveProduct[i];
+      if (product.Product_id == Product_id) {
+        product.tbcount = value;
+        this.setState({
+          preSaveProduct
+        })
+        return;
+      }
+    }
+    var data = {
+      Product_id: Product_id,
+      tbcount: value
+    }
+    preSaveProduct.push(data);
+    this.setState({
+      preSaveProduct
+    })
+  }
+
+  
 
   onDisplayChange(Product_id, value) {
     console.log("onDisplayChange", value, Product_id);
@@ -457,11 +492,13 @@ class PromotionDetail extends React.Component {
       var displayid = this.getPreSaveDisplayid(product);
       var displaypos = this.getPreSaveDisplaypos(product);
       var displaycount = this.getPreSaveDisplaycount(product);
+      var tbcount = this.getPreSaveTBcount(product);
       console.log("displayid", displayid);
       productDom.push(<div className={styles.productcontent}>
         <Paper zDepth={1} className={styles.productPanel}>
           <div className={styles.titlebar}>
-            {product.product_name}
+            <p>{product.product_name}</p>
+            <p>包</p>
           </div>
           <div className={styles.head}>
             <div className={styles.headcontent}>
@@ -501,6 +538,11 @@ class PromotionDetail extends React.Component {
                 <Input value={displaycount} onChange={function (e) { context.onCountChange(product.Product_id, e.target.value) } } placeholder="请填写"
                   style={{ width: '100px' }} />
               </div>
+              <div className={styles.formcontent}>
+                <p style={{ color: orange500 }}>门店提报</p>
+                <Input value={tbcount} onChange={function (e) { context.onTBChange(product.Product_id, e.target.value) } } placeholder="请填写"
+                  style={{ width: '100px' }} />
+              </div>
             </div>
           </div>
         </Paper>
@@ -527,7 +569,8 @@ class PromotionDetail extends React.Component {
         product_id: product.Product_id,
         count: product.count,
         pos: product.pos,
-        display: product.display
+        display: product.display,
+        tbcount: product.tbcount,
       }
     })
 
