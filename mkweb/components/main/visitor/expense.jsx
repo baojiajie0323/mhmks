@@ -637,20 +637,27 @@ class Expense extends React.Component {
           btsum += parseFloat(btbz);
           var report = 0;
           var fpcount = 0;
-          var adjustmoney = "";
+          var adjustmoney = null;
           var fpname = "";
+          var expenseInfo = this.getExpense(plandate, expenseType);
+          if (expenseInfo) {
+              adjustmoney = expenseInfo.adjustmoney;
+          }
           if (expenseType == "wcbt" || expenseType == "snjt" || expenseType == "ccbt") {
             report = btbz;
-            adjustmoney = " "
+            //adjustmoney = " "
           } else {
             var expenseInfo = this.getExpense(plandate, expenseType);
             if (expenseInfo) {
               report = expenseInfo.money;
-              adjustmoney = expenseInfo.adjustmoney;
+              //adjustmoney = expenseInfo.adjustmoney;
               fpcount = expenseInfo.fpcount;
               fpname = expenseInfo.fpname;
             }
           }
+          // if(adjustmoney == ""){
+          //   adjustmoney = " "
+          // }
           expensesum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
           planData.push({
             plandate,
