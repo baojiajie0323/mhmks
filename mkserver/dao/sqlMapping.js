@@ -62,6 +62,7 @@ var sqlmap = {
   getvisitormainshelf: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_shelfmain a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
   getvisitorstock: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_stock a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
   getvisitorshelfaway: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_shelfaway a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
+  getshelfawayimage: 'select b.Store_name,c.realname,a.* from product_image a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) where type = 1 and b.Region_id = ? and a.year = ? and a.month = ?',
   getvisitorimage: 'select * from product_image where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getshelfmain: 'select * from visitor_shelfmain where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',
   getstock: 'select * from visitor_stock where year= ? and month = ? and day = ? and store_id = ? and user_id = ?',

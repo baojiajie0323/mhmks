@@ -46,6 +46,7 @@ var eventMap = {
     AE_VISITOR_MAINSHELFLIST: null,
     AE_VISITOR_STOCKLIST: null,
     AE_VISITOR_SHELFAWAYLIST: null,
+    AE_SHELFAWAYLIST: null,
     AE_VISITOR_IMAGE: null,
 
     AE_SUBSIDY: null,
@@ -121,6 +122,7 @@ var eventMap = {
     SE_EXPENSE_ADJUST: null,
     SE_PARTTIME: null,
     SE_SAVEEXPENSEERP: null,
+    SE_SHELFAWAYLIST: null,
   })
 };
 

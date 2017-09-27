@@ -43,6 +43,7 @@ class VisitorMenu extends React.Component {
             {isManager ? [
               <Menu.Item key="saleactual">SKU上架动销</Menu.Item>,
               <Menu.Item key="saleactualsum">动销汇总</Menu.Item>,
+              <Menu.Item key="offlinesum">离架陈列统计</Menu.Item>,
               <Menu.Item key="promotionsum">促销陈列统计</Menu.Item>,
               <Menu.Item key="parttime">兼促人员信息</Menu.Item>
             ] : null}

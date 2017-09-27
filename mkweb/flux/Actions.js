@@ -29,7 +29,7 @@ var Action = {
         message.error('与服务器建立连接失败');
         console.log('login fail');
         if (_debug) {
-          var response = '{"code":0,"data":[{"id":6,"username":"001837","realname":"卢琴","password":"123456","phone":"","email":"luqin@myhome-sh.com","depart":12,"role":6,"enableweb":1,"enableapp":1,"check":0,"departname":"沪浙区","userid":6}]}';
+          var response = '{"code":0,"data":[{"id":6,"username":"000001","realname":"卢琴","password":"123456","phone":"","email":"luqin@myhome-sh.com","depart":12,"role":6,"enableweb":1,"enableapp":1,"check":0,"departname":"沪浙区","userid":6}]}';
           var rsp = JSON.parse(response);
           context.dispatch(ActionEvent.AE_LOGIN, rsp.data[0]);
         }
@@ -896,6 +896,26 @@ var Action = {
         console.log('getVisitorShelfaway:', response);
         if (response.code == 0) {
           context.dispatch(ActionEvent.AE_VISITOR_SHELFAWAYLIST, response.data);
+        } else {
+          message.error('获取离架列表失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getVisitorShelfaway fail');
+      })
+  },
+  getShelfaway: function (data) {
+    var context = this;
+    data.command = 'getshelfawayimage';
+    $.ajax({
+      url: '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getShelfaway:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_SHELFAWAYLIST, response.data);
         } else {
           message.error('获取离架列表失败！' + response.msg);
         }

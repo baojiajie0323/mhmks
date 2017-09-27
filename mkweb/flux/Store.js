@@ -874,6 +874,10 @@ AppDispatcher.register((action) => {
       Store.emit(StoreEvent.SE_SAVEEXPENSEERP, action.value);
     }
       break;
+    case ActionEvent.AE_SHELFAWAYLIST: {
+      Store.emit(StoreEvent.SE_SHELFAWAYLIST, action.value);
+    }
+      break;
     default:
       break;
   }
