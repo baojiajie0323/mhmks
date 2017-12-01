@@ -130,10 +130,10 @@ class Login extends React.Component {
         ch = c1.height = c2.height = window.innerHeight;
     }
 
-    init(205);
+    init(0);
   }
   componentDidMount() {
-    this.initCanvas();
+    //this.initCanvas();
     var username = localStorage.username;
     var password = localStorage.password;
     var savepwd = localStorage.savepwd;
@@ -196,8 +196,8 @@ class Login extends React.Component {
   render() {
     return (
       <div className={styles.container}>
-        <canvas id='c1' className={styles.canvas1}></canvas>
-        <canvas id='c2' className={styles.canvas2}></canvas>
+        {/*<canvas id='c1' className={styles.canvas1}></canvas>
+        <canvas id='c2' className={styles.canvas2}></canvas>*/}
         <div className={styles.content}>
           <div className={styles.appdownload} onClick={this.onClickApp} title="app下载">
            <Icon type="qrcode" />

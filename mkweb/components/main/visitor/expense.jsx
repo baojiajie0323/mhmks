@@ -392,6 +392,10 @@ class Expense extends React.Component {
       title: '实际拜访门店',
       dataIndex: 'realstore',
       key: 'realstore',
+    }, {
+      title: '拜访类型',
+      dataIndex: 'plantypename',
+      key: 'plantypename',
     }];
   }
   getRecordTableData() {
@@ -401,17 +405,25 @@ class Expense extends React.Component {
       if (new Date(planInfo.plan_date).Format("yyyy-MM-dd") == this.state.currecord.plandate) {
         var planstore = "";
         var realstore = "";
+        var plantypename = "";
         if (planInfo.plan_type == 1) {
           planstore = planInfo.Store_name;
           if (planInfo.isfinish == 1) {
             realstore = planInfo.Store_name;
           }
+          plantypename = "路线拜访";
         } else {
           realstore = planInfo.Store_name;
+          if(planInfo.plan_type == 2){
+            plantypename = "临时拜访";
+          }else if(planInfo.plan_type == 3){
+            plantypename = "电话拜访";
+          }          
         }
         tableData.push({
           planstore,
-          realstore
+          realstore,
+          plantypename
         })
       }
     }
@@ -448,7 +460,7 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name || record.realname == "市内拜访合计") {
             obj.props.rowSpan = 1;
           } else {
             obj.props.rowSpan = 0;
@@ -469,7 +481,7 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name || record.realname == "市内拜访合计") {
             obj.props.rowSpan = 1;
           } else {
             obj.props.rowSpan = 0;
@@ -490,7 +502,7 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name || record.realname == "市内拜访合计") {
             obj.props.rowSpan = 1;
           } else {
             obj.props.rowSpan = 0;
@@ -511,7 +523,7 @@ class Expense extends React.Component {
         if (!record.btnr || record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name || record.realname == "市内拜访合计") {
             obj.props.rowSpan = 1;
           } else {
             obj.props.rowSpan = 0;
@@ -529,7 +541,7 @@ class Expense extends React.Component {
             context.onClickVisitor(record);
           }}>拜访情况</a>
         ];
-        if (!record.btnr) {
+        if (!record.btnr || record.realname == "市内拜访合计" ) {
           return null;
         }
         const obj = {
@@ -539,7 +551,7 @@ class Expense extends React.Component {
         if (record.btnr == context.expenseType[0].name) {
           obj.props.rowSpan = 6;
         } else {
-          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name) {
+          if (record.btnr == context.expenseType[6].name || record.btnr == context.expenseType[7].name || record.realname == "市内拜访合计") {
             obj.props.rowSpan = 1;
           } else {
             obj.props.rowSpan = 0;
@@ -577,7 +589,7 @@ class Expense extends React.Component {
             context.onClickShowPicture(record);
           }}>发票照片</a>
         ];
-        if (!record.btnr) {
+        if (!record.btnr || record.realname == "市内拜访合计" ) {
           return null;
         }
         return operateDom;
@@ -611,8 +623,16 @@ class Expense extends React.Component {
     }
     var btsum = 0;
     var expensesum = 0;
+    var snwcbzsum = 0;
+    var snwctzsum = 0;
+    var snjtbzsum = 0;
+    var snjttzsum = 0;
     var lastPlandate = "";
     for (var i = 0; i < visitorPlan.length; i++) {
+      if(visitorPlan[i].plan_type == 3){
+        //如果是电话拜访，不应该去计算补贴标准
+        continue;
+      }
       var plandate = new Date(visitorPlan[i].plan_date).Format("yyyy-MM-dd");
       if (plandate != lastPlandate) {
         var routeInfo = this.getRouteInfo(plandate);
@@ -635,6 +655,14 @@ class Expense extends React.Component {
           var expenseType = this.expenseType[j].type;
           var btbz = this.getSubsidy(userInfo.role, visitorPlan[i].City_lev, plannatureid, expenseType, plandate);
           btsum += parseFloat(btbz);
+          if(j == 0){
+            //误餐费
+            snwcbzsum += parseFloat(btbz);
+          }else if(j == 1){
+            //室内交通费
+            snjtbzsum += parseFloat(btbz);
+          }
+          
           var report = 0;
           var fpcount = 0;
           var adjustmoney = null;
@@ -659,6 +687,13 @@ class Expense extends React.Component {
           //   adjustmoney = " "
           // }
           expensesum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
+          if(j == 0){
+            //误餐费
+            snwctzsum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
+          }else if(j == 1){
+            //室内交通费
+            snjttzsum += (adjustmoney && adjustmoney != " ") ? parseFloat(adjustmoney) : parseFloat(report);
+          }
           planData.push({
             plandate,
             plannature,
@@ -729,27 +764,23 @@ class Expense extends React.Component {
       console.log("planData", planData);
     }
 
-    // planData.push({
-    //   plandate,
-    //   plannature,
-    //   realnature,
-    //   realname: visitorPlan[i].realname,
-    //   btnr: this.expenseType[j].name,
-    //   btbz,
-    //   report,
-    //   fpcount,
-    //   fpname,
-    //   userid: this.userid,
-    //   expensetype: expenseType,
-    //   adjustmoney,
-    // })
     this.erpData = Object.assign([], planData);
     if (planData.length > 0) {
-      planData.push({
+      planData.push({        
+        realname: '市内拜访合计',        
+        btnr: "误餐标准：" + snwcbzsum,
+        btbz: "市内交通标准：" + snjtbzsum,
+        report: "误餐调整后:" + snwctzsum,
+        fpcount: "市内交通调整后：" + snjttzsum,
+        adjustmoney: ' ',
+      })
+    }
+    if (planData.length > 0) {
+      planData.push({        
+        realname: '总计',
         btbz: "补贴：" + btsum,
         report: "发放：" + expensesum,
         adjustmoney: ' ',
-        realname: '总计'
       })
     }
     return planData;

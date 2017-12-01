@@ -51,7 +51,7 @@ module.exports = {
       } else {
         var sqlstring = _sql.getuser;
         if(param.depart){
-          sqlstring += ' where a.depart = ';
+          sqlstring += ' and a.depart = ';
           sqlstring += connection.escape(param.depart);
         }
         connection.query(sqlstring, [], function (err, result) {
