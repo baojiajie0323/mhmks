@@ -1,7 +1,11 @@
 var sqlmap = {
   log: 'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
   login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
-  login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
+  // login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
+  login_app: 'select c.path_id role,a.*,b.name departname,b.userid from user a \
+  LEFT JOIN department b on (a.depart = b.id) \
+  LEFT JOIN plan c on (a.username = c.userid and plan_type = 1 and plan_date = ?) \
+  where username = ? and password = ? and enableapp = 1 limit 0,1',
   getstorearea: 'select * from store_area',
   getstorebasic: 'SELECT store.*,  department.name departname,System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) left JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username) left join department on (department.id = user.depart)',
   getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
@@ -41,7 +45,7 @@ var sqlmap = {
   getstoreproduct: 'select a.*,b.Product_name,b.Brand_id from product_price a INNER JOIN product b on(a.Product_id = b.product_id) where Store_id = ?',
   signin: 'update plan set signin_time=?,signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? and ISNULL(signin_time) ',
   signin2: 'update plan set signin_gps_x=?,signin_gps_y=? where userid=? and year=? and month=? and day=? and store_id=? ',
-  signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? ',
+  signout: 'update plan set signout_time=?,signout_gps_x=?,signout_gps_y=?,isfinish=1 where userid=? and year=? and month=? and day=? and store_id=? and ISNULL(signout_time) ',
   checksign: 'insert into sign_check (signtime,gps_x,gps_y,userid) values (?,?,?,?)',
   getsignlist: 'select * from sign_check where userid=? and signtime like ?',
   getproductbystore: 'select a.*,b.Product_name,b.Brand_id from product_price a left join store c on (a.Store_id = c.Store_id ) left join product b on (a.Product_id = b.Product_id) where a.store_id = ?',
@@ -60,7 +64,7 @@ var sqlmap = {
   getvisitorplan: 'select b.Store_name,e.City_lev,b.Gps_x,b.Gps_y,c.realname,d.path_name,a.* from plan a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.userid = c.username) LEFT JOIN path d ON (a.path_id = d.path_id) LEFT JOIN city e ON (e.City_id = b.City_id) where (userid like ? or realname like ?) and plan_date BETWEEN ? and ? ',
   getvisitorchat: 'select b.Store_name,c.realname,a.* from visitor_chat a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
   getvisitormainshelf: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_shelfmain a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
-  getvisitorstock: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_stock a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
+  getvisitorstock: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_stock a LEFT JOIN store b ON (a.store_id = b.Store_id) inner JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
   getvisitorshelfaway: 'select b.Store_name,c.realname,d.product_name,a.* from visitor_shelfaway a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) left join product d on a.product_id = d.product_id where (a.user_id like ? or realname like ?) and a.plan_date BETWEEN ? and ? ',
   getshelfawayimage: 'select b.Store_name,c.realname,a.* from product_image a LEFT JOIN store b ON (a.store_id = b.Store_id) LEFT JOIN user c ON (a.user_id = c.username) where type = 1 and b.Region_id = ? and a.year = ? and a.month = ?',
   getvisitorimage: 'select * from product_image where year = ? and month = ? and day = ? and store_id = ? and user_id = ?',

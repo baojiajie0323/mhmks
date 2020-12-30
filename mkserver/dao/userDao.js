@@ -20,11 +20,13 @@ module.exports = {
         return;
       } else {
         var sqlstring = _sql.login_web;
+        var paramlist = [param.username, param.password];
         if (param.type == 2) {
           sqlstring = _sql.login_app;
+          paramlist.unshift(new Date().Format('yyyy-MM-dd'))
         }
 
-        connection.query(sqlstring, [param.username, param.password], function (err, result) {
+        connection.query(sqlstring, paramlist, function (err, result) {
           console.log('dbresult', result);
           if (result.length > 0) {
             _dao.log(param.username,"登录成功[登录终端类型：" + param.type + "]");
