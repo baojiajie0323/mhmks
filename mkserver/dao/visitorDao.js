@@ -146,7 +146,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
-    _dao.log(param.user_id, "创建拜访计划");
+    _dao.log(param.user_id, "创建拜访计划" + param.store_id + '类型：'+ param.plan_type);
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -179,6 +179,8 @@ module.exports = {
     //   jsonWrite(res, {}, dbcode.PARAM_ERROR);
     //   return;
     // }
+    _dao.log(param.user_id, "删除计划" + param.store_id + '计划日期：'+ param.year + param.month + param.day);
+    
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -207,6 +209,7 @@ module.exports = {
   reSign: function (req, res, next) {
     console.log('visitorDao reSign');
     var param = req.body;
+    _dao.log(param.userid, "重签" + param.store_id + "用户：" + param.userid);
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -335,9 +338,9 @@ module.exports = {
       return;
     }
     if (param.sign_type == 'signin') {
-      _dao.log(param.userid, "签到");
+      _dao.log(param.userid, "签到" + param.store_id);
     } else {
-      _dao.log(param.userid, "签退");
+      _dao.log(param.userid, "签退" + param.store_id);
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -378,9 +381,9 @@ module.exports = {
       return;
     }
     if (param.sign_type == 'signin') {
-      _dao.log(param.userid, "签到");
+      _dao.log(param.userid, "电话签到" + param.store_id);
     } else {
-      _dao.log(param.userid, "签退");
+      _dao.log(param.userid, "电话签退" + param.store_id);
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
