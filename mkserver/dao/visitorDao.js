@@ -1,4 +1,4 @@
-
+"use strict"
 var _dao = require('./dao');
 var _sql = require('./sqlMapping');
 var async = require('async');
@@ -179,7 +179,7 @@ module.exports = {
     //   jsonWrite(res, {}, dbcode.PARAM_ERROR);
     //   return;
     // }
-    _dao.log(param.user_id, "删除计划" + param.store_id + '计划日期：'+ param.year + param.month + param.day);
+    _dao.log(param.userid, "删除计划" + param.store_id + '计划日期：'+ param.year + param.month + param.day);
     
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -934,6 +934,7 @@ module.exports = {
           sqlstring += connection.escape(param.depart);
         }
         sqlstring += "order by a.plan_date desc,a.store_id";
+        console.log(sqlstring,param.begindate,param.enddate,param.userid);
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {

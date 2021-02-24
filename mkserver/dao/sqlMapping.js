@@ -1,11 +1,7 @@
 var sqlmap = {
   log: 'insert into loginfo (logtime,userid,loginfo) values (?,?,?)',
   login_web: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ?',
-  // login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
-  login_app: 'select c.path_id role,a.*,b.name departname,b.userid from user a \
-  LEFT JOIN department b on (a.depart = b.id) \
-  LEFT JOIN plan c on (a.username = c.userid and plan_type = 1 and plan_date = ?) \
-  where username = ? and password = ? and enableapp = 1 limit 0,1',
+  login_app: 'select a.*,b.name departname,b.userid from user a LEFT JOIN department b on (a.depart = b.id) where username = ? and password = ? and enableapp = 1',
   getstorearea: 'select * from store_area',
   getstorebasic: 'SELECT store.*,  department.name departname,System_name,Region_name,Contacts_name,Tel,user.realname from store left join store_area on (store.System_id=store_area.System_id AND store.Region_id=store_area.Region_id ) left JOIN store_contacts on (store_contacts.Store_id = store.Store_id) left join user on (store.user_id = user.username) left join department on (department.id = user.depart)',
   getstorecontacts: 'select store_contacts.*,Store_name from store_contacts left join store on (store_contacts.Store_id = store.Store_id)',
