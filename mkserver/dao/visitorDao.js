@@ -381,9 +381,9 @@ module.exports = {
       return;
     }
     if (param.sign_type == 'signin') {
-      _dao.log(param.userid, "电话签到" + param.store_id);
+      _dao.log(param.userid, "再次签到" + param.store_id);
     } else {
-      _dao.log(param.userid, "电话签退" + param.store_id);
+      _dao.log(param.userid, "再次签退" + param.store_id);
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
