@@ -16,7 +16,7 @@ function getMonthWeek(today) {
   a + b 的和在除以7 就是当天是当前月份的第几周 
   */
   var date = new Date(a, parseInt(b) - 1, c), w = date.getDay(), d = date.getDate();
-  if(w == 0){
+  if (w == 0) {
     w = 7;
   }
   return Math.ceil(
@@ -201,7 +201,7 @@ class Schdule extends React.Component {
           day: day,
           plan_type: 1,
           path_id: path,
-          Path_Name:pathDetail[i].Path_name,
+          Path_Name: pathDetail[i].Path_name,
           store_id: pathDetail[i].Store_id
         })
       }
@@ -344,9 +344,9 @@ class Schdule extends React.Component {
     if (planSum && planSum.complete) {
       complete = planSum.complete;
     }
-    return <div className={monthStyle.join(' ') }
-      onClick={function () { context.onClickMonthContent(value) } }
-      >
+    return <div className={monthStyle.join(' ')}
+      onClick={function () { context.onClickMonthContent(value) }}
+    >
       {monthType == 'later' ? null :
         [<div className={styles.tableContent}>
           <p>计划月均拜访</p>
@@ -354,15 +354,15 @@ class Schdule extends React.Component {
           <Tag color="#27b56e">{'B类：' + (planSum ? planSum.storeB : '0') + '次'}</Tag>
           <Tag color="#7265E6">{'C类：' + (planSum ? planSum.storeC : '0') + '次'}</Tag>
         </div>,
-          <div className={styles.tableContent}>
-            <p>计划覆盖率</p>
-            <Progress percent={cover} strokeWidth={5} status="active" />
-          </div>,
-          <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
-          <div className={styles.tableContent}>
-            <p>执行完成率</p>
-            <Progress percent={complete} strokeWidth={5} status="active" />
-          </div>]
+        <div className={styles.tableContent}>
+          <p>计划覆盖率</p>
+          <Progress percent={cover} strokeWidth={5} status="active" />
+        </div>,
+        <div style={{ height: '1px', backgroundColor: '#D2D2D2' }}></div>,
+        <div className={styles.tableContent}>
+          <p>执行完成率</p>
+          <Progress percent={complete} strokeWidth={5} status="active" />
+        </div>]
       }
     </div>;
   }
@@ -377,7 +377,11 @@ class Schdule extends React.Component {
       return 'next';
     }
 
-    if(nowDate.date() <= 25 && value.month() == 0 && nowDate.month() == 11 && value.year() == nowDate.year() + 1 && value.week() == 1){
+    if (nowDate.date() <= 25 &&
+      nowDate.month() == 11 &&
+      value.month() == 0 &&
+      value.year() == nowDate.year() + 1
+    ) {
       return 'next';
     }
 
@@ -419,9 +423,9 @@ class Schdule extends React.Component {
       }
     }
 
-    return <div className={dateStyle.join(' ') }
-      onClick={function () { context.onClickDateContent(value) } }
-      >
+    return <div className={dateStyle.join(' ')}
+      onClick={function () { context.onClickDateContent(value) }}
+    >
       <Select
         style={{ width: '100%' }}
         size="small"
@@ -430,9 +434,9 @@ class Schdule extends React.Component {
         notFoundContent='没有路线'
         onChange={function (path) {
           context.onPathSelChange(value, path);
-        } }
+        }}
         disabled={dateType == 'past'} >
-        {getPathOption() }
+        {getPathOption()}
       </Select>
       <div className={styles.date_path_store_content}>
         {storelist}
@@ -445,14 +449,14 @@ class Schdule extends React.Component {
       dataIndex: 'level',
       key: 'level',
     }, {
-        title: '门店数量',
-        dataIndex: 'count',
-        key: 'count',
-      }, {
-        title: '月均拜访次数',
-        dataIndex: 'percount',
-        key: 'percount',
-      }];
+      title: '门店数量',
+      dataIndex: 'count',
+      key: 'count',
+    }, {
+      title: '月均拜访次数',
+      dataIndex: 'percount',
+      key: 'percount',
+    }];
     return columns;
   }
   getTable2Column() {
@@ -461,14 +465,14 @@ class Schdule extends React.Component {
       dataIndex: 'name',
       key: 'name',
     }, {
-        title: '门店级别',
-        dataIndex: 'level',
-        key: 'level',
-      }, {
-        title: '所属路线',
-        dataIndex: 'path',
-        key: 'path',
-      }];
+      title: '门店级别',
+      dataIndex: 'level',
+      key: 'level',
+    }, {
+      title: '所属路线',
+      dataIndex: 'path',
+      key: 'path',
+    }];
     return columns;
   }
   unique(arr) {
@@ -569,21 +573,21 @@ class Schdule extends React.Component {
       count: sumInfo.storeACount + '家',
       percount: sumInfo.storeA + '次',
     }, {
-        key: '2',
-        level: 'B类',
-        count: sumInfo.storeBCount + '家',
-        percount: sumInfo.storeB + '次',
-      }, {
-        key: '3',
-        level: 'C类',
-        count: sumInfo.storeCCount + '家',
-        percount: sumInfo.storeC + '次',
-      }, {
-        key: '4',
-        level: '所有门店',
-        count: sumInfo.storeCount + '家',
+      key: '2',
+      level: 'B类',
+      count: sumInfo.storeBCount + '家',
+      percount: sumInfo.storeB + '次',
+    }, {
+      key: '3',
+      level: 'C类',
+      count: sumInfo.storeCCount + '家',
+      percount: sumInfo.storeC + '次',
+    }, {
+      key: '4',
+      level: '所有门店',
+      count: sumInfo.storeCount + '家',
 
-      }];
+    }];
     return data;
   }
   getTable2Data(noPlanList) {
@@ -669,66 +673,66 @@ class Schdule extends React.Component {
       key: 'Region_name',
       width: 80,
     }, {
-        title: '代表',
-        dataIndex: 'realname',
-        key: 'realname',
-        width: 50,
-      }, {
-        title: '门店名称',
-        dataIndex: 'Store_name',
-        key: 'Store_name',
-        width: 130,
-      }, {
-        title: '门店地址',
-        dataIndex: 'Address',
-        key: 'Address',
-        width: 240
-      }, {
-        title: '类型',
-        dataIndex: 'Level',
-        key: 'Level',
-        width: 50,
-      }, {
-        title: '路线',
-        dataIndex: 'Path_name',
-        key: 'Path_name',
-        width: 70,
-      }, {
-        //   title: '时间',
-        //   dataIndex: 'visitor_date',
-        //   key: 'visitor_date',
-        //   width: 56,
-        // }, {
-        title: '总次数',
-        dataIndex: 'visitor_count',
-        key: 'visitor_count',
-        width: 50,
-      }, {
-        title: '第一周',
-        dataIndex: 'visitor_count1',
-        key: 'visitor_count1',
-        width: 50,
-      }, {
-        title: '第二周',
-        dataIndex: 'visitor_count2',
-        key: 'visitor_count2',
-        width: 50,
-      }, {
-        title: '第三周',
-        dataIndex: 'visitor_count3',
-        key: 'visitor_count3',
-        width: 50,
-      }, {
-        title: '第四周',
-        dataIndex: 'visitor_count4',
-        key: 'visitor_count4',
-        width: 50,
-      }, {
-        title: '第五周',
-        dataIndex: 'visitor_count5',
-        key: 'visitor_count5',
-        width: 50,
-      }];
+      title: '代表',
+      dataIndex: 'realname',
+      key: 'realname',
+      width: 50,
+    }, {
+      title: '门店名称',
+      dataIndex: 'Store_name',
+      key: 'Store_name',
+      width: 130,
+    }, {
+      title: '门店地址',
+      dataIndex: 'Address',
+      key: 'Address',
+      width: 240
+    }, {
+      title: '类型',
+      dataIndex: 'Level',
+      key: 'Level',
+      width: 50,
+    }, {
+      title: '路线',
+      dataIndex: 'Path_name',
+      key: 'Path_name',
+      width: 70,
+    }, {
+      //   title: '时间',
+      //   dataIndex: 'visitor_date',
+      //   key: 'visitor_date',
+      //   width: 56,
+      // }, {
+      title: '总次数',
+      dataIndex: 'visitor_count',
+      key: 'visitor_count',
+      width: 50,
+    }, {
+      title: '第一周',
+      dataIndex: 'visitor_count1',
+      key: 'visitor_count1',
+      width: 50,
+    }, {
+      title: '第二周',
+      dataIndex: 'visitor_count2',
+      key: 'visitor_count2',
+      width: 50,
+    }, {
+      title: '第三周',
+      dataIndex: 'visitor_count3',
+      key: 'visitor_count3',
+      width: 50,
+    }, {
+      title: '第四周',
+      dataIndex: 'visitor_count4',
+      key: 'visitor_count4',
+      width: 50,
+    }, {
+      title: '第五周',
+      dataIndex: 'visitor_count5',
+      key: 'visitor_count5',
+      width: 50,
+    }];
   }
 
   getStoreBasic(store_id) {
@@ -857,13 +861,13 @@ class Schdule extends React.Component {
           <span>大区主管：</span>
           <p></p>
           <div className={styles.markcontent}>
-            <div className={[styles.markblock, styles.next].join(' ') }></div>
+            <div className={[styles.markblock, styles.next].join(' ')}></div>
             <p>可排计划</p>
-            <div className={[styles.markblock, styles.past].join(' ') }></div>
+            <div className={[styles.markblock, styles.past].join(' ')}></div>
             <p>不可改</p>
           </div>
         </div>
-        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ') }>
+        <div className={[styles.content, this.state.mode == 'month' ? styles.content_month : ''].join(' ')}>
           <Calendar value={this.state.monent}
             mode={this.state.mode}
             onPanelChange={this.onPanelChange}
@@ -878,18 +882,18 @@ class Schdule extends React.Component {
                 <span style={{ width: '100px' }}>拜访覆盖率：</span>
                 <Progress percent={sumInfo.cover} strokeWidth={5} status="active" />
               </div>
-              <Table pagination={false} columns={this.getTableColumn() } dataSource={this.getTableData(sumInfo) } />
+              <Table pagination={false} columns={this.getTableColumn()} dataSource={this.getTableData(sumInfo)} />
               <Button onClick={this.onClickShowPlanCount} style={{ marginTop: '20px', width: '100%', background: '#4DCEB6', color: 'white' }} type="primary">门店拜访频次</Button>
               <Button onClick={this.onClickSave} style={{ marginTop: '5px', width: '100%' }} type="primary">保存提交计划</Button>
               <p>{'未覆盖门店(' + sumInfo.noplanList.length + '家) ：'}</p>
-              <Table pagination={false} columns={this.getTable2Column() } dataSource={this.getTable2Data(sumInfo.noplanList) } />
+              <Table pagination={false} columns={this.getTable2Column()} dataSource={this.getTable2Data(sumInfo.noplanList)} />
             </div>
           </div> : null
         }
 
         <Modal title="门店拜访频次" width={1200} height={600} footer={null} visible={this.state.showPlanCount}
           onCancel={this.handlePlanCountCancel} >
-          <Table pagination={false} scroll={{ y: 450 }} size="small" columns={this.getPlanCountTableColumn() } dataSource={this.getPlanCountTableData() } />
+          <Table pagination={false} scroll={{ y: 450 }} size="small" columns={this.getPlanCountTableColumn()} dataSource={this.getPlanCountTableData()} />
         </Modal>
 
       </div>

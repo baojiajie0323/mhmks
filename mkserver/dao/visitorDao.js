@@ -1,4 +1,4 @@
-
+"use strict"
 var _dao = require('./dao');
 var _sql = require('./sqlMapping');
 var async = require('async');
@@ -146,7 +146,7 @@ module.exports = {
       jsonWrite(res, {}, dbcode.PARAM_ERROR);
       return;
     }
-    _dao.log(param.user_id, "创建拜访计划");
+    _dao.log(param.user_id, "创建拜访计划" + param.store_id + '类型：'+ param.plan_type);
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -179,6 +179,8 @@ module.exports = {
     //   jsonWrite(res, {}, dbcode.PARAM_ERROR);
     //   return;
     // }
+    _dao.log(param.userid, "删除计划" + param.store_id + '计划日期：'+ param.year + param.month + param.day);
+    
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -207,6 +209,7 @@ module.exports = {
   reSign: function (req, res, next) {
     console.log('visitorDao reSign');
     var param = req.body;
+    _dao.log(param.userid, "重签" + param.store_id + "用户：" + param.userid);
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
         jsonWrite(res, {}, dbcode.CONNECT_ERROR);
@@ -335,9 +338,9 @@ module.exports = {
       return;
     }
     if (param.sign_type == 'signin') {
-      _dao.log(param.userid, "签到");
+      _dao.log(param.userid, "签到" + param.store_id);
     } else {
-      _dao.log(param.userid, "签退");
+      _dao.log(param.userid, "签退" + param.store_id);
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -378,9 +381,9 @@ module.exports = {
       return;
     }
     if (param.sign_type == 'signin') {
-      _dao.log(param.userid, "签到");
+      _dao.log(param.userid, "再次签到" + param.store_id);
     } else {
-      _dao.log(param.userid, "签退");
+      _dao.log(param.userid, "再次签退" + param.store_id);
     }
     pool.getConnection(function (err, connection) {
       if (connection == undefined) {
@@ -931,6 +934,7 @@ module.exports = {
           sqlstring += connection.escape(param.depart);
         }
         sqlstring += "order by a.plan_date desc,a.store_id";
+        console.log(sqlstring,param.begindate,param.enddate,param.userid);
         connection.query(sqlstring, ["%" + param.userid + "%", "%" + param.userid + "%", param.begindate, param.enddate], function (err, result) {
           //console.log('dbresult', err, result);
           if (err) {
