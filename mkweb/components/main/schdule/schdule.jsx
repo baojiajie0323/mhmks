@@ -377,6 +377,10 @@ class Schdule extends React.Component {
       return 'next';
     }
 
+    if(nowDate.date() <= 25 && value.month() == 0 && nowDate.month() == 11 && value.year() == nowDate.year() + 1 && value.week() == 1){
+      return 'next';
+    }
+
     return 'past';
   }
   dateCellRender(value) {
