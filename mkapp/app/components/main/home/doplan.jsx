@@ -216,6 +216,7 @@ class DoPlan extends React.Component {
     //bSign = true;
     console.log('renderStepActions', store, bSign);
     var signin_distance = 0;
+    var signout_distance = 0;
     var showResign = false;
     if (this.map) {
       var pointStore = new BMap.Point(store.Gps_x, store.Gps_y);
@@ -226,8 +227,16 @@ class DoPlan extends React.Component {
           showResign = true;
         }
       }
+      if (store.signout_gps_x && store.signout_gps_y) {
+        var pointSignout = new BMap.Point(store.signout_gps_x, store.signout_gps_y);
+        signout_distance = parseInt(this.map.getDistance(pointStore, pointSignout));
+        // if (signin_distance > 500) {
+        //   showResign = true;
+        // }
+      }
     } else {
       signin_distance = "未知";
+      signout_distance = "未知";
       showResign = false;
     }
     var diff = new Date().getTime() - new Date(store.signin_time).getTime();
@@ -239,6 +248,18 @@ class DoPlan extends React.Component {
     if (this.getPlanType() == 3) {
       // 电话拜访
       signin_distance = "0";
+      signout_distance = "0";
+    }
+    if(!!store.isfinish){
+      return (
+        <div style={{ margin: '12px 0' }}>
+            <p>签退成功，偏差<span style={{
+              margin: '0px 10px',
+              color: '#ef6b1e',
+              fontSize: '20px'
+            }}>{signout_distance}</span>米</p>
+        </div>
+      );
     }
     return (
       <div style={{ margin: '12px 0' }}>
@@ -392,17 +413,18 @@ class DoPlan extends React.Component {
   }
   getStep() {
     var stepIndex = this.state.stepIndex;
-    var finishCount = 0;
+    // var finishCount = 0;
+    var finishCount = this.state.storelist.filter(s => !!s.isfinish).length;
     var stepDom = this.state.storelist.map((store, index) => {
-      if (stepIndex < 0 && !store.isfinish) {
-        stepIndex = index;
-      }
-      if (store.isfinish) {
-        if (stepIndex == index) {
-          stepIndex = -1;
-        }
-        finishCount++;
-      }
+      // if (stepIndex < 0 && !store.isfinish) {
+      //   stepIndex = index;
+      // }
+      // if (store.isfinish) {
+      //   if (stepIndex == index) {
+      //     stepIndex = -1;
+      //   }
+      //   finishCount++;
+      // }
       return <Step completed={store.isfinish}>
         <StepButton onTouchTap={() => this.setState({ stepIndex: index })}>{store.Store_name}</StepButton>
         <StepContent>

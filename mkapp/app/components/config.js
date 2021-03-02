@@ -1,5 +1,5 @@
 var config = {
-    version: "1.2.3",
+    version: "1.3.0",
 
     // ios
     platform:"ios",
