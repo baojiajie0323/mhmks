@@ -1640,6 +1640,31 @@ module.exports = {
       }
     });
   },
+  getPathExpense: function (req, res, next) {
+    console.log('visitorDao getPathExpense');
+    var param = req.body;
+    if (!param.userid) {
+      jsonWrite(res, {}, dbcode.PARAM_ERROR);
+      return;
+    }
+    pool.getConnection(function (err, connection) {
+      if (connection == undefined) {
+        jsonWrite(res, {}, dbcode.CONNECT_ERROR);
+        return;
+      } else {
+        var sqlstring = _sql.getpathexpense;
+        connection.query(sqlstring, [], function (err, result) {
+          //console.log('dbresult', err, result);
+          if (err) {
+            jsonWrite(res, {}, dbcode.FAIL);
+          } else {
+            jsonWrite(res, result, dbcode.SUCCESS);
+          }
+          connection.release();
+        });
+      }
+    });
+  },
   getExpense: function (req, res, next) {
     console.log('visitorDao getExpense');
     var param = req.body;

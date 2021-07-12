@@ -152,7 +152,10 @@ router.post('/', function (req, res, next) {
   } else if (req.body.command == "getsafestock") {
     console.log('getsafestock');
     visitorDao.getSafeStock(req, res, next);
-  } else if (req.body.command == "getexpense") {
+  } else if (req.body.command == "getpathexpense") {
+    console.log('getpathexpense');
+    visitorDao.getPathExpense(req, res, next);
+  }else if (req.body.command == "getexpense") {
     console.log('getexpense');
     visitorDao.getExpense(req, res, next);
   } else if (req.body.command == "adjustexpense") {

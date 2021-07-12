@@ -23,9 +23,11 @@ class Expense extends React.Component {
       subsidy: [],
       routeCost: [],
       file: {},
+      pathExpense: []
     };
     this.onClickBack = this.onClickBack.bind(this);
     this.onNatureChange = this.onNatureChange.bind(this);
+    this.onPathExpenseChange = this.onPathExpenseChange.bind(this);
     this.onSubsidyChange = this.onSubsidyChange.bind(this);
     this.onRoutecostChange = this.onRoutecostChange.bind(this);
     this.onClickSave = this.onClickSave.bind(this);
@@ -37,6 +39,7 @@ class Expense extends React.Component {
   }
 
   componentDidMount() {
+    Store.addChangeListener(StoreEvent.SE_PATHEXPENSE, this.onPathExpenseChange);
     Store.addChangeListener(StoreEvent.SE_SUBSIDY, this.onSubsidyChange);
     Store.addChangeListener(StoreEvent.SE_ROUTECOST, this.onRoutecostChange);
     Store.addChangeListener(StoreEvent.SE_EXPENSE_SUBMIT, this.onExpneseSubmit);
@@ -74,6 +77,7 @@ class Expense extends React.Component {
 
     this.setState({ expense, file })
 
+    Action.getPathExpense();
     Action.getSubsidy();
 
     var planpath = this.getPlanPath();
@@ -116,6 +120,9 @@ class Expense extends React.Component {
         return planInfo.path_id;
       }
     }
+  }
+  onPathExpenseChange(pathExpense) {
+    this.setState({ pathExpense });
   }
   onSubsidyChange(subsidy) {
     this.setState({ subsidy });
@@ -200,70 +207,90 @@ class Expense extends React.Component {
     }
   }
   getSubsidy(expenseType) {
-    var role_id = Store.getUserInfo().role;
-    var city_lev = this.getCityLev();
-    var nature = this.getNature();
-    //console.log(plan_date, nature, city_lev, expenseType);
-    if (expenseType == 'ctjt') {
-      if (nature == 2 || nature == 3) {
-        return this.getRouteCtjt();
-      }
-    } else if (expenseType == 'zsbt') {
-      if (nature == 2) {
-        var routeInfo = this.getRouteInfo();
-        if (routeInfo) {
-          return routeInfo.cczs;
-        }
-      }
-    }
-    for (var i = 0; i < this.state.subsidy.length; i++) {
-      if (this.state.subsidy[i].role_id == role_id) {
-        var subsidyInfo = this.state.subsidy[i];
-        if (expenseType == "wcbt") {
-          if (city_lev == 1) {
-            return subsidyInfo.gzdcf1;
-          } else if (city_lev == 2) {
-            return subsidyInfo.gzdcf2;
-          } else if (city_lev == 3) {
-            return subsidyInfo.gzdcf3;
-          }
-        } else if (expenseType == "snjt") {
-          if (nature == 2 || nature == 3) {
-            return 0;
-          }
-          if (city_lev == 1) {
-            return subsidyInfo.gzdjt1;
-          } else if (city_lev == 2) {
-            return subsidyInfo.gzdjt2;
-          } else if (city_lev == 3) {
-            return subsidyInfo.gzdjt3;
-          }
-        } else if (expenseType == "ccdsnjt") {
-          if (nature == 1 || nature == 4) {
-            return 0;
-          }
-          if (city_lev == 1) {
-            return subsidyInfo.ccjt1;
-          } else if (city_lev == 2) {
-            return subsidyInfo.ccjt2;
-          } else if (city_lev == 3) {
-            return subsidyInfo.ccjt3;
-          }
-        } else if (expenseType == "ccbt") {
-          if (nature == 1 || nature == 4) {
-            return 0;
-          }
-          if (city_lev == 1) {
-            return subsidyInfo.ccbt1;
-          } else if (city_lev == 2) {
-            return subsidyInfo.ccbt2;
-          } else if (city_lev == 3) {
-            return subsidyInfo.ccbt3;
-          }
-        }
+    var pathid = this.getPlanPath();
+    var pathEx = this.state.pathExpense.find(p => p.Path_id == pathid);
+    if (!!pathEx) {
+      if (expenseType == 'ctjt') {
+        return pathEx.ctjtf;
+      } else if (expenseType == 'zsbt') {
+        return pathEx.zsf;
+      } else if (expenseType == 'wcbt') {
+        return pathEx.wcf;
+      } else if (expenseType == 'snjt') {
+        return pathEx.snjtf;
+      } else if (expenseType == 'ccdsnjt') {
+        return pathEx.ccdjtf;
+      } else if (expenseType == 'ccbt') {
+        return pathEx.ccbt;
       }
     }
     return 0;
+
+
+
+    // var role_id = Store.getUserInfo().role;
+    // var city_lev = this.getCityLev();
+    // var nature = this.getNature();
+    // if (expenseType == 'ctjt') {
+    //   if (nature == 2 || nature == 3) {
+    //     return this.getRouteCtjt();
+    //   }
+    // } else if (expenseType == 'zsbt') {
+    //   if (nature == 2) {
+    //     var routeInfo = this.getRouteInfo();
+    //     if (routeInfo) {
+    //       return routeInfo.cczs;
+    //     }
+    //   }
+    // }
+    // for (var i = 0; i < this.state.subsidy.length; i++) {
+    //   if (this.state.subsidy[i].role_id == role_id) {
+    //     var subsidyInfo = this.state.subsidy[i];
+    //     if (expenseType == "wcbt") {
+    //       if (city_lev == 1) {
+    //         return subsidyInfo.gzdcf1;
+    //       } else if (city_lev == 2) {
+    //         return subsidyInfo.gzdcf2;
+    //       } else if (city_lev == 3) {
+    //         return subsidyInfo.gzdcf3;
+    //       }
+    //     } else if (expenseType == "snjt") {
+    //       if (nature == 2 || nature == 3) {
+    //         return 0;
+    //       }
+    //       if (city_lev == 1) {
+    //         return subsidyInfo.gzdjt1;
+    //       } else if (city_lev == 2) {
+    //         return subsidyInfo.gzdjt2;
+    //       } else if (city_lev == 3) {
+    //         return subsidyInfo.gzdjt3;
+    //       }
+    //     } else if (expenseType == "ccdsnjt") {
+    //       if (nature == 1 || nature == 4) {
+    //         return 0;
+    //       }
+    //       if (city_lev == 1) {
+    //         return subsidyInfo.ccjt1;
+    //       } else if (city_lev == 2) {
+    //         return subsidyInfo.ccjt2;
+    //       } else if (city_lev == 3) {
+    //         return subsidyInfo.ccjt3;
+    //       }
+    //     } else if (expenseType == "ccbt") {
+    //       if (nature == 1 || nature == 4) {
+    //         return 0;
+    //       }
+    //       if (city_lev == 1) {
+    //         return subsidyInfo.ccbt1;
+    //       } else if (city_lev == 2) {
+    //         return subsidyInfo.ccbt2;
+    //       } else if (city_lev == 3) {
+    //         return subsidyInfo.ccbt3;
+    //       }
+    //     }
+    //   }
+    // }
+    // return 0;
   }
   getFpCount(expensetype) {
     console.log("getFpCount", expensetype);

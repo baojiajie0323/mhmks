@@ -731,6 +731,27 @@ var Action = {
         console.log('getSaleActual fail');
       })
   },
+  getPathExpense: function (data) {
+    var context = this;
+    data.command = 'getpathexpense';
+    console.log('send getPathExpense', data);
+    $.ajax({
+      url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
+      data: data
+    })
+      .done(function (response) {
+        console.log('getPathExpense:', response);
+        if (response.code == 0) {
+          context.dispatch(ActionEvent.AE_PATHEXPENSE, response.data);
+        } else {
+          message.error('获取路线报销标准失败！' + response.msg);
+        }
+      })
+      .fail(function (xhr, textStatus, thrownError) {
+        message.error('与服务器建立连接失败');
+        console.log('getPathExpense fail');
+      })
+  },
   getExpense: function (data) {
     var context = this;
     data.command = 'getexpense';

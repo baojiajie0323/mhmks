@@ -157,6 +157,10 @@ var Store = assign({}, EventEmitter.prototype, {
   getExpense: function () {
     return _expense;
   },
+  setPathExpense: function (pl) {
+    _expense = pl;
+    this.emit(StoreEvent.SE_PATHEXPENSE);
+  },
   setExpense: function (pl) {
     _expense = pl;
     this.emit(StoreEvent.SE_EXPENSE);
@@ -417,6 +421,10 @@ AppDispatcher.register((action) => {
       break;
     case ActionEvent.AE_SALEACTUAL: {
       Store.emit(StoreEvent.SE_SALEACTUAL, action.value);
+    }
+      break;
+    case ActionEvent.AE_PATHEXPENSE: {
+      Store.setPathExpense(action.value);
     }
       break;
     case ActionEvent.AE_EXPENSE: {
