@@ -731,13 +731,15 @@ var Action = {
         console.log('getSaleActual fail');
       })
   },
-  getPathExpense: function (data) {
+  getPathExpense: function () {
     var context = this;
-    data.command = 'getpathexpense';
-    console.log('send getPathExpense', data);
+    // data.command = 'getpathexpense';
+    // console.log('send getPathExpense', data);
     $.ajax({
       url: _domain_name + '/visitor', type: 'POST', timeout: AJAXTIMEOUT,
-      data: data
+      data: {
+        command: 'getpathexpense'
+      }
     })
       .done(function (response) {
         console.log('getPathExpense:', response);

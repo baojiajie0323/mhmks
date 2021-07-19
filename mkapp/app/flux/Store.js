@@ -162,8 +162,8 @@ var Store = assign({}, EventEmitter.prototype, {
     this.emit(StoreEvent.SE_PATHEXPENSE);
   },
   setExpense: function (pl) {
-    _expense = pl;
-    this.emit(StoreEvent.SE_EXPENSE);
+    // _expense = pl;
+    this.emit(StoreEvent.SE_EXPENSE,pl);
   },
   signInStore: function (signStore) {
     for (var i = 0; i < _plan.length; i++) {
